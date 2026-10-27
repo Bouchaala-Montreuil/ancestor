@@ -313,3 +313,45 @@ Two bugs fell out of it, both invisible in tests and both real:
    was never applied.
 
 Eight checks in `design.js` guard the sweep (group 8e).
+
+---
+
+## §0.4 RTL, Arabic and the lesson reader
+
+**Mirroring is now structural** (`4e2beeb`). 78 physical properties
+(`margin-left`, `padding-right`, `border-left`, `left:`) became logical. The
+sheet had a hand-written `[dir=rtl]` patch list of seven rules doing by hand
+what the base rules should have done; six are gone. The one survivor is a
+caption that must be allowed to wrap, because an Arabic caption is longer than
+an English one. The desktop shell mirrors too — sidebar, rest bar, toast,
+sheet drawer.
+
+**Arabic was inherited, never designed.** Three things were actively wrong:
+
+| | Was | Now |
+|---|---|---|
+| **Tracking** | 132 `letter-spacing` declarations applied to a joined script, severing every connection | off entirely under `html[lang="ar"]` |
+| **Uppercase** | `text-transform:uppercase`, which does not exist in Arabic | off; authority comes from size and weight instead |
+| **The face** | Barlow Condensed has no Arabic, so text fell through to whatever the OS had | named fallthrough to the system Arabic face, `system-ui` first |
+
+Body leading opens to 1.72 and the display line box to 1.06 for Arabic's
+deeper descenders. Eleven checks guard this (design group 8f).
+
+**The lesson reader is a paper now** (`05f3b39`). It was six identical
+bordered panels stacked on top of each other. It is a title at document scale,
+a lede, numbered section entries with a rule, and prose at 16px on a 64ch
+measure. Only things you operate keep a box.
+
+### What this changes about B5
+
+B5 assumed 1,853 lines of undesigned UI. That is the wrong measure — every
+class in `science.js`, `modules.js` and `anatomy3d.js` is styled; the problem
+was that they were all styled *the same*. The remaining work on Science is not
+volume, it is hierarchy:
+
+- the hub's lesson list (a numbered index, not a card grid);
+- the module view's diagrams (they inherit the palette but not the mark's logic);
+- the lesson reader's apparatus: quiz feedback, evidence cards, the personal
+  figure — all still boxes, and only the first should be.
+
+Estimate drops from 3–5 days to ~2.
