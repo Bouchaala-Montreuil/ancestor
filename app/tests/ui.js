@@ -1210,6 +1210,89 @@ group('27. Every screen has one h1 and no missing heading level');
   w18.closeModule && w18.closeModule();
 }
 
+group('28. Rest can reach a person who is not looking at the tab');
+{
+  /* The countdown is a page timer. The honest upgrade is a notification through
+     the service worker — and only where the platform can actually deliver it. */
+  const open = async (opts) => {
+    const dom = await boot();
+    const w = dom.window, d = w.document;
+    completeOnboarding(w, d);
+    w.asked = 0;
+    w.posted = [];
+    if(opts.supported !== false){
+      w.Notification = {
+        permission: opts.permission || 'default',
+        requestPermission: function(){ w.asked++; return Promise.resolve(opts.grant || 'granted'); }
+      };
+      Object.defineProperty(w.navigator, 'serviceWorker', {
+        configurable: true,
+        value: { ready: Promise.resolve({ showNotification: (title, o) => w.posted.push([title, o]) }) }
+      });
+    } else {
+      delete w.Notification;
+      try{ delete w.navigator.serviceWorker; }catch(e){}
+    }
+    Object.defineProperty(d, 'hidden', { configurable: true, get: () => opts.hidden !== false });
+    if(opts.on) w.getState().profile.restNotify = true;
+    return { w, d };
+  };
+
+  const a = await open({ });
+  chk('the permission is never requested on boot', a.w.asked === 0,
+      'requestPermission called ' + a.w.asked + ' times');
+  chk('the alert is off until someone asks for it',
+      a.w.getState().profile.restNotify === false);
+  chk('and nothing is posted while it is off', a.w.notifyRestDone() === false && a.w.posted.length === 0);
+
+  const b = await open({ on:true, permission:'granted', hidden:true });
+  const posted = b.w.notifyRestDone();
+  await new Promise(r => setTimeout(r, 20));   /* the post is a promise */
+  chk('with permission and the tab in the background, rest is posted',
+      posted === true && b.w.posted.length === 1, b.w.posted.length + ' notification');
+  chk('and the notification says what happened, in the reader\'s language',
+      (b.w.posted[0] || [])[0] === b.w.t('rest.notifyTitle') &&
+      (b.w.posted[0] || [{}])[1] && b.w.posted[0][1].body === b.w.t('rest.notifyBody'),
+      JSON.stringify((b.w.posted[0] || [])[0]));
+  chk('one tag, so a second rest replaces the first',
+      (b.w.posted[0] || [{}])[1] && b.w.posted[0][1].tag === 'ancestor-rest');
+
+  const c = await open({ on:true, permission:'granted', hidden:false });
+  chk('with the screen on, the toast is enough — nothing is posted',
+      c.w.notifyRestDone() === false, 'visible tab');
+
+  const dd = await open({ on:true, permission:'denied', hidden:true });
+  chk('a denied permission posts nothing and claims nothing',
+      dd.w.notifyRestDone() === false);
+
+  const e = await open({ on:true, permission:'granted', supported:false });
+  chk('a browser without notifications degrades quietly', e.w.notifyRestDone() === false);
+
+  const g = await open({ permission:'default', grant:'granted' });
+  g.w.setRestNotify();
+  await new Promise(r => setTimeout(r, 30));
+  chk('turning it on asks the browser, once', g.w.asked === 1, String(g.w.asked));
+  chk('and records the answer', g.w.getState().profile.restNotify === true);
+
+  const h = await open({ permission:'denied', grant:'denied' });
+  h.w.setRestNotify();
+  await new Promise(r => setTimeout(r, 30));
+  chk('a refused request is stored as off, not as on', h.w.getState().profile.restNotify === false);
+
+  const i2 = await open({ on:true, permission:'granted' });
+  i2.w.setRestNotify();
+  await new Promise(r => setTimeout(r, 30));
+  chk('turning it off does not ask again', i2.w.asked === 0 && i2.w.getState().profile.restNotify === false);
+
+  /* The timer itself: rest ends, and the alert goes out without anyone looking. */
+  const j = await open({ on:true, permission:'granted', hidden:true });
+  j.w.startSession('A');
+  j.w.startRest(0.3);
+  await new Promise(r => setTimeout(r, 700));
+  chk('a finished rest posts the alert by itself', j.w.posted.length === 1,
+      j.w.posted.length + ' posted');
+}
+
 /* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');

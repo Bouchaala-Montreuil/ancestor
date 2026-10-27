@@ -680,6 +680,9 @@ function runRestTimer(){
     if(left <= 0){
       REST.leftMs = 0;
       stopRest(); render();
+      /* A toast is only seen by someone looking at the tab. If they are not,
+         and they asked to be told, the service worker says it instead. */
+      notifyRestDone();
       toast(t('session.restDone'), 'ok');
       try{ pressFeedback(null); }catch(e){}
       return;
@@ -789,6 +792,65 @@ function paintRestHost(){
     '<button class="btn quiet sm" onclick="stopRest();render()">' + esc(t('btn.close')) + '</button>' +
     '</div></div>';
   paintRest();
+}
+
+/* ---------- rest alert ----------
+   The countdown is a page timer: it stops when the tab is closed, and a browser
+   that suspends a background tab delivers it late. So this is not advertised as
+   an alarm — it is the one honest upgrade available to a page-only app: if the
+   tab is merely *behind* another window, and the person has opted in and granted
+   permission, rest ending is posted as a notification through the service
+   worker, which the operating system will show even though the page is not
+   visible. Every path that cannot deliver returns false, and nothing claims
+   otherwise. */
+function restAlertSupported(){
+  try{
+    return typeof Notification !== 'undefined' &&
+           typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
+  }catch(e){ return false; }
+}
+function notifyRestDone(){
+  const s = getState();
+  if(!s || !s.profile || s.profile.restNotify !== true) return false;
+  if(!restAlertSupported()) return false;
+  if(Notification.permission !== 'granted') return false;
+  /* If the screen is on, the toast and the strip have already said it. A
+     notification for something already visible is noise. */
+  if(!document.hidden) return false;
+  try{
+    navigator.serviceWorker.ready.then(reg => {
+      if(!reg || typeof reg.showNotification !== 'function') return;
+      reg.showNotification(t('rest.notifyTitle'), {
+        body: t('rest.notifyBody'),
+        tag: 'ancestor-rest',        /* a second rest replaces the first */
+        renotify: true,
+        icon: './img/icon-192.png',
+        badge: './img/icon-192.png',
+        data: { url: './' }
+      });
+    }).catch(() => {});
+  }catch(e){ return false; }
+  return true;
+}
+/* Permission is asked for here and nowhere else: a request on boot is a dialog
+   from an app the person has not used yet. */
+function setRestNotify(){
+  const s = getState();
+  if(s.profile.restNotify === true){
+    s.profile.restNotify = false; saveState(); render();
+    toast(t('rest.notifyOff'), 'ok');
+    return;
+  }
+  if(!restAlertSupported()){ toast(t('rest.notifyUnsupported'), 'warn'); return; }
+  const done = ok => {
+    s.profile.restNotify = !!ok; saveState(); render();
+    toast(ok ? t('rest.notifyOn') : t('rest.notifyBlocked'), ok ? 'ok' : 'warn');
+  };
+  try{
+    const r = Notification.requestPermission();
+    if(r && typeof r.then === 'function'){ r.then(p => done(p === 'granted')).catch(() => done(false)); }
+    else done(Notification.permission === 'granted');
+  }catch(e){ done(false); }
 }
 
 /* One line, spoken only when the rest state changes. */
@@ -1836,6 +1898,23 @@ Screens.profile = function(){
     h += '<p class="hint mt-3 mb-0">' + esc(t('plan.excludedCount', { n: avail.length - enabledCount })) +
          ' <button type="button" class="link-btn" onclick="restoreExPool()">' +
          esc(t('profile.restorePool')) + '</button></p>';
+  }
+  h += '</div>';
+
+  /* Session alert. Opt-in, and the hint says what it can and cannot do: a
+     promise the platform cannot keep is worse than no promise. */
+  const notifyOn = p.restNotify === true;
+  h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('rest.notifyT')) + '</h3>' +
+       '<span class="flag sm ' + (notifyOn ? 'ok' : 'plain') + '">' +
+       esc(notifyOn ? t('rest.notifyStateOn') : t('rest.notifyStateOff')) + '</span></div>';
+  h += '<button type="button" class="tile ' + (notifyOn ? 'on' : '') + '" role="switch" ' +
+       'aria-checked="' + (notifyOn ? 'true' : 'false') + '" onclick="setRestNotify()">' +
+       '<span class="box"></span><span><span class="t">' + esc(t('rest.notifyLbl')) +
+       '</span><span class="d">' + esc(t('rest.notifyHint')) + '</span></span></button>';
+  if(!restAlertSupported()){
+    h += '<p class="hint mt-2">' + esc(t('rest.notifyUnsupported')) + '</p>';
+  } else if(notifyOn && typeof Notification !== 'undefined' && Notification.permission !== 'granted'){
+    h += '<p class="hint mt-2">' + esc(t('rest.notifyBlocked')) + '</p>';
   }
   h += '</div>';
 

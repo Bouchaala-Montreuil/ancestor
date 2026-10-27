@@ -29,6 +29,11 @@ function defaultState(){
       usualWake: 7,
       style: 'std',            // 'hit' | 'std' | 'min' | 'freq'
       unit: 'kg',
+      /* Opt-in, and only ever asked for from the settings switch — never on
+         boot. When rest ends while the tab is in the background and the browser
+         has granted permission, a notification is posted through the service
+         worker. Otherwise nothing is claimed: the countdown is a page timer. */
+      restNotify: false,
       exercises: null,         // {id:true} once chosen
       /* --- schema v2, additive --- */
       goals: ['h'],

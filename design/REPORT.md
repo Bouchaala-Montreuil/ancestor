@@ -12,23 +12,23 @@ exactly what was seen and what a headless browser still cannot tell you.
 
 The visual pass happened last, and it is the most useful thing in this
 document: it found eleven rendered defects that every structural suite had
-passed. Three further passes have since found five more — and the last two were
-found only because the capture covered the whole page instead of the first
-screen.
+passed. Each pass since has found more, and the most recent ones came from two
+places: a capture that covered the whole page instead of the first screen, and
+reusing a component outside the screen it was written for.
 
 **How to re-verify**
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
 node tests/browser.js          # 33 real Chromium: WebGL, layouts, keyboard, SW offline
-node tools/keyscan.js          # 1,657 keys × 7 languages, 0 leaks
+node tools/keyscan.js          # 1,668 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,297 checks over ten headless suites**, all green —
-design 213, premium 213, ui 242, run 142, inclusive 65, personas 68, science 124,
+Current: **1,315 checks over ten headless suites**, all green —
+design 217, premium 213, ui 256, run 142, inclusive 65, personas 68, science 124,
 logic 122, anatomy 64, print 44 — plus **33 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
@@ -302,6 +302,8 @@ run against this build — was executed.
 | the screens themselves | full-page and clipped screenshots at 320, 390, 768, 1024, 1280, 1440 px, English and Arabic | eleven visual defects, listed in §8 and in `app/DESIGN.md` §3.13 |
 | a second pass over the screens the first one skipped | exercise sheet, plan editor, lesson, settings fold, progress drill-down, print card, onboarding at 320 px, rest timer | the exercise sheet was rendering as an A4 poster on a phone, with no visible way out (`DESIGN.md` §3.14). The rest held. |
 | the on-screen keyboard | 390 × 420, a numeric field focused in a live session | the tab bar was painted over the set's **Log Set** button (`DESIGN.md` §3.15); fixed |
+| rest alerts, with the tab in the background | `Notification` + service worker stubbed in jsdom; real `showNotification` call asserted | opt-in, asked only from its own switch, posted only when the tab is hidden and permitted (`DESIGN.md` §3.20) |
+| the new rest-alert switch, on Profile | 1280 px, element capture | the tile component rendered as `High contrastStronger borders…` with a 0 × 0 checkbox **outside onboarding** — a fix that had been written against one screen (`DESIGN.md` §3.21) |
 | a full-page capture of Body, not just the first screen | 1280 and 390 px, whole document | a tap icon with no width rendering as a **547 × 547 px** glyph, 560 px of empty page between the figure and the muscle list (`DESIGN.md` §3.17); plus the raw key `body.selectBody` in all seven languages (§3.19) |
 
 **What the screenshots changed.** Nine of the eleven defects found visually were
@@ -452,10 +454,14 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
 
 ## 9. Next improvements, ranked by user impact
 
-1. **A rest timer that can reach you when the screen is off** — a service-worker
-   notification, or an honest "keep this tab open" note. This is the one place
-   where the product currently under-delivers on a promise the session screen
-   makes.
+1. ~~**A rest timer that can reach you when the screen is off.**~~ **Done, as
+   far as a page can honestly go.** An opt-in switch posts a service-worker
+   notification when rest ends and the tab is in the background; permission is
+   asked for from that switch alone; with the screen on the toast stands; and the
+   hint states the two cases it cannot cover — a suspended tab and a closed one
+   (`DESIGN.md` §3.20). What is left here is the platform's, not the page's: a
+   real alarm needs a native shell or a push server, and this app has neither
+   backend nor store presence by design.
 2. ~~**Body: drop the duplicate muscle list.**~~ **Done — but not by deleting
    the list.** Measured, the figure carried no visible names at all: the
    duplication was fourteen focus stops plus twelve for the same groups, and a
@@ -506,6 +512,6 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
    same minute once the capture ran to the full document height. This is the
    cheapest item on this list and it has already paid.
 
-Ranked by user impact, then by cost: 1 is a small change with daily
-consequences; 3 and 4 are audits; 8 and 11 are cheap guards; 7 and 9 are the
-investments that would make every other claim in this document checkable.
+Ranked by user impact, then by cost: 4 is the last unaudited surface; 8 and 11
+are cheap guards; 7 and 9 are the investments that would make every other claim
+in this document checkable.

@@ -1193,6 +1193,9 @@ button.flag:hover{border-color:var(--ink)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .toast.alert{background:var(--alert)}
 .toast.ok{background:var(--ok)}
+/* A refusal is not an error: nothing broke, the browser simply will not do
+   this. --warn carries 4.79:1 with ivory on it, same as the other two. */
+.toast.warn{background:var(--warn)}
 
 /* ---------------------------------------------------------------- OVERLAYS */
 .sheet-backdrop{
@@ -2133,6 +2136,28 @@ table.data tbody tr:last-child td{border-bottom:0}
 .tile.on::after{
   content:"";position:absolute;top:8px;inset-inline-end:8px;width:6px;height:6px;background:var(--burnt);
 }
+/* The tile's parts. These used to live only under .onb-frame — the comment with
+   them describes a title running into its description — so every tile outside
+   onboarding regressed to exactly that: "High contrastStronger borders and text
+   for easier reading", with a 0 x 0 checkbox, on Profile's three accessibility
+   switches and on the rest alert. The component belongs to the component. */
+.tile > span{min-width:0}
+.tile .t{
+  display:block;font-family:var(--f-display);font-size:16px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:.02em;color:var(--ink);
+}
+.tile .d{
+  display:block;font-size:var(--fs-sm);color:var(--ink-3);line-height:1.45;
+  margin-top:4px;max-width:52ch;
+}
+.tile .box{
+  width:18px;height:18px;flex:none;margin:0;
+  border:var(--hair) solid var(--ink);position:relative;
+}
+.tile.on .box,.tile[aria-checked="true"] .box{background:var(--ink)}
+.tile.on .box::after,.tile[aria-checked="true"] .box::after{
+  content:"";position:absolute;inset:4px;background:var(--paper);
+}
 .tile .k{
   font-family:var(--f-mono);font-size:8px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--tech-ink);
@@ -2141,7 +2166,6 @@ table.data tbody tr:last-child td{border-bottom:0}
   font-family:var(--f-display);font-size:24px;line-height:1;
   text-transform:uppercase;font-variant-numeric:tabular-nums;
 }
-.tile .d{font-size:11px;color:var(--ink-2);line-height:1.4}
 .tile .ic{color:var(--ink-2)}
 .tile .ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5}
 .tiles.tiles-3{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -2226,8 +2250,7 @@ table.data tbody tr:last-child td{border-bottom:0}
    lines: without that the title ran straight into its description
    ("Standard volumeThe most widely supported approach"). */
 .onb-frame .tile > span{min-width:0;grid-column:1;grid-row:1}
-.onb-frame .tile > span .t{display:block}
-.onb-frame .tile > span .d{display:block}
+/* Onboarding keeps its larger, tighter type; the parts themselves are shared. */
 .onb-frame .tile .t{
   display:block;font-family:var(--f-display);font-size:clamp(20px,4.4vw,26px);
   line-height:1.05;text-transform:uppercase;letter-spacing:.01em;color:var(--ink);

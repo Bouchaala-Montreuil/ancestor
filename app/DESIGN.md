@@ -594,6 +594,69 @@ in `js/ui/` and `js/app.js` and fails if no dictionary defines it. Falsified by
 deleting the English entry and watching the scan report
 `untranslatable keys: en:body.selectBody` and `rendered verbatim: en :: body.selectBody`.
 
+### 3.20 Rest can reach you, or it says it cannot
+
+The first item on the report's list was the one place the product under-delivers
+on a promise the session screen makes: *rest 120 s* starts a countdown, and then
+the person puts the phone down and looks at something else. A toast they will
+never see is not an alert.
+
+What a page can honestly do about that, in order of what it can promise:
+
+| what | promised? |
+|---|---|
+| a toast and a strip while the screen is on | yes, and it worked |
+| a system notification when the tab is backgrounded, if the person opted in and granted permission | yes — the service worker posts it |
+| a notification when the phone has suspended the tab | **no** — the timer is a page timer; it fires when the page runs again |
+| a notification when the tab is closed | **no** |
+| waking the phone | **no**, and nothing claims to |
+
+So: an **opt-in switch in Profile** (`restNotify`, off by default), permission
+requested from that switch and nowhere else — never on boot — and
+`notifyRestDone()` posting through the service worker **only** when
+`document.hidden && Notification.permission === 'granted'`. With the screen on,
+the toast is enough and no notification is posted; with the tab suspended,
+nothing is claimed. The hint under the switch says exactly that in all seven
+languages, including the two rows marked *no* above. Clicking the notification
+focuses the window or opens the app (`sw.js` `notificationclick`), because an
+alert that leads nowhere is a dead end with a sound.
+
+`tests/ui.js` group 28 stubs `Notification`, `navigator.serviceWorker` and
+`document.hidden`, and checks: nothing is requested on boot; off is silent; on +
+granted + hidden posts exactly one notification with the translated title and
+`tag: ancestor-rest`; on + granted + **visible** posts nothing; denied posts
+nothing; unsupported degrades quietly; turning it on asks once and records the
+answer; turning it off does not ask again; and a rest that runs to zero posts by
+itself. `tests/design.js` holds the three static facts (opt-in check, hidden
+check, click handler) so a refactor cannot quietly remove them.
+
+### 3.21 The tile that only existed in onboarding
+
+The rest alert needed a switch, and the product already has one: `.tile`, used by
+onboarding and by Profile's three accessibility toggles. Screenshotting the new
+one showed:
+
+> **High contrast**Stronger borders and text for easier reading
+
+— a title running into its description, with a **0 × 0 checkbox** beside it. The
+new switch was not the defect: `.tile .t`, `.tile .d` and `.tile .box` were
+styled **only** under `.onb-frame`, and the comment sitting above those rules
+describes this exact bug:
+
+> *"the captions are spans, so they also need to be told they are lines: without
+> that the title ran straight into its description ("Standard volumeThe most
+> widely supported approach")."*
+
+The fix had been written against the screen being looked at, not the component.
+It is now base-level — caption block, description block, 18 px box, filled when
+chosen — and onboarding keeps only its larger type as an override. The
+regression guard asserts that the three base rules exist at the start of a line
+(an `.onb-frame`-prefixed copy does not count) and that the caption and
+description are `display:block`; falsified by deleting one `display:block`.
+
+This is the same failure as §3.17 and §3.19 in a different costume: the thing was
+never seen because the screen it lives on was never captured whole.
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was
@@ -666,7 +729,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (213 checks), the 33 real-browser checks in `tests/browser.js`
+`tests/design.js` (217 checks), the 33 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 

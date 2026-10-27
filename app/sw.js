@@ -1,5 +1,5 @@
 /* ANCESTOR — offline cache. Bump CACHE on every deploy. */
-const CACHE = 'ancestor-v24';  // v24: one list, one key, one h1
+const CACHE = 'ancestor-v25';  // v25: rest can reach you when the tab cannot
 const FILES = [
   './', './index.html', './css/app.css',
   './js/i18n/core.js', './js/i18n/ui.js', './js/i18n/exercises.js', './js/i18n/screens.js', './js/i18n/acc.js', './js/i18n/ar.js', './js/i18n/v2.js', './js/i18n/science.js', './js/i18n/science2.js', './js/i18n/ex_modes.js', './js/i18n/modes.js', './js/i18n/lesson_bodies_en.js', './js/i18n/lesson_bodies_fr.js', './js/i18n/lesson_bodies_es_de.js', './js/i18n/lesson_bodies_it_nl_ar.js', './js/i18n/locale.js',
@@ -19,6 +19,20 @@ self.addEventListener('activate', e => {
     .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
+/* Rest ending posts a notification through this worker, because the page that
+   owns the timer may be behind another window. Clicking it brings that window
+   forward, or opens the app if there is none — a notification that leads
+   nowhere is a dead end with a sound. */
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type:'window', includeUncontrolled:true }).then(list => {
+    for (const c of list) {
+      if ('focus' in c) return c.focus();
+    }
+    if (self.clients.openWindow) return self.clients.openWindow('./');
+  }));
+});
+
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(

@@ -944,6 +944,37 @@ group('9. Reusable component vocabulary');
   /* An inline <svg viewBox="0 0 24 24"> with no width is a 547 px square in a
      547 px column. The tap hint on Body took 560 px of page until a full-page
      screenshot found it. */
+  /* Rest alerts: the permission is asked for from the switch and nowhere else,
+     the notification only goes out when the tab cannot be seen, and a click on
+     it brings the app forward instead of leading nowhere. */
+  const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  const bootjs  = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  const sw      = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  chk('the rest alert is opt-in and never asked for on load',
+      /profile\.restNotify !== true\) return false/.test(screens) &&
+      /function setRestNotify\(/.test(screens) &&
+      !/requestPermission/.test(bootjs),
+      'setRestNotify is the only caller of requestPermission');
+  chk('the notification is only posted when the tab is in the background',
+      /if\(!document\.hidden\) return false;/.test(screens));
+  chk('the service worker handles the click and focuses the window',
+      /addEventListener\('notificationclick'/.test(sw) && /clients\.matchAll/.test(sw));
+
+  /* A component's parts belong to the component, not to the one screen that was
+     being looked at when they were written. The tile's caption and checkbox were
+     styled under .onb-frame only, so every tile outside onboarding rendered
+     "High contrastStronger borders..." with a 0 x 0 box. Each base rule must
+     exist at the start of a line, which an .onb-frame-prefixed copy does not. */
+  const baseRule = sel => {
+    const m = new RegExp('(^|\\n)\\s*' + sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*\\{([^}]*)\\}').exec(css);
+    return m ? m[2] : '';
+  };
+  chk("the tile's caption and checkbox are styled where every tile can reach them",
+      /display:block/.test(baseRule('.tile .t')) &&
+      /display:block/.test(baseRule('.tile .d')) &&
+      /width:18px/.test(baseRule('.tile .box')),
+      'title, description and box are their own lines at every width');
+
   chk('inline icons are given a size, not the width of the column',
       /\.fig-hint svg\{[^}]*width:\s*\d+px[^}]*height:\s*\d+px/s.test(css));
 

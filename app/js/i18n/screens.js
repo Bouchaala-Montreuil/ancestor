@@ -341,7 +341,7 @@ en:{
 'progress.nodata':'No session recorded','progress.nodataBody':'Your trends, volumes and records will appear here once you have logged a first session.',
 'session.noplanBody':'Complete the onboarding or rebuild your programme to get a planned session.',
 'session.targetHit':'Target reached','session.skipped':'Skipped','session.nosubBody':'No other exercise in your configuration targets these muscles in the same way.',
-'session.restDone':'Rest complete','onb.name':'Name','onb.redo':'Redo onboarding',
+'session.restDone':'Rest complete', 'rest.notifyT':'Rest alert','rest.notifyLbl':'Tell me when rest ends','rest.notifyHint':'A system notification when the countdown reaches zero and this tab is in the background. The countdown itself is a page timer: if the browser suspends the tab or you close it, nothing runs and no alert arrives.','rest.notifyStateOn':'on','rest.notifyStateOff':'off','rest.notifyOn':'Rest alerts on. They arrive while this tab is in the background.','rest.notifyOff':'Rest alerts off.','rest.notifyBlocked':'Your browser blocked notifications for this site, so nothing will arrive. Allow them in the site settings first.','rest.notifyUnsupported':'This browser cannot post notifications from a page like this one, so the countdown stays on screen only.','rest.notifyTitle':'Rest is over','rest.notifyBody':'Time for your next set.','onb.name':'Name','onb.redo':'Redo onboarding',
 'decision.trainWhy':'Proceed with the planned session.','decision.modifyWhy':'Adapt the session: reduce the volume or the load.','decision.restWhy':'Prioritise recovery today.'
 },
 fr:{
@@ -354,7 +354,7 @@ fr:{
 'progress.nodata':'Aucune séance enregistrée','progress.nodataBody':'Vos tendances, volumes et records apparaîtront ici après une première séance.',
 'session.noplanBody':'Terminez la configuration ou reconstruisez votre programme pour obtenir une séance planifiée.',
 'session.targetHit':'Cible atteinte','session.skipped':'Passée','session.nosubBody':'Aucun autre exercice de votre configuration ne cible ces muscles de la même façon.',
-'session.restDone':'Repos terminé','onb.name':'Nom','onb.redo':'Refaire la configuration',
+'session.restDone':'Repos terminé', 'rest.notifyT':'Alerte de repos','rest.notifyLbl':'Me prévenir à la fin du repos','rest.notifyHint':'Une notification système quand le compte à rebours atteint zéro et que cet onglet est en arrière-plan. Le compte à rebours reste une minuterie de page : si le navigateur suspend l’onglet ou si vous le fermez, rien ne s’exécute et aucune alerte n’arrive.','rest.notifyStateOn':'actif','rest.notifyStateOff':'inactif','rest.notifyOn':'Alertes de repos activées. Elles arrivent tant que cet onglet est en arrière-plan.','rest.notifyOff':'Alertes de repos désactivées.','rest.notifyBlocked':'Votre navigateur bloque les notifications de ce site : rien n’arrivera. Autorisez-les dans les réglages du site.','rest.notifyUnsupported':'Ce navigateur ne peut pas envoyer de notifications depuis une page comme celle-ci : le compte à rebours reste à l’écran.','rest.notifyTitle':'Repos terminé','rest.notifyBody':'C’est l’heure de la série suivante.','onb.name':'Nom','onb.redo':'Refaire la configuration',
 'decision.trainWhy':'Effectuez la séance prévue.','decision.modifyWhy':'Adaptez la séance : réduisez le volume ou la charge.','decision.restWhy':'Faites de la récupération une priorité aujourd\'hui.'
 },
 es:{
@@ -367,7 +367,7 @@ es:{
 'progress.nodata':'Ninguna sesión registrada','progress.nodataBody':'Tus tendencias, volúmenes y récords aparecerán aquí tras registrar una primera sesión.',
 'session.noplanBody':'Completa la configuración o reconstruye tu programa para obtener una sesión planificada.',
 'session.targetHit':'Objetivo alcanzado','session.skipped':'Omitida','session.nosubBody':'Ningún otro ejercicio de tu configuración trabaja estos músculos del mismo modo.',
-'session.restDone':'Descanso completado','onb.name':'Nombre','onb.redo':'Repetir configuración',
+'session.restDone':'Descanso completado', 'rest.notifyT':'Aviso de descanso','rest.notifyLbl':'Avísame cuando acabe el descanso','rest.notifyHint':'Una notificación del sistema cuando la cuenta atrás llega a cero y esta pestaña está en segundo plano. La cuenta atrás sigue siendo un temporizador de página: si el navegador suspende la pestaña o la cierras, nada se ejecuta y no llega ningún aviso.','rest.notifyStateOn':'activo','rest.notifyStateOff':'inactivo','rest.notifyOn':'Avisos de descanso activados. Llegan mientras esta pestaña está en segundo plano.','rest.notifyOff':'Avisos de descanso desactivados.','rest.notifyBlocked':'Tu navegador bloquea las notificaciones de este sitio, así que no llegará nada. Permítelas en los ajustes del sitio.','rest.notifyUnsupported':'Este navegador no puede enviar notificaciones desde una página como esta: la cuenta atrás se queda solo en pantalla.','rest.notifyTitle':'Descanso terminado','rest.notifyBody':'Toca la siguiente serie.','onb.name':'Nombre','onb.redo':'Repetir configuración',
 'decision.trainWhy':'Realiza la sesión prevista.','decision.modifyWhy':'Adapta la sesión: reduce el volumen o la carga.','decision.restWhy':'Prioriza la recuperación hoy.'
 },
 de:{
@@ -380,7 +380,7 @@ de:{
 'progress.nodata':'Keine Einheit erfasst','progress.nodataBody':'Trends, Volumen und Rekorde erscheinen hier nach der ersten erfassten Einheit.',
 'session.noplanBody':'Schließe die Einrichtung ab oder baue dein Programm neu auf, um eine geplante Einheit zu erhalten.',
 'session.targetHit':'Ziel erreicht','session.skipped':'Übersprungen','session.nosubBody':'Keine andere Übung deiner Konfiguration trainiert diese Muskeln auf dieselbe Weise.',
-'session.restDone':'Pause beendet','onb.name':'Name','onb.redo':'Einrichtung wiederholen',
+'session.restDone':'Pause beendet', 'rest.notifyT':'Pausen-Hinweis','rest.notifyLbl':'Sag mir, wenn die Pause vorbei ist','rest.notifyHint':'Eine Systembenachrichtigung, wenn der Countdown null erreicht und dieser Tab im Hintergrund ist. Der Countdown bleibt ein Seitentimer: hängt der Browser den Tab an oder schließt du ihn, läuft nichts und es kommt kein Hinweis.','rest.notifyStateOn':'an','rest.notifyStateOff':'aus','rest.notifyOn':'Pausen-Hinweise an. Sie kommen, solange dieser Tab im Hintergrund ist.','rest.notifyOff':'Pausen-Hinweise aus.','rest.notifyBlocked':'Der Browser blockiert Benachrichtigungen für diese Seite, es kommt also nichts an. Erlaube sie zuerst in den Seiteneinstellungen.','rest.notifyUnsupported':'Dieser Browser kann aus einer Seite wie dieser keine Benachrichtigungen senden; der Countdown bleibt auf dem Bildschirm.','rest.notifyTitle':'Pause vorbei','rest.notifyBody':'Der nächste Satz ist dran.','onb.name':'Name','onb.redo':'Einrichtung wiederholen',
 'decision.trainWhy':'Führe die geplante Einheit aus.','decision.modifyWhy':'Passe die Einheit an: reduziere Volumen oder Last.','decision.restWhy':'Setze heute die Regeneration an erste Stelle.'
 },
 it:{
@@ -393,7 +393,7 @@ it:{
 'progress.nodata':'Nessuna sessione registrata','progress.nodataBody':'Trend, volumi e record appariranno qui dopo la prima sessione registrata.',
 'session.noplanBody':'Completa la configurazione o ricostruisci il programma per ottenere una sessione pianificata.',
 'session.targetHit':'Obiettivo raggiunto','session.skipped':'Saltata','session.nosubBody':'Nessun altro esercizio della tua configurazione coinvolge questi muscoli allo stesso modo.',
-'session.restDone':'Recupero completato','onb.name':'Nome','onb.redo':'Ripeti la configurazione',
+'session.restDone':'Recupero completato', 'rest.notifyT':'Avviso di recupero','rest.notifyLbl':'Avvisami quando finisce il recupero','rest.notifyHint':'Una notifica di sistema quando il conto alla rovescia arriva a zero e questa scheda è in background. Il conto alla rovescia resta un timer di pagina: se il browser sospende la scheda o la chiudi, non gira nulla e non arriva nessun avviso.','rest.notifyStateOn':'attivo','rest.notifyStateOff':'spento','rest.notifyOn':'Avvisi di recupero attivi. Arrivano finché questa scheda è in background.','rest.notifyOff':'Avvisi di recupero disattivati.','rest.notifyBlocked':'Il browser blocca le notifiche per questo sito, quindi non arriverà nulla. Consentile nelle impostazioni del sito.','rest.notifyUnsupported':'Questo browser non può inviare notifiche da una pagina come questa: il conto alla rovescia resta solo sullo schermo.','rest.notifyTitle':'Recupero finito','rest.notifyBody':'Tocca la serie successiva.','onb.name':'Nome','onb.redo':'Ripeti la configurazione',
 'decision.trainWhy':'Esegui la sessione prevista.','decision.modifyWhy':'Adatta la sessione: riduci volume o carico.','decision.restWhy':'Dai priorità al recupero oggi.'
 },
 nl:{
@@ -406,7 +406,7 @@ nl:{
 'progress.nodata':'Geen sessie geregistreerd','progress.nodataBody':'Je trends, volumes en records verschijnen hier na een eerste geregistreerde sessie.',
 'session.noplanBody':'Voltooi de configuratie of herbouw je programma om een geplande sessie te krijgen.',
 'session.targetHit':'Doel bereikt','session.skipped':'Overgeslagen','session.nosubBody':'Geen andere oefening in je configuratie belast deze spieren op dezelfde manier.',
-'session.restDone':'Rust voltooid','onb.name':'Naam','onb.redo':'Configuratie herhalen',
+'session.restDone':'Rust voltooid', 'rest.notifyT':'Rustmelding','rest.notifyLbl':'Waarschuw me als de rust voorbij is','rest.notifyHint':'Een systeemmelding wanneer de aftelling nul bereikt en dit tabblad op de achtergrond staat. De aftelling blijft een paginatimer: als de browser het tabblad pauzeert of je het sluit, loopt er niets en komt er geen melding.','rest.notifyStateOn':'aan','rest.notifyStateOff':'uit','rest.notifyOn':'Rustmeldingen aan. Ze komen zolang dit tabblad op de achtergrond staat.','rest.notifyOff':'Rustmeldingen uit.','rest.notifyBlocked':'Je browser blokkeert meldingen voor deze site, dus er komt niets binnen. Sta ze eerst toe in de site-instellingen.','rest.notifyUnsupported':'Deze browser kan geen meldingen sturen vanuit een pagina als deze; de aftelling blijft alleen op het scherm.','rest.notifyTitle':'Rust voorbij','rest.notifyBody':'Tijd voor je volgende set.','onb.name':'Naam','onb.redo':'Configuratie herhalen',
 'decision.trainWhy':'Voer de geplande sessie uit.','decision.modifyWhy':'Pas de sessie aan: verlaag volume of gewicht.','decision.restWhy':'Geef herstel vandaag voorrang.'
 }
 
