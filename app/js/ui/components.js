@@ -15,7 +15,38 @@ const STATE_VAR = {
   rest:    'var(--alert)',
   fresh:   'var(--nodata)'
 };
-const STATE_HEX = { ready:'#46603F', caution:'#8A5E12', rest:'#963F28', fresh:'#8C8A80' };
+/* ------------------------------------------------------------------ TOKENS
+   State colours are declared once, in the stylesheet, and read back here.
+   They used to be written twice — once as CSS custom properties and once as
+   literals in this file — which is how the anatomy figure ended up painting
+   #8C8A80, a grey that exists nowhere in the design system.
+
+   Read once and memoised: this runs for every path of every figure, and a
+   getComputedStyle call per path would be a per-frame cost for no reason. */
+const STATE_TOKEN = { ready:'ok', caution:'warn', rest:'alert', fresh:'nodata' };
+const STATE_FALLBACK = { ready:'#46603F', caution:'#8A5E12', rest:'#963F28', fresh:'#7F7D73' };
+const _tokenCache = {};
+
+function token(name, fallback){
+  if (_tokenCache[name] !== undefined) return _tokenCache[name] || fallback;
+  let v = '';
+  try {
+    v = getComputedStyle(document.documentElement)
+          .getPropertyValue('--' + name).trim();
+  } catch (e) { v = ''; }
+  _tokenCache[name] = v;
+  return v || fallback;
+}
+
+/* Redraw after a theme or contrast change. */
+function tokenReset(){ Object.keys(_tokenCache).forEach(k => delete _tokenCache[k]); }
+
+const STATE_HEX = {
+  get ready()    { return token('ok',     STATE_FALLBACK.ready); },
+  get caution()  { return token('warn',   STATE_FALLBACK.caution); },
+  get rest()     { return token('alert',  STATE_FALLBACK.rest); },
+  get fresh()    { return token('nodata', STATE_FALLBACK.fresh); }
+};
 
 /* ------------------------------------------------------ ANATOMY GEOMETRY */
 /* Validated: 100% inside silhouette, symmetric, no overlap. */
@@ -135,7 +166,7 @@ function anatomyFigure(state, opts){
     paths.forEach(d => {
       out += '<path class="seg' + (isSel ? ' sel' : '') + '" data-m="' + m + '" d="' + d + '" ' +
              'fill="' + fill + '" fill-opacity="' + (isSel ? Math.min(1, +opacity + 0.3).toFixed(2) : opacity) + '" ' +
-             'stroke="' + (isSel ? '#20211F' : fill) + '" stroke-width="' + (isSel ? 1.6 : 0.6) + '" ' +
+             'stroke="' + (isSel ? token('ink','#20211F') : fill) + '" stroke-width="' + (isSel ? 1.6 : 0.6) + '" ' +
              'stroke-opacity="' + (isSel ? 1 : 0.75) + '">' +
              '<title>' + esc(t('mg.' + m)) + ' — ' + esc(t('mst.' + st)) + '</title></path>';
     });
@@ -143,7 +174,7 @@ function anatomyFigure(state, opts){
       // selection ring around the focused region
       const b = FIG.bbox[side][m];
       if(b) out += '<rect x="' + (b.x0-5) + '" y="' + (b.y0-5) + '" width="' + (b.x1-b.x0+10) +
-                   '" height="' + (b.y1-b.y0+10) + '" fill="none" stroke="#20211F" ' +
+                   '" height="' + (b.y1-b.y0+10) + '" fill="none" stroke="' + token('ink','#20211F') + '" ' +
                    'stroke-width="1" stroke-dasharray="4 3" opacity=".65" pointer-events="none"/>';
     }
   });
@@ -526,7 +557,7 @@ function exerciseFigureSideSvg(ex, side){
   (SIDE_MUSCLES[side] || []).forEach(m => {
     const info = weights[m];
     if(!info) return;
-    const col = info.primary ? '#D66A3A' : '#8A5E12';
+    const col = info.primary ? token('burnt','#D66A3A') : token('warn','#8A5E12');
     const op  = info.primary ? '0.88' : Math.min(0.65, 0.28 + info.w).toFixed(2);
     (FIG.regions[side][m] || []).forEach(d => {
       s += '<path d="' + d + '" fill="' + col + '" fill-opacity="' + op +

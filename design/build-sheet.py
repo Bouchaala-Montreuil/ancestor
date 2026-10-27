@@ -59,11 +59,24 @@ RECOVERY = [
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
+import base64
+
+# The sheet is the same identity, so it carries the same face. Read from the
+# app's own font files so there is one source of truth for the type.
+def _face(weight, fname):
+    with open(os.path.join(HERE, '..', 'app', 'fonts', fname), 'rb') as fh:
+        b64 = base64.b64encode(fh.read()).decode()
+    return ('@font-face{font-family:"Barlow Condensed";font-style:normal;'
+            'font-weight:%d;font-display:block;'
+            'src:url("data:font/woff2;base64,%s") format("woff2")}' % (weight, b64))
+
+BARLOW = _face(500, 'barlow-condensed-500.woff2') + "\n" + _face(700, 'barlow-condensed-700.woff2')
+
 CSS = """
 :root{
   --ink:#20211F; --paper:#FFFFFF; --line:#B9B3A6; --line-2:#E3DFD5; --burnt:#D66A3A;
-  --f-display:"Arial Narrow","Helvetica Neue Condensed","Roboto Condensed",
-              "Liberation Sans Narrow",system-ui,sans-serif;
+  --f-display:"Barlow Condensed","Arial Narrow","Helvetica Neue Condensed",
+              "Roboto Condensed",system-ui,sans-serif;
   --f-body:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --f-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
 }
@@ -417,7 +430,8 @@ HTML = f"""<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ANCESTOR — Training sheet (A4)</title>
-<style>{CSS}</style>
+<style>{BARLOW}
+{CSS}</style>
 </head>
 <body>
 {BODY}

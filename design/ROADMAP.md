@@ -19,9 +19,9 @@ Everything below was verified against the code today, not remembered.
 
 | # | Problem | Why it's a blocker | Effort |
 |---|---|---|---|
-| **B1** | **The identity depends on a font nobody has.** `--f-display` is `Arial Narrow → Helvetica Neue Condensed → Roboto Condensed → system-ui`. Stock Android — the primary target device — has none of them, so it falls to Roboto and the condensed display collapses into ordinary text. The whole "76 px next to 9 px" identity disappears on the phone the app was built for. | The design as specified does not exist on the device it ships to. | 1–2 d |
+| ~~**B1**~~ | ~~**The identity depends on a font nobody has.**~~ **Resolved — see §0.1.** The display face resolved to Arial Narrow → Roboto on stock Android, collapsing the whole identity. Now shipped. | 0 ✅ |
 | **B2** | **Styling lives in JavaScript.** 260 `var(--…)` usages and 358 inline `style="…"` attributes across `screens.js`, `science.js`, `components.js`, `workout.js`, `modules.js`. | Every future theme change, RTL fix or density change means editing JS. The CSS is not the source of truth, so the design cannot be maintained. | 3–4 d |
-| **B3** | **The drawings use a hardcoded old palette.** `components.js` bakes `#20211F`, `#46603F`, `#8A5E12`, `#963F28`, `#D66A3A` and **`#8C8A80`** (which isn't even in the token set) directly into SVG fills. | The anatomy figure and the exercise diagrams are visibly off-system. Tokens can't reach them. | 1–2 d |
+| **B3** | **The drawings use a hardcoded old palette.** Mostly fixed: state colours and the anatomy figure now read from the stylesheet through `token()`, and the off-system `#8C8A80` is gone. Remaining: 47 literal strokes inside the exercise diagram strings, which are being redrawn in the illustration pass. | The drawings were visibly off-system. | 1 d |
 | **B4** | **RTL is incomplete.** 60 physical properties (`margin-left`, `padding-right`, `border-left`, `left:`) instead of logical ones (`inline-start/end`). Arabic is a shipping language. | The Arabic app — and its printed sheet — will mirror wrongly in places. | 1–2 d |
 | **B5** | **1,853 lines of UI nobody has designed.** Science hub, lesson reader, module view, 3D anatomy lab (626 + 459 + 768 lines). They inherit tokens by luck, not by design. | These are four of the six tabs' destinations. Right now they are "whatever the old CSS made them". | 3–5 d |
 | **B6** | **Nothing has been seen.** No browser in this environment, so every screen was designed from markup. Type may overflow; the 104 px headline may break on a 320 px phone. | Unverifiable design is not finished design. | 0.5 d *once you send screenshots* |
@@ -170,3 +170,95 @@ days of it.
   they're in the right palette.
 - The 3D lab as a *designed* centrepiece. It should work, inherit tokens, and stop.
   The 2D figure is the better design object and the one people will actually use.
+
+---
+
+## §0.1 The font — decided and shipped
+
+**Barlow Condensed 500 + 700**, SIL Open Font License 1.1, subset to 239 glyphs:
+Latin + Latin-1 + Latin Extended-A + the punctuation the app actually prints.
+
+### Why this face
+
+It is a **sign-painting grotesque**, not a geometric condensed. Squarish
+terminals, flat sides, low contrast. At 104 px uppercase it reads as an
+instrument panel; at 15 px it still reads. The alternatives, honestly:
+
+| Face | Why not |
+|---|---|
+| **Roboto Condensed** | The Android default. The app would look unstyled on exactly the platform it targets. |
+| **Oswald** | More famous, more worn. Reads "blog header" in 2026. |
+| **Archivo Narrow** | Quieter and more editorial than a clinic wants; loses the industrial temperament. |
+| **Saira Condensed** | Strong, but wider than the display role needs at large sizes. |
+
+Barlow's slightly squared terminals also rhyme with the system's 2 px radii,
+which the previous fallback (Arial Narrow, rounded) never did.
+
+### What it cost
+
+24 KB of woff2 → **31 KB base64 in the stylesheet**. The app already ships
+2.08 MB, so this is ~1.5% for the thing that makes it look like itself.
+
+### How it ships
+
+Embedded as `data:font/woff2;base64` inside `@font-face`, **not** linked. The
+single-file build inlines this stylesheet, so a relative `url()` would break the
+moment the app was opened from the file system. Being embedded means it works in
+the app, offline, in the printed sheet and in the identity sheet, with no request
+anywhere and no build step.
+
+Fallbacks stay behind it:
+`"Barlow Condensed", "Arial Narrow", "Helvetica Neue Condensed, "Roboto
+Condensed", system-ui` — so the design degrades to something deliberate, never
+to a serif.
+
+### Verified, not assumed
+
+- The subset covers every accented character the six Latin languages need —
+  `é è ê ë à â ç î ï ô û ù œ æ ñ ü ö ä ß …` — checked with fontTools.
+- **Two gaps, both documented.** `Ÿ` is absent from the source `latin` subset and
+  appears in no shipped string. **Barlow has no arrow glyphs at all** (`↑ ↓`),
+  which the Trend metric uses; it falls back to the system face for that one
+  character. The right fix is to *draw* the trend mark rather than print it,
+  which belongs with the data-viz spec.
+- Line-height is now measured, not guessed: cap height is **0.700 em**, so the
+  `.84` display line-height gives 0.14 em of lead between uppercase lines.
+- Rebuild: `design/build-fonts.sh` (`pip install fonttools brotli`).
+
+### Also cleared this pass: B3 (mostly)
+
+`components.js` painted its SVG with six hardcoded hexes, one of which
+(`#8C8A80`) was not in the design system at all. State colours and the anatomy
+figure now read the real tokens through a memoised `token()` helper, so the
+drawings follow the stylesheet, including high-contrast mode. A test now fails if
+any colour in the drawings falls outside the token set.
+
+---
+
+## §0.2 Recommendations for everything else
+
+Decisions I would take, with the reasoning, so you can overrule any of them.
+
+| Question | Recommendation | Why |
+|---|---|---|
+| **Dark mode** | **No.** | It is a second design, not a theme. Every state, chart and drawing needs a dark counterpart; that is a week for a feature nobody asked for. The paper metaphor is also the argument — a clinic is light. |
+| **Landing page** | **Yes, one page.** | An app with no page cannot be shared or explained. One screen-height of argument, the mark, the verdict, and a link. ~2 days. |
+| **Case study** | **Yes, if this is a portfolio piece.** | It is the cheapest way to make the thinking visible, and the before/after already exists to anchor it. ~2 days. |
+| **Icons** | **Yes, but small.** | Six nav icons + a handful of actions, drawn on the mark's logic (same corner treatment, 1.5 px strokes). Half a design day, not a week. |
+| **Exercise illustrations** | **Redraw, don't expand.** | There are 4 drawing styles in the app today. One line weight, one fill rule. Not 100 new drawings — a rule applied to the existing ones. 2 days. |
+| **3D anatomy lab** | **Make it inherit, don't celebrate it.** | The 2D figure is the better design object and the one people will use. The lab should look like it belongs and stop. Do not design a centrepiece around a 700 KB WebGL viewer. |
+| **Motion** | **Two tiers, not one.** | Today one duration and one curve cover everything. The verdict should arrive like a verdict (~280 ms, from below); list rows should not (~120 ms, fade). A written spec + a week of implementation is overkill; half a day for the spec and the four places it matters. |
+| **Arabic** | **Treat it as a design, not a mirror.** | `text-transform:uppercase` is meaningless in Arabic and currently applied. Needs an Arabic display face (system Noto Naskh is acceptable), correct line-height, and logical properties. 1–2 days. |
+| **Print** | **Keep, and add "reprint any past session".** | It is the differentiator and the cheapest thing to love. Half a day. |
+
+### The order I would actually work in
+
+1. **B2 — move styling out of `screens.js`.** Everything else is cheaper afterwards.
+   3–4 days, and it is the least glamorous item on the list.
+2. **B6 — your screenshots.** Half a day of fixes after that.
+3. **Onboarding, all nine steps.** Where the product is won. 3 days.
+4. **B4 + Arabic.** 2 days.
+5. **The Science screens (B5).** 3 days.
+6. **State matrix.** 3 days.
+7. **Icons + illustrations + data-viz spec + motion.** 4 days.
+8. **Landing page + case study.** 4 days.

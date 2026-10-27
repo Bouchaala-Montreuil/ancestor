@@ -234,6 +234,32 @@ group('8b. Preference hooks are real, not aspirational');
 }
 
 /* ================================================================ */
+group('8c. Type and colour are not re-declared in JavaScript');
+{
+  const comps = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const tokens = new Set(
+    [...css.matchAll(/--(?:ink|charcoal|burnt|tech|ok|warn|alert|nodata|ivory|line|paper)\s*:\s*(#[0-9A-Fa-f]{6})/g)]
+      .map(m => m[1].toLowerCase()));
+  // literals are allowed only as documented fallbacks next to a token() read
+  const bare = [...comps.matchAll(/(?<!token\('[a-z]+',\s*)'(#[0-9A-Fa-f]{6})'/g)]
+    .map(m => m[1].toLowerCase())
+    .filter(h => tokens.has(h) === false ? false : true);
+  const notInSystem = [...comps.matchAll(/'(#[0-9A-Fa-f]{6})'/g)]
+    .map(m => m[1].toLowerCase())
+    .filter(h => !tokens.has(h));
+  chk('no colour in the drawings is outside the token set',
+      notInSystem.length === 0, notInSystem.join(',') || 'none');
+  chk('state colours are read from the stylesheet, not hardcoded',
+      /function token\(name, fallback\)/.test(comps) && /getPropertyValue\('--'/.test(comps));
+  chk('the display face is shipped, not borrowed',
+      /@font-face\{[^}]*Barlow Condensed/.test(css) && /url\("data:font\/woff2;base64,/.test(css));
+  chk('the webfont is embedded, so it works offline',
+      (css.match(/data:font\/woff2;base64,/g) || []).length >= 2);
+  chk('the system stack remains as the fallback',
+      /--f-display:"Barlow Condensed","Arial Narrow"/.test(css));
+}
+
+/* ================================================================ */
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',
