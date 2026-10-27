@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANCESTOR — Identity</title>
+<style>
+  :root{
+    --charcoal:#20211F; --ivory:#F1EBDD; --burnt:#D66A3A; --tech:#77796F; --line:#C8C0B2;
+    --paper:#F1EBDD; --surface:#FCF9F2; --recess:#E7E0CF; --line-soft:rgba(200,192,178,.55);
+    --ink:#20211F; --ink-2:#3F4139; --ink-3:#5B5D54; --tech-ink:#636559;
+    --ok:#46603F; --warn:#8A5E12; --alert:#963F28;
+    --f-display:"Arial Narrow","Helvetica Neue Condensed","Roboto Condensed","Liberation Sans Narrow",system-ui,sans-serif;
+    --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --f-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px; --s9:96px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+  body{padding-bottom:var(--s9)}
+  body::after{content:"";position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.03;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>")}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 var(--s5)}
+  p{margin:0 0 var(--s3)}
+  a{color:var(--burnt);text-decoration:none;border-bottom:1px solid rgba(214,106,58,.3)}
+
+  .mono{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tech-ink)}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* top bar */
+  .bar{position:sticky;top:0;z-index:50;background:var(--paper);
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px var(--s5)}
+  .lock{display:flex;align-items:center;gap:10px}
+  .lock svg{width:22px;height:22px;display:block}
+  .lock b{font-family:var(--f-display);font-size:20px;letter-spacing:.16em;text-transform:uppercase}
+  .bar .mono{font-size:9px}
+
+  /* cover */
+  .cover{padding:var(--s9) 0 var(--s8);border-bottom:1px solid var(--ink)}
+  .cover .mark-xl{width:clamp(96px,18vw,176px);height:auto;display:block;margin-bottom:var(--s6)}
+  .cover h1{
+    font-family:var(--f-display);font-weight:700;margin:0;
+    font-size:clamp(56px,15vw,152px);line-height:.82;letter-spacing:.005em;text-transform:uppercase;
+  }
+  .cover .sub{
+    display:flex;flex-wrap:wrap;gap:var(--s3) var(--s5);margin-top:var(--s5);
+    font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tech-ink);
+  }
+  .cover .sub b{color:var(--ink);font-weight:600}
+
+  /* sections */
+  section{padding:var(--s7) 0;border-top:1px solid var(--ink)}
+  section:first-of-type{border-top:0}
+  .head{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s5)}
+  .stamp{display:inline-flex;align-items:center;justify-content:center;
+    min-width:24px;height:17px;padding:0 5px;background:var(--ink);color:var(--ivory);
+    font-family:var(--f-mono);font-size:9px;font-weight:600;flex:none}
+  .head h2{font-family:var(--f-display);font-size:15px;letter-spacing:.12em;
+    text-transform:uppercase;margin:0;font-weight:700}
+  .head .rule{flex:1;height:1px;background:var(--line)}
+  .lede{font-family:var(--f-display);font-size:clamp(22px,3vw,30px);line-height:1.05;
+    max-width:26ch;margin:0 0 var(--s4)}
+  .body{max-width:62ch;font-size:15px;line-height:1.6;color:var(--ink-2)}
+
+  .grid{display:grid;gap:var(--s5)}
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr}
+  @media(min-width:760px){
+    .g2{grid-template-columns:1fr 1fr}
+    .g3{grid-template-columns:repeat(3,1fr)}
+  }
+
+  .card{background:var(--surface);border:1px solid var(--line);padding:var(--s4)}
+  .card .cap{margin-top:var(--s3);font-family:var(--f-mono);font-size:8.5px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--tech-ink);line-height:1.7}
+  .inkcard{background:var(--charcoal);color:var(--ivory);border:0}
+  .inkcard .cap{color:rgba(241,235,221,.6)}
+
+  /* size row */
+  .sizes{display:flex;align-items:flex-end;gap:var(--s5);flex-wrap:wrap}
+  .sizes figure{margin:0;text-align:center}
+  .sizes svg{display:block;margin:0 auto;fill:var(--ink)}
+  .sizes figcaption{margin-top:var(--s2);font-family:var(--f-mono);font-size:8px;
+    letter-spacing:.1em;color:var(--tech-ink)}
+
+  /* clear space */
+  .clearspace{position:relative;display:inline-block;padding:40px;background:
+    repeating-linear-gradient(45deg,rgba(214,106,58,.14) 0 6px,transparent 6px 12px)}
+  .clearspace .box{position:relative;padding:22px;border:1px dashed rgba(32,33,31,.35)}
+  .clearspace svg{display:block;fill:var(--ink);width:72px;height:72px}
+
+  /* lockups */
+  .lk{display:flex;align-items:center;gap:12px}
+  .lk svg{width:44px;height:44px}
+  .lk .t{font-family:var(--f-display);font-size:38px;letter-spacing:.14em;text-transform:uppercase;line-height:1}
+  .lk.small svg{width:22px;height:22px}
+  .lk.small .t{font-size:19px;letter-spacing:.16em}
+  .stack{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+  .stack .t{font-family:var(--f-display);font-size:34px;letter-spacing:.2em;text-transform:uppercase;line-height:1}
+  .stack svg{width:38px;height:38px}
+
+  /* icon in situ */
+  .homescreen{background:#141614;padding:26px;display:flex;gap:22px;align-items:flex-start}
+  .app{width:74px;text-align:center}
+  .app .sq{width:74px;height:74px;display:block;border-radius:16px;overflow:hidden}
+  .app .sq svg{display:block;width:100%;height:100%}
+  .app .nm2{margin-top:8px;font-size:11px;color:#EDEDEA;font-family:var(--f-body)}
+  .mock{width:74px;height:74px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--f-mono);font-size:9px;color:#8b8b86}
+
+  /* palette */
+  .swatches{display:grid;grid-template-columns:repeat(2,1fr);gap:2px}
+  @media(min-width:760px){.swatches{grid-template-columns:repeat(5,1fr)}}
+  .sw{aspect-ratio:1;display:flex;flex-direction:column;justify-content:flex-end;padding:10px}
+  .sw b{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;display:block}
+  .sw span{font-family:var(--f-mono);font-size:9px;opacity:.75}
+  .ratio{display:flex;height:14px;margin-top:2px}
+  .ratio i{display:block;height:100%}
+
+  /* type */
+  .spec{border-top:1px solid var(--line);padding:var(--s4) 0;display:grid;
+    grid-template-columns:1fr;gap:var(--s3)}
+  @media(min-width:760px){.spec{grid-template-columns:150px 1fr}}
+  .spec .meta{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--tech-ink);line-height:1.8}
+  .spec .meta b{color:var(--ink);display:block;font-weight:600}
+  .d1{font-family:var(--f-display);font-size:clamp(40px,7vw,72px);line-height:.86;
+    text-transform:uppercase;margin:0}
+  .d2{font-family:var(--f-display);font-size:24px;line-height:1;text-transform:uppercase;margin:0}
+  .bd{font-size:15px;line-height:1.6;color:var(--ink-2);margin:0;max-width:56ch}
+  .mn{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;line-height:1.8;
+    text-transform:uppercase;color:var(--tech-ink);margin:0}
+
+  /* verdict mock */
+  .verdict{background:var(--charcoal);color:var(--ivory);padding:26px 26px 26px 30px;position:relative}
+  .verdict .bar2{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--burnt)}
+  .verdict .lab{font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;
+    text-transform:uppercase;color:rgba(241,235,221,.62);display:flex;align-items:center;gap:8px}
+  .verdict .lab::before{content:"";width:6px;height:6px;background:var(--burnt)}
+  .verdict .state{font-family:var(--f-display);font-size:clamp(46px,9vw,76px);line-height:.82;
+    text-transform:uppercase;margin:8px 0 0}
+  .verdict .row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .verdict .pct{font-family:var(--f-display);font-size:40px;line-height:1;
+    font-variant-numeric:tabular-nums;text-align:right}
+  .verdict .pct small{font-family:var(--f-mono);font-size:10px;opacity:.6}
+  .verdict .meter{height:2px;background:rgba(241,235,221,.2);margin:10px 0 6px}
+  .verdict .meter i{display:block;height:100%;width:84%;background:var(--burnt)}
+  .verdict .cap2{font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;
+    text-transform:uppercase;color:rgba(241,235,221,.62);line-height:1.6}
+  .verdict .why{margin-top:20px;border-top:1px solid rgba(241,235,221,.16)}
+  .verdict .why div{display:flex;gap:8px;padding:8px 0;font-size:13px;
+    border-bottom:1px solid rgba(241,235,221,.1);color:rgba(241,235,221,.86)}
+  .verdict .why i{width:5px;height:5px;background:var(--burnt);flex:none;margin-top:7px}
+  .verdict .why em{font-style:normal;background:none;width:5px;height:5px;background:rgba(241,235,221,.4);margin-top:7px;flex:none}
+  .verdict .act{margin-top:22px;display:flex;gap:8px;flex-wrap:wrap}
+  .verdict .act b{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    padding:13px 20px;background:var(--ivory);color:var(--ink);font-weight:600}
+  .verdict .act s{text-decoration:none;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;padding:13px 18px;border:1px solid rgba(241,235,221,.3)}
+
+  /* do / don't */
+  .dos{border-left:3px solid var(--ok);padding-left:var(--s4)}
+  .donts{border-left:3px solid var(--alert);padding-left:var(--s4)}
+  .dos li,.donts li{margin-bottom:8px;font-size:14px;line-height:1.5;color:var(--ink-2)}
+  ul{padding-left:18px;margin:0}
+
+  footer{border-top:1px solid var(--ink);margin-top:var(--s7);padding:var(--s5) 0;
+    display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="lock">
+    <svg viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg>
+    <b>Ancestor</b>
+  </div>
+  <span class="mono">Identity · v1 · 27 Oct 2026</span>
+</div>
+
+<div class="wrap">
+
+  <!-- ============================================================ COVER -->
+  <div class="cover">
+    <div class="mark-xl"><svg viewBox="0 0 24 24" width="176" height="176" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg></div>
+    <h1>Ancestor</h1>
+    <div class="sub">
+      <span><b>The Clinic</b> — identity system</span>
+      <span>Mark: the tally</span>
+      <span>Paper &amp; ink, one signal</span>
+    </div>
+  </div>
+
+  <!-- ============================================================= MARK -->
+  <section>
+    <div class="head"><span class="stamp">00</span><h2>The mark</h2><span class="rule"></span></div>
+    <p class="lede">Four strokes for the work. One slash for the set that closes it.</p>
+    <div class="grid g2">
+      <div>
+        <p class="body">The tally is the oldest counting gesture there is, and the app is a
+        counting machine: sets, reps, days since, days left. It is drawn on the oldest surface
+        there is. Nothing about it is borrowed from fitness apps — no flame, no bolt, no swoosh,
+        no shield. It is a record someone made with a stick on a wall, and it means exactly what
+        the product does.</p>
+        <p class="body">The fifth stroke is the important one. It is not decoration: it is the
+        moment the count is closed. That is the whole argument of the training method.</p>
+      </div>
+      <div class="card">
+        <div class="sizes">
+          <figure><svg viewBox="0 0 24 24" width="64" height="64" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><figcaption>64</figcaption></figure>
+          <figure><svg viewBox="0 0 24 24" width="40" height="40" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><figcaption>40</figcaption></figure>
+          <figure><svg viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><figcaption>24</figcaption></figure>
+          <figure><svg viewBox="0 0 24 24" width="16" height="16" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><figcaption>16</figcaption></figure>
+        </div>
+        <p class="cap">Minimum size 16 px. Below that the strokes fuse and it becomes a smudge —
+        use the icon instead, or drop the mark entirely.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================== CLEARSPACE -->
+  <section>
+    <div class="head"><span class="stamp">01</span><h2>Space &amp; proportion</h2><span class="rule"></span></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="clearspace">
+          <div class="box"><svg viewBox="0 0 24 24" width="72" height="72" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg></div>
+        </div>
+        <p class="cap">Clear space = 1× the stroke height on all sides (dashed). No other
+        graphic element, type or edge may enter it.</p>
+      </div>
+      <div class="card">
+        <p class="mn">Construction — 24 × 24 grid</p>
+        <p class="mono" style="text-transform:none;letter-spacing:.04em;margin-top:10px;line-height:2">
+          margin 3.2 · stroke 2.4 · gap 2.667<br>
+          verticals y 4.2 → 19.8 · slash 19.4 at −16°<br>
+          all values even-halves of the 24 grid
+        </p>
+        <p class="cap" style="margin-top:16px">Everything is generated from these six numbers,
+        so the 16 px favicon and the 176 px cover are the same drawing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== LOCKUPS -->
+  <section>
+    <div class="head"><span class="stamp">02</span><h2>Lockups</h2><span class="rule"></span></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="lk small" style="margin-bottom:26px">
+          <svg viewBox="0 0 24 24" width="22" height="22" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><span class="t">Ancestor</span>
+        </div>
+        <div class="lk">
+          <svg viewBox="0 0 24 24" width="44" height="44" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><span class="t">Ancestor</span>
+        </div>
+        <p class="cap">Horizontal — the default. Mark at cap height, gap = half the mark width.
+        Wordmark in the display face, tracking .14em, uppercase.</p>
+      </div>
+      <div class="card inkcard">
+        <div class="lk" style="margin-bottom:26px">
+          <svg viewBox="0 0 24 24" width="40" height="40" role="img" aria-label="Ancestor"><g fill="#F1EBDD"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><span class="t">Ancestor</span>
+        </div>
+        <div class="stack">
+          <svg viewBox="0 0 24 24" width="38" height="38" role="img" aria-label="Ancestor"><g fill="#F1EBDD"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><span class="t">Ancestor</span>
+        </div>
+        <p class="cap">On ink the mark inverts. Stacked lockup is used when the surface is
+        square — the print sheet, the icon, the store listing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= ICON -->
+  <section>
+    <div class="head"><span class="stamp">03</span><h2>App icon</h2><span class="rule"></span></div>
+    <div class="grid g2">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="homescreen">
+          <div class="app">
+            <span class="sq"><svg viewBox="0 0 24 24" width="74" height="74" aria-hidden="true"><rect width="24" height="24" fill="#20211F"/><g transform="translate(4.08,4.08) scale(0.66)"><g fill="#F1EBDD"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></g></svg></span>
+            <div class="nm2">Ancestor</div>
+          </div>
+          <div class="mock">other</div>
+          <div class="mock">other</div>
+          <div class="mock">other</div>
+        </div>
+        <p class="cap" style="padding:14px 16px 16px">Ink field, ivory mark, no radius of our own
+        — the operating system masks it. Scaled to 66 % so it survives the maskable safe circle.</p>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:16px;align-items:flex-end">
+          <span class="sq" style="width:56px;height:56px;border-radius:12px;overflow:hidden;display:block"><svg viewBox="0 0 24 24" width="56" height="56" aria-hidden="true"><rect width="24" height="24" fill="#20211F"/><g transform="translate(4.08,4.08) scale(0.66)"><g fill="#F1EBDD"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></g></svg></span>
+          <span class="sq" style="width:40px;height:40px;border-radius:9px;overflow:hidden;display:block"><svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true"><rect width="24" height="24" fill="#20211F"/><g transform="translate(4.08,4.08) scale(0.66)"><g fill="#F1EBDD"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></g></svg></span>
+          <span class="sq" style="width:28px;height:28px;border-radius:7px;overflow:hidden;display:block"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><rect width="24" height="24" fill="#20211F"/><g transform="translate(4.08,4.08) scale(0.66)"><g fill="#F1EBDD"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></g></svg></span>
+        </div>
+        <p class="cap">The mark is the icon. No letter, no container change, no gradient — one
+        field, one gesture. It stays legible at 28 px, which is where most icons fail.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== COLOUR -->
+  <section>
+    <div class="head"><span class="stamp">04</span><h2>Colour</h2><span class="rule"></span></div>
+    <p class="lede">Paper, ink, and one signal. Nothing else.</p>
+    <div class="swatches">
+      <div class="sw" style="background:#F1EBDD;color:#20211F;border:1px solid #C8C0B2">
+        <b>Ivory</b><span>#F1EBDD</span></div>
+      <div class="sw" style="background:#E7E0CF;color:#20211F"><b>Recess</b><span>#E7E0CF</span></div>
+      <div class="sw" style="background:#20211F;color:#F1EBDD"><b>Charcoal</b><span>#20211F</span></div>
+      <div class="sw" style="background:#D66A3A;color:#20211F"><b>Burnt</b><span>#D66A3A</span></div>
+      <div class="sw" style="background:#77796F;color:#F1EBDD"><b>Tech</b><span>#77796F</span></div>
+    </div>
+    <div class="ratio" aria-hidden="true">
+      <i style="flex:72;background:#F1EBDD;border:1px solid #C8C0B2"></i>
+      <i style="flex:16;background:#E7E0CF"></i>
+      <i style="flex:9;background:#20211F"></i>
+      <i style="flex:2.2;background:#D66A3A"></i>
+      <i style="flex:.8;background:#77796F"></i>
+    </div>
+    <p class="cap mono" style="margin-top:10px">Intended surface ratio — 72 % paper · 16 % recess ·
+    9 % ink · 2 % signal. The orange is measured in square centimetres, not in taste.</p>
+    <div class="grid g2" style="margin-top:var(--s5)">
+      <div class="dos">
+        <p class="mono" style="color:var(--ok);margin-bottom:8px">Signal — use it</p>
+        <ul>
+          <li>The primary action. One per screen.</li>
+          <li>The current position: active nav edge, selected chip, focus ring.</li>
+          <li>One state that needs attention — never all of them.</li>
+        </ul>
+      </div>
+      <div class="donts">
+        <p class="mono" style="color:var(--alert);margin-bottom:8px">Decoration — never</p>
+        <ul>
+          <li>Headings, borders, or icons whose only job is to look alive.</li>
+          <li>Backgrounds of cards or sections.</li>
+          <li>Two orange elements competing on one screen.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= TYPE -->
+  <section>
+    <div class="head"><span class="stamp">05</span><h2>Type</h2><span class="rule"></span></div>
+    <p class="lede">Hierarchy comes from the gap between two sizes, not from weight.</p>
+    <div class="spec">
+      <div class="meta"><b>Display</b>Condensed 700<br>line-height .86<br>uppercase<br>tracking 0</div>
+      <p class="d1">Legs is ready</p>
+    </div>
+    <div class="spec">
+      <div class="meta"><b>Title</b>Condensed 700<br>15–18 px<br>tracking .04em</div>
+      <p class="d2">Muscle-group coverage</p>
+    </div>
+    <div class="spec">
+      <div class="meta"><b>Body</b>System UI<br>15–16 px / 1.6<br>max 62 ch</div>
+      <p class="bd">Nothing in your log argues against training today. Your quadriceps have had
+      four days since their last recorded exposure, which is inside the estimated window.</p>
+    </div>
+    <div class="spec">
+      <div class="meta"><b>Data</b>Monospace<br>8–10 px / 1.8<br>tracking .14em<br>uppercase</div>
+      <p class="mn">Recommendation · availability 84 % · 26 Oct · 4 × 5–8 reps · RIR 1</p>
+    </div>
+    <div class="spec">
+      <div class="meta"><b>Figures</b>Display face<br>tabular, lining<br>always aligned</div>
+      <p class="d1 num" style="font-size:clamp(36px,6vw,60px)">18 · 112.1 · 84 · 3</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ STAMP -->
+  <section>
+    <div class="head"><span class="stamp">06</span><h2>The stamp</h2><span class="rule"></span></div>
+    <p class="lede">A dossier is numbered. Every section carries its file number.</p>
+    <div class="card" style="max-width:480px">
+      <div style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--ink);padding-top:8px;margin-bottom:18px">
+        <span class="stamp">01</span>
+        <h2 style="font-family:var(--f-display);font-size:14px;letter-spacing:.1em;text-transform:uppercase;margin:0">Recent work</h2>
+        <span style="flex:1;height:1px;background:var(--line)"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--ink);padding-top:8px">
+        <span class="stamp">02</span>
+        <h2 style="font-family:var(--f-display);font-size:14px;letter-spacing:.1em;text-transform:uppercase;margin:0">Muscle-group coverage</h2>
+        <span style="flex:1;height:1px;background:var(--line)"></span>
+        <span class="mono" style="font-size:9px">last seven days</span>
+      </div>
+    </div>
+    <p class="cap mono" style="margin-top:14px">Replaces iconography entirely. No screen needs a
+    decorative glyph when it can be numbered.</p>
+  </section>
+
+  <!-- ========================================================== VERDICT -->
+  <section>
+    <div class="head"><span class="stamp">07</span><h2>The signature moment</h2><span class="rule"></span></div>
+    <p class="lede">One solid ink block per screen. It answers the only question the app exists to answer.</p>
+    <div class="grid g2">
+      <div class="verdict">
+        <span class="bar2"></span>
+        <div class="row">
+          <div>
+            <div class="lab">Recommendation</div>
+            <div class="state">Train</div>
+          </div>
+          <div class="pct">84<small>%</small><div class="meter"><i></i></div>
+            <div class="cap2">availability</div></div>
+        </div>
+        <div class="why">
+          <div><i></i><span>Quadriceps fully recovered — four days since last exposure</span></div>
+          <div><i></i><span>Performance trending up across three sessions</span></div>
+          <div><em></em><span>Sleep below declared average — it does not change this verdict</span></div>
+        </div>
+        <div class="act"><b>Start legs</b><s>Why this?</s></div>
+      </div>
+      <div>
+        <p class="body">The verdict is the product. It has to feel like a judgement handed to you,
+        not a notification. Ink, not colour: colour would make it a warning, and it is not one.</p>
+        <p class="body">Availability is a ruled scale, not a gauge. Reasons are a list with square
+        markers — the marker changes only when the meaning does. The primary action inverts to
+        ivory, so it is the brightest object on the page.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== VOICE -->
+  <section>
+    <div class="head"><span class="stamp">08</span><h2>Voice</h2><span class="rule"></span></div>
+    <div class="grid g2">
+      <div>
+        <p class="body"><strong>Plain, specific, unexcited.</strong> It states what it knows, names
+        what it does not, and never congratulates. Numbers get units. Estimates are called
+        estimates, every time.</p>
+        <p class="body">No exclamation marks. No “crush it”. No invented data. If something is
+        unknown, the interface says <em>unknown</em> rather than showing a plausible number.</p>
+      </div>
+      <div class="inkcard card">
+        <p class="mn" style="color:rgba(241,235,221,.6)">Copy that sounds like the product</p>
+        <p style="font-size:16px;line-height:1.5;margin-top:12px">“Do not train today. Your chest
+        has three days left.”</p>
+        <p style="font-size:16px;line-height:1.5">“Estimated recovery, not a measurement. Every
+        factor is listed below.”</p>
+        <p style="font-size:16px;line-height:1.5">“No sleep recorded. The verdict uses training
+        history only.”</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="lock">
+      <svg viewBox="0 0 24 24" width="20" height="20" role="img" aria-label="Ancestor"><g fill="#20211F"><rect x="3.20" y="4.2" width="2.4" height="15.6"/><rect x="8.27" y="4.2" width="2.4" height="15.6"/><rect x="13.33" y="4.2" width="2.4" height="15.6"/><rect x="18.40" y="4.2" width="2.4" height="15.6"/><rect x="2.30" y="10.80" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg><b style="font-family:var(--f-display);font-size:16px;letter-spacing:.16em;text-transform:uppercase">Ancestor</b>
+    </div>
+    <span class="mono">Files: design/marks/ · generated by design/build-marks.js</span>
+  </footer>
+
+</div>
+</body>
+</html>

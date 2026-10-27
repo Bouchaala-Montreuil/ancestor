@@ -68,8 +68,8 @@ manifest = {
     "short_name": "Ancestor",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#08090A",
-    "theme_color": "#08090A",
+    "background_color": "#F1EBDD",
+    "theme_color": "#20211F",
     "icons": [
         {"src": icon192, "sizes": "192x192", "type": "image/png", "purpose": "any"},
         {"src": icon512, "sizes": "512x512", "type": "image/png", "purpose": "any"},
@@ -117,9 +117,31 @@ inline_payload("anatomy-glb", "assets/anatomy-male-mobile.glb", encode=True)
 # manifest + icons as data URIs, so a file:// copy is still installable
 html = html.replace('<link rel="manifest" href="manifest.webmanifest">',
                     '<link rel="manifest" href="data:application/manifest+json;base64,' + manifest_b64 + '">')
-html = html.replace('<link rel="icon" href="img/icon-192.png">', '<link rel="icon" href="' + icon192 + '">')
-html = html.replace('<link rel="apple-touch-icon" href="img/icon-192.png">',
-                    '<link rel="apple-touch-icon" href="' + icon192 + '">')
+# Every local image reference in the document is replaced with an inline data
+# URI, by matching whatever the markup actually says. This keeps the guarantee
+# that the single file has no external references, without the build having to
+# know in advance which icons the identity happens to use this month.
+IMG_MIME = {'.png': 'image/png', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif'}
+
+def inline_images(doc):
+    cache = {}
+    def repl(m):
+        attr, url = m.group(1), m.group(2)
+        if url.startswith('data:') or url.startswith('#') or '://' in url:
+            return m.group(0)
+        fp = os.path.join(ROOT, url)
+        ext = os.path.splitext(url)[1].lower()
+        if not os.path.exists(fp) or ext not in IMG_MIME:
+            return m.group(0)
+        if url not in cache:
+            with open(fp, 'rb') as fh:
+                cache[url] = 'data:%s;base64,%s' % (IMG_MIME[ext],
+                                                    base64.b64encode(fh.read()).decode())
+        return '%s="%s"' % (attr, cache[url])
+    return re.sub(r'(href|src)="([^"]+)"', repl, doc)
+
+html = inline_images(html)
 
 # no service worker is registered in the single-file build: there is nothing
 # off-device to cache. Boot is dispatched manually because the load event has

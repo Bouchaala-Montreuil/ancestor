@@ -142,3 +142,60 @@ inventory, not by eye.
    square — would finish the identity. Do you want me to draw options?
 4. **Print.** The app has a print card. A genuine A4 training sheet in this language
    would be the most shareable thing in the product. Worth a screen?
+
+---
+
+## 9. The identity — the tally
+
+Being told the direction wasn't distinct enough was correct: the first pass had a
+strong system but no owned object. That has been fixed.
+
+**The mark is a tally: four strokes for the work, one slash for the set that closes
+it.** It is the oldest counting gesture there is — and this app is a counting
+machine: sets, reps, days since, days left. It carries the name: what you do now,
+your grandfather did with a stick on a wall. It is also, structurally, a training
+log.
+
+It is deliberately not a flame, a bolt, a swoosh, a shield, a mountain or a sword.
+Those are the flags of the category.
+
+### Where it lives
+
+| Surface | Use |
+|---|---|
+| Header | 22 px mark beside the wordmark, at cap height |
+| Boot screen | 44 px, above `ANCESTOR` |
+| App icon | ink field, ivory mark at 66 % — survives the maskable safe circle |
+| Print sheet | ivory mark in the footer |
+| — | nowhere else. Restraint is what makes it a signature. |
+
+Everything is generated from six numbers (`design/build-marks.js`), so the 16 px
+favicon and the 176 px cover are the same drawing, not two that agree roughly.
+The SVG is embedded in the stylesheet as a percent-encoded data URI — no request,
+and it still works when the app is opened straight off the file system.
+
+### The second signature: the stamp
+
+Every section on every screen is now numbered in a **solid ink stamp** — `01`, `02`,
+`03` — set in 8.5 px mono on charcoal. That is the dossier motif, repeated dozens of
+times per session, and it replaces iconography entirely. No screen needs a
+decorative glyph when it can be numbered. If you remember one thing about this
+product's interface six months from now, it will be the little black square with a
+number in it.
+
+### Files
+
+```
+design/
+  identity.html      the identity sheet — open it in the preview
+  build-marks.js     geometry → every SVG and PNG the product uses
+  marks/             mark, lockups, icons at every size, contact sheet
+app/img/             the same icons, wired into manifest, favicon and apple-touch
+```
+
+### Verification
+
+Identity work touched the build, so the whole suite was re-run: design 61, premium
+170, all green, bundle self-contained at 2.06 MB with zero external references
+(`build.py` now inlines any local image reference automatically, and the bundle's
+manifest had been carrying the old v0.1 dark palette — fixed to paper/ink).
