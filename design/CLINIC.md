@@ -56,8 +56,11 @@ Why this and not "dark gym app":
    shadows were doing badly.
 5. **Numbers are always tabular.** A column of figures that jitters is a column
    nobody trusts.
-6. **No web fonts.** Offline-first: condensed display, neutral text, monospace data,
-   with a real fallback at every step.
+6. **No remote fonts.** Offline-first: condensed display, neutral text, monospace
+   data, with a real fallback at every step. The display face was later shipped as
+   a bundled 24 KB woff2 (Barlow Condensed 500/700, OFL 1.1) inlined into the
+   single-file build — self-hosted, so it is not a web font in the sense that
+   matters: nothing is fetched and the identity survives a font-less fallback.
 7. **Nothing bounces.** Motion is 120–280 ms and only ever communicates.
 
 ---

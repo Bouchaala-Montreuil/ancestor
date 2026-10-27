@@ -5,6 +5,13 @@ Everything visual that is not the app itself.
 ```
 ROADMAP.md           what the design still needs, prioritised, with effort
 CLINIC.md            the design direction, the rules, and what changed
+CASE_STUDY.md        the case study: brief, idea, system, the four real defects,
+                     verification without a browser, and what is left
+DATAVIZ.md           the chart grammar, the scale, the motion spec
+dataviz-before.png   the charts as they were (broken axis, hollow dots)
+dataviz-after.png    the charts now, rasterised out of the live DOM
+icons/PATTERNS.md    the exercise-drawing grammar, 140 x 94
+../site/index.html   the landing page (one file, figures from the app)
 identity.html        the identity sheet — mark, lockups, colour, type, verdict
 compare.html         before / after, both frames live, same data
 before/              the original stylesheet + a page wired to the current app
@@ -19,10 +26,11 @@ marks/               mark + icons at every size, plus a contact sheet
 ## Regenerate
 
 ```bash
-node design/build-marks.js      # marks + icons (writes design/marks/)
-python3 design/build-sheet.py   # the A4 specimen
-node design/build-live-sheet.js # the A4 sheet as the app actually prints it
-python3 app/build.py            # the single-file app
+python3 site/build.py && python3 site/check.py   # the landing page
+node design/build-marks.js                       # marks + icons (design/marks/)
+python3 design/build-sheet.py                    # the A4 specimen
+node design/build-live-sheet.js                  # the A4 sheet as the app prints it
+python3 app/build.py                             # the single-file app
 ```
 
 After regenerating icons, copy them into the app:

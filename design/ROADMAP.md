@@ -498,10 +498,9 @@ the tokens.
 |---|---|
 | **3 B6 his screenshots** | **still blocked on you** |
 | 6 state matrix, per screen | ~1 d, better after the screenshots |
-| 8 landing page + case study | ~4 d |
 
-The icons, the loading/failure/empty states, the exercise drawings, the charts
-and the motion spec are now done.
+The icons, the loading/failure/empty states, the exercise drawings, the charts,
+the motion spec, the landing page and the case study are now done.
 
 ---
 
@@ -535,3 +534,35 @@ so a print pass or a browser that drops the animation still shows the data.
 `design/DATAVIZ.md` has the grammar; `dataviz-before.png` and
 `dataviz-after.png` are rasterised out of the live DOM through the real
 stylesheet. Tests: design **8k**, sixteen checks.
+
+---
+
+## §0.9 The landing page and the case study
+
+Order items 7 and 8, done together because they are the same argument twice: a
+page for the product, a document about the work.
+
+**`site/index.html`** — one file, 87 KB, no requests. The figures are not
+illustrations *of* the app; they are pulled out of the running DOM
+(`patternKinematicSvg`, `exerciseFigureSideSvg`, `lineChart`, `barChart`) and
+styled by the same class names the app uses, so the page cannot drift from the
+product without looking wrong. `site/build.py` inlines the two woff2 weights and
+every figure; `site/check.py` holds 55 checks over structure, palette, contrast,
+type, motion and inline styles.
+
+**The type is measured, not guessed.** `site/measure_type.py` loads the shipped
+woff2, sums real advance widths, and tests every display string against the column
+it has to live in at eleven viewport widths. It found three overflows on the first
+run — including the hero at 320 px by one pixel — and the `clamp()` on the h1 is
+now the number those two curves meet, not a guess.
+
+**`design/CASE_STUDY.md`** — the brief, the five structural failures of the first
+attempt, the direction, the system, and the four defects that were not taste
+(a selector that matched nothing, `var()` in a presentation attribute, a hollow
+dot born of inheritance, preference hooks keyed on the wrong attribute). Then how
+the work was verified without a browser, what is still unproven, and what comes
+next.
+
+What is left on the whole order: **the device screenshots** (yours) and the
+**state matrix** that wants them. Everything else has been through at least one
+round of looking.
