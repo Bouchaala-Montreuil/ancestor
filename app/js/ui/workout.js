@@ -583,7 +583,7 @@ function renderLive(){
   h += '<div><p class="eyebrow" style="color:var(--burnt)">' +
        esc(ACTIVE.paused ? t('session.restPaused') : t('plan.liveBadge')) + '</p>' +
        '<div class="row nowrap row-base mt-1">' +
-       '<strong style="font-family:var(--f-display);font-size:20px;letter-spacing:.04em;text-transform:uppercase">' +
+       '<strong class="sess-h">' +
        esc(ACTIVE.name || t('session.title')) + '</strong>' +
        '<span class="live-clock" id="liveClock">' + formatElapsed(activeElapsedMs()) + '</span>' +
        '</div></div>';

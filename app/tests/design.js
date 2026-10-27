@@ -324,6 +324,41 @@ group('8e. Layout lives in the stylesheet, not in the screens');
       /class="stamp"/.test(print) && /\.sheet-bh \.stamp\{[^}]*background:#000/.test(css));
 }
 
+/* ================================================================ */
+group('8f. Arabic is a design, not a mirror');
+{
+  const dirProps = (css.match(/(?:margin|padding|border)-(?:left|right)[:-]/g) || []).length;
+  chk('no physical left/right box properties remain', dirProps === 0, dirProps + ' found');
+  const align = (css.match(/text-align:\s*(?:left|right)\b/g) || []).length;
+  chk('no physical text alignment remains', align === 0, align + ' found');
+  const bad = (css.match(/(?:margin|padding|border)-(?:start|end)[:-]/g) || []).length;
+  chk('no invalid shorthand crept in — logical sides are spelled out', bad === 0, bad + ' found');
+
+  const rtlPatches = (css.match(/\[dir="rtl"\]/g) || []).length;
+  chk('mirroring is structural — one exception, not a patch list', rtlPatches === 1,
+      rtlPatches + ' rtl rules');
+
+  const ar = /html\[lang="ar"\]\{([^}]*)\}/.exec(css);
+  chk('Arabic gets its own type settings', !!ar);
+  chk('the display face falls through to a real Arabic face by name',
+      !!ar && /(?:SF Arabic|Geeza Pro|Noto Naskh Arabic)/.test(ar[1]));
+  chk('Arabic body leading is opened up for deeper descenders',
+      !!ar && /--lh-body:\s*1\.[7-9]/.test(ar[1]));
+
+  const arAll = /html\[lang="ar"\] \*\{([^}]*)\}/.exec(css);
+  chk('tracking is switched off — it severs Arabic joins',
+      !!arAll && /letter-spacing:\s*0/.test(arAll[1]));
+  chk('uppercase is switched off — it does not exist in Arabic',
+      !!arAll && /text-transform:\s*none/.test(arAll[1]));
+
+  const locale = fs.readFileSync(path.join(ROOT, 'js/i18n/locale.js'), 'utf8');
+  chk('the document direction is actually set from the language',
+      /r\.dir = isRTL\(lang\) \? 'rtl' : 'ltr'/.test(locale));
+  chk('the two inline display styles became classes Arabic can reach',
+      !/style="[^"]*letter-spacing/.test(fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8') +
+        fs.readFileSync(path.join(ROOT, 'js/ui/science.js'), 'utf8')));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

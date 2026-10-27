@@ -131,7 +131,7 @@ function sciLessons(){
         (done ? '<span class="flag sm ok">' + esc(t('sci.read')) + '</span>'
               : '<span class="flag sm plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>') +
       '</div>' +
-      '<div class="mb-1" style="font-family:var(--f-display);font-size:17px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink)">' +
+      '<div class="mb-1 sci-h">' +
         esc(t(l.titleKey)) + '</div>' +
       '<div class="body-sm">' + esc(t(l.summaryKey)) + '</div>' +
       '</div>' +
