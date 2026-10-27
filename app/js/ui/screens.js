@@ -1742,23 +1742,36 @@ Screens.profile = function(){
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.exercises')) + '</h3>' +
        '<span class="hint">' + enabledCount + ' / ' + avail.length + '</span></div>';
   h += '<p class="body-sm mb-3">' + esc(t('onb.ex.d')) + '</p>';
+  h += '<p class="hint mb-3">' + esc(t('onb.ex.hint')) + '</p>';
   h += '<button type="button" class="btn quiet block mb-3"  onclick="openExerciseLibrary()">' +
        esc(t('plan.tabLibrary')) + ' (' + EX.length + ')</button>';
+  /* Same component as the onboarding step, for the same reason: this is a list
+     of things you remove from, not a form you fill in. It used to be twelve
+     disclosures of an older pattern with the first two forced open — a second
+     accordion that behaved differently for no reason. */
   const byPat = {};
   avail.forEach(e => { (byPat[e.pat] = byPat[e.pat] || []).push(e); });
-  Object.keys(byPat).forEach((pat, patIdx) => {
-    const patOn = byPat[pat].filter(e => !p.exercises || p.exercises[e.id] !== false).length;
-    h += '<details class="acc"' + (patIdx < 2 ? ' open' : '') + '>' +
-         '<summary><span class="eyebrow" style="color:var(--ink);font-size:11.5px">' + esc(t('pat.'+pat)) + '</span>' +
-         '<span class="flag sm plain">' + patOn + ' / ' + byPat[pat].length + '</span></summary>' +
-         '<div class="acc-body"><div class="chips">' + byPat[pat].map(e => {
+  Object.keys(byPat).forEach(pat => {
+    const list = byPat[pat];
+    const patOn = list.filter(e => !p.exercises || p.exercises[e.id] !== false).length;
+    const changed = patOn < list.length;
+    h += '<details class="dis onb-ex-group"' + (changed ? ' open' : '') + '>' +
+         '<summary><span class="dis-t">' + esc(t('pat.'+pat)) + '</span>' +
+         '<span class="flag sm ' + (changed ? 'warn' : 'plain') + '">' +
+         patOn + ' / ' + list.length + '</span></summary>' +
+         '<div class="chips mt-2">' + list.map(e => {
            const on = p.exercises ? p.exercises[e.id] !== false : true;
            return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
                   'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
                   'onclick="toggleEx(\'' + e.id + '\')">' +
                   esc(t('ex.'+e.id)) + '</button>';
-         }).join('') + '</div></div></details>';
+         }).join('') + '</div></details>';
   });
+  if(enabledCount < avail.length){
+    h += '<p class="hint mt-3 mb-0">' + esc(t('plan.excludedCount', { n: avail.length - enabledCount })) +
+         ' <button type="button" class="link-btn" onclick="restoreExPool()">' +
+         esc(t('profile.restorePool')) + '</button></p>';
+  }
   h += '</div>';
 
   h += groupClose;
@@ -2308,6 +2321,15 @@ function setLimit(l){
   if(l === '__none__'){ s.profile.limits = []; }
   else { const i = arr.indexOf(l); if(i>=0) arr.splice(i,1); else arr.push(l); }
   saveState(); render();
+}
+/* One action to undo removals, because "put it back" is the thing a person
+   needs after an experiment, and hunting the group they changed is not. */
+function restoreExPool(){
+  const s = getState();
+  s.profile.exercises = {};
+  EX.forEach(e => { s.profile.exercises[e.id] = true; });
+  saveState(); render();
+  toast(t('profile.poolRestored'));
 }
 function toggleEx(id){
   const s = getState();

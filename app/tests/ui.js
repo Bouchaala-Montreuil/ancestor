@@ -816,6 +816,63 @@ group('21. The rest timer is readable without watching it');
   chk('closing rest leaves nothing behind', !d12.getElementById('restHost').querySelector('[role=region]'));
 }
 
+group('22. The exercise pool is the same component as the step that fills it');
+{
+  const dom13 = await boot();
+  const w13 = dom13.window, d13 = w13.document;
+  completeOnboarding(w13, d13);
+  w13.go('profile');
+  const body = () => d13.getElementById('screenBody');
+  const groups = () => Array.from(body().querySelectorAll('details.onb-ex-group'));
+
+  chk('the pool is groups of the shared disclosure, not a second accordion',
+      groups().length >= 8 && body().querySelectorAll('.acc').length === 0,
+      groups().length + ' groups, ' + body().querySelectorAll('.acc').length + ' legacy');
+  chk('nothing is forced open: the pool starts folded',
+      groups().filter(g => g.hasAttribute('open')).length === 0,
+      groups().filter(g => g.hasAttribute('open')).length + ' open');
+  chk('every group states what it holds',
+      groups().every(g => /\d+\s*\/\s*\d+/.test(g.querySelector('summary').textContent)),
+      groups()[0].querySelector('summary').textContent.trim());
+  chk('every chip states its state', Array.from(body().querySelectorAll('.onb-ex-group .chip'))
+      .every(c => c.getAttribute('aria-pressed') === 'true'));
+
+  /* removing one opens that group and offers a way back */
+  chk('no restore action while nothing is removed',
+      !body().querySelector('[onclick*="restoreExPool"]'));
+  groups()[0].querySelector('.chip').dispatchEvent(new w13.MouseEvent('click', {bubbles:true}));
+  const changed = groups().filter(g => g.hasAttribute('open'));
+  chk('a group you changed opens itself', changed.length === 1, changed.length + ' open');
+  chk('the changed group says so with more than colour',
+      changed[0].querySelector('.flag.warn') !== null);
+  chk('a restore action appears once something is removed',
+      !!body().querySelector('[onclick*="restoreExPool"]'),
+      body().querySelector('[onclick*="restoreExPool"]').parentElement.textContent.trim());
+
+  const restoreBtn = body().querySelector('[onclick*="restoreExPool"]');
+  restoreBtn.dispatchEvent(new w13.MouseEvent('click', {bubbles:true}));
+  chk('restoring puts every exercise back',
+      Object.keys(w13.getState().profile.exercises || {})
+        .every(k => w13.getState().profile.exercises[k] === true),
+      Object.keys(w13.getState().profile.exercises || {}).filter(
+        k => w13.getState().profile.exercises[k] === false).length + ' still out');
+  chk('and the restore action goes away again',
+      !body().querySelector('[onclick*="restoreExPool"]'));
+
+  /* the profile stayed short through all of it */
+  const exposed = el => {
+    let n = el;
+    while(n && n !== body()){
+      if(n.tagName === 'DETAILS' && !n.hasAttribute('open')) return false;
+      n = n.parentElement;
+    }
+    return true;
+  };
+  const vis = Array.from(body().querySelectorAll('button,[role=button],input,select,textarea'))
+                   .filter(exposed).length;
+  chk('the profile is still under fifty controls at rest', vis < 50, vis + ' visible');
+}
+
 group("18. Onboarding's exercise step: remove, do not select");
 {
   const dom9 = await boot();

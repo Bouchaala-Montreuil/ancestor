@@ -275,7 +275,37 @@ past its own maximum** (`-15 of 120`). Extra time is now tracked separately from
 the rest you programmed, so the bar's maximum grows with it while *Reset* still
 returns to the rest you actually set.
 
-### 3.10 Small things that were wrong
+### 3.10 One accordion, and a way back
+
+The exercise pool inside Programme was the last chip-wall: 84 chips in twelve
+disclosures of an *older* accordion pattern — `.acc` with its own animation
+binding — with the first two groups forced open for no stated reason. It is the
+same job as the onboarding step beside it, so it now uses the same component and
+the same rule: closed, each group stating what it holds, and a group you changed
+opens itself.
+
+| | before | after |
+|---|---|---|
+| disclosures on the profile | two patterns (`.acc` + `.dis`) | **one** |
+| groups forced open | 2 | **0** |
+| controls reachable at rest | 59 | **41** |
+| ways to undo a removal | none | **one** ("Restore all") |
+
+That last row is the real addition. Removing an exercise was reversible only by
+remembering which group you had opened and finding the chip again — the kind of
+"undo" that exists in the data model but not in the interface. The pool now
+states *"Exercises removed from your pool: 3 — Restore all"* and disappears when
+nothing is removed.
+
+Deleting the old pattern also deleted its animation binding (`bindAccordions`)
+and its two CSS rules: dead code that still carried a `prefers-reduced-motion`
+branch. A design check now fails if the superseded accordion comes back.
+
+A plural bug surfaced in the new line — *"1 exercises removed"* — and was fixed by
+phrasing that has no plural to get wrong, in all seven languages, rather than by
+adding a pluralisation engine nobody asked for.
+
+### 3.11 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -341,7 +371,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | set fields naming their set | 0 of 54 | 54 of 54 |
 | controls on the exercise atlas | 382 | 119 |
 | words on the exercise atlas | 1 304 | 591 |
-| controls exposed on Profile | 160 | 59 |
+| controls exposed on Profile | 160 | 41 |
 | page titles that are `h1` | 1 of 7 | 7 of 7 |
 | top-level sections on Today | 9 | 3 |
 | visible words in an active session | 826 | 205 |
@@ -366,7 +396,7 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 | Progress | untouched | charts and records re-verified for scale in the previous pass; drill-down not re-audited |
 | Body / anatomy | figure semantics fixed | 59 controls on one screen; the muscle list duplicates what the figure already shows |
 | Science | untouched | 26 controls, evidence disclosures already sound |
-| Profile | four records with their values on the closed row | every setting is now one tap deeper, and nothing measures whether people find it; the exercise pool inside Programme is still 84 chips |
+| Profile | four records; the pool is one accordion with an undo | every setting is now one tap deeper, and nothing measures whether people find it |
 
 ---
 
@@ -402,13 +432,12 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 ## 9. Next, ranked by user impact
 
-1. **The exercise pool inside Programme** — 84 chips in six disclosures; it now
-   has a good pattern to copy from the onboarding step it sits beside.
-2. **Today's 381 words.** The outline is fixed; the prose inside the verdict and
+1. **Today's 381 words.** The outline is fixed; the prose inside the verdict and
    the insight card is not.
-3. **A rest timer that can reach you when the screen is off** — a service-worker
+2. **A rest timer that can reach you when the screen is off** — a service-worker
    notification, or an honest "keep this tab open" note.
-4. **Body screen.** Drop the duplicate muscle list once the figure carries the
+3. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
-5. **The exercise sheet** — now the atlas's only action surface; it has never been
+4. **The exercise sheet** — now the atlas's only action surface; it has never been
    audited on its own.
+5. **The plan screen** — the only surface never audited in this phase.

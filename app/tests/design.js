@@ -703,6 +703,11 @@ group('8o. Disclosures are one component, not four improvisations');
       /\.ex-block\.is-current\{[^}]*border-color/.test(flat));
   chk('rest is styled as a bar with a track and a painted fill',
       /\.restbar\b/.test(flat));
+  /* One accordion, not two. The older .acc pattern was left in the stylesheet
+     and the motion module after its last caller moved to .dis. */
+  chk('the superseded accordion is gone from both the stylesheet and the code',
+      !/\.acc\{/.test(flat) && !/\.acc-body\{/.test(flat) &&
+      !/bindAccordions/.test(src));
   chk('the session uses the screen heading it was missing',
       /<h1 class="sess-h">/.test(src) || /'<h1 class="sess-h">'/.test(src));
   function coarseHasDis(){

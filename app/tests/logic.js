@@ -644,7 +644,10 @@ group('15. Questions asked once are not asked again, and they work');
       w.getState().profile.goals.join() === 'h', w.getState().profile.goals.join());
   w.go('profile');
   const txt = d.querySelector('#screenBody').textContent;
-  const headings = Array.from(d.querySelectorAll('#screenBody .eyebrow')).map(x => x.textContent.trim());
+  /* the pool's group labels moved from .eyebrow to the shared disclosure label
+     (.dis-t) when the pool adopted the one accordion the app has */
+  const headings = Array.from(d.querySelectorAll('#screenBody .eyebrow, #screenBody .dis-t'))
+    .map(x => x.textContent.trim());
   const PATTERNS = ['pushH','pushV','pullH','pullV','squat','hinge','calf','curl','extend','forearm','core'];
   const raw = headings.filter(x => PATTERNS.indexOf(x) >= 0);
   chk('no internal pattern key is used as a group heading', raw.length === 0, raw.join(', '));

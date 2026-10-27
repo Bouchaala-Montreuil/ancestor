@@ -221,7 +221,6 @@ function hydrateMotion(root){
     }
   }
   animateSubnavs(root);
-  bindAccordions(root);
   observeReveals(root);
   staggerIn(root);
 }
@@ -255,38 +254,6 @@ function animateSubnavs(root){
   }
 }
 
-/* Smooth accordion expansion on <details class="acc"> without breaking native
-   keyboard / assistive-tech semantics. */
-function bindAccordions(root){
-  const list = root.querySelectorAll('details.acc');
-  for(let i = 0; i < list.length; i++){
-    const det = list[i];
-    if(det.__ancAcc) continue;
-    det.__ancAcc = true;
-    const sum = det.querySelector('summary');
-    const body = det.querySelector('.acc-body');
-    if(!sum || !body) continue;
-    sum.addEventListener('click', ev => {
-      if(reducedMotion() || isJsdom() || typeof body.animate !== 'function') return;
-      ev.preventDefault();
-      if(det.open){
-        const anim = body.animate(
-          [{ opacity: 1, transform: 'translateY(0)' },
-           { opacity: 0, transform: 'translateY(-4px)' }],
-          { duration: MOTION.fast, easing: EASE.out }
-        );
-        anim.onfinish = () => { det.open = false; };
-      } else {
-        det.open = true;
-        body.animate(
-          [{ opacity: 0, transform: 'translateY(-6px)' },
-           { opacity: 1, transform: 'translateY(0)' }],
-          { duration: MOTION.base, easing: EASE.out }
-        );
-      }
-    });
-  }
-}
 
 /* Scroll-triggered reveals for below-the-fold sections. Falls back immediately
    when IntersectionObserver is absent or reduced motion is enabled. */
@@ -347,6 +314,6 @@ function moveIndicator(indicator, target, axis){
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { MOTION, EASE, reducedMotion, dur, dismissAppBoot, transitionView, staggerIn,
                      animateNumber, animateRing, hydrateMotion, animateSubnavs,
-                     bindAccordions, observeReveals, pressFeedback,
+                     observeReveals, pressFeedback,
                      moveIndicator };
 }

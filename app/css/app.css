@@ -1640,8 +1640,6 @@ table.data tbody tr:last-child td{border-bottom:0}
 .mile-card-t{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase}
 .mile-bar{height:2px;background:var(--recess-2);margin-top:6px}
 .mile-bar i{display:block;height:100%;background:var(--ink)}
-.acc{border-top:var(--hair) solid var(--line)}
-.acc-body{padding:var(--s3) 0;font-size:var(--fs-sm);color:var(--ink-2)}
 .prev-copy-btn svg,.ic svg{width:14px;height:14px}
 .energy-model{border-top:var(--hair) solid var(--line);margin-top:var(--s3)}
 .modebar{justify-content:flex-start;gap:var(--s2);margin-bottom:var(--s4)}

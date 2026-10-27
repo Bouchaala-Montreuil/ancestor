@@ -1672,6 +1672,9 @@ const TPLAN = {
     "plan.liveBadge": "Live session in progress",
     "plan.inPool": "In pool",
     "plan.excluded": "Excluded",
+    "plan.excludedCount": "Exercises removed from your pool: {n}",
+    "profile.poolRestored": "Pool restored",
+    "profile.restorePool": "Restore all",
     "plan.resumeLive": "Resume active session",
     "lab3d.atlasTag": "3D anatomical atlas — 218 named muscles, front & rear orbit, raycast selection."
   },
@@ -1694,6 +1697,9 @@ const TPLAN = {
     "plan.liveBadge": "Séance en direct",
     "plan.inPool": "Inclus",
     "plan.excluded": "Exclu",
+    "plan.excludedCount": "Exercices retirés de votre réserve : {n}",
+    "profile.poolRestored": "Réserve rétablie",
+    "profile.restorePool": "Tout rétablir",
     "plan.resumeLive": "Reprendre la séance en cours",
     "lab3d.atlasTag": "Atlas anatomique 3D — 218 muscles nommés, orbite face/dos et sélection directe."
   },
@@ -1716,6 +1722,9 @@ const TPLAN = {
     "plan.liveBadge": "Sesión en curso",
     "plan.inPool": "Incluido",
     "plan.excluded": "Excluido",
+    "plan.excludedCount": "Ejercicios quitados de tu reserva: {n}",
+    "profile.poolRestored": "Reserva restablecida",
+    "profile.restorePool": "Restablecer todo",
     "plan.resumeLive": "Reanudar sesión activa",
     "lab3d.atlasTag": "Atlas anatómico 3D — 218 músculos con nombre, órbita frontal/posterior y selección directa."
   },
@@ -1738,6 +1747,9 @@ const TPLAN = {
     "plan.liveBadge": "Laufende Einheit",
     "plan.inPool": "Aktiv",
     "plan.excluded": "Ausgeschlossen",
+    "plan.excludedCount": "Übungen aus deinem Pool entfernt: {n}",
+    "profile.poolRestored": "Pool wiederhergestellt",
+    "profile.restorePool": "Alle wiederherstellen",
     "plan.resumeLive": "Aktive Einheit fortsetzen",
     "lab3d.atlasTag": "3D-Anatomieatlas — 218 benannte Muskeln, Vorder-/Rückansicht und Direktauswahl."
   },
@@ -1760,6 +1772,9 @@ const TPLAN = {
     "plan.liveBadge": "Sessione dal vivo",
     "plan.inPool": "Incluso",
     "plan.excluded": "Escluso",
+    "plan.excludedCount": "Esercizi rimossi dalla tua riserva: {n}",
+    "profile.poolRestored": "Riserva ripristinata",
+    "profile.restorePool": "Ripristina tutto",
     "plan.resumeLive": "Riprendi sessione attiva",
     "lab3d.atlasTag": "Atlante anatomico 3D — 218 muscoli nominati, orbita fronte/retro e selezione diretta."
   },
@@ -1782,6 +1797,9 @@ const TPLAN = {
     "plan.liveBadge": "Actieve sessie bezig",
     "plan.inPool": "Actief",
     "plan.excluded": "Uitgesloten",
+    "plan.excludedCount": "Oefeningen verwijderd uit je lijst: {n}",
+    "profile.poolRestored": "Lijst hersteld",
+    "profile.restorePool": "Alles herstellen",
     "plan.resumeLive": "Actieve sessie hervatten",
     "lab3d.atlasTag": "3D-anatomieatlas — 218 benoemde spieren, voor-/achteraanzicht en directe selectie."
   },
@@ -1804,6 +1822,9 @@ const TPLAN = {
     "plan.liveBadge": "حصة مباشرة قيد التنفيذ",
     "plan.inPool": "مُدرج",
     "plan.excluded": "مُستبعد",
+    "plan.excludedCount": "تمارين مستبعدة من قائمتك: {n}",
+    "profile.poolRestored": "أُعيدت القائمة",
+    "profile.restorePool": "إعادة الكل",
     "plan.resumeLive": "متابعة الحصة الجارية",
     "lab3d.atlasTag": "أطلس تشريحي ثلاثي الأبعاد — 218 عضلة مسماة ودوران أمامي/خلفي واختيار مباشر."
   }
