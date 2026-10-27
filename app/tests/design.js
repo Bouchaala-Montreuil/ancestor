@@ -359,6 +359,40 @@ group('8f. Arabic is a design, not a mirror');
         fs.readFileSync(path.join(ROOT, 'js/ui/science.js'), 'utf8')));
 }
 
+/* ================================================================ */
+group('8g. Science has a hierarchy now');
+{
+  const sci = fs.readFileSync(path.join(ROOT, 'js/ui/science.js'), 'utf8');
+
+  chk('the factor row is a component, not two locals',
+      /(?:^|\n)\.factor\{/.test(css));
+  chk('every dossier section is numbered, none uses an h3',
+      !/<div class="sect"><h3/.test(sci));
+
+  chk('eleven categories are one rail, not five rows of buttons',
+      /\.chips\.rail\{[^}]*flex-wrap:nowrap/.test(css));
+
+  chk('the lesson list is a register of rows',
+      /\.lesson-card\{[^}]*grid-template-columns:26px minmax\(0,1fr\) auto/.test(css));
+  chk('each entry is a number, a title and a time',
+      /<span class="lesson-idx">/.test(sci) && /<span class="lesson-title">/.test(sci) &&
+      /<span class="lesson-meta">/.test(sci));
+  chk('the summary is clamped to one line',
+      /\.lesson-sum\{[^}]*-webkit-line-clamp:1/.test(css));
+  chk('read is a tally stroke, not a green pill',
+      /\.lesson-card\.done \.lesson-idx::after\{[^}]*background:var\(--burnt\)/.test(css));
+
+  chk('an evidence abstract is collapsed until asked for',
+      /<details class="ev-more">/.test(sci) && /\.ev-more summary/.test(css));
+  chk('the disclosure sign is drawn, not a glyph the face lacks',
+      /\.ev-more summary::after\{[^}]*content:"\+"/.test(css));
+
+  chk('achievements are rows that fill when earned',
+      /class="factor' \+ \(got \? ' up' : ' locked'\)/.test(sci));
+  chk('a locked achievement is hollow, not grey-filled',
+      /\.factor\.locked \.dot\{[^}]*background:transparent/.test(css));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

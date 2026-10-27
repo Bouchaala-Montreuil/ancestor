@@ -72,10 +72,14 @@ Screens.science = function(){
   if(SCI_VIEW === 'explorers') h += sciExplorers();
   if(SCI_VIEW === 'evidence')  h += sciEvidence();
 
-  /* achievements */
-  h += '<div class="sect"><h3 class="sub">' + esc(t('sci.achievements')) + '</h3><span class="rule"></span></div>';
-  h += '<div class="chips">' + ACHIEVEMENTS.map(a =>
-      '<span class="flag ' + (ach.indexOf(a.id) >= 0 ? 'ok' : 'nodata') + '">' + esc(t(a.label)) + '</span>').join('') + '</div>';
+  /* achievements — rows with a mark that fills when earned, not pills. Every
+     other section in the dossier is numbered; this one was not. */
+  h += '<div class="sect"><h2 class="title">' + esc(t('sci.achievements')) + '</h2><span class="rule"></span></div>';
+  h += '<div class="factors bare">' + ACHIEVEMENTS.map(a => {
+      const got = ach.indexOf(a.id) >= 0;
+      return '<div class="factor' + (got ? ' up' : ' locked') + '">' +
+             '<span class="dot"></span><span class="txt">' + esc(t(a.label)) + '</span></div>';
+    }).join('') + '</div>';
 
   return { html: h };
 };
@@ -86,9 +90,10 @@ function setSciView(v){ SCI_VIEW = v; EXPLORER = null; render(); }
 function sciModules(){
   let h = '<div class="mod-grid" data-stagger>';
   LEARNING_MODULES.forEach(m => {
+    /* The tab is already called Interactive; saying it again on every card is
+       the third time on one screen. The card leads with the thing itself. */
     h += '<button class="panel mod-card" onclick="openModule(\'' + m.id + '\')">';
-    h += '<p class="eyebrow">' + esc(t('sci.tabModules')) + '</p>';
-    h += '<h3 class="sub mb-0 mt-2">' + esc(t(m.titleKey)) + '</h3>';
+    h += '<h3 class="mod-title">' + esc(t(m.titleKey)) + '</h3>';
     h += '<p class="body-sm mb-3">' + esc(t(m.summaryKey)) + '</p>';
     h += '<div class="chips">' +
          '<span class="flag plain">' + m.steps.length + ' ' + esc(t('mod.stepsLabel')) + '</span>' +
@@ -104,7 +109,9 @@ function sciLessons(){
   let h = '';
   h += '<div class="field"><label for="sciSearchInput">' + esc(t('sci.search')) + '</label>' +
        '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" oninput="setSciQuery(this.value)" placeholder="' + esc(t('sci.search')) + '"></div>';
-  h += '<div class="chips mb-4">' +
+  /* Eleven categories. Wrapped, they were five rows of buttons before the first
+     lesson; as one rail they are one row that scrolls. */
+  h += '<div class="chips rail mb-4" role="group" aria-label="' + esc(t('sci.catLabel')) + '">' +
        '<button class="chip sm ' + (SCI_CAT==='all'?'on':'') + '" onclick="setSciCat(\'all\')">' + esc(t('sci.all')) + '</button>' +
        SCIENCE_CATEGORIES.map(c => '<button class="chip sm ' + (SCI_CAT===c.id?'on':'') + '" onclick="setSciCat(\'' + c.id + '\')">' +
        esc(t(c.label)) + '</button>').join('') + '</div>';
@@ -124,21 +131,16 @@ function sciLessons(){
   list.forEach(l => {
     const done = isRead(l.id);
     const numIdx = String(LESSONS.indexOf(l) + 1).padStart(2, '0');
-    h += '<button type="button" class="lesson-card ' + (done ? 'done' : '') + '" onclick="openLesson(\'' + l.id + '\')">' +
-      '<div style="width:100%">' +
-      '<div class="row nowrap between mb-1">' +
-        '<span class="lesson-idx">' + numIdx + '</span>' +
-        (done ? '<span class="flag sm ok">' + esc(t('sci.read')) + '</span>'
-              : '<span class="flag sm plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>') +
-      '</div>' +
-      '<div class="mb-1 sci-h">' +
-        esc(t(l.titleKey)) + '</div>' +
-      '<div class="body-sm">' + esc(t(l.summaryKey)) + '</div>' +
-      '</div>' +
-      '<div class="chips mt-2">' +
-        '<span class="flag sm plain">' + esc(t('cat.' + l.cat.replace(/-(\w)/g,(m,c)=>c.toUpperCase()))) + '</span>' +
-        (done ? '<span class="flag sm plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>' : '') +
-      '</div></button>';
+    /* A register, not a card: number, title, one line of what it covers, and
+       how long it takes. The category is not repeated — you filtered by it. */
+    h += '<button type="button" class="lesson-card' + (done ? ' done' : '') + '" onclick="openLesson(\'' + l.id + '\')">' +
+      '<span class="lesson-idx">' + numIdx + '</span>' +
+      '<span class="lesson-main">' +
+        '<span class="lesson-title">' + esc(t(l.titleKey)) + '</span>' +
+        '<span class="lesson-sum">' + esc(t(l.summaryKey)) + '</span>' +
+      '</span>' +
+      '<span class="lesson-meta">' + (done ? esc(t('sci.read')) : l.mins + ' ' + esc(t('sci.minutes'))) + '</span>' +
+      '</button>';
   });
   h += '</div>';
   return h;
@@ -344,7 +346,8 @@ function sciExplorers(){
       esc(t(i.label)) + '</button>').join('') + '</div>';
 
   if(!EXPLORER){
-    h += '<div class="panel"><p class="body-sm">' + esc(t('sci.explorerIntro')) + '</p></div>';
+    /* One sentence is not a card. It is what the screen is for. */
+    h += '<p class="read-p">' + esc(t('sci.explorerIntro')) + '</p>';
     return h;
   }
   if(EXPLORER === 'muscle')     h += explorerMuscle();
@@ -491,7 +494,7 @@ function evidenceCard(e, compactMode){
   if(!e) return '';
   const driving = canAffectRecommendations(e);
   let h = '<div class="panel inset mt-0 mb-3">';
-  h += '<p class="mb-2" style="font-size:14px;font-weight:600">' + esc(e.title) + '</p>';
+  h += '<p class="ev-title">' + esc(e.title) + '</p>';
   h += '<div class="chips mb-2">' +
     '<span class="flag plain">' + esc(t('ev.type.' + e.type)) + '</span>' +
     '<span class="flag ' + (e.quality === 'high' ? 'ok' : e.quality === 'moderate' ? 'accent' : 'nodata') + '">' +
@@ -501,13 +504,17 @@ function evidenceCard(e, compactMode){
              : '<span class="flag nodata">' + esc(t('sci.notDriving')) + '</span>') +
     '</div>';
   h += '<p class="hint">' + esc(e.authors) + (e.year ? ' · ' + e.year : '') + (e.journal ? ' · ' + esc(e.journal) : '') + '</p>';
+  /* A library is scanned, not read. The question stays on the line; the
+     findings, the limitations and the relevance open on demand. Uncollapsed,
+     twelve entries made twelve screen-heights of dense text. */
   if(!compactMode){
-    h += '<div class="mt-2">' +
-      '<p class="body-sm"><b>' + esc(t('ev.question')) + ':</b> ' + esc(e.question) + '</p>' +
-      '<p class="body-sm"><b>' + esc(t('ev.findings')) + ':</b> ' + esc(e.findings) + '</p>' +
-      '<p class="body-sm"><b>' + esc(t('ev.limitations')) + ':</b> ' + esc(e.limitations) + '</p>' +
-      '<p class="body-sm"><b>' + esc(t('ev.relevance')) + ':</b> ' + esc(e.relevance) + '</p>' +
-      '</div>';
+    h += '<details class="ev-more"><summary>' +
+      '<span class="ev-q"><b>' + esc(t('ev.question')) + '</b>' + esc(e.question) + '</span>' +
+      '</summary><div class="ev-abstract">' +
+      '<p><b>' + esc(t('ev.findings')) + '</b> ' + esc(e.findings) + '</p>' +
+      '<p><b>' + esc(t('ev.limitations')) + '</b> ' + esc(e.limitations) + '</p>' +
+      '<p><b>' + esc(t('ev.relevance')) + '</b> ' + esc(e.relevance) + '</p>' +
+      '</div></details>';
   }
   h += '<div class="chips mt-2">' +
     (e.doi ? '<span class="flag plain">' + esc(t('ev.doi')) + ': ' + esc(e.doi) + '</span>' : '') +

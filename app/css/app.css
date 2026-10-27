@@ -1251,22 +1251,96 @@ table.data tbody tr:last-child td{border-bottom:0}
 .done-actions .btn{flex:1 1 140px}
 
 /* ---------------------------------------------------------------- SCIENCE */
-.lesson-grid{display:grid;grid-template-columns:1fr;gap:0}
+/* An evidence card in the library. The citation line is the identity; the
+   abstract opens on demand. */
+.ev-title{
+  font-family:var(--f-display);font-size:17px;line-height:1.25;letter-spacing:.02em;
+  color:var(--ink);margin:0 0 var(--s2);
+}
+.ev-more{margin-top:var(--s2);border-top:var(--hair) solid var(--line-soft);padding-top:var(--s2)}
+.ev-more summary{
+  display:flex;align-items:baseline;gap:var(--s2);
+  cursor:pointer;list-style:none;min-height:32px;
+}
+.ev-more summary::-webkit-details-marker{display:none}
+.ev-q{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:13px;line-height:1.5;color:var(--ink-2);
+}
+.ev-q b{
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tech-ink);margin-inline-end:var(--s2);font-weight:600;
+}
+/* The sign is drawn, not glyph-hunted: the display face has no arrows. */
+.ev-more summary::after{
+  content:"+";margin-inline-start:auto;flex:none;
+  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt);
+}
+.ev-more[open] summary::after{content:"\2013"}
+.ev-more[open] .ev-q{white-space:normal;text-overflow:clip}
+.ev-abstract{margin-top:var(--s2);max-width:64ch}
+.ev-abstract p{font-size:13.5px;line-height:1.6;color:var(--ink-2);margin:0 0 var(--s2)}
+.ev-abstract p:last-child{margin-bottom:0}
+.ev-abstract b{
+  display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tech-ink);margin-bottom:2px;
+}
+
+/* The lesson list is a register: a numbered entry per lesson, ruled, not a
+   grid of cards. It was a two-column grid of 34px + 1fr while the markup had
+   a single full-width child, so every title was being set inside a 34 px
+   column. A list of rows cannot make that mistake. */
+.lesson-grid{display:block;border-top:2px solid var(--ink)}
 .lesson-card{
-  display:grid;grid-template-columns:34px 1fr;gap:var(--s3);
-  padding:var(--s3) 0;border-bottom:var(--hair) solid var(--line-soft);
+  display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:var(--s3);
+  align-items:baseline;width:100%;min-height:64px;
+  padding:var(--s4) 0;border-bottom:var(--hair) solid var(--line-soft);
   background:none;border-inline-start:0;border-inline-end:0;border-top:0;
-  text-align:start;cursor:pointer;width:100%;align-items:start;
+  text-align:start;cursor:pointer;
 }
 .lesson-card:hover{background:rgba(32,33,31,.03)}
+.lesson-card:active{background:var(--recess)}
 .lesson-idx{
-  font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;
-  color:var(--tech-ink);padding-top:3px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;
+  color:var(--tech-ink);
 }
+/* Read is a tally stroke under the number, not a green pill. */
+.lesson-card.done .lesson-idx{color:var(--ink);font-weight:700}
+.lesson-card.done .lesson-idx::after{
+  content:"";display:block;width:14px;height:2px;background:var(--burnt);margin-top:5px;
+}
+.lesson-main{min-width:0}
+.lesson-title{
+  display:block;font-family:var(--f-display);font-size:19px;line-height:1.12;
+  letter-spacing:.025em;text-transform:uppercase;color:var(--ink);
+}
+.lesson-sum{
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
+  overflow:hidden;margin-top:4px;font-size:13px;line-height:1.45;color:var(--ink-2);
+}
+.lesson-meta{
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tech-ink);white-space:nowrap;
+}
+/* Filters: one rail that scrolls, instead of five rows of buttons before the
+   first lesson. */
+.chips.rail{
+  flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;-ms-overflow-style:none;
+  scroll-padding-inline:var(--s4);
+  -webkit-overflow-scrolling:touch;
+}
+.chips.rail::-webkit-scrollbar{display:none}
+.chips.rail .chip{flex:none}
 .mod-grid{display:grid;grid-template-columns:1fr;gap:var(--s3)}
 .mod-card{
-  border:var(--hair) solid var(--line);padding:var(--s3);
-  border-radius:var(--r-xs);background:transparent;
+  border:var(--hair) solid var(--line);padding:var(--s4) var(--s3);
+  border-inline-start:3px solid var(--ink);
+  border-radius:0;background:transparent;
+}
+.mod-title{
+  font-family:var(--f-display);font-size:21px;line-height:1.1;font-weight:700;
+  letter-spacing:.025em;text-transform:uppercase;color:var(--ink);margin:0 0 var(--s2);
 }
 .mod-body{font-size:var(--fs-sm);color:var(--ink-2)}
 .mod-diagram,.mod-svg{background:var(--surface);border:var(--hair) solid var(--line);padding:var(--s2)}
@@ -1820,6 +1894,26 @@ html[data-motion="on"] .onb-bar i{transition:none}
 .meta-b{font-weight:700;color:var(--burnt-text)}
 /* Empty state inside a table, where there is no row to style. */
 .td-empty{text-align:center;color:var(--tech-ink);padding:var(--s5)}
+/* A factor list: one line per reason, a dot, a value at the end. It was styled
+   only inside .decision and .onb-frame, so the lesson takeaways — the third
+   place it is used — rendered as loose text with a stray empty dot. This is the
+   generic form; the two scoped versions above still override it. */
+.factor{
+  display:flex;align-items:flex-start;gap:var(--s2);
+  padding:var(--s2) 0;border-bottom:var(--hair) solid var(--line-soft);
+  font-size:var(--fs-sm);line-height:1.5;color:var(--ink);
+}
+.factor:last-child{border-bottom:0}
+.factor .dot{width:5px;height:5px;flex:none;margin-top:6px;background:var(--ink)}
+.factor.up .dot{background:var(--burnt)}
+.factor.warn .dot{background:var(--warn)}
+.factor.locked .dot{background:transparent;border:var(--hair) solid var(--line)}
+.factor.locked .txt{color:var(--ink-3)}
+.factor .txt{min-width:0;flex:1}
+.factor .w{
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;
+  color:var(--tech-ink);white-space:nowrap;
+}
 /* A factor list that already sits under a rule does not draw another one. */
 .factors.bare{border-top:0}
 /* A panel that opens a section: the rule is heavier than the shared hairline. */
