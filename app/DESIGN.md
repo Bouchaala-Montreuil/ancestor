@@ -4,13 +4,20 @@ This document is the working design record: the audit that produced it, the
 decisions taken, what was actually implemented, and what was not. It is written
 to be checked against the code, not admired.
 
-**What this pass is not.** There is no browser or GPU in the environment this was
-built in. Every number below comes from a jsdom crawl of the running application
-(`node --check`-clean scripts, real stylesheet, seeded state) or from static
-inspection of the stylesheet. jsdom has no layout engine: it can prove structure,
-names, counts and contrast arithmetic. It cannot prove that a box overflows, that
-a figure renders in WebGL, or that a 390 px screen looks right. Where a claim
-would need eyes, it is marked **not verified** rather than asserted.
+**What this pass is, and what it is not.** Most numbers below come from a jsdom
+crawl of the running application (`node --check`-clean scripts, real stylesheet,
+seeded state) or from static inspection of the stylesheet. jsdom has no layout
+engine: it can prove structure, names, counts and contrast arithmetic, and it
+cannot prove that a box overflows or that a 390 px screen looks right.
+
+**That gap was closed late, not never.** A headless Chromium was installed in
+this environment at the end of the pass and `tests/browser.js` was run for the
+first time against this build — 28 checks, WebGL included, all green in the end.
+It found eleven rendered defects that the structural audit had passed. They are
+listed in §3.13, and every claim in this document that used to be marked *not
+verified* has been re-read against what the browser showed. What is still
+argued rather than observed: real devices (no iOS Safari, no Firefox, no notch),
+motion, and thumb reach. §8 states it precisely.
 
 ---
 
@@ -352,6 +359,65 @@ exercise thumbnail. The true figure at that commit was **153**. The table in
 - The dashboard's dead `.dash-figlink-t` rule was deleted with its markup, rather
   than left as a style waiting for an element.
 
+### 3.13 A real browser was finally run, and it disagreed with the page
+
+Everything above was measured through jsdom: structure, wording, contrast
+arithmetic, focus order. None of it could see the page. A headless Chromium was
+made to run inside this environment (`@sparticuz/chromium@148` unpacked from an
+npm tarball, launched through `puppeteer-core`), and `tests/browser.js` — 28
+checks that already existed for exactly this — ran for the first time against
+this build. It failed two, and reading the failures turned up five more.
+
+What it saw, in the order it was found:
+
+| what a screenshot showed | what the code said | why nothing caught it |
+|---|---|---|
+| every screen clipped by 200 px at 1024 px | `.shell{width:100%;margin-inline-start:200px}` — an over-constrained block; Chrome kept the margin and made the end margin −200 px, so the document measured 1224 px | `body{overflow-x:hidden}` hid the scrollbar; jsdom has no layout engine, so `scrollWidth` does not exist to compare |
+| the anatomy viewer showed "Loading…" for ever | `.lab-loading,.lab-error{display:flex}` outranked the browser's `[hidden]{display:none}` | the element was correctly marked `hidden`; only a rendered page shows that hidden lost |
+| the 3D canvas would not respond to a click | the hidden error overlay, empty and `position:absolute;inset:0`, sat on top of it | jsdom's hit-testing is not a paint order |
+| Pause / Rest / Add exercise were three empty boxes | `.btn.quiet` is ink-on-paper; inside the charcoal HUD that is ink on ink | contrast was computed per token pair, and this pair (ink on ink) was never in the token table |
+| "OKSession saved" | `.banner .ic` had no rule at all | the text was present and the words were right |
+| "Exercise library 88" | `.subnav-cnt` had no space of its own | a bare number in the DOM reads identically to a bare number in a screenshot |
+| the science tab bar's active tab was unreadable | `.chip.on` filled it charcoal while `.subnav-btn.on` set the label ink | the tab is a `.chip` for a test selector's sake; no rule said "not inside a tab bar" |
+| the plan's three day cards were three slivers of 8 px type | the day switcher reuses `.day-grid` — the SVG week strip's `repeat(7,1fr)` — and had no rule of its own | the class *was* in the stylesheet, so "all named component classes exist" passed |
+| the verdict word "TRAIN" ran under "100%" | the readiness meter shared the verdict's flex row with a 104 px floor, and its definition was a third child of that row | the elements existed and were in a sensible order; they simply did not fit |
+| onboarding answers printed on top of their own radio box | the tile is a two-column grid and only the box was placed; the answer span auto-flowed into the 20 px slot, and its captions were `<span>`s with no line of their own | the markup was "correct" — a grid child needs a column |
+| "1 lifts · 2 sets · ~8 min" | one template, `{n} lifts`, with a number dropped in | the string existed in seven languages and read fine at n>1 |
+
+Two of these were also found by the existing suite the moment the browser ran
+(the overflow and the canvas click). The other nine needed the screenshots.
+
+**The fixes, and what now guards them.** The overflow is `width:auto`;
+`[hidden]` is `display:none!important` (stated once, since component display
+rules will keep out-ranking the UA sheet); the HUD's quiet buttons are styled
+for the surface they are on and given `--hit`; the banner's status word is a
+stamped tag; the tab count has a margin and a drawn middot; a `.chip.on` inside
+a `.subnav` loses its fill; the day switcher has its own `plan-days` class and a
+card; the readiness figure is a clamped column and the definition is its own
+line under the row; onboarding tiles place both children and force their
+captions onto their own lines; the cost line is three translated nouns joined,
+with a singular form per language.
+
+Five of them are now static assertions in `tests/design.js` (the stylesheet
+cannot quietly lose `[hidden]`, the HUD's button colours, the banner tag, the
+tab count spacing, the set-row grid, the tile's grid placement) and one is a
+behavioural check in `tests/ui.js` (`sessionCostLine(1,1,8)` is singular in all
+seven languages). The rest are covered by the browser suite itself, which is
+the only place they *can* be covered.
+
+**A measurement correction, from the same pass.** The set row was reported in
+§3.8 as "fields naming their set, 54 of 54" — true, and yet those fields were
+unreadable as a row: label, input and unit shared one flex baseline per field,
+so the rep range (`6–10`) landed inside the RIR label and the RIR unit printed
+a second "RIR" after a field already labelled RIR. It is a grid now — caption
+above, number in the middle, unit after it, one baseline across the three.
+
+**One thing the browser pass changed my mind about.** §6 of this document used
+to say the visual pass was impossible here. It was not impossible, it was
+unattempted: a Chromium binary is a 60 MB tarball on a registry that was
+reachable the whole time. The report's §6 has been rewritten to say what was
+actually seen, and the screenshots it took are described there.
+
 ---
 
 ## 4. Tokens and components
@@ -412,12 +478,14 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | page titles that are `h1` | 1 of 7 | 7 of 7 |
 | top-level sections on Today | 9 | 3 |
 | visible words on Today | 311 | 222 |
+| horizontal overflow at the 1024 px rail | 200 px of every screen, clipped | 0 across 96 layouts |
 | visible words in an active session | 826 | 153 |
 | controls reachable at once in a session | 152 | 21 |
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (196 checks) and `tools/qa_audit.js` (1 accepted Medium: the
+`tests/design.js` (203 checks), the 28 real-browser checks in `tests/browser.js`
+and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 
 ---
@@ -440,16 +508,21 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 ## 8. Limits of this pass
 
-- **No visual inspection.** Nothing here was looked at in a browser. Type,
-  spacing, rhythm, overflow and the 320/375/390/768/1024/1440 breakpoints are
-  inherited from the existing design system and were not re-verified visually.
-- **No WebGL verification.** The 3D anatomy path cannot run without a GPU; the
-  flat figure was the only anatomy surface exercised.
+- **Visual inspection happened late, and only in headless Chromium.** A browser
+  was made to run in this environment at the end of the pass
+  (§3.13) and it found eleven defects the structural audit had passed. It is
+  still not a device: no iOS Safari, no Firefox, no notch insets, no collapsing
+  address bar, and motion was never watched.
+- ~~**No WebGL verification.**~~ **Verified.** SwiftShader rendered the atlas in
+  headless Chromium: 218 meshes, real framebuffer pixels, front ≠ back, the
+  burnt highlight appears on selection, and raycast picking returns a named
+  muscle.
 - **The census counts are structural.** "Words" is text content, not reading
   effort; "controls exposed" ignores visual weight.
-- **Onboarding is the one journey never watched.** Eight steps, one question
-  each, all measured structurally and none of them tested by a person who has
-  never seen the app.
+- **Onboarding has been rendered, not used.** Eight steps were photographed at
+  390 px — which is how the tile that printed its own answers over its radio box
+  was caught — but none of them has been walked by a person who has never seen
+  the app.
 - **Discoverability was not tested.** Collapsing a settings page is a bet that
   the summary line is enough to make someone open it. Nobody has watched a real
   user look for "units".
@@ -464,8 +537,11 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
   inside the first panel; measured at the end of this pass: Body `h1,h3`,
   Progress `h1,h3×6`, session plan `h1,h3` — Science is now `h1,h2`). The
   panels share one `h3` component and were left alone rather than half-converted.
-- **No rest-timer, no print-layout and no offline-persistence re-verification**
-  in this pass; those suites are green, which is not the same as inspected.
+- **Offline persistence is now verified for real** (service worker populated,
+  network severed, page reloaded: the app boots with all 218 muscles), and the
+  shipped single-file bundle renders offline too. The rest timer and the print
+  layout were still not re-verified in this pass; their suites are green, which
+  is not the same as inspected.
 
 ---
 

@@ -887,6 +887,78 @@ group('23. Today states the decision, not the whole case for it');
       !!body().querySelector('.dash-actions .btn'));
 }
 
+group('25. A record in the log is asked about with the rows that came before it');
+{
+  const dom16 = await boot();
+  const w16 = dom16.window, d16 = w16.document;
+  completeOnboarding(w16, d16);
+  const S = o => Object.assign({w:null,r:null,t:null,d:null,a:null,rir:null}, o);
+  const now = Date.now();
+  /* An ascending series: 50 -> 54 -> 58 -> 62, so the last session is a record
+     and the earlier ones were records of their own day, not of today. */
+  [4,3,2,1].forEach(k => {
+    const wgt = 46 + (5 - k) * 4;      // newer sessions are heavier: 50, 54, 58, 62
+    w16.addSession({ date: now - k*4*864e5, startedAt: now - k*4*864e5, planId:'A', name:'S'+k,
+      exercises:[{ id:'bb-bench', sets:[S({w:wgt, r:8, rir:2})] }] });
+  });
+  w16.go('progress');
+  const body = () => d16.getElementById('screenBody');
+  const metric = () => Array.from(body().querySelectorAll('.metric'))
+    .filter(m => /records/i.test(m.querySelector('.k').textContent))[0];
+
+  chk('the records metric counts records, not zero', /^[1-9]/.test(metric().querySelector('.v').textContent.trim()),
+      metric().querySelector('.v').textContent.trim());
+  chk('the metric says which period it counts',
+      /period|période|periodo|Zeitraum/i.test(metric().querySelector('.d').textContent),
+      metric().querySelector('.d').textContent.trim());
+
+  /* An older row in the log must be judged against what came before it. */
+  const st = w16.getState();
+  const hist = w16.exerciseHistory('bb-bench');
+  const oldest = hist[0], newest = hist[hist.length-1];
+  chk('the oldest row was a baseline, not a record',
+      w16.recordKind(st, 'bb-bench', oldest.sets, {excludeRow: oldest}) === 'baseline',
+      w16.recordKind(st, 'bb-bench', oldest.sets, {excludeRow: oldest}));
+  chk('the newest row is a record',
+      w16.recordKind(st, 'bb-bench', newest.sets, {excludeRow: newest}) === 'pr');
+}
+
+group('24. The cost line is singular when the session is');
+{
+  const dom15 = await boot();
+  const w15 = dom15.window, d15 = w15.document;
+  completeOnboarding(w15, d15);
+  w15.go('home');
+
+  /* The sentence used to be one template with a number dropped in, so a
+     one-lift day read "1 lifts · 1 sets". Each noun is its own key now. */
+  chk('one lift and one set are singular', w15.sessionCostLine(1, 1, 8) === '1 lift · 1 set · ~8 min',
+      w15.sessionCostLine(1, 1, 8));
+  chk('two lifts and three sets stay plural', w15.sessionCostLine(2, 3, 73) === '2 lifts · 3 sets · ~73 min',
+      w15.sessionCostLine(2, 3, 73));
+
+  const langs = ['en','fr','es','de','it','nl','ar'];
+  const bad = [];
+  const before = w15.CURRENT_LANG;
+  langs.forEach(l => {
+    w15.setLang(l);
+    const one = w15.sessionCostLine(1, 1, 8), many = w15.sessionCostLine(4, 9, 60);
+    /* Arabic spells the singular out ("تمرين واحد") instead of prefixing a 1, so
+       the check is that the two forms differ and carry no placeholder — not that
+       every language prints a digit. */
+    if(/[{}]/.test(one + many) || one.indexOf('undefined') >= 0) bad.push(l + ':' + one);
+    if(one === many) bad.push(l + ': same sentence for 1 and 4');
+    if(many.indexOf('4') < 0 || many.indexOf('9') < 0) bad.push(l + ': plural lost its numbers');
+  });
+  w15.setLang(before);
+  chk('all seven languages carry both forms', bad.length === 0, bad.join('; ') || '7/7');
+
+  const hint = d15.getElementById('screenBody').querySelector('.next-blueprint .hint');
+  chk('the rendered verdict uses the plural-aware line',
+      !!hint && hint.textContent.indexOf('·') > 0 && !/[{}]/.test(hint.textContent),
+      hint && hint.textContent.trim());
+}
+
 group('22. The exercise pool is the same component as the step that fills it');
 {
   const dom13 = await boot();

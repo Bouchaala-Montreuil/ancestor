@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-27 against `263fba8`, with 1,248 headless checks and no browser.
+Read on 2026-10-27 against `263fba8`, with 1,268 headless checks and 28 real-browser checks.
 
 ---
 
@@ -28,7 +28,7 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,248 checks — plus `tests/browser.js`,
+**Tests.** Ten headless suites (jsdom) — 1,268 checks — plus `tests/browser.js` (28 real-Chromium checks),
 which needs a real Chrome and covers the three things jsdom cannot: WebGL, layout
 overflow at 320/360/768/1280, and a service-worker reload with the network severed.
 
@@ -45,7 +45,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,248 checks that only execute when a person remembers. | no `.github/` | **pipeline written** — `app/ci/checks.yml`, one copy from running |
+| S5 | Medium | Nothing ran the suites. 1,268 checks that only execute when a person remembers. | no `.github/` | **pipeline written** — `app/ci/checks.yml`, one copy from running |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
@@ -108,17 +108,26 @@ now in CI.
   screens, every sheet, the exercise library and three learning modules.
 - **41 scripts, 2.2 MB, zero runtime dependencies.** The largest single file is
   the vendored three.js (4,220 lines) — lazily loaded, never on the critical path.
-- **One accepted risk:** `overflow-x:hidden` on `body`. It is masking, and the only
-  thing that could catch a masked overflow is `tests/browser.js`, which needs a
-  machine with Chrome.
+- **One accepted risk, now half-retired:** `overflow-x:hidden` on `body`. It is
+  masking, and the only thing that can catch a masked overflow is
+  `tests/browser.js`. That suite has now run (28/28 green) and it found exactly
+  the kind of defect the note predicted: at 1024 px the `.shell` was an
+  over-constrained block — `width:100%` plus the rail's 200 px inline-start
+  margin — so Chrome kept the margin, computed a *negative* inline-end margin,
+  and the document measured 1224 px wide. Every screen at the rail breakpoint
+  was clipped by 200 px and `overflow-x:hidden` hid the evidence. The fix is one
+  declaration (`width:auto`); the risk that remains is the same risk, one
+  breakpoint narrower.
 
 ---
 
 ## 5. What I would do next, in order
 
-1. **Run `tests/browser.js` once.** It covers the three claims nothing else can:
-   the 3D atlas renders, no screen overflows at 320 px, and the app reloads with
-   the network cut. It needs a machine with Chrome; everything else is arithmetic.
+1. ~~**Run `tests/browser.js` once.**~~ **Done.** 28/28 green: the 3D atlas
+   renders (218 meshes, real pixels, picking works), no screen overflows across
+   96 layouts (8 views × 6 widths × LTR/RTL), the app reloads with the network
+   cut, and the shipped bundle boots offline. It found seven things jsdom
+   structurally could not — see `DESIGN.md` §3.13. Keep it green.
 2. **An update prompt** (S14, small): on `registration.update()` finding a new
    worker, one strip — "A new version is ready" — with a reload action. This is
    the same component as the storage strip, which already has a vocabulary for

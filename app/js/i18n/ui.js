@@ -11,7 +11,7 @@ const T = {};
 
 T.en = {
 'app.bootNote':'Your log never leaves this device',
-'app.tag':'RECOVERY ENGINE',
+'app.name':'ANCESTOR','app.tag':'RECOVERY ENGINE',
 
 'nav.home':'Home',
 

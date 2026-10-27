@@ -174,7 +174,10 @@ function renderWorkoutPlanner(){
   const todayStart = bioDayStart(now, wakeAnchor);
 
   /* --- Split Day Switcher --- */
-  h += '<div class="day-grid" role="tablist" aria-label="' + esc(t('prog.title')) + '">';
+  /* `plan-days` marks this as the buttons, not the SVG week strip that shares
+     the .day-grid name — the strip's seven-column layout was being applied to
+     three cards. */
+  h += '<div class="day-grid plan-days" role="tablist" aria-label="' + esc(t('prog.title')) + '">';
   sessions.forEach((ds, idx) => {
     const on = (ds.id === selected.id);
     const recDay = (ds.id === next.session.id);
@@ -781,7 +784,7 @@ function fieldHtml(f, ei, si, set, ex, range, u, nSets){
   } else if(f.key === 'reps'){
     suffix = range.lo + '–' + range.hi;
   } else if(f.key === 'rir'){
-    suffix = 'RIR';
+    suffix = '';                 // the label already says RIR; the suffix repeated it
   }
   const labelKey = f.key === 'load' ? (exLogSpec(ex).loadRole === 'added' ? 'log.added' : 'log.load') : f.labelKey;
   const optional = exLogSpec(ex).optional.indexOf(f) >= 0;

@@ -651,7 +651,7 @@ refusal, the untouched bytes, the archive and the resumed writes are all asserte
 and the guard was removed once to watch two of them fail.
 
 Two honest notes about this pair. The figures were rasterised and looked at; **the
-page itself was not** — there is no browser here, so `site/index.html` is verified
+page itself was not** — there was no browser when this was written, so `site/index.html` is verified
 structurally, numerically and by measurement of the real font metrics, and nobody
 has seen it composed. And `CASE_STUDY.md` says the same things the roadmap does,
 in one place, for a reader who is not going to open the repository.

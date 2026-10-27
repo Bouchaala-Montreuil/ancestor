@@ -358,15 +358,45 @@ function previousPerformance(state, exId, before){
 /* --------------------------------------------------------------- records */
 /* A first exposure is a BASELINE, not a record. A record needs something to
    beat. Returning 'pr' on the first session made the app congratulate users
-   for simply turning up. */
-function recordKind(state, exId, sets){
+   for simply turning up.
+
+   Two ways to ask, and they are not the same question:
+
+     recordKind(state, id, sets)                    "is this brand-new work a
+                                                     record?" — history is the
+                                                     past, the last row in it is
+                                                     the row before this one.
+
+     recordKind(state, id, sets, {excludeRow: row})  "is that row in the log a
+                                                     record?" — the row is already
+                                                     inside the history, so it is
+                                                     taken out first and compared
+                                                     with every row that remains.
+
+   Getting the second case wrong in either direction is silent: leave the row in
+   and it ties with itself (no record is ever found); drop a row as well and the
+   record is compared with the wrong month. */
+function recordKind(state, exId, sets, opts){
   const ex = EX_BY_ID[exId];
   if(!ex) return 'none';
-  const hist = exerciseHistory(exId);
+  const o = opts || {};
+  let hist = exerciseHistory(exId);
+  if(o.excludeSessionId) hist = hist.filter(h => h.sessionId !== o.excludeSessionId);
+  if(o.excludeRow){
+    /* "Was that row a record when it was logged?" means: strictly earlier rows
+       only. Comparing it with every other row would judge last month against
+       today. exerciseHistory() rebuilds its rows on every call, so the session
+       id is the only stable key. */
+    const row = o.excludeRow;
+    hist = hist.filter(h => h.date < row.date);
+  }
   const cur = bestSetScore(workingSets(sets), ex, (state && state.profile) || null);
   if(!cur) return 'none';
-  if(hist.length <= 1) return 'baseline';
-  const prev = hist.slice(0, -1).reduce((a, h) => {
+  /* When the row was taken out, everything left is "before". When it was not,
+     the newest entry in the history is the row itself and is dropped. */
+  const before = o.excludeRow ? hist : hist.slice(0, -1);
+  if(!before.length) return 'baseline';
+  const prev = before.reduce((a, h) => {
     const b = bestSetScore(workingSets(h.sets), ex, (state && state.profile) || null);
     return b && b.score > a ? b.score : a;
   }, -Infinity);

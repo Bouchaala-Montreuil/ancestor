@@ -616,6 +616,37 @@ group('14. Progression rules hold for every exercise mode');
   chk('a worse result is not a record',
       w.recordKind(st,'db-calf',[S({w:20,r:15,rir:2})]) === 'none');
 
+  /* A row that is already in the log is asked about with excludeRow. Asking the
+     old way — passing the row's sets as if they were new work — answers about a
+     different question, and two silent mistakes hide behind it: leave the row in
+     and it ties with itself so nothing is ever a record; drop a row as well and
+     the record is measured against the wrong month. */
+  {
+    const b3 = boot(); onboard(b3.w, b3.d);
+    const ss = (dt, id, wgt) => ({ date:t0-dt*DAY, startedAt:t0-dt*DAY, planId:'A', name:id,
+      exercises:[{ id:id, sets:[S({w:wgt,r:8,rir:2})] }] });
+    b3.w.addSession(ss(18,'bb-curl', 40));
+    b3.w.addSession(ss(12,'bb-curl', 45));
+    b3.w.addSession(ss(6, 'bb-curl', 50));
+    const st3 = b3.w.getState();
+    const hist = b3.w.exerciseHistory('bb-curl');
+    const newest = hist[hist.length - 1], older = hist[0];
+    chk('the newest row, asked about as a row, is a record',
+        b3.w.recordKind(st3,'bb-curl',newest.sets,{excludeRow:newest}) === 'pr');
+    chk('an older row is judged against what came before it, not against the now',
+        b3.w.recordKind(st3,'bb-curl',older.sets,{excludeRow:older}) === 'baseline');
+    chk('a row that ties the best is not a record',
+        b3.w.recordKind(st3,'bb-curl',[{w:50,r:8,t:null,d:null,a:null,rir:2}]) === 'pr' &&
+        b3.w.recordKind(st3,'bb-curl',newest.sets,{excludeRow:newest}) === 'pr');
+    b3.w.addSession(ss(0,'bb-curl', 50));
+    const h2 = b3.w.exerciseHistory('bb-curl');
+    const tie = h2[h2.length - 1];
+    chk('a tie is not a record either', b3.w.recordKind(b3.w.getState(),'bb-curl',tie.sets,{excludeRow:tie}) === 'none',
+        b3.w.recordKind(b3.w.getState(),'bb-curl',tie.sets,{excludeRow:tie}));
+    chk('nothing before the first row at all is a baseline',
+        b3.w.recordKind(b3.w.getState(),'bb-curl',tie.sets) === 'none');
+  }
+
   /* warm-up sets never count */
   const benchSets = [ S({w:60,r:8,rir:3}), S({w:20,r:8,rir:3}) ];
   benchSets[1].warmup = true;

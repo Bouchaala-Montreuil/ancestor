@@ -168,6 +168,14 @@ body{
   overflow-x:hidden;
 }
 img,svg{max-width:100%}
+/* The hidden attribute has to win. Component rules like
+   `.lab-loading,.lab-error{display:flex}` outrank the browser's own
+   `[hidden]{display:none}`, so an overlay that had been hidden in script
+   stayed painted — the anatomy viewer's loading skeleton sat on top of the
+   3D canvas for ever, and the error box (empty, opaque) sat on top of that.
+   Nothing else in the app relies on `hidden` plus a class to show an
+   element, so this is stated once, with weight. */
+[hidden]{display:none!important}
 button{font:inherit;color:inherit}
 a{color:var(--burnt-text);text-decoration:none;border-bottom:1px solid var(--burnt-tint-2)}
 a:hover{border-bottom-color:var(--burnt-text)}
@@ -678,7 +686,26 @@ button.flag:hover{border-color:var(--ink)}
   font-weight:700;line-height:.82;letter-spacing:0;text-transform:uppercase;
   margin:var(--s2) 0 0;color:var(--ivory);
 }
-.decision .readiness{min-width:104px;text-align:end;flex:none}
+/* The verdict word and the availability figure shared one row and collided at
+   every width: "TRAIN" ran under "100%", and the meter's own caption printed on
+   top of the word. The figure is a narrow column with its own line; the word
+   gets the rest of the row and is never allowed to sit under it. */
+.decision .top{gap:var(--s5);flex-wrap:nowrap;align-items:flex-start}
+.decision .readiness-def{margin-inline-start:0;margin-top:var(--s3)}
+.decision .top > .grow{min-width:0}
+.decision .readiness{min-width:96px;max-width:96px;text-align:end;flex:none}
+.decision .readiness .v{font-size:30px;line-height:.95;white-space:nowrap}
+.decision .readiness .cap{
+  font-family:var(--f-mono);font-size:8px;letter-spacing:.09em;line-height:1.35;
+  text-transform:uppercase;color:rgba(241,235,221,.62);
+  overflow-wrap:anywhere;
+}
+.decision .readiness .bar{margin-top:3px}
+@media (max-width:430px){
+  .decision .readiness{min-width:70px;max-width:70px}
+  .decision .readiness .v{font-size:26px}
+  .dec-state{font-size:clamp(38px,11.5vw,58px)}
+}
 .decision .readiness .v{
   font-family:var(--f-display);font-size:34px;line-height:.9;
   color:var(--ivory);font-variant-numeric:tabular-nums;
@@ -1108,6 +1135,21 @@ button.flag:hover{border-color:var(--ink)}
 .banner.alert{border-inline-start-color:var(--alert);background:var(--alert-tint)}
 .banner.info{border-inline-start-color:var(--tech);background:var(--surface)}
 
+/* The banner carries its state as a word ("OK", "!", "!!") so it never depends
+   on colour alone — but nothing styled .ic, so the toast read
+   "OKSession saved". It is a small stamped tag now, with room after it. */
+.banner{display:flex;align-items:flex-start;gap:var(--s3)}
+.banner .ic{
+  flex:none;font-family:var(--f-mono);font-size:9px;font-weight:700;
+  letter-spacing:.08em;line-height:1;padding:4px 5px;margin-top:2px;
+  border:var(--hair) solid currentColor;border-radius:var(--r-xs);
+  text-transform:uppercase;
+}
+.banner.ok .ic{color:var(--ok)}
+.banner.warn .ic{color:var(--warn)}
+.banner.alert .ic{color:var(--alert)}
+.banner .ic + span{min-width:0}
+
 .toast{
   position:fixed;left:50%;bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--s3));
   transform:translate(-50%,14px);z-index:8000;
@@ -1389,6 +1431,14 @@ table.data tbody tr:last-child td{border-bottom:0}
   font-variant-numeric:tabular-nums;letter-spacing:.01em;
 }
 .live-hud .eyebrow{color:rgba(241,235,221,.6)}
+/* Quiet buttons are ink-on-paper everywhere else. Inside the charcoal HUD that
+   made Pause, Rest and Add exercise ink on ink: three empty rectangles, text
+   present, legible to nobody. They are on a dark surface, so they are styled
+   for one — and given the full target instead of 36 px. */
+.live-hud .btn.quiet{
+  color:var(--ivory);border-color:rgba(241,235,221,.42);min-height:var(--hit);
+}
+.live-hud .btn.quiet:hover{color:var(--ink);background:var(--ivory);border-color:var(--ivory)}
 .live-hud-meta{justify-content:space-between;margin-top:var(--s3);
   border-top:var(--hair) solid rgba(241,235,221,.16);padding-top:var(--s3);
   font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
@@ -1408,6 +1458,33 @@ table.data tbody tr:last-child td{border-bottom:0}
   border-bottom:var(--hair) solid var(--line);
 }
 .setcard input:focus{border-bottom-color:var(--burnt);background:rgba(214,106,58,.05)}
+/* The three fields of a set were one flex row of label / input / unit per
+   field, all sharing a baseline: it rendered as
+       Load —  kg   Reps 6  6–10   RIR optional —  RIR
+   with the rep range wrapping into the RIR label. A field is a column now:
+   small caption, the number, the unit, one shared baseline. */
+.setcard .row.nowrap{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,.9fr);
+  gap:var(--s4) var(--s5);
+  align-items:end;
+}
+.setcard .fld{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:end;gap:0 var(--s2);
+  border:0;padding:0;min-height:0;background:none;
+}
+.setcard .fld label{
+  grid-column:1/-1;font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tech-ink);margin-bottom:2px;
+}
+.setcard .fld label .opt{font-size:8px;letter-spacing:.08em;text-transform:none;color:var(--nodata)}
+.setcard .fld input{grid-column:1;width:100%;min-width:0;min-height:42px;padding:0}
+.setcard .fld .u{grid-column:2;padding-bottom:10px;font-size:9px;white-space:nowrap}
+@media (max-width:520px){
+  .setcard .row.nowrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s4)}
+  .setcard .fld:last-child{grid-column:1/-1}
+}
 .setcard .w,.setcard .t{flex:1;min-width:0}
 .setcard .n{
   font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;
@@ -1678,10 +1755,28 @@ table.data tbody tr:last-child td{border-bottom:0}
   display:inline-flex;align-items:center;gap:5px;
 }
 .subnav-btn.on{color:var(--ink);font-weight:700}
+/* The active tab was white-on-white: `.on` sets the ink colour, but whatever
+   rule painted the active state above it filled the box with the same charcoal
+   the ink was meant to sit on, so "Lessons" — the tab you were looking at —
+   was the one tab you could not read. The selected tab is a paper box with an
+   ink label and the burnt rule under it. */
+/* The active tab was unreadable. Science's tabs carry `.chip` as well as
+   `.subnav-btn`, because an old query in the suites selected tabs by chip class
+   — and `.chip.on` fills the chip with charcoal while `.subnav-btn.on` sets the
+   label to ink. Ink on charcoal: the tab you were looking at ("Lessons") was
+   the one word on the bar you could not read. The chip fill is cancelled inside
+   a tab bar; the selected tab is ink on paper with the sliding rule under it. */
+.subnav .chip.on,.subnav .subnav-btn.on{background:transparent;box-shadow:none}
+.subnav .subnav-btn.on{color:var(--ink)}
 .subnav-ind{position:absolute;bottom:-1px;inset-inline-start:0;height:2px;background:var(--ink)}
 .subnav-cnt{
   font-family:var(--f-mono);font-size:8px;color:var(--tech-ink);
+  margin-inline-start:5px;
 }
+/* A bare number after a tab label reads as part of the word ("Exercise
+   library 88" looked like a version). One middot, drawn, not typed. */
+.subnav-cnt::before{content:"·";margin-inline-end:4px;opacity:.7}
+.subnav-cnt:empty::before{content:none}
 
 /* --------------------------------------------------------------- PROFILE */
 .profile-grid{display:grid;grid-template-columns:1fr;gap:0}
@@ -2052,7 +2147,15 @@ table.data tbody tr:last-child td{border-bottom:0}
 .onb-frame .tile:hover{background:rgba(32,33,31,.03)}
 .onb-frame .tile.on{background:transparent;box-shadow:inset 3px 0 0 var(--burnt);padding-inline-start:var(--s3)}
 .onb-frame .tile.on::after{display:none}
-.onb-frame .tile > span{min-width:0}
+/* The tile is a two-column grid: the answer, then the radio. Both children have
+   to be placed — with only the box in column 2, the answer span auto-flowed
+   into the 20 px slot and the whole row was painted on top of the radio at
+   every width. The captions are spans, so they also need to be told they are
+   lines: without that the title ran straight into its description
+   ("Standard volumeThe most widely supported approach"). */
+.onb-frame .tile > span{min-width:0;grid-column:1;grid-row:1}
+.onb-frame .tile > span .t{display:block}
+.onb-frame .tile > span .d{display:block}
 .onb-frame .tile .t{
   display:block;font-family:var(--f-display);font-size:clamp(20px,4.4vw,26px);
   line-height:1.05;text-transform:uppercase;letter-spacing:.01em;color:var(--ink);
@@ -2063,8 +2166,8 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 /* the radio square sits at the end of the row, filled when chosen */
 .onb-frame .tile .box{
-  order:2;width:18px;height:18px;margin:0;border:var(--hair) solid var(--ink);
-  position:relative;flex:none;justify-self:end;
+  grid-column:2;grid-row:1;width:18px;height:18px;margin:0;
+  border:var(--hair) solid var(--ink);position:relative;flex:none;justify-self:end;
 }
 .onb-frame .tile.on .box{background:var(--ink)}
 .onb-frame .tile.on .box::after{
@@ -2180,8 +2283,37 @@ html[data-motion="on"] .onb-bar i{transition:none}
 .when{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;color:var(--tech-ink)}
 .grip{width:14px;height:14px;fill:none;stroke:var(--tech-ink);stroke-width:1.4}
 .pt-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);display:inline-block}
+/* The week strip is an SVG (seven drawn cells). The plan's day switcher reuses
+   the same class names for HTML buttons and had no layout rule of its own, so
+   it inherited `repeat(7,1fr)` from the strip and the SVG `fill:` typography —
+   three day cards squeezed into 1/7 of the width each, their titles set in 8 px
+   with no card around them. Scoped to the buttons, it is a card. */
 .day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .cols .day-grid{column-span:none}
+.day-grid.plan-days,
+.day-grid:has(> .day-card){grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:var(--s2)}
+.day-card{
+  display:flex;flex-direction:column;gap:2px;align-items:flex-start;
+  background:var(--surface);border:var(--hair) solid var(--line);
+  border-radius:var(--r-xs);padding:var(--s3);min-height:var(--hit);
+  text-align:start;cursor:pointer;color:var(--ink);
+}
+.day-card:hover{border-color:var(--ink)}
+.day-card.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.day-card.on .d-idx{color:var(--ink)}
+.day-card .d-idx{
+  display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;
+  font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tech-ink);
+}
+.day-card .d-nm{
+  font-family:var(--f-display);font-size:19px;line-height:1.05;
+  text-transform:uppercase;letter-spacing:.01em;color:var(--ink);
+}
+.day-card .d-meta{
+  font-family:var(--f-mono);font-size:8px;letter-spacing:.04em;line-height:1.5;
+  color:var(--tech-ink);white-space:normal;text-align:start;
+}
 .sw{width:10px;height:10px;display:inline-block;border-radius:1px;flex:none}
 .lab-btn{
   background:none;border:var(--hair) solid var(--line);border-radius:var(--r-xs);
@@ -2467,7 +2599,12 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   .tabbar button svg{width:17px;height:17px}
   header{margin-inline-start:200px}
   .hd{max-width:none;padding-inline-start:var(--s6)}
-  .shell{margin-inline-start:200px;max-width:calc(var(--shell-max) + 200px);padding:0 var(--s7) 0 var(--s6)}
+  /* width:auto is the whole fix. .shell is width:100% at every width; with the
+     rail's 200 px inline-start margin that made an over-constrained block,
+     so the browser kept the margin and computed a -200 px inline-end margin.
+     The document then measured 1224 px at a 1024 px viewport and every screen
+     was clipped by 200 px, hidden behind body{overflow-x:hidden}. */
+  .shell{width:auto;margin-inline-start:200px;max-width:calc(var(--shell-max) + 200px);padding:0 var(--s7) 0 var(--s6)}
   .masthead-title{font-size:clamp(48px,5.4vw,84px)}
   body{padding-bottom:var(--s6)}
   .restbar{inset-inline-start:200px;bottom:0}

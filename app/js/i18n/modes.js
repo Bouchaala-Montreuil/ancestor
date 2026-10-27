@@ -6,6 +6,30 @@
 
 const TMODE = {};
 
+/* ---------------------------------------------------- plural-aware cost
+   The verdict's cost line read "1 lifts · 2 sets" on a one-lift day, because
+   the sentence was one template with a number dropped into it. The three
+   parts are translated separately and joined with a middot, so a language
+   can inflect each noun on its own without the app owning a plural engine. */
+const TCOST = {
+en: {'home.costLifts':'{n} lifts','home.costLifts1':'1 lift',
+     'home.costSets':'{s} sets','home.costSets1':'1 set','home.costMins':'~{m} min'},
+fr: {'home.costLifts':'{n} exercices','home.costLifts1':'1 exercice',
+     'home.costSets':'{s} séries','home.costSets1':'1 série','home.costMins':'~{m} min'},
+es: {'home.costLifts':'{n} ejercicios','home.costLifts1':'1 ejercicio',
+     'home.costSets':'{s} series','home.costSets1':'1 serie','home.costMins':'~{m} min'},
+de: {'home.costLifts':'{n} Übungen','home.costLifts1':'1 Übung',
+     'home.costSets':'{s} Sätze','home.costSets1':'1 Satz','home.costMins':'~{m} Min.'},
+it: {'home.costLifts':'{n} esercizi','home.costLifts1':'1 esercizio',
+     'home.costSets':'{s} serie','home.costSets1':'1 serie','home.costMins':'~{m} min'},
+nl: {'home.costLifts':'{n} oefeningen','home.costLifts1':'1 oefening',
+     'home.costSets':'{s} sets','home.costSets1':'1 set','home.costMins':'~{m} min'},
+ar: {'home.costLifts':'{n} تمارين','home.costLifts1':'تمرين واحد',
+     'home.costSets':'{s} مجموعات','home.costSets1':'مجموعة واحدة','home.costMins':'~{m} دقيقة'}
+};
+Object.keys(TCOST).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], TCOST[l]); });
+
+
 /* ------------------------------------------------------------------ EN */
 TMODE.en = {
 'chart.basis':'Basis',
@@ -33,7 +57,7 @@ TMODE.en = {
 'home.sessionCost':'{n} lifts · {s} sets · ~{m} min',
 'home.moreLifts':'and {n} more',
 'home.howToRead':'How to read this',
-'home.heroFirst':'Start where you are','home.heroStop':'Rest today — that is the recommendation','home.heroRest':'Recovery first today','home.heroNext':'{name} is ready','home.heroNoPlan':'No session planned',
+'home.heroFirst':'Start where you are','home.heroStop':'Rest today — that is the recommendation','home.heroRest':'Recovery first today','home.heroNext':'{name} today','home.heroNoPlan':'No session planned',
 'home.startNext':'Start {name}','home.progressTitle':'Recent work','home.weeklySets':'Working sets this week',
 'home.weeklySetsDelta':'{n} sets across {groups} muscle groups','home.noSetsYet':'Nothing logged in the last seven days',
 'home.sparkLabel':'Sets per session','home.sparkUnit':'sets','home.sparkEmpty':'Log two sessions to see a trend',
@@ -209,7 +233,7 @@ TMODE.fr = {
 'home.sessionCost':'{n} exercices · {s} séries · ~{m} min',
 'home.moreLifts':'et {n} de plus',
 'home.howToRead':'Comment lire ceci',
-'home.heroFirst':'Commencez où vous êtes','home.heroStop':'Repos aujourd\'hui — c\'est la recommandation','home.heroRest':'La récupération d\'abord aujourd\'hui','home.heroNext':'{name} est prête','home.heroNoPlan':'Aucune séance prévue',
+'home.heroFirst':'Commencez où vous êtes','home.heroStop':'Repos aujourd\'hui — c\'est la recommandation','home.heroRest':'La récupération d\'abord aujourd\'hui','home.heroNext':'{name} aujourd’hui','home.heroNoPlan':'Aucune séance prévue',
 'home.startNext':'Commencer {name}','home.progressTitle':'Travail récent','home.weeklySets':'Séries cette semaine',
 'home.weeklySetsDelta':'{n} séries sur {groups} groupes musculaires','home.noSetsYet':'Rien d\'enregistré ces sept derniers jours',
 'home.sparkLabel':'Séries par séance','home.sparkUnit':'séries','home.sparkEmpty':'Enregistrez deux séances pour voir une tendance',
@@ -385,7 +409,7 @@ TMODE.es = {
 'home.sessionCost':'{n} ejercicios · {s} series · ~{m} min',
 'home.moreLifts':'y {n} más',
 'home.howToRead':'Cómo leer esto',
-'home.heroFirst':'Empieza donde estás','home.heroStop':'Descansa hoy — esa es la recomendación','home.heroRest':'Hoy primero la recuperación','home.heroNext':'{name} está lista','home.heroNoPlan':'Ninguna sesión planeada',
+'home.heroFirst':'Empieza donde estás','home.heroStop':'Descansa hoy — esa es la recomendación','home.heroRest':'Hoy primero la recuperación','home.heroNext':'{name} hoy','home.heroNoPlan':'Ninguna sesión planeada',
 'home.startNext':'Empezar {name}','home.progressTitle':'Trabajo reciente','home.weeklySets':'Series esta semana',
 'home.weeklySetsDelta':'{n} series en {groups} grupos musculares','home.noSetsYet':'Nada registrado en los últimos siete días',
 'home.sparkLabel':'Series por sesión','home.sparkUnit':'series','home.sparkEmpty':'Registra dos sesiones para ver una tendencia',
@@ -536,7 +560,7 @@ TMODE.de = {
 'home.sessionCost':'{n} Übungen · {s} Sätze · ~{m} Min.',
 'home.moreLifts':'und {n} weitere',
 'home.howToRead':'So zu lesen',
-'home.heroFirst':'Fang dort an, wo du stehst','home.heroStop':'Heute Ruhe — das ist die Empfehlung','home.heroRest':'Heute zuerst Erholung','home.heroNext':'{name} ist bereit','home.heroNoPlan':'Keine Einheit geplant',
+'home.heroFirst':'Fang dort an, wo du stehst','home.heroStop':'Heute Ruhe — das ist die Empfehlung','home.heroRest':'Heute zuerst Erholung','home.heroNext':'{name} heute','home.heroNoPlan':'Keine Einheit geplant',
 'home.startNext':'{name} starten','home.progressTitle':'Letzte Arbeit','home.weeklySets':'Arbeitssätze diese Woche',
 'home.weeklySetsDelta':'{n} Sätze über {groups} Muskelgruppen','home.noSetsYet':'In den letzten sieben Tagen nichts erfasst',
 'home.sparkLabel':'Sätze pro Einheit','home.sparkUnit':'Sätze','home.sparkEmpty':'Erfasse zwei Einheiten, um einen Trend zu sehen',
@@ -687,7 +711,7 @@ TMODE.it = {
 'home.sessionCost':'{n} esercizi · {s} serie · ~{m} min',
 'home.moreLifts':'e altri {n}',
 'home.howToRead':'Come leggerlo',
-'home.heroFirst':'Inizia da dove sei','home.heroStop':'Riposo oggi — è la raccomandazione','home.heroRest':'Oggi prima il recupero','home.heroNext':'{name} è pronta','home.heroNoPlan':'Nessuna sessione prevista',
+'home.heroFirst':'Inizia da dove sei','home.heroStop':'Riposo oggi — è la raccomandazione','home.heroRest':'Oggi prima il recupero','home.heroNext':'{name} oggi','home.heroNoPlan':'Nessuna sessione prevista',
 'home.startNext':'Inizia {name}','home.progressTitle':'Lavoro recente','home.weeklySets':'Serie questa settimana',
 'home.weeklySetsDelta':'{n} serie su {groups} gruppi muscolari','home.noSetsYet':'Nulla registrato negli ultimi sette giorni',
 'home.sparkLabel':'Serie per sessione','home.sparkUnit':'serie','home.sparkEmpty':'Registra due sessioni per vedere un andamento',
@@ -838,7 +862,7 @@ TMODE.nl = {
 'home.sessionCost':'{n} oefeningen · {s} sets · ~{m} min',
 'home.moreLifts':'en nog {n}',
 'home.howToRead':'Hoe dit te lezen',
-'home.heroFirst':'Begin waar je bent','home.heroStop':'Vandaag rust — dat is de aanbeveling','home.heroRest':'Vandaag eerst herstel','home.heroNext':'{name} staat klaar','home.heroNoPlan':'Geen sessie gepland',
+'home.heroFirst':'Begin waar je bent','home.heroStop':'Vandaag rust — dat is de aanbeveling','home.heroRest':'Vandaag eerst herstel','home.heroNext':'{name} vandaag','home.heroNoPlan':'Geen sessie gepland',
 'home.startNext':'Start {name}','home.progressTitle':'Recent werk','home.weeklySets':'Werksets deze week',
 'home.weeklySetsDelta':'{n} sets over {groups} spiergroepen','home.noSetsYet':'Niets vastgelegd in de afgelopen zeven dagen',
 'home.sparkLabel':'Sets per sessie','home.sparkUnit':'sets','home.sparkEmpty':'Leg twee sessies vast om een trend te zien',
@@ -980,7 +1004,7 @@ TMODE.ar = {
 'home.sessionCost':'{n} تمرينًا · {s} مجموعة · ~{m} دقيقة',
 'home.moreLifts':'و{n} أخرى',
 'home.howToRead':'كيف تقرأ هذا',
-'home.heroFirst':'ابدأ من حيث أنت','home.heroStop':'الراحة اليوم — هذه هي التوصية','home.heroRest':'التعافي أولاً اليوم','home.heroNext':'{name} جاهزة','home.heroNoPlan':'لا حصة مخطّطة',
+'home.heroFirst':'ابدأ من حيث أنت','home.heroStop':'الراحة اليوم — هذه هي التوصية','home.heroRest':'التعافي أولاً اليوم','home.heroNext':'{name} اليوم','home.heroNoPlan':'لا حصة مخطّطة',
 'home.startNext':'بدء {name}','home.progressTitle':'العمل الأخير','home.weeklySets':'مجموعات هذا الأسبوع',
 'home.weeklySetsDelta':'{n} مجموعة عبر {groups} مجموعة عضلية','home.noSetsYet':'لا شيء مسجَّل في الأيام السبعة الأخيرة',
 'home.sparkLabel':'مجموعات لكل حصة','home.sparkUnit':'مجموعة','home.sparkEmpty':'سجّل حصتين لرؤية الاتجاه',

@@ -875,8 +875,36 @@ group('9. Reusable component vocabulary');
   chk('buttons declare a loading state', /\.btn\.loading/.test(css));
   chk('inputs declare focus', /input:focus/.test(css));
   chk('tiles declare selected state', /\.tile\.on/.test(css));
+  /* The onboarding tile is a grid row: `<box><span>` are its only children, so
+     one of them has to be placed or the whole answer column auto-flows into the
+     20 px slot and renders on top of the radio. The caption inside it is
+     `display:block` for the same reason — a plain <span> has no line of its own
+     and the title runs into its description. */
+  chk('the onboarding tile places both of its children', /\.onb-frame \.tile > span\{[^}]*grid-column/s.test(css));
+  chk('a tile caption is its own line, not a run-on',
+      /\.onb-frame \.tile > span \.d\{[^}]*display:block/s.test(css) ||
+      /\.onb-frame \.tile \.d\{[^}]*display:block/s.test(css));
   chk('empty, error and success feedback exist',
       /\.empty\{/.test(css) && /\.banner\.alert/.test(css) && /\.banner\.ok/.test(css));
+
+  /* ---- the things a browser pass found that jsdom could not --------------
+     Each of these was a real, rendered defect: a loading overlay that stayed
+     painted over the 3D canvas, ink-on-ink buttons inside the dark HUD, a
+     status word glued to its sentence, and a count glued to a tab label.
+     They are asserted here so the stylesheet cannot quietly lose them. */
+  chk('the hidden attribute outranks a component display rule',
+      /\[hidden\]\{[^}]*display:none!important/.test(css));
+  chk('a quiet button on a dark surface is styled for that surface',
+      /\.live-hud \.btn\.quiet\{[^}]*color:var\(--ivory\)/s.test(css) &&
+      /\.live-hud \.btn\.quiet\{[^}]*min-height:var\(--hit\)/s.test(css));
+  chk('the banner status word has a rule of its own',
+      /\.banner \.ic\{/.test(css) && /\.banner\{display:flex/.test(css));
+  chk('the tab count is separated from the tab label',
+      /\.subnav-cnt\{[^}]*margin-inline-start/s.test(css) &&
+      /\.subnav-cnt::before\{content:"·"/.test(css));
+  chk('the set row is a grid of fields, not a flex row of fragments',
+      /\.setcard \.row\.nowrap\{[^}]*display:grid/s.test(css) &&
+      /\.setcard \.fld\{[^}]*grid-template-columns/s.test(css));
 }
 
 /* ================================================================ */

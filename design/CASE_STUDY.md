@@ -2,7 +2,9 @@
 
 **A training record for one body, drawn as a clinical dossier.**
 Free, offline-first, no account, seven languages, one accent colour.
-Built and verified in an environment with no browser and no network.
+Built and verified in an environment with no network; the visual pass ran
+late, in a headless Chromium installed from an offline-capable registry
+(see §6 and `app/DESIGN.md` §3.13).
 
 ---
 
@@ -236,8 +238,19 @@ process changed.
 
 ## 6. Verification without a browser
 
-There is no browser and no network in this environment. That is a hard limit, not
-a preference, so the verification had to be invented:
+**Corrected.** This section was written when the environment had neither a
+browser nor a network. The network half is still true (no CDN, no analytics, no
+remote font — the app asks for nothing at runtime). The browser half is not: a
+headless Chromium was installed late in the project and the real browser suite
+now runs — WebGL pixels, 96 viewport layouts, service-worker offline reload.
+It immediately found a page-wide layout defect that every structural test had
+passed. The text below is kept as written, because it is the honest account of
+what was verified *before* that, and the correction above it is the honest
+account of what it cost.
+
+There was no browser and no network in this environment when this section was
+written. That was a hard limit, not a preference, so the verification had to be
+invented:
 
 - **Ten test suites, 1,068 checks.** `design` executes the chart scale as a
   function rather than describing it; `ui`, `run`, `premium`, `inclusive`,

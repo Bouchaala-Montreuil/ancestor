@@ -66,7 +66,7 @@ const TAR = {
 'progress.sessions':'الحصص','progress.pr':'الأرقام الشخصية','progress.sets':'مجموعات','progress.reps':'تكرارات',
 'progress.load':'الحمل','progress.date':'التاريخ','progress.table':'سجل الحصص','progress.compare':'مقارنة',
 'progress.sample':'مثال توضيحي','progress.sampleNote':'بيانات خيالية للشرح فقط. ليست بياناتك.',
-'progress.start':'سجّل أول حصة','progress.best':'الأفضل',
+'progress.start':'سجّل أول حصة','progress.best':'الأفضل','progress.prDef':'محققة في هذه الفترة',
 'progress.nodata':'لا توجد حصة مسجّلة','progress.nodataBody':'ستظهر اتجاهاتك وأحجامك وأرقامك هنا بعد تسجيل أول حصة.',
 
 'chart.unit':'الوحدة','chart.pr':'رقم شخصي','chart.load':'الحمل','chart.e1rm':'تقدير 1RM',

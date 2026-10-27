@@ -45,6 +45,17 @@ const STATE_WHY = {
 /* Load volume for a whole session, summed over the exercises that HAVE a load
    volume. Returns null when none of them do, so the interface can say "not
    applicable" instead of printing 0 kg. */
+/* The cost of the session, in a language's own plurals. Each noun is its own
+   key and the parts are joined, so "1 lift · 2 sets" and "1 lift · 1 set" are
+   both right without the app owning a plural engine. */
+function sessionCostLine(n, s, m){
+  return [
+    n === 1 ? t('home.costLifts1') : t('home.costLifts', { n: n }),
+    s === 1 ? t('home.costSets1') : t('home.costSets', { s: s }),
+    t('home.costMins', { m: m })
+  ].join(' · ');
+}
+
 function sessionTotalVolume(sess, state){
   let total = null, any = false;
   (sess.exercises||[]).forEach(e => {
@@ -157,13 +168,16 @@ Screens.home = function(){
   h += '<div class="dec-state">' + esc(t('decision.' + shown)) + '</div>';
   h += '</div>';
   h += readinessMeter(ids.length ? d.ratio : null, null, {showDef:false});
+  h += '</div>';
   /* The caveat that makes the number honest: an estimate of elapsed time, not a
      measurement of tissue. It stays on the screen, one tap down, instead of
-     sitting under the meter on every visit. */
-  h += '<details class="dis inline readiness-def"><summary><span class="dis-t">' +
+     sitting under the meter on every visit — and it is its own line *under* the
+     verdict row, because as a third child of that row its summary competed with
+     the verdict word for the same 300 px and the two printed on top of each
+     other at 390 px. */
+  h += '<details class="dis inline readiness-def mt-2"><summary><span class="dis-t">' +
        esc(t('readiness.title')) + '</span></summary>' +
        '<p class="body-sm mt-2 mb-0">' + esc(t('readiness.definition')) + '</p></details>';
-  h += '</div>';
 
   if(d.reasons.length){
     h += '<div class="factors">';
@@ -186,7 +200,7 @@ Screens.home = function(){
        again, not the decision. */
     h += '<div class="next-blueprint"><div class="next-blueprint-hd">' +
          '<span class="eyebrow">' + esc(t('home.nextSession')) + ': <b>' + esc(next.session.name) + '</b></span>' +
-         '<span class="hint">' + esc(t('home.sessionCost', { n: lifts.length, s: sets, m: mins })) + '</span></div>' +
+         '<span class="hint">' + esc(sessionCostLine(lifts.length, sets, mins)) + '</span></div>' +
          '<div class="next-ex-pills">' +
          lifts.slice(0, 2).map(e =>
            '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + e.sets + '×' + esc(targetRangeText(EX_BY_ID[e.id])) + '</span>'
@@ -560,7 +574,8 @@ function contextualInsight(state, now, decision){
       const hist = exerciseHistory(id);
       if(hist.length < 2) return false;
       const lastRow = hist[hist.length-1];
-      return lastRow.date >= now - 21*86400000 && recordKind(state, id, lastRow.sets) === 'pr';
+      return lastRow.date >= now - 21*86400000 &&
+        recordKind(state, id, lastRow.sets, { excludeRow: lastRow }) === 'pr';
     });
     if(!anyRecord){
       return { basisKey:'sci.algorithm', text: t('home.insightFlat'),
@@ -1312,7 +1327,7 @@ Screens.progress = function(){
   const inPeriod = s.sessions.filter(x => x.date >= from);
   const vol = volumeByMuscle(s, from);
   const totalVol = Object.keys(vol).reduce((a,k)=>a+vol[k],0);
-  const prCount = inPeriod.length ? countPRs(s) : 0;
+  const prCount = inPeriod.length ? countPRs(s, from) : 0;
   h += '<div class="sect"><h3 class="sub">' + esc(t('progress.overview')) + '</h3><span class="rule"></span>' +
        '<span class="aside">' + esc(periodLabel) + '</span></div>';
   h += metricsBlock([
@@ -1320,7 +1335,7 @@ Screens.progress = function(){
     { k:t('progress.volume'), v: totalVol === null ? '—' : Math.round(totalVol/1000), u:'k',
       d: esc(totalVol === null ? t('log.notApplicable') : t('progress.volumeDef')), numKey:'prog.vol' },
     { k:t('body.trend'), v: t('trend.' + overallTrend(s, 21, now)) },
-    { k:t('progress.pr'), v: prCount, d: esc(t('progress.best')), numKey:'prog.pr' }
+    { k:t('progress.pr'), v: prCount, d: esc(t('progress.prDef')), numKey:'prog.pr' }
   ]);
 
   if(!s.sessions.length){
@@ -1522,13 +1537,25 @@ function bodyweightTrendPanel(s){
 
 /* How many exercises hit a genuine personal record in their most recent
    outing. A first-ever exposure is a baseline and is not counted. */
-function countPRs(s){
-  const ids = [];
-  s.sessions.forEach(x => (x.exercises||[]).forEach(e => { if(ids.indexOf(e.id)<0) ids.push(e.id); }));
-  return ids.filter(id => {
-    const h = exerciseHistory(id);
-    return h.length >= 2 && recordKind(s, id, h[h.length-1].sets) === 'pr';
-  }).length;
+/* Records set in a period — not "exercises whose newest row happens to be one".
+   The metric sits in a block headed by the period, so it has to answer about
+   the period: every logged row inside it is compared with everything strictly
+   before it. A row that ties the previous best is not a record, and a first
+   exposure is a baseline, which is why the count is honest on both ends. */
+function countPRs(s, from){
+  const cutoff = from || 0;
+  let n = 0;
+  (s.sessions || []).forEach(sess => {
+    if(sess.date < cutoff) return;
+    (sess.exercises || []).forEach(e => {
+      /* exerciseHistory() is the only place that decides what counts as a
+         completed set, so the row is looked up there rather than re-derived. */
+      const row = exerciseHistory(e.id).filter(h => h.sessionId === sess.id)[0];
+      if(!row) return;
+      if(recordKind(s, e.id, row.sets, { excludeRow: row }) === 'pr') n++;
+    });
+  });
+  return n;
 }
 
 /* A clearly-labelled fictional example, shown only when there is no real data. */

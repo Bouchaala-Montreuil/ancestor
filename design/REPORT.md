@@ -12,15 +12,17 @@ that could not be re-run, and §6 states exactly what could not be inspected.
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
-node tools/keyscan.js          # 1,650 keys × 7 languages, 0 leaks
+node tests/browser.js          # 28 real Chromium: WebGL, 96 layouts, SW offline
+node tools/keyscan.js          # 1,656 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,248 checks over ten headless suites**, all green —
-design 196, premium 213, ui 217, run 142, inclusive 65, personas 66, science 124,
-logic 117, anatomy 64, print 44.
+Current: **1,268 checks over ten headless suites**, all green —
+design 203, premium 213, ui 225, run 142, inclusive 65, personas 66, science 124,
+logic 122, anatomy 64, print 44 — plus **28 real-browser checks** in
+`tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---
 
@@ -71,6 +73,14 @@ three exercises, bodyweight recorded), English, default viewport.
 - In the running code, not only the design: a save could delete a record it
   failed to parse; a failure strip reported errors and did nothing; several
   marks were below the 44 px target; some uncaught errors were swallowed.
+
+**Eleven more were found only when a browser was finally run** — clipped screens
+hidden by `overflow-x:hidden`, a loading overlay that never hid, ink-on-ink
+buttons in the dark session HUD, an unreadable active tab, three day cards
+compressed into slivers, onboarding answers printed over their own radio, and
+"1 lifts · 2 sets". They are listed with their causes in §8 and in
+`app/DESIGN.md` §3.13, and they are the reason §6 was rewritten: the structural
+audit was thorough and still passed a page nobody could read.
 
 Two "findings" were artefacts of the audit tool itself and are recorded because
 they shaped the method: an input's own attributes say nothing about its
@@ -264,54 +274,59 @@ state change. Hover is never the only path to anything.
 
 ## 6. Viewports and screens actually inspected
 
-**No pixel of this application was visually inspected.** There is no browser and
-no GPU in this environment: no screenshots, no rendered layout, no devtools
-inspection, no WebGL. Concretely:
+**This section was rewritten.** It used to open with "no pixel of this
+application was visually inspected". That was true when it was written and it
+stopped being true in this pass: a headless Chromium was installed inside this
+environment (the `@sparticuz/chromium@148` binary, unpacked from an npm tarball
+that the sandbox's registry allowlist already covered, launched through
+`puppeteer-core`), and `tests/browser.js` — a 28-check suite that had never been
+run against this build — was executed.
 
-- **320 / 375 / 390 / 768 / 1024 / 1440 were not visually verified.** The layout
-  is mobile-first with breakpoints at 400, 560, 720, 1024 and 1280 px, and
-  `tests/design.js` asserts the structural facts it can assert statically (the
-  tab bar becomes a 200 px side rail at 1024, the media queries exist, the
-  400 px wordmark rule is present). That is a source-code assertion, not an
-  observation of how anything looks.
-- **jsdom has no layout engine.** `getComputedStyle` in the test environment
-  returns declared values without a used-value layout, so paddings, wrapping,
-  overflow and long translated strings (German compounds, Arabic shaping) are
-  unverified at every width.
-- **The 3D anatomy path was never executed.** The flat figure was the only
-  anatomy surface exercised; the WebGL route cannot run without a GPU.
-- **No interaction was performed by hand.** Every interaction in §5 was driven
-  through the DOM in jsdom, which proves wiring and state, not feel, latency or
-  thumb reach.
+**What was actually seen**
 
-What *was* done instead, and what the numbers in this document actually mean:
+| what | how | result |
+|---|---|---|
+| real WebGL 2.0 rendering of the anatomy atlas | SwiftShader, framebuffer sampled | 218 meshes, real non-empty pixels, front and back genuinely different, burnt-orange highlight on selection, raycast picking on the canvas |
+| layout and horizontal overflow | Chromium at 320, 375, 390, 768, 1024, 1440 px, 8 views, LTR **and** RTL = 96 layouts | 96/96 clean **after** a fix; 5 clean failures before it |
+| service worker + genuine offline reload | cache populated, network severed, page reloaded | app boots offline with all 218 muscles |
+| the shipped single-file bundle | `dist/ancestor.html`, gzip-b64 decompressed in-page, network severed | renders offline, zero console errors |
+| accessibility tree | CDP `Accessibility` domain in real Chromium | every interactive control and dialog has a non-empty name |
+| the screens themselves | full-page and clipped screenshots at 320, 390, 768, 1024, 1280, 1440 px, English and Arabic | eleven visual defects, listed in §8 and in `app/DESIGN.md` §3.13 |
 
-- a DOM census of every screen and sub-screen (Today, session plan, active
-  session, Body, atlas, exercise sheet, Progress, Science, Science lesson,
-  Profile, eight onboarding steps) counting visible text, controls in the DOM,
-  controls reachable without opening a disclosure, disclosures and their
-  open state, and heading sequence;
-- contrast computed from the token hex values against the surfaces they are
-  actually painted on (§7);
-- tab-order and focus-region counts taken from the same DOM;
-- static stylesheet assertions for the things a stylesheet can be asked about;
-- falsification: every new assertion was broken on purpose to watch it fail, and
-  two numbers that did not survive re-measurement were corrected rather than
-  kept (see below).
+**What the screenshots changed.** Nine of the eleven defects found visually were
+invisible to every check that existed: clipped layouts hidden by
+`overflow-x:hidden`, a loading overlay that never hid, a hidden error box eating
+the canvas's clicks, ink-on-ink buttons inside the dark session HUD, a status
+word glued to its sentence, a count glued to a tab label, an unreadable active
+tab, three day cards compressed into slivers of 8 px type, the verdict word
+printing under the readiness figure, onboarding answers painted on top of their
+own radio, and "1 lifts · 2 sets". All of them are fixed and five are now
+guarded by static assertions.
+
+**What is still not inspected, and why**
+
+- **Real devices.** Everything above is headless Chromium at a fixed viewport
+  and 1× (occasionally 2×) device pixel ratio — no `env(safe-area-inset-*)`
+  notch, no iOS Safari address-bar collapse, no Firefox, no Android WebView.
+- **Thumb reach and one-handed use at 390 px.** A screenshot shows that a target
+  is 44 px; it cannot show that a tired person's thumb lands on it.
+- **Motion.** Screenshots are stills. Transitions, the reduced-motion media
+  query and the sliding tab indicator were reasoned about and are structurally
+  asserted, not watched.
+- **Long-language stress.** German compounds and Arabic shaping were rendered and
+  checked for overflow, but only in the strings the app ships — a user's own
+  units or a longer name are still untested.
+- **The JS-disabled path.** `<details>` is native and the app degrades per
+  component, but no run has been done with scripting off.
+- **The self-checked numbers in §1–3 are still structural.** Word counts and
+  control counts are DOM counts. The browser pass tells us the pages look right;
+  it does not tell us anybody understood them.
 
 **A measurement error, corrected.** The active session was earlier reported at
 205 visible words. That figure came from a walker that did not skip `<svg>`
 subtrees: jsdom exposes those element names lower-case, the filter compared
 upper-case, and the accessible `<title>` of every muscle region and thumbnail was
-counted as prose. The true figure at that commit is **153**. `app/DESIGN.md`
-§3.8 and §7 now say 153, and the correction is written into the record. Any older
-probe number computed with that walker should be treated as suspect.
-
-**What a browser pass would need to look at first:** the 320 px Today card (cost
-line + two lifts + *+4 more* in one column), the exercise block at 390 px with
-the keyboard covering the rep field, the atlas row height and its 72 px density,
-the sheet hand-off at 768 px, the 1024 px rail switch, and 1440 px whitespace in
-the two-column bento.
+counted as prose. The true figure at that commit is **153**.
 
 ---
 
@@ -359,6 +374,15 @@ specified for marks, and both have a text-safe sibling in the token set. They
 remain on the list in §9 because a token that fails AA will eventually be used as
 text by someone.
 
+**Two defects the browser found that no contrast table could.** The session HUD's
+quiet buttons were ink on charcoal (2.6:1 — the button text and the surface were
+both `--ink`), and the Science tab bar's active tab was ink on charcoal for the
+same reason, because the tab carries `.chip` as well as `.subnav-btn`. Both were
+invisible to a token audit: the ink pair is fine on paper, and these two
+surfaces put it on the one surface it must never meet. The HUD's buttons are
+now ivory on charcoal with the full 44 px target, and a `.chip.on` inside a
+`.subnav` no longer takes the chip fill.
+
 **Still open:** heading levels jump (`h1 → h3`) on Body, Progress and the session
 plan — measured at the end of this pass as `h1,h3` (Body), `h1,h3×6` (Progress),
 `h1,h3` (session plan); Science is now `h1,h2`. The panels share one `h3`
@@ -368,9 +392,15 @@ component and were left alone rather than half-converted.
 
 ## 8. Incomplete features and limitations
 
-- **Nothing was seen.** No visual inspection, no viewport rendering, no WebGL —
-  stated in full in §6. This is the first line of the report because it is the
-  first thing a reviewer should weigh.
+- **Real devices were not seen.** Headless Chromium at fixed viewports is not an
+  iPhone: no notch insets, no collapsing address bar, no iOS Safari, no Firefox.
+  Thumb reach, motion and long-language stress are still argued rather than
+  observed. §6 lists what was seen and what was not, precisely.
+- **A browser pass is now possible in this environment, and that changes the
+  standing of every earlier claim.** The pass was not available when the first
+  version of this report was written; it is available now, and it found eleven
+  rendered defects that the structural suites had passed. Anything in §1–3 that
+  is stated as a count is still a DOM count, not a measurement of the page.
 - **The rest timer cannot reach a sleeping phone.** It is computed from an
   absolute end time, so it is correct the moment the tab resumes, but nothing
   fires while the screen is off. There is no OS notification. "Survives a locked
@@ -419,9 +449,12 @@ component and were left alone rather than half-converted.
    argument; ten minutes of observation would replace most of it.
 8. **Measure discoverability of the folded settings** — instrument or test
    whether anyone finds units, shift pattern and export after the fold.
-9. **A browser pass at 320, 390, 768 and 1440 px** — the one item this
-   environment could not do, and the one that decides whether the rest of the
-   layout work holds.
+9. ~~**A browser pass at 320, 390, 768 and 1440 px.**~~ **Done** — and it was
+   worth more than any other item on this list, which is why it was moved to the
+   top of the evidence rather than the bottom of the plan. What replaces it:
+   **check the remaining screens the browser pass did not visit** — the exercise
+   sheet at 390 px with the keyboard up, the plan editor, the print sheet, and
+   the eight onboarding steps at 320 px.
 
 Ranked by user impact, then by cost: 1 and 2 are small changes with daily
 consequences; 3, 4 and 5 are audits and mechanical fixes; 6 and 8 are cheap
