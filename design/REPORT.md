@@ -25,8 +25,8 @@ python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,268 checks over ten headless suites**, all green —
-design 203, premium 213, ui 225, run 142, inclusive 65, personas 66, science 124,
+Current: **1,272 checks over ten headless suites**, all green —
+design 207, premium 213, ui 225, run 142, inclusive 65, personas 66, science 124,
 logic 122, anatomy 64, print 44 — plus **28 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
@@ -455,12 +455,17 @@ component and were left alone rather than half-converted.
    argument; ten minutes of observation would replace most of it.
 8. **Measure discoverability of the folded settings** — instrument or test
    whether anyone finds units, shift pattern and export after the fold.
-9. ~~**A browser pass at 320, 390, 768 and 1440 px.**~~ **Done** — and it was
-   worth more than any other item on this list, which is why it was moved to the
-   top of the evidence rather than the bottom of the plan. What replaces it:
-   **check the remaining screens the browser pass did not visit** — the exercise
-   sheet at 390 px with the keyboard up, the plan editor, the print sheet, and
-   the eight onboarding steps at 320 px.
+9. ~~**A browser pass at 320, 390, 768 and 1440 px.**~~ **Done**, twice — and it
+   was worth more than any other item on this list, which is why it now lives in
+   the evidence rather than the plan. The second pass went where the first had
+   not: an exercise sheet, the plan editor, a lesson, the settings fold, the
+   progress drill-down, the print card, onboarding at 320 px, and the rest
+   timer. It found the exercise sheet rendering as an A4 poster on a phone with
+   no visible way out (`DESIGN.md` §3.14) — a surface this list had described
+   only as "unaudited". Everything else held.
+10. **The keyboard.** No pass has yet photographed a numeric field with the
+   on-screen keyboard up, which at 390 px is half the viewport. It is the most
+   likely place for the next real defect to be hiding.
 
 Ranked by user impact, then by cost: 1 and 2 are small changes with daily
 consequences; 3, 4 and 5 are audits and mechanical fixes; 6 and 8 are cheap

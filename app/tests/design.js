@@ -902,6 +902,19 @@ group('9. Reusable component vocabulary');
   chk('the tab count is separated from the tab label',
       /\.subnav-cnt\{[^}]*margin-inline-start/s.test(css) &&
       /\.subnav-cnt::before\{content:"·"/.test(css));
+  /* Paper is paper: the print document's A4 geometry must not leak into the
+     modal overlay that shares its class name. A bare `.sheet{width:210mm}` is
+     what turned every bottom sheet into a poster. */
+  chk('the print sheet geometry is scoped to the print root',
+      /#printRoot \.sheet\{/.test(css) && !/\n\.sheet\{[^}]*210mm/s.test(css));
+  chk('the sheet is anchored to the bottom, not the top',
+      /\.sheet\{[^}]*top:auto/s.test(css) && /\.sheet\{[^}]*bottom:0/s.test(css));
+  chk('the sheet carries its own way out, in the title row',
+      /\.sheet-hd\{/.test(css) && /\.sheet-x\{/.test(css));
+  chk('the exercise figures sit side by side, not stacked',
+      /\.ex-vis-figs\{display:grid;grid-template-columns:1fr 1fr/.test(css) &&
+      /\.ex-vis-figs svg\{[^}]*max-height/s.test(css));
+
   chk('the set row is a grid of fields, not a flex row of fragments',
       /\.setcard \.row\.nowrap\{[^}]*display:grid/s.test(css) &&
       /\.setcard \.fld\{[^}]*grid-template-columns/s.test(css));

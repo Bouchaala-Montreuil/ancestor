@@ -412,6 +412,37 @@ so the rep range (`6–10`) landed inside the RIR label and the RIR unit printed
 a second "RIR" after a field already labelled RIR. It is a grid now — caption
 above, number in the middle, unit after it, one baseline across the three.
 
+### 3.14 The second browser pass: the screens the first one did not visit
+
+The first pass photographed Today, Session, Body, Progress, Science and the
+atlas. It never opened a sheet, the plan editor, a lesson or the print card.
+The second pass did, and the exercise sheet — the surface §9 had just named as
+*the one that has never been audited alone* — was being rendered as an A4
+poster on a phone.
+
+| what a screenshot showed | the cause |
+|---|---|
+| the exercise sheet twice the width of the screen, its content 4 900 px down, only its heading visible | the print document's own rule was a bare `.sheet{width:210mm;min-height:297mm;…}`, and the modal overlay is also called `.sheet`. Every bottom sheet in the app was wearing A4 paper. |
+| the sheet hung from the top with a gap at the bottom, the atlas visible through it | the overlay is its own backdrop (`class="sheet sheet-backdrop"`), and `.sheet-backdrop{inset:0}` pins `top:0`; `max-height:88vh` then left 12% of the screen showing the list behind |
+| the sheet opened on two full-body anatomy figures, ~760 px tall each, and put the exercise's record 1 600 px below them | `.ex-vis-figs` had no rule of its own: two stacked full-width figures |
+| there was no way out except by scrolling 1 845 px to a Close button at the bottom | the only Close was the last child of the panel; tap-outside and Escape worked and nothing said so |
+
+Four fixes, all in the stylesheet except the last, which is markup: the print
+geometry is scoped to `#printRoot .sheet`; the overlay sets `top:auto`; the two
+figures are a capped pair side by side; and the sheet's title row is sticky and
+carries the Close control — one Close, not two, so a screen reader is not given
+the same name twice.
+
+**Everything else in that pass held.** The plan editor, the settings accordion,
+a science lesson, the progress drill-down and the print card all rendered
+correctly at 390 px, and the live session's set row now reads as three captioned
+fields with one baseline:
+
+```
+LOAD        REPS        RIR
+62   kg     9   6–10   —   optional
+```
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was
@@ -551,6 +582,8 @@ and `tools/qa_audit.js` (1 accepted Medium: the
    notification, or an honest "keep this tab open" note.
 2. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
-3. **The exercise sheet** — now the atlas's only action surface; it has never been
-   audited on its own.
+3. ~~**The exercise sheet** — the atlas's only action surface, never audited on
+   its own.~~ **Done** (§3.14): it was rendering as an A4 poster on a phone, with
+   two stacked anatomy figures and no visible way out. It is now a bottom sheet
+   with a sticky title row, a paired figure block and a Close control in reach.
 4. **The plan screen** — the only surface never audited in this phase.

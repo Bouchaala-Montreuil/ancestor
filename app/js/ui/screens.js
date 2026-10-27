@@ -2045,11 +2045,18 @@ function sheet(title, bodyHtml){
   const host = $('#sheetHost');
   LAST_FOCUS = document.activeElement;
   /* Backdrop fades, panel rises: one coordinated movement, not two. */
+  /* The only visible way out used to be a Close button at the very bottom of
+     the sheet — 1 845 px down the scroll on a 390 px phone, below the whole
+     exercise record. Tap-outside and Escape both worked; nothing said so. The
+     title row is sticky and carries the way out, at the top, in reach of a
+     thumb. One Close, not two: a second control with the same name is noise for
+     a screen reader. */
   host.innerHTML = '<div class="sheet sheet-backdrop" onclick="if(event.target===this)closeSheet()">' +
     '<div class="panel sheet-panel" role="dialog" aria-modal="true" aria-label="' + esc(title) + '" tabindex="-1">' +
-    '<div class="grip"></div><h2>' + esc(title) + '</h2>' + bodyHtml +
-    '<div class="sp-4"></div><button class="btn quiet block" onclick="closeSheet()">' +
-    esc(t('btn.close')) + '</button></div></div>';
+    '<div class="sheet-hd"><h2>' + esc(title) + '</h2>' +
+    '<button type="button" class="btn quiet sm sheet-x" onclick="closeSheet()">' +
+    esc(t('btn.close')) + '</button></div>' + bodyHtml +
+    '</div></div>';
   const panel = host.querySelector('.panel');
   if(panel){
     panel.addEventListener('keydown', sheetKeyHandler);

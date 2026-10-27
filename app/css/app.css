@@ -1169,13 +1169,29 @@ button.flag:hover{border-color:var(--ink)}
   animation:fade-in var(--t) var(--ease) both;
 }
 .sheet{
-  position:fixed;inset-inline:0;bottom:0;z-index:7100;
+  /* `top:auto` matters: this element is also its own backdrop
+     (`class="sheet sheet-backdrop"`), and .sheet-backdrop sets inset:0, which
+     pins top to 0. With max-height:88vh the sheet then hung from the top of the
+     screen and left a 12% gap at the bottom, through which the list behind it
+     showed. It is anchored to the bottom edge, as a sheet is. */
+  position:fixed;inset-inline:0;top:auto;bottom:0;z-index:7100;
   background:var(--paper);border-top:2px solid var(--ink);
   max-height:88vh;overflow:auto;padding:var(--s5) var(--s5) calc(var(--s5) + var(--safe-b));
   animation:sheet-up var(--t-slow) var(--ease-in-out) both;
   box-shadow:var(--shadow-3);
 }
 .sheet-panel{position:sticky;top:0}
+/* The title row is the sheet's handle: it stays at the top of the scroll so the
+   way out is always one tap away, and it carries the same paper the sheet does
+   so content scrolling under it disappears cleanly. */
+.sheet-hd{
+  position:sticky;top:calc(-1 * var(--s5));z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  background:var(--paper);border-bottom:var(--hair) solid var(--line);
+  padding:var(--s2) 0;margin-bottom:var(--s3);
+}
+.sheet-hd h2{margin:0;min-width:0}
+.sheet-hd .sheet-x{flex:none;min-height:var(--hit)}
 @keyframes sheet-up{from{transform:translate3d(0,100%,0)}to{transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 .sheet h2,.sheet h3{margin-bottom:var(--s3)}
@@ -1390,7 +1406,14 @@ table.data tbody tr:last-child td{border-bottom:0}
 .ex-thumb svg{width:100%;height:100%}
 .ex-vis{display:grid;grid-template-columns:1fr;gap:var(--s3);margin:var(--s3) 0}
 .ex-vis-figs,.ex-vis-kin{background:var(--surface);border:var(--hair) solid var(--line);padding:var(--s2)}
-.ex-vis-figs svg,.ex-vis-kin svg{display:block;width:100%;height:auto}
+/* Front and back are a pair, not a column. As two stacked full-width figures
+   they were ~760 px tall each on a 390 px phone, so the exercise sheet opened
+   on two posters of a body and put its own record 1 600 px down. Side by side,
+   capped, with the caption under each. */
+.ex-vis-figs{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2);align-items:end}
+.ex-vis-figs > div{min-width:0;text-align:center}
+.ex-vis-figs svg{display:block;width:auto;max-width:100%;height:auto;max-height:230px;margin-inline:auto}
+.ex-vis-kin svg{display:block;width:100%;height:auto}
 .ex-note-wrap{margin-top:var(--s3)}
 /* Muscle contribution, one 3px bar. The three <i> carried width percentages
    and nothing else: no height, no paint, so the data visual rendered as three
@@ -1886,7 +1909,15 @@ table.data tbody tr:last-child td{border-bottom:0}
    stays hidden so it can never leak into the layout. */
 #printRoot{display:none}
 
-.sheet{
+
+/* Scoped, deliberately. This rule used to be a bare `.sheet{…}`, and the modal
+   overlay is also called `.sheet` — so every bottom sheet in the app inherited
+   A4 geometry: 210 mm wide on a 390 px phone, 297 mm tall, 8 pt type, a white
+   page background and a flex column. The exercise sheet rendered as a poster
+   twice the screen wide with its content 4 900 px down the page, and
+   body{overflow-x:hidden} hid the evidence. Paper is paper: the print document
+   only ever exists inside #printRoot. */
+#printRoot .sheet{
   --pa-ink:#000;
   --pa-line:#B9B3A6;
   --pa-line-soft:#E3DFD5;

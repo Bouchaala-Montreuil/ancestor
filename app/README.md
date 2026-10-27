@@ -172,7 +172,7 @@ python3 build.py                   # rebuild dist/ancestor.html
 npm test                           # the ten headless suites, in order
 npm run test:browser               # the one that needs a real Chrome
 
-node tests/design.js               # 203 design system, states, targets, disclosures
+node tests/design.js               # 207 design system, states, targets, disclosures
 node tests/premium.js              # 213 motion, dashboard, charts, states, boundaries
 node tests/ui.js                   # 225 end-to-end DOM tests
 node tests/run.js                  # 142 engine / i18n tests
@@ -286,7 +286,7 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 ## Tests
 
 ```
-node tests/design.js   →  203 passed   palette, contrast on washes, states, 44px targets, disclosures
+node tests/design.js   →  207 passed   palette, contrast on washes, states, 44px targets, disclosures
 node tests/premium.js  →  213 passed   motion, dashboard, charts, the state matrix, boundaries
 node tests/ui.js       →  225 passed   onboarding, logging, anatomy, charts, restart, disclosure
 node tests/run.js      →  142 passed   progression, recovery, shifts, persistence, honesty, i18n
