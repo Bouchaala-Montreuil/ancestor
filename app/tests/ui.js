@@ -443,6 +443,36 @@ group('13. Language switching in the live UI');
 }
 
 /* ================================================================ */
+group('14. The failure state');
+{
+  const dom5 = await boot();
+  const w5 = dom5.window, d5 = dom5.window.document;
+
+  const host = d5.createElement('div');
+  host.innerHTML = w5.failureState(new Error('synthetic failure'));
+  d5.querySelector('#screenBody').appendChild(host);
+
+  chk('a throwing screen has a designed place to land', !!d5.querySelector('.fail'));
+  chk('it says the log is intact', /untouched|intact/i.test(d5.querySelector('.fail').textContent));
+  chk('it offers a way out', d5.querySelectorAll('.fail .act button').length >= 2);
+  chk('the stack is available but not shouted',
+      !!d5.querySelector('.fail-more') && !d5.querySelector('.fail-more[open]'));
+  chk('it is marked with the broken tally, not a stock warning icon',
+      d5.querySelectorAll('.fail .mk svg rect').length === 5);
+
+  /* The guard itself: the render must not call a screen unprotected. */
+  const appSrc = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  chk('the screen render is wrapped, so one bad view cannot take the app down',
+      /try \{\s*out = onboarding \? Screens\.onb\(\)/.test(appSrc) &&
+      /catch \(err\)[\s\S]{0,200}failureState/.test(appSrc));
+
+  /* Every empty state carries the same mark — the blank tally form. */
+  const compSrc = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  chk('empty and failed states are marked by the app, not by an icon set',
+      !/EMPTY_ICON/.test(compSrc) && /TALLY_BLANK/.test(compSrc) && /TALLY_BROKEN/.test(compSrc));
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

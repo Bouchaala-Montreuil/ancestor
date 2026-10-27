@@ -889,11 +889,37 @@ button.flag:hover{border-color:var(--ink)}
   text-align:start;padding:var(--s5) 0;border-top:var(--hair) solid var(--line);
   border-bottom:var(--hair) solid var(--line);
 }
-.empty .ic{
-  width:22px;height:22px;margin-bottom:var(--s3);color:var(--tech-ink);
-  display:block;
+/* A screen that failed. Same body as an empty state, with the alert rule on
+   top, because the difference matters and should be visible before it is read. */
+.fail{
+  padding:var(--s5) 0 var(--s4);margin:var(--s5) 0;
+  border-top:3px solid var(--alert);
 }
-.empty .ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.4}
+.fail .mk{width:22px;height:22px;margin-bottom:var(--s3);color:var(--alert);display:block}
+.fail .mk svg{width:100%;height:100%;display:block}
+.fail h3{
+  font-family:var(--f-display);font-size:24px;line-height:1.05;text-transform:uppercase;
+  letter-spacing:.03em;margin:0 0 var(--s2);color:var(--ink);
+}
+.fail p{font-size:var(--fs-sm);color:var(--ink-2);max-width:52ch;margin:0 0 var(--s4)}
+.fail .act{display:flex;gap:var(--s2);flex-wrap:wrap}
+.fail-more{margin-top:var(--s4);border-top:var(--hair) solid var(--line-soft);padding-top:var(--s2)}
+.fail-more summary{
+  cursor:pointer;list-style:none;font-family:var(--f-mono);font-size:9px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--tech-ink);min-height:32px;
+}
+.fail-more summary::-webkit-details-marker{display:none}
+.fail-more pre{
+  margin:var(--s2) 0 0;padding:var(--s3);background:var(--recess);
+  font-family:var(--f-mono);font-size:10px;line-height:1.5;color:var(--ink-2);
+  white-space:pre-wrap;overflow-wrap:anywhere;
+}
+
+/* The blank tally form. Same geometry as the wordmark's mark, uninked. */
+.empty .mk{width:22px;height:22px;margin-bottom:var(--s3);color:var(--ink);display:block}
+.empty .mk svg{width:100%;height:100%;display:block}
+/* It was marked up as an h4 while the stylesheet styled h3, so every empty
+   state in the product was rendering its headline in the default UI font. */
 .empty h3{
   font-family:var(--f-display);font-size:18px;text-transform:uppercase;
   letter-spacing:.04em;margin-bottom:6px;

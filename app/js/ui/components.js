@@ -446,19 +446,53 @@ function timelineStrip(state, now){
 }
 
 /* -------------------------------------------------------- FEEDBACK STATES */
-const EMPTY_ICON = {
-  inbox:'<path d="M3 12h6l2 3h2l2-3h6"/><path d="M5 5h14l2 7v6H3v-6z"/>',
-  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-  body: '<circle cx="12" cy="5" r="2.5"/><path d="M6 21l6-7 6 7"/><path d="M4 10h16"/>',
-  plan: '<rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  off:  '<path d="M3 3l18 18"/><path d="M12 6a6 6 0 0 1 6 6"/><path d="M6 12a6 6 0 0 1 6-6"/>'
-};
+/* The mark for a state with no content in it: a blank tally form. Four
+   strokes, uninked, waiting to be counted. It replaces six stock line icons —
+   an inbox, a chart, a clock, a body, a plan, a crossed-out circle — which said
+   nothing the wordmark had not already said, and which nobody had drawn on
+   this system's logic. */
+const TALLY_BLANK =
+  '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" opacity=".32">' +
+  '<rect x="3.2" y="4.2" width="2.4" height="15.6"/>' +
+  '<rect x="8.267" y="4.2" width="2.4" height="15.6"/>' +
+  '<rect x="13.333" y="4.2" width="2.4" height="15.6"/>' +
+  '<rect x="18.4" y="4.2" width="2.4" height="15.6"/>' +
+  '</g></svg>';
 
+/* The failure state. Four strokes drawn, and the fifth — the one that closes
+   the set — in the alert colour, because that is exactly what happened: the
+   screen could not be completed. */
+const TALLY_BROKEN =
+  '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+  '<g fill="currentColor"><g opacity=".3">' +
+  '<rect x="3.2" y="4.2" width="2.4" height="15.6"/>' +
+  '<rect x="8.267" y="4.2" width="2.4" height="15.6"/>' +
+  '<rect x="13.333" y="4.2" width="2.4" height="15.6"/>' +
+  '<rect x="18.4" y="4.2" width="2.4" height="15.6"/>' +
+  '</g><rect x="2.30" y="10.8" width="19.4" height="2.4" transform="rotate(-16 12 12)"/></g></svg>';
+
+/* A screen that failed is not a crash dialogue. It says what happened, says the
+   log is intact, offers one way out, and puts the stack one tap away. */
+function failureState(err){
+  const detail = err && (err.stack || err.message) ? String(err.stack || err.message) : '';
+  return '<div class="fail">' +
+    '<div class="mk">' + TALLY_BROKEN + '</div>' +
+    '<h3>' + esc(t('app.fail.title')) + '</h3>' +
+    '<p>' + esc(t('app.fail.body')) + '</p>' +
+    '<div class="act">' +
+      '<button class="btn" onclick="render()">' + esc(t('app.fail.retry')) + '</button>' +
+      '<button class="btn quiet" onclick="go(\'home\')">' + esc(t('nav.today')) + '</button>' +
+    '</div>' +
+    (detail ? '<details class="fail-more"><summary>' + esc(t('app.fail.detail')) + '</summary>' +
+      '<pre>' + esc(detail) + '</pre></details>' : '') +
+    '</div>';
+}
+
+/* The third argument used to pick an icon. It is accepted and ignored, so no
+   call site had to change and no call site can pick a different mark again. */
 function emptyState(titleKey, bodyKey, icon, actionHtml){
-  return '<div class="empty"><div class="ic"><svg viewBox="0 0 24 24">' +
-    (EMPTY_ICON[icon || 'inbox']) + '</svg></div>' +
-    '<h4>' + esc(t(titleKey)) + '</h4>' +
+  return '<div class="empty"><div class="mk">' + TALLY_BLANK + '</div>' +
+    '<h3>' + esc(t(titleKey)) + '</h3>' +
     '<p>' + esc(t(bodyKey)) + '</p>' +
     (actionHtml ? '<div class="act">' + actionHtml + '</div>' : '') + '</div>';
 }

@@ -81,8 +81,17 @@ function render(){
   try { applyDisplay(s.profile); } catch(e){}
   try { applyLocale(CURRENT_LANG); } catch(e){}
 
-  const out = onboarding ? Screens.onb()
-            : (Screens[view] ? Screens[view]() : Screens.home());
+  /* A screen that throws used to take the whole render with it, leaving
+     whatever was on the page before — or nothing. It now degrades to a
+     designed failure state that says the log is intact and offers a way out. */
+  let out;
+  try {
+    out = onboarding ? Screens.onb()
+        : (Screens[view] ? Screens[view]() : Screens.home());
+  } catch (err) {
+    if (typeof console !== 'undefined' && console.error) console.error(err);
+    out = { html: (typeof failureState === 'function') ? failureState(err) : '' };
+  }
   // Science lessons hide the tab bar's "active" state is handled by renderNav
 
   const body = $('#screenBody');
