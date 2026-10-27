@@ -180,12 +180,17 @@ function animateRing(circle, fraction){
   const target = circumference * (1 - clamped);
   circle.setAttribute('stroke-dasharray', circumference.toFixed(2));
   if(reducedMotion()){ circle.setAttribute('stroke-dashoffset', target.toFixed(2)); return; }
+  /* The markup already holds the finished arc so the ring is right without
+     JS. Animate from where it really was: the previous value for a keyed ring,
+     or an empty track on first paint — never from the value already printed. */
   const key = circle.getAttribute('data-ring-key') || '';
-  if(key && PREV_RINGS[key] !== undefined){
-    const prevTarget = circumference * (1 - PREV_RINGS[key]);
-    circle.setAttribute('stroke-dashoffset', prevTarget.toFixed(2));
-  }
+  const from = (key && PREV_RINGS[key] !== undefined)
+    ? circumference * (1 - PREV_RINGS[key])
+    : circumference;
   if(key) PREV_RINGS[key] = clamped;
+  circle.style.transition = 'none';
+  circle.setAttribute('stroke-dashoffset', from.toFixed(2));
+  void circle.getBoundingClientRect();
   circle.style.transition = 'stroke-dashoffset ' + MOTION.count + 'ms ' + EASE.out;
   requestAnimationFrame(() => circle.setAttribute('stroke-dashoffset', target.toFixed(2)));
 }

@@ -280,6 +280,29 @@ function niceCeil(v){
   return step*mag;
 }
 
+/* A chart axis must land on numbers a person can read. The old code rounded
+   only the top of the domain and then took min = rawMin * 0.85, which is how a
+   chart of 42..52.5 kg ended up labelled 36, 52, 68, 84, 100. */
+function niceStep(raw){
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const n = raw / mag;
+  const m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+  return m * mag;
+}
+function niceScale(lo, hi, ticks){
+  ticks = ticks || 4;
+  if(!isFinite(lo) || !isFinite(hi)) { lo = 0; hi = 1; }
+  if(hi - lo < 1e-9){ hi = lo + 1; }
+  const step = niceStep((hi - lo) / ticks);
+  const min = Math.floor(lo / step) * step;
+  const max = Math.ceil(hi / step) * step;
+  /* integers only when the data is integers, so 2.5 does not become 2.5000001 */
+  const dp = step < 1 ? 1 : 0;
+  const labels = [];
+  for(let v = min; v <= max + step / 2; v += step) labels.push(Number(v.toFixed(dp)));
+  return { min, max, step, labels, dp };
+}
+
 let CHART_SEQ = 0;
 function showChartTip(id, text){
   const el = document.getElementById(id);
@@ -304,25 +327,28 @@ function lineChart(opts){
   const vals = pts.map(p => p.v);
   const rawMax = Math.max.apply(null, vals);
   const rawMin = Math.min.apply(null, vals);
-  const max = niceCeil(rawMax * 1.08);
-  const min = Math.max(0, rawMin * 0.85);
+  /* Six per cent of headroom, then a scale that lands on round numbers at both
+     ends. An axis is a ruler, not a remainder. */
+  const pad = Math.max((rawMax - rawMin) * 0.08, Math.abs(rawMax) * 0.01 || 1);
+  const sc = niceScale(rawMin - pad, rawMax + pad, 4);
+  const max = sc.max, min = sc.min;
   const x = i => PL + (i/(pts.length-1))*(W-PL-PR);
   const y = v => PT + (1 - (v-min)/Math.max(0.0001,(max-min)))*(H-PT-PB);
 
   let g = '';
-  for(let k=0;k<=4;k++){
-    const v = min + (max-min)*k/4, yy = y(v);
-    g += '<line x1="' + PL + '" y1="' + yy.toFixed(1) + '" x2="' + (W-PR) + '" y2="' + yy.toFixed(1) +
-         '" stroke="var(--recess-2)" stroke-width="1"/>' +
-         '<text x="' + (PL-8) + '" y="' + (yy+3.5).toFixed(1) + '" fill="var(--tech-ink)" ' +
-         'font-size="10" text-anchor="end" font-family="var(--f-mono)">' + Math.round(v) + '</text>';
-  }
+  sc.labels.forEach(v => {
+    const yy = y(v);
+    g += '<line class="dv-grid" x1="' + PL + '" y1="' + yy.toFixed(1) + '" x2="' + (W-PR) +
+         '" y2="' + yy.toFixed(1) + '"/>' +
+         '<text class="dv-ytick" x="' + (PL-8) + '" y="' + (yy+3.5).toFixed(1) + '" ' +
+         'text-anchor="end">' + v + '</text>';
+  });
   // x labels: first, middle, last — anchor edge labels inward so they never clip
   [0, Math.floor((pts.length-1)/2), pts.length-1].filter((v,i,a)=>a.indexOf(v)===i).forEach(i => {
     const anchor = i === 0 ? 'start' : (i === pts.length - 1 ? 'end' : 'middle');
     const dx = i === 0 ? -2 : (i === pts.length - 1 ? 2 : 0);
-    g += '<text x="' + (x(i)+dx).toFixed(1) + '" y="' + (H-12) + '" fill="var(--tech-ink)" font-size="9.5" ' +
-         'text-anchor="' + anchor + '" font-family="var(--f-mono)">' + esc(pts[i].label) + '</text>';
+    g += '<text class="dv-xtick" x="' + (x(i)+dx).toFixed(1) + '" y="' + (H-12) + '" ' +
+         'text-anchor="' + anchor + '">' + esc(pts[i].label) + '</text>';
   });
 
   const d = pts.map((p,i) => (i?'L':'M') + x(i).toFixed(1) + ' ' + y(p.v).toFixed(1)).join(' ');
@@ -335,9 +361,13 @@ function lineChart(opts){
       'onfocus="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
       'onclick="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')">' +
       '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(p.v).toFixed(1) + '" r="11" fill="transparent"/>' +
-      '<circle class="pt-dot" cx="' + x(i).toFixed(1) + '" cy="' + y(p.v).toFixed(1) +
-      '" r="' + (p.best?4.2:3) + '" fill="' + (p.best?'var(--burnt)':'var(--surface)') +
-      '" stroke="var(--burnt)" stroke-width="' + (p.best?2:1.6) + '"/>' +
+      (p.best
+        ? '<circle class="dv-dot best" style="animation-delay:' +
+          Math.round((i/(pts.length-1))*520) + 'ms" cx="' + x(i).toFixed(1) +
+          '" cy="' + y(p.v).toFixed(1) + '" r="5.2"/>'
+        : '<circle class="dv-dot" style="animation-delay:' +
+          Math.round((i/(pts.length-1))*520) + 'ms" cx="' + x(i).toFixed(1) +
+          '" cy="' + y(p.v).toFixed(1) + '" r="2.8"/>') +
       '<title>' + esc(fullTip) + '</title></g>';
   }).join('');
 
@@ -348,10 +378,9 @@ function lineChart(opts){
     '<span class="p">' + esc(opts.period) + ' · ' + esc(t('chart.unit')) + ': ' + esc(unit) + '</span></div>' +
     '<svg class="chart chart-anim" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.title) + '">' +
     g +
-    '<path class="chart-path" pathLength="1000" d="' + d + '" fill="none" stroke="var(--burnt)" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path class="chart-path" pathLength="1000" d="' + d + '"/>' +
     '<g role="list">' + dots + '</g>' +
-    '<line x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) +
-      '" stroke="var(--ink)" stroke-width="1"/>' +
+    '<line class="dv-axis" x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) + '"/>' +
     '</svg>' +
     '<div class="chart-legend"><div><i class="sw direct"></i>' + esc(label) +
     '</div><div><i class="sw dot"></i>' +
@@ -367,45 +396,55 @@ function lineChart(opts){
 
 /* Bar chart: volume by muscle group. */
 function barChart(opts){
-  const W = 640, H = 220, PL = 46, PR = 14, PT = 14, PB = 40;
+  /* PT is generous because the value printed above a bar is part of the mark:
+     a tall bar must not push its own number into the top gridline. */
+  const W = 640, H = 220, PL = 46, PR = 14, PT = 24, PB = 40;
   const rows = opts.rows || [];
   if(!rows.length) return emptyState('chart.nodata', 'chart.nodata.body');
   const tipId = 'ctip_' + (++CHART_SEQ);
-  const max = niceCeil(Math.max.apply(null, rows.map(r => r.v)) * 1.1) || 1;
+  const sc = niceScale(0, Math.max.apply(null, rows.map(r => r.v)) * 1.04, 4);
+  const max = sc.max || 1;
   const bw = (W-PL-PR)/rows.length;
   const u = opts.unit || '';
   let g = '';
-  for(let k=0;k<=4;k++){
-    const v = max*k/4, yy = PT + (1 - k/4)*(H-PT-PB);
-    g += '<line x1="' + PL + '" y1="' + yy.toFixed(1) + '" x2="' + (W-PR) + '" y2="' + yy.toFixed(1) +
-         '" stroke="var(--recess-2)" stroke-width="1"/>' +
-         '<text x="' + (PL-8) + '" y="' + (yy+3.5).toFixed(1) + '" fill="var(--tech-ink)" font-size="10" ' +
-         'text-anchor="end" font-family="var(--f-mono)">' + Math.round(v) + '</text>';
-  }
+  sc.labels.forEach(v => {
+    const yy = PT + (1 - v/max)*(H-PT-PB);
+    g += '<line class="dv-grid" x1="' + PL + '" y1="' + yy.toFixed(1) + '" x2="' + (W-PR) +
+         '" y2="' + yy.toFixed(1) + '"/>' +
+         '<text class="dv-ytick" x="' + (PL-8) + '" y="' + (yy+3.5).toFixed(1) + '" ' +
+         'text-anchor="end">' + v + '</text>';
+  });
   rows.forEach((r,i) => {
     const h = (r.v/max)*(H-PT-PB);
     const bx = PL + i*bw + bw*0.16, bwid = bw*0.68;
     const tipTxt = (r.name || r.short) + ' — ' + Math.round(r.v*10)/10 + (u ? ' ' + u : '');
     const jsTip = tipTxt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    /* A zero is a zero: a 2 px stub on the axis, never a 1 px sliver that
+       pretends to be a very small value. */
+    const zero = !(r.v > 0);
     g += '<g class="chart-bar-g" tabindex="0" role="listitem" aria-label="' + esc(tipTxt) + '" ' +
          'onmouseenter="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
          'onfocus="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
          'onclick="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')">' +
-         '<rect class="chart-bar" style="animation-delay:' + (i*28) + 'ms" x="' + bx.toFixed(1) + '" y="' + (H-PB-h).toFixed(1) + '" width="' + bwid.toFixed(1) +
-         '" height="' + Math.max(1,h).toFixed(1) + '" fill="' + (r.col||'var(--burnt)') +
-         '" fill-opacity="' + (r.v>0?'.85':'.25') + '"><title>' + esc(tipTxt) + '</title></rect>' +
-         '<text x="' + (bx+bwid/2).toFixed(1) + '" y="' + (H-24) + '" fill="var(--tech-ink)" ' +
-         'font-size="9" text-anchor="middle" font-family="var(--f-mono)">' + esc(r.short) + '</text>' +
-         '<text x="' + (bx+bwid/2).toFixed(1) + '" y="' + (H-12) + '" fill="var(--ink-3)" ' +
-         'font-size="9" text-anchor="middle" font-family="var(--f-mono)">' + Math.round(r.v) + '</text></g>';
+         (zero
+           ? '<rect class="chart-bar zero" x="' + bx.toFixed(1) + '" y="' + (H-PB-2) +
+             '" width="' + bwid.toFixed(1) + '" height="2"/>'
+           : '<rect class="chart-bar" style="animation-delay:' + (i*45) + 'ms" x="' + bx.toFixed(1) +
+             '" y="' + (H-PB-h).toFixed(1) + '" width="' + bwid.toFixed(1) +
+             '" height="' + h.toFixed(1) + '"/>') +
+         '<title>' + esc(tipTxt) + '</title>' +
+         (zero ? '' :
+           '<text class="dv-value" x="' + (bx+bwid/2).toFixed(1) + '" y="' + Math.max(PT + 8, H-PB-h-7).toFixed(1) +
+           '" text-anchor="middle">' + (Math.round(r.v*10)/10) + '</text>') +
+         '<text class="dv-xtick" x="' + (bx+bwid/2).toFixed(1) + '" y="' + (H-14) +
+         '" text-anchor="middle">' + esc(r.short) + '</text></g>';
   });
   const srList = rows.map(r => (r.name || r.short) + ' ' + Math.round(r.v*10)/10).join(', ');
   return '<div class="chart-hd"><span class="t">' + esc(opts.title) + '</span><span class="p">' +
     esc(opts.period) + ' · ' + esc(t('chart.unit')) + ': ' + esc(u) + '</span></div>' +
     '<svg class="chart chart-anim" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.title) + '">' +
     '<g role="list">' + g + '</g>' +
-    '<line x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) +
-    '" stroke="var(--ink)" stroke-width="1"/></svg>' +
+    '<line class="dv-axis" x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) + '"/></svg>' +
     '<div class="chart-legend"><span class="chart-tip-readout mono" id="' + tipId + '" aria-live="polite">' +
     esc(rows[0] ? ((rows[0].name || rows[0].short) + ' — ' + Math.round(rows[0].v*10)/10 + (u ? ' ' + u : '')) : '') +
     '</span></div>' +
@@ -574,8 +613,12 @@ function sparkline(points, opts){
     '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true" focusable="false">' +
       '<path class="spark-area" d="' + area + '"/>' +
       '<path class="spark-line" d="' + d + '"/>' +
-      points.map((p,i) => '<circle cx="' + x(i).toFixed(2) + '" cy="' + y(p.v).toFixed(2) +
-        '" r="1.4"><title>' + esc(p.label + ': ' + (Math.round(p.v*10)/10)) + '</title></circle>').join('') +
+      points.map((p,i) => {
+        const now = i === points.length - 1;
+        return '<circle class="spark-dot' + (now ? ' now' : '') + '" cx="' + x(i).toFixed(2) +
+          '" cy="' + y(p.v).toFixed(2) + '" r="' + (now ? 2.2 : 1.2) +
+          '"><title>' + esc(p.label + ': ' + (Math.round(p.v*10)/10)) + '</title></circle>';
+      }).join('') +
     '</svg>' +
     '<div class="spark-foot"><span>' + esc(first.label) + '</span><span>' + esc(lastP.label) + '</span></div>' +
     '<p class="sr-only">' + esc(t('chart.summarySpark',
@@ -595,9 +638,13 @@ function progressRing(fraction, opts){
     '<svg viewBox="0 0 ' + ((r+sw)*2) + ' ' + ((r+sw)*2) + '" aria-hidden="true">' +
       '<circle class="ring-track" cx="' + (r+sw) + '" cy="' + (r+sw) + '" r="' + r +
         '" stroke-width="' + sw + '" fill="none"/>' +
+      /* The markup carries the finished arc, not an empty one. The motion
+         engine animates from zero on first paint; nothing that fails to run
+         JS, and no print pass, may show a ring that reads 72% and draws 0%. */
       '<circle class="ring-value" cx="' + (r+sw) + '" cy="' + (r+sw) + '" r="' + r +
         '" stroke-width="' + sw + '" fill="none" stroke-dasharray="' + c.toFixed(2) +
-        '" stroke-dashoffset="' + c.toFixed(2) + '" data-ring="' + (pct/100) + '"' + rk + '/>' +
+        '" stroke-dashoffset="' + (c * (1 - pct/100)).toFixed(2) +
+        '" data-ring="' + (pct/100) + '"' + rk + '/>' +
     '</svg>' +
     '<span class="ring-t num">' + pct + '<small>%</small></span>' +
     '<span class="sr-only">' + esc((opts.label || '') + ': ' + pct + '%') + '</span>' +

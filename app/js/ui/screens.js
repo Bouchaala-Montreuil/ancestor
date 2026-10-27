@@ -1248,9 +1248,12 @@ Screens.progress = function(){
   }
 
   /* --- volume by muscle --- */
+  /* One series, one colour. The old rows carried col:'var(--burnt)' — a token
+     inside a presentation attribute, which no browser resolves; the only reason
+     the bars had a colour was a stylesheet rule overriding it. */
   const volRows = MUSCLES.map(m => ({ v: vol[m], name: t('mg.'+m),
-                                      short: esc(t('mg.'+m)).slice(0,3).toUpperCase(),
-                                      col: 'var(--burnt)' })).filter(r => r.v > 0);
+                                      short: esc(t('mg.'+m)).slice(0,3).toUpperCase() }))
+                        .filter(r => r.v > 0);
   h += '<div class="panel mt-3">';
   if(volRows.length){
     h += barChart({ title: t('progress.volume'), period: periodLabel, unit: unit() + '·reps', rows: volRows });
