@@ -721,7 +721,7 @@ Screens.body = function(){
   const trackedCount = MUSCLES.filter(m => rec[m] && rec[m].since !== null).length;
   let h = '<div class="masthead"><div>' +
           '<p class="masthead-idx">' + trackedCount + ' / ' + MUSCLES.length + ' ' + esc(t('body.tracked')) + '</p>' +
-          '<h2 class="masthead-title">' + esc(t('body.title')) + '</h2>' +
+          '<h1 class="masthead-title">' + esc(t('body.title')) + '</h1>' +
           '<p class="masthead-sub">' + esc(BODY_MODE === 'model' ? t('lab3d.atlasTag') : t('body.note2d')) + '</p>' +
           '</div></div>';
 
@@ -1217,7 +1217,7 @@ Screens.progress = function(){
 
   let h = '<div class="masthead"><div>' +
           '<p class="masthead-idx">' + s.sessions.length + ' ' + esc(t('progress.sessions').toLowerCase()) + '</p>' +
-          '<h2 class="masthead-title">' + esc(t('progress.title')) + '</h2></div>' +
+          '<h1 class="masthead-title">' + esc(t('progress.title')) + '</h1></div>' +
           '<span class="flag plain">' + esc(periodLabel) + '</span></div>';
 
   if(LAST_SUMMARY){
@@ -1602,10 +1602,33 @@ Screens.profile = function(){
   const avail = EX.filter(e => eq.indexOf(e.equip) >= 0);
   const enabledCount = avail.filter(e => !p.exercises || p.exercises[e.id] !== false).length;
 
+  /* What the page is set to, before it asks what you would like to change.
+     Eleven panels at full height was a form 621 words long; four records that
+     name their own value is a page you can read in one pass. */
+  const backupDue = s.sessions.length >= 5 && (!s.lastExportAt || (Date.now() - s.lastExportAt) > 30*86400000);
+  const needCount = NEEDS.filter(n => needOn(p, n.id)).length;
+  const styleName = t('onb.style.' + (p.style || 'std'));
+  const valProgramme = [styleName, p.daysPerWeek + 'd',
+                        t('onb.avail.len.' + (p.sessionMinutes || 50)),
+                        t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))].join(' · ');
+  const valBody = [t('onb.shift.' + ({none:'no', night:'night', rotating:'rot'}[p.shiftType] || 'no')),
+                   p.sleepHours + ' ' + t('onb.sleep.h'),
+                   needCount ? needCount + ' ' + t('a11y.needsTitle') : ''].filter(Boolean).join(' · ');
+  const valA11y = [Math.round((p.display.textScale || 1) * 100) + '%',
+                   p.display.highContrast ? t('a11y.contrast') : '',
+                   langName(CURRENT_LANG)].filter(Boolean).join(' · ');
+  const valData = [s.sessions.length + ' ' + t('progress.sessions'),
+                   backupDue ? t('you.backupDue') : ''].filter(Boolean).join(' · ');
+  const groupOpen = (title, value, open) =>
+    '<details class="prof-group"' + (open ? ' open' : '') + '><summary>' +
+    '<h2>' + esc(title) + '</h2>' +
+    (value ? '<span class="prof-val">' + esc(value) + '</span>' : '') + '</summary>';
+  const groupClose = '</details>';
+
   let h = '<div class="masthead"><div>' +
           '<p class="masthead-idx">' + esc(t('onb.style.' + (p.style || 'std'))) + ' · ' +
           esc(t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))) + '</p>' +
-          '<h2 class="masthead-title">' + esc(t('profile.title')) + '</h2></div>' +
+          '<h1 class="masthead-title">' + esc(t('profile.title')) + '</h1></div>' +
           '<div class="row">' +
           '<button class="btn sm" onclick="rebuildPlan()">' + esc(t('profile.rebuild')) + '</button>' +
           '<button class="btn quiet sm" onclick="go(\'onb\')">' + esc(t('onb.redo')) + '</button></div></div>';
@@ -1614,6 +1637,7 @@ Screens.profile = function(){
 
   /* ==================== LEFT COLUMN: TRAINING & PROGRAMME ==================== */
   h += '<div class="profile-col">';
+  h += groupOpen(t('profile.gProgramme'), valProgramme, true);
 
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('prog.title')) + '</h3></div>';
   h += '<div class="field"><label for="pf_name">' + esc(t('onb.name')) + '</label>' +
@@ -1684,12 +1708,14 @@ Screens.profile = function(){
   });
   h += '</div>';
 
+  h += groupClose;
   h += '</div>'; /* end left profile-col */
 
   /* ==================== RIGHT COLUMN: ADAPTATION, SCHEDULE & DATA ==================== */
   h += '<div class="profile-col">';
 
   /* Schedule & Sleep */
+  h += groupOpen(t('profile.gBody'), valBody, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.planning')) +
        '</h3><span class="hint">' + esc(t('onb.shift.note')) + '</span></div>';
   h += '<div class="field"><label>' + esc(t('onb.shift.t')) + '</label><div class="chips">' +
@@ -1724,7 +1750,10 @@ Screens.profile = function(){
   h += '<div class="mt-3"><button class="btn quiet sm" onclick="rebuildPlan()">' +
        esc(t('profile.rebuild')) + '</button></div></div>';
 
+  h += groupClose;
+
   /* Display & Accessibility */
+  h += groupOpen(t('profile.gAccess'), valA11y, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('a11y.title')) + '</h3></div>';
   h += '<div class="field"><label>' + esc(t('a11y.textSize')) + '</label><div class="chips">' +
        [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') + '" onclick="setDisplay(\'textScale\',' + v + ')">' + Math.round(v*100) + '%</button>').join('') +
@@ -1749,10 +1778,12 @@ Screens.profile = function(){
          '<span><span class="t">' + esc(langName(l)) + ' (' + esc(langLabel(l)) + ')</span></span></button>').join('') +
        '</div></div>';
 
+  h += groupClose;
+
   /* Local Data Vault */
-  const backupDue = s.sessions.length >= 5 && (!s.lastExportAt || (Date.now() - s.lastExportAt) > 30*86400000);
   const persistLabel = (typeof STORAGE_PERSISTED !== 'undefined' && STORAGE_PERSISTED === true)
     ? t('you.persistProtected') : t('you.persistStandard');
+  h += groupOpen(t('profile.gData'), valData, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.data')) + '</h3>' +
        '<span class="flag sm ' + ((typeof STORAGE_PERSISTED !== 'undefined' && STORAGE_PERSISTED === true) ? 'ok' : 'plain') + '">' +
        esc(persistLabel) + '</span></div>';
@@ -1778,6 +1809,7 @@ Screens.profile = function(){
   h += '<div class="uncertain mt-3"><b>' + esc(t('lab3d.credits')) +
        '</b> ' + esc(t('body.note2d')) + '</div></div>';
 
+  h += groupClose;
   h += '</div>'; /* end right profile-col */
   h += '</div>'; /* end profile-grid */
   return { html: h };

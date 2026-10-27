@@ -89,6 +89,8 @@ const TAR = {
 'session.noplanBody':'أكمل الإعداد أو أعد بناء البرنامج للحصول على حصة مقرّرة.',
 
 'profile.title':'الملف','profile.planning':'الجدول','profile.workshifts':'ساعات العمل',
+'profile.gProgramme':'البرنامج','profile.gBody':'الجسم والتعافي',
+'profile.gAccess':'إمكانية الوصول والعرض','profile.gData':'البيانات وحول',
 'profile.sleepLog':'النوم المُعلَن','profile.data':'بياناتك','profile.about':'حول','profile.rebuild':'إعادة بناء البرنامج',
 'profile.exercises':'التمارين','profile.limits':'القيود','profile.language':'اللغة',
 

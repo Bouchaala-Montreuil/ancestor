@@ -47,7 +47,7 @@ Screens.science = function(){
   h += '<div class="masthead"><div>' +
        '<p class="masthead-idx">' + LESSONS.length + ' ' + esc(t('sci.tabLessons').toLowerCase()) +
        ' · ' + LEARNING_MODULES.length + ' ' + esc(t('sci.tabModules').toLowerCase()) + '</p>' +
-       '<h2 class="masthead-title">' + esc(t('sci.title')) + '</h2>' +
+       '<h1 class="masthead-title">' + esc(t('sci.title')) + '</h1>' +
        '<p class="masthead-sub">' + esc(t('sci.sub')) + '</p></div>' +
        '<div class="row nowrap inline">' +
        progressRing(LESSONS.length ? read.length / LESSONS.length : 0,

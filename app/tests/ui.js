@@ -605,6 +605,62 @@ group('16. Progressive disclosure: one action per moment');
   w7.closeSheet();
 }
 
+group('17. Profile: four records that name their own value');
+{
+  const dom8 = await boot();
+  const w8 = dom8.window, d8 = w8.document;
+  completeOnboarding(w8, d8);
+  w8.go('profile');
+  const body = () => d8.getElementById('screenBody');
+  const exposed = el => {
+    let n = el;
+    while(n && n !== body()){
+      if(n.tagName === 'DETAILS' && !n.hasAttribute('open')) return false;
+      n = n.parentElement;
+    }
+    return true;
+  };
+
+  chk('the profile is one h1 and four h2 groups',
+      body().querySelectorAll('h1').length === 1 &&
+      body().querySelectorAll('h2').length === 4,
+      body().querySelectorAll('h1').length + ' h1, ' +
+      body().querySelectorAll('h2').length + ' h2');
+  const groups = Array.from(body().querySelectorAll('details.prof-group'));
+  chk('every group is a native disclosure with a summary',
+      groups.length === 4 && groups.every(g => g.firstElementChild.tagName === 'SUMMARY'));
+  chk('every group names its current value while closed',
+      groups.every(g => {
+        const v = g.querySelector('.prof-val');
+        return v && v.textContent.trim().length > 0;
+      }), groups.map(g => (g.querySelector('.prof-val') || {}).textContent).join(' | '));
+
+  /* The claim is collapse, not delete: the settings are all still there. */
+  const all = body().querySelectorAll('button,[role=button],input,select,textarea').length;
+  const vis = Array.from(body().querySelectorAll('button,[role=button],input,select,textarea'))
+                  .filter(exposed).length;
+  chk('no setting was deleted to make the page short', all >= 160, all + ' controls in the DOM');
+  chk('most of them wait to be needed', vis < 70, vis + ' of ' + all + ' exposed');
+
+  /* Opening a group still changes the setting, and the summary follows. */
+  const a11y = groups.filter(g => /Accessibility/.test(g.textContent))[0];
+  a11y.setAttribute('open', '');
+  const tile = Array.from(a11y.querySelectorAll('button'))
+    .filter(b => (b.getAttribute('onclick') || '').indexOf("setDisplay('highContrast'") >= 0)[0];
+  chk('a display setting is reachable inside its group', !!tile);
+  const before = a11y.querySelector('.prof-val').textContent;
+  tile.dispatchEvent(new w8.MouseEvent('click', {bubbles:true}));
+  chk('the setting takes effect', w8.getState().profile.display.highContrast === true);
+  const after = body().querySelectorAll('details.prof-group')[2].querySelector('.prof-val').textContent;
+  chk('the closed row now states the new value', after !== before && /contrast/i.test(after), after);
+  w8.setDisplay('highContrast', false);
+
+  /* Language is still a full-size choice, not a chip row. */
+  const langTiles = Array.from(body().querySelectorAll('.tile'))
+    .filter(b => (b.getAttribute('onclick') || '').indexOf('switchLang') === 0).length;
+  chk('the language selector is still seven full rows', langTiles === 7, langTiles + ' rows');
+}
+
 group('15. The boot veil and the offline state');
 {
   const dom6 = await boot();

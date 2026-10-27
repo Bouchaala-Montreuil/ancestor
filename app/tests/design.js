@@ -683,6 +683,16 @@ group('8o. Disclosures are one component, not four improvisations');
       !/\.dash-figlink-t\{/.test(flat));
   chk('a heading was added without changing its size',
       /\.sess-ex-h\{[^}]*font:inherit/.test(flat));
+  /* The profile's four groups are the same idea at page scale: a record that
+     states its own value, one tap from the form underneath. */
+  chk('a profile group is a focus stop a thumb can hit',
+      /\.prof-group > summary:focus-visible\{[^}]*outline/.test(flat) &&
+      /\.prof-group > summary\{[^}]*min-height:var\(--hit\)/.test(flat));
+  chk('the value line is a component, not an inline style',
+      /\.prof-val\{[^}]*font-family/.test(flat) &&
+      !/style="[^"]*prof-val/.test(src));
+  chk('the group says open and closed without an icon font',
+      /\.prof-group\[open\] > summary::after\{content:/.test(flat));
   chk('the session uses the screen heading it was missing',
       /<h1 class="sess-h">/.test(src) || /'<h1 class="sess-h">'/.test(src));
   function coarseHasDis(){

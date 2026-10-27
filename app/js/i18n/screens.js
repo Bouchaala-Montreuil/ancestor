@@ -57,6 +57,8 @@ TS.en = {
 'session.cue':'Technique','session.planned':'Planned','session.noplan':'No session planned today',
 
 'profile.title':'Profile','profile.planning':'Schedule','profile.workshifts':'Work shifts',
+'profile.gProgramme':'Programme','profile.gBody':'Body & recovery',
+'profile.gAccess':'Accessibility & display','profile.gData':'Data & about',
 'profile.sleepLog':'Declared sleep','profile.data':'Your data','profile.about':'About',
 'profile.rebuild':'Rebuild programme','profile.exercises':'Exercises','profile.limits':'Limitations',
 
@@ -116,6 +118,8 @@ TS.fr = {
 'session.cue':'Technique','session.planned':'Prévue','session.noplan':'Aucune séance prévue aujourd\'hui',
 
 'profile.title':'Profil','profile.planning':'Planning','profile.workshifts':'Horaires de travail',
+'profile.gProgramme':'Programme','profile.gBody':'Corps et récupération',
+'profile.gAccess':'Accessibilité et affichage','profile.gData':'Données et à propos',
 'profile.sleepLog':'Sommeil déclaré','profile.data':'Vos données','profile.about':'À propos',
 'profile.rebuild':'Reconstruire le programme','profile.exercises':'Exercices','profile.limits':'Limitations',
 
@@ -164,6 +168,8 @@ TS.es = {
 'session.draftRestored':'Sesión en curso restaurada','session.warmup':'Las series de calentamiento no cuentan. Hazlas igualmente.',
 'session.cue':'Técnica','session.planned':'Prevista','session.noplan':'Ninguna sesión prevista hoy',
 'profile.title':'Perfil','profile.planning':'Horario','profile.workshifts':'Horarios de trabajo',
+'profile.gProgramme':'Programa','profile.gBody':'Cuerpo y recuperación',
+'profile.gAccess':'Accesibilidad y pantalla','profile.gData':'Datos y acerca de',
 'profile.sleepLog':'Sueño declarado','profile.data':'Tus datos','profile.about':'Acerca de',
 'profile.rebuild':'Reconstruir programa','profile.exercises':'Ejercicios','profile.limits':'Limitaciones',
 'state.nodata':'Sin datos','state.noresult':'Sin resultados para estos filtros','state.needSetup':'Sin configurar',
@@ -211,6 +217,8 @@ TS.de = {
 'session.draftRestored':'Laufende Einheit wiederhergestellt','session.warmup':'Aufwärmsätze zählen nicht. Mach sie trotzdem.',
 'session.cue':'Technik','session.planned':'Geplant','session.noplan':'Heute keine Einheit geplant',
 'profile.title':'Profil','profile.planning':'Zeitplan','profile.workshifts':'Arbeitszeiten',
+'profile.gProgramme':'Programm','profile.gBody':'Körper & Erholung',
+'profile.gAccess':'Barrierefreiheit & Anzeige','profile.gData':'Daten & über',
 'profile.sleepLog':'Angegebener Schlaf','profile.data':'Deine Daten','profile.about':'Über',
 'profile.rebuild':'Programm neu aufbauen','profile.exercises':'Übungen','profile.limits':'Einschränkungen',
 'state.nodata':'Keine Daten','state.noresult':'Kein Ergebnis für diese Filter','state.needSetup':'Nicht konfiguriert',
@@ -258,6 +266,8 @@ TS.it = {
 'session.draftRestored':'Sessione in corso ripristinata','session.warmup':'Le serie di riscaldamento non contano. Falle comunque.',
 'session.cue':'Tecnica','session.planned':'Prevista','session.noplan':'Nessuna sessione prevista oggi',
 'profile.title':'Profilo','profile.planning':'Programma','profile.workshifts':'Orari di lavoro',
+'profile.gProgramme':'Programma','profile.gBody':'Corpo e recupero',
+'profile.gAccess':'Accessibilità e schermo','profile.gData':'Dati e informazioni',
 'profile.sleepLog':'Sonno dichiarato','profile.data':'I tuoi dati','profile.about':'Informazioni',
 'profile.rebuild':'Ricostruisci programma','profile.exercises':'Esercizi','profile.limits':'Limitazioni',
 'state.nodata':'Nessun dato','state.noresult':'Nessun risultato per questi filtri','state.needSetup':'Non configurato',
@@ -305,6 +315,8 @@ TS.nl = {
 'session.draftRestored':'Lopende sessie hersteld','session.warmup':'Warming-upsets tellen niet. Doe ze toch.',
 'session.cue':'Techniek','session.planned':'Gepland','session.noplan':'Vandaag geen sessie gepland',
 'profile.title':'Profiel','profile.planning':'Rooster','profile.workshifts':'Werktijden',
+'profile.gProgramme':'Programma','profile.gBody':'Lichaam & herstel',
+'profile.gAccess':'Toegankelijkheid en weergave','profile.gData':'Gegevens en over',
 'profile.sleepLog':'Opgegeven slaap','profile.data':'Jouw gegevens','profile.about':'Over',
 'profile.rebuild':'Programma herbouwen','profile.exercises':'Oefeningen','profile.limits':'Beperkingen',
 'state.nodata':'Geen gegevens','state.noresult':'Geen resultaat voor deze filters','state.needSetup':'Niet ingesteld',

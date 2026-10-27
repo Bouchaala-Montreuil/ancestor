@@ -125,7 +125,7 @@ function renderSessionMasthead(mode){
   const sub = mode === 'library' ? t('plan.libSub') : t('session.warmup');
   return '<div class="masthead"><div>' +
          '<p class="masthead-idx">' + esc(idx) + '</p>' +
-         '<h2 class="masthead-title">' + esc(title) + '</h2>' +
+         '<h1 class="masthead-title">' + esc(title) + '</h1>' +
          '<p class="masthead-sub">' + esc(sub) + '</p>' +
          '</div></div>';
 }

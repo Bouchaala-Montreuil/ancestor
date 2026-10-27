@@ -141,7 +141,37 @@ subtle one: the row's four buttons were the only way to reach add-to-plan, which
 the sheet also offered — the duplication was invisible until the controls were
 counted.
 
-### 3.5 Small things that were wrong
+### 3.5 Profile: four records, not eleven panels
+
+160 controls and 621 words in one scroll: programme, goals, style, environment,
+an 84-exercise pool, schedule, sleep, adaptations, display, language, data and
+about — every setting visible at once, and therefore none of them found.
+
+It is now four records under one `h1`, each **naming its own value while
+closed**:
+
+> **Programme** — Standard volume · 3d · 50 minutes · Full gym
+> **Body & recovery** — Night shifts · 7 hours per night
+> **Accessibility & display** — 100% · English
+> **Data & about** — 0 sessions
+
+| | before | after |
+|---|---|---|
+| controls exposed on load | 160 | **59** |
+| page heading levels | h2, then h3 (no h1) | **h1 → 4 × h2 → h3** |
+| settings in the document | 160 | **164** (nothing deleted) |
+
+Nothing was removed to make the page short — that is the difference between this
+and the atlas, which really had four controls per exercise doing one job. Here
+every control still exists; the page simply stops answering questions nobody
+asked. Programme opens, because a programme is the reason the screen exists.
+
+The same pass fixed a structural fault that ran through five screens: every page
+title was an `h2`, so each screen's outline began at level 2 and then jumped to
+`h3` inside its first panel. Today, Session, Progress, Body, Science, Profile and
+the plan/library mastheads are all `h1` now.
+
+### 3.6 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -207,6 +237,8 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | set fields naming their set | 0 of 54 | 54 of 54 |
 | controls on the exercise atlas | 382 | 119 |
 | words on the exercise atlas | 1 304 | 591 |
+| controls exposed on Profile | 160 | 59 |
+| page titles that are `h1` | 1 of 7 | 7 of 7 |
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
@@ -227,7 +259,7 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 | Progress | untouched | charts and records re-verified for scale in the previous pass; drill-down not re-audited |
 | Body / anatomy | figure semantics fixed | 59 controls on one screen; the muscle list duplicates what the figure already shows |
 | Science | untouched | 26 controls, evidence disclosures already sound |
-| Profile | untouched | **160 controls, 621 words, eleven `h3` sections** — a settings wall that needs an IA pass, not a style pass |
+| Profile | four records with their values on the closed row | every setting is now one tap deeper, and nothing measures whether people find it; the exercise pool inside Programme is still 84 chips |
 
 ---
 
@@ -240,11 +272,15 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
   flat figure was the only anatomy surface exercised.
 - **The census counts are structural.** "Words" is text content, not reading
   effort; "controls exposed" ignores visual weight.
-- **One screen was left with a wall** (Profile, 160 controls). It is the next
-  highest-impact work and was deliberately not half-fixed.
-- **The atlas was measured, not seen.** Row density, the 72 px row height and the
-  sheet hand-off are structural claims; nobody has looked at 88 rows on a 390 px
-  screen.
+- **Discoverability was not tested.** Collapsing a settings page is a bet that
+  the summary line is enough to make someone open it. Nobody has watched a real
+  user look for "units".
+- **The atlas and the profile were measured, not seen.** Row density, the 72 px
+  row height, the sheet hand-off and four stacked records are structural claims;
+  nobody has looked at them on a 390 px screen.
+- **Heading levels still jump on Progress, Science and Body** (h1 → h3 inside the
+  first panel). The panels share one component and were left alone rather than
+  half-converted.
 - **No rest-timer, no print-layout and no offline-persistence re-verification**
   in this pass; those suites are green, which is not the same as inspected.
 
@@ -252,11 +288,10 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 ## 9. Next, ranked by user impact
 
-1. **Profile** — 160 controls, 621 words, eleven sections. Split into
-   *Programme · Body · Accessibility · Data*, each a page, with the disclosure
-   discipline the atlas just gained.
-2. **Onboarding's exercise step** — 90 controls on the last screen before the
+1. **Onboarding's exercise step** — 90 controls on the last screen before the
    programme is built. The one place a first-run user can be lost for good.
+2. **The exercise pool inside Programme** — 84 chips in six disclosures; the
+   same register treatment the atlas just got would fit it.
 3. **Session: 774 words.** One exercise expanded at a time, user-controlled, with
    a visible "next" — plus a rest timer that survives a locked screen.
 4. **Today's nine sections.** Group into *today / this week / understand*; the
