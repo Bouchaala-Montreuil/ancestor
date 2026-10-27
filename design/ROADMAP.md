@@ -116,8 +116,8 @@ stylesheet".
 |---|---|
 | Real screenshots at 320 / 360 / 390 / 414 / 768 / 1024 / 1280 | 0.5 d *(needs you)* |
 | iOS Safari + Android Chrome, installed and in-browser | 0.5 d *(needs a device)* |
-| Contrast audit of the new palette against WCAG AA in every state | 0.5 d |
-| Touch-target audit (44 px minimum) | 0.5 d |
+| ~~Contrast audit of the new palette against WCAG AA in every state~~ | done — `STATES.md` |
+| ~~Touch-target audit (44 px minimum)~~ | done — §0.10 |
 | Screen-reader pass (VoiceOver + TalkBack) | 1 d |
 | Printed sheet on real paper, both sides on a cheap printer | 0.5 d |
 | Lighthouse / PWA install audit | 0.5 d |
@@ -568,6 +568,48 @@ next.
 What is left on the whole order: **the device screenshots** (yours). The state
 matrix wanted them; it has been audited without them, and says in `STATES.md`
 exactly which of its claims that leaves open.
+
+---
+
+## §0.10 The thumb
+
+The app is used one-handed, mid-set, with the phone flat on a bench. That is a
+physical claim, and it had never been measured: the touch-target audit sat in §6
+as half a day of work.
+
+The stylesheet answered for itself. Every rule that sets `cursor:pointer`, with
+its declared `min-height`, then the height it inherits from its component:
+
+| control | was | now |
+|---|---|---|
+| `.link-btn` — "edit", "clear", "save" inside rows | 24 px | 24 px + invisible 44 |
+| `.langsel button` — the language switch, on every screen | 26 px | 26 px + invisible 44 |
+| `button.flag` — the two filter flags | 26 px | 26 px + invisible 44 |
+| `.lab-btn` — the 3D lab controls | 28 px | 28 px + invisible 44 |
+| `.prev-copy-btn` — copy last session | 28 px | 28 px + invisible 44 |
+| `.fail-more summary`, `.ev-more summary` | 32 px | 32 px + invisible 44 |
+| `.chip` — 38 px, in rows of eight | 38 px | **left alone, deliberately** |
+
+Nothing got bigger. A 44 px flag would be a pill, not a mark; the design would
+lose the density that makes it readable. So the expansion is a transparent
+pseudo-element inside the control, on the block axis only, and only under
+`@media (pointer: coarse)` — a mouse does not need it and a desktop layout should
+not get looser to serve a thumb it does not have.
+
+Two exclusions are argued rather than assumed. **Chips** sit shoulder to shoulder
+in a scrolling row: an invisible 44 px area would reach into its neighbour, and a
+control that answers for the wrong tap is worse than one that is small. And
+**sixty-seven of the sixty-nine flags are labels** — a `span`, not a button. An
+invisible target on a word that does nothing is not a kindness, so only the two
+clickable flags are expanded.
+
+The check (design **8n**, three of them) reads the stylesheet rather than a list I
+typed: any rule that is clickable and declares less than 44 px must either be
+expanded in the coarse-pointer block or be on a one-line exemption list with a
+reason. It also insists on the part that a diff hides — the control must be the
+element the overlay is positioned against, because a `::after` without
+`position:relative` on its parent is still in the file and no longer a target. I
+verified the check fails both ways before shipping it.
 
 Two honest notes about this pair. The figures were rasterised and looked at; **the
 page itself was not** — there is no browser here, so `site/index.html` is verified

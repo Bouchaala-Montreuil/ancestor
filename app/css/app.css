@@ -143,6 +143,7 @@
   --t-stagger:45ms;
 
   /* layout */
+  --hit:44px;          /* the smallest tap that a thumb can find */
   --shell-max:1180px;
   --rail:216px;
   --tabbar-h:64px;
@@ -2356,6 +2357,37 @@ html[data-simple="on"] .chart-tip-readout{display:none}
    The mirroring itself is no longer patched anywhere: every rule above is on
    logical properties, so dir="rtl" reflows the app without a single override.
    The one exception is a caption that must be allowed to wrap. */
+
+/* ------------------------------------------------------------------ TOUCH
+   The marks are small on purpose — a 22px flag, a 24px inline link, a 26px
+   language switch — and a small mark is a bad target: this app is used one
+   handed, mid-set, with the phone flat on a bench. Under a coarse pointer every
+   control shorter than --hit gains an invisible area above and below itself.
+   Nothing moves: the pseudo-element is transparent, sits inside the control, and
+   clicks on it reach the control.
+
+   Two deliberate limits. The expansion is block-axis only — chips and segments
+   sit shoulder to shoulder, and an invisible hit area that reaches into its
+   neighbour is worse than a small target. And a control that already carries a
+   ::after (the evidence disclosure sign) gets its area on ::before instead.
+
+   Only the two clickable flags get this. The other sixty-seven are labels: an
+   invisible target on a word that does nothing is not a kindness. */
+@media (pointer: coarse){
+  .link-btn,.langsel button,.fail-more summary,.prev-copy-btn,
+  .lab-btn,button.flag{position:relative}
+  .link-btn::after,
+  .langsel button::after,
+  .fail-more summary::after,
+  .prev-copy-btn::after,
+  .lab-btn::after,
+  button.flag::after,
+  .ev-more summary::before{
+    content:"";position:absolute;inset-inline:0;
+    inset-block:calc((var(--hit) - 100%) * -0.5);
+  }
+  .ev-more summary{position:relative}
+}
 
 html[lang="ar"]{
   --f-display: system-ui, -apple-system, "SF Arabic", "Geeza Pro",

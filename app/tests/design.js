@@ -677,6 +677,79 @@ group('8m. Text on a wash is measured, not assumed');
       unused.length === 0, unused.join(', '));
 }
 
+group('8n. Every target is big enough for a thumb in a gym');
+{
+  /* Split the stylesheet into rules, so "how tall is that control" is answered by
+     the file rather than by memory. */
+  const bare = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const blocks = (text, start) => {
+    const out = []; let i = start || 0;
+    while(i < text.length){
+      const j = text.indexOf('{', i); if(j < 0) break;
+      const sel = text.slice(i, j).trim(); let d = 1, k = j + 1;
+      while(k < text.length && d){ const c = text[k]; if(c === '{') d++; else if(c === '}') d--; k++; }
+      out.push([sel, text.slice(j + 1, k - 1), i]); i = k;
+    }
+    return out;
+  };
+  const flat = [];
+  const walk = t => blocks(t).forEach(([sel, body]) => sel.startsWith('@media') ? walk(body) : flat.push([sel, body]));
+  walk(bare);
+
+  const single = {};
+  flat.forEach(([sel, body]) => {
+    if(!/[ ,]/.test(sel) && /^[.#][\w.\- ]+$/.test(sel)){
+      const m = /(?:^|;)\s*min-height\s*:\s*(\d+(?:\.\d+)?)px/.exec(body);
+      if(m) single[sel] = parseFloat(m[1]);
+    }
+  });
+  /* Only rules that are themselves clickable count. A variant such as
+     `.flag.ok` inherits the size of `.flag`; it is not a second control. */
+  const smallClickable = [];
+  flat.forEach(([sel, body]) => {
+    if(!/cursor\s*:\s*pointer/.test(body)) return;
+    let h = null;
+    const own = /(?:^|;)\s*min-height\s*:\s*(\d+(?:\.\d+)?)px/.exec(body);
+    if(own) h = parseFloat(own[1]);
+    else {
+      const hs = (sel.match(/\.[\w-]+/g) || []).map(c => single[c]).filter(v => v !== undefined);
+      if(hs.length) h = Math.min.apply(null, hs);
+    }
+    if(h !== null && h < 44 && smallClickable.indexOf(sel) < 0) smallClickable.push(sel.trim());
+  });
+
+  /* The controls that stay small, and why. Anything new below 44px that is not
+     on this list fails the check below, which is the point. */
+  const exempt = {
+    '.chip': 'chips sit shoulder to shoulder in a row: a 44px invisible area would steal its neighbour'
+  };
+  const coarse = blocks(bare).filter(([sel]) => /@media\s*\(pointer:\s*coarse\)/.test(sel))
+    .map(([, body]) => body).join('\n');
+
+  /* Two things have to be true, and only one of them is visible in a diff: the
+     invisible area must exist, and the control must be the thing it is positioned
+     against. Drop the position and the overlay escapes to the nearest ancestor —
+     still in the file, no longer a target. */
+  const esc = sel => sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const handled = sel => {
+    const anchored = new RegExp('(^|[,{\\s])' + esc(sel) + '[^{]*\\{[^}]*position:\\s*relative').test(coarse);
+    const area = new RegExp(esc(sel) + '::(?:after|before)').test(coarse);
+    return anchored && area;
+  };
+  const unhandled = smallClickable.filter(sel => !exempt[sel] && !handled(sel));
+  chk('no control is left under 44px without an invisible target',
+      unhandled.length === 0,
+      smallClickable.length + ' small controls; unhandled: ' + unhandled.join(', '));
+
+  chk('the expansion only exists on a coarse pointer',
+      /@media\s*\(pointer:\s*coarse\)[\s\S]*?\.langsel button/.test(bare) &&
+      bare.split('@media (pointer: coarse)').length === 2);
+
+  const hit = token('hit');
+  chk('the target size is one number, and it is at least 44px',
+      hit && parseFloat(hit) >= 44 && /var\(--hit\)/.test(coarse), hit);
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',
