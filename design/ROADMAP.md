@@ -20,7 +20,7 @@ Everything below was verified against the code today, not remembered.
 | # | Problem | Why it's a blocker | Effort |
 |---|---|---|---|
 | ~~**B1**~~ | ~~**The identity depends on a font nobody has.**~~ **Resolved — see §0.1.** The display face resolved to Arial Narrow → Roboto on stock Android, collapsing the whole identity. Now shipped. | 0 ✅ |
-| **B2** | **Styling lives in JavaScript.** 260 `var(--…)` usages and 358 inline `style="…"` attributes across `screens.js`, `science.js`, `components.js`, `workout.js`, `modules.js`. | Every future theme change, RTL fix or density change means editing JS. The CSS is not the source of truth, so the design cannot be maintained. | 3–4 d |
+| ~~**B2**~~ | ~~**Styling lives in JavaScript.**~~ **First pass done.** 358 inline attributes down to 59: margins, flex, text alignment, spacers and the repeating patterns now live in a closed utility layer in `app.css`. What is left is 30 pieces of geometry (a percentage width, a plotted top — data, not style) and ~29 single-use type sizes and colours, which belong to the typography pass, not to a sweep. | The CSS is the source of truth for layout again. | 0.5 d |
 | **B3** | **The drawings use a hardcoded old palette.** Mostly fixed: state colours and the anatomy figure now read from the stylesheet through `token()`, and the off-system `#8C8A80` is gone. Remaining: 47 literal strokes inside the exercise diagram strings, which are being redrawn in the illustration pass. | The drawings were visibly off-system. | 1 d |
 | **B4** | **RTL is incomplete.** 60 physical properties (`margin-left`, `padding-right`, `border-left`, `left:`) instead of logical ones (`inline-start/end`). Arabic is a shipping language. | The Arabic app — and its printed sheet — will mirror wrongly in places. | 1–2 d |
 | **B5** | **1,853 lines of UI nobody has designed.** Science hub, lesson reader, module view, 3D anatomy lab (626 + 459 + 768 lines). They inherit tokens by luck, not by design. | These are four of the six tabs' destinations. Right now they are "whatever the old CSS made them". | 3–5 d |
@@ -126,14 +126,12 @@ stylesheet".
 
 ## Suggested order
 
-**Sprint 1 — make it real (1 week)**
-B1 font delivery · B3 token bridge · B2 first pass (move styling out of `screens.js`
-home + session) · B6 screenshots and fixes · the state matrix for the three
-designed screens.
+**Sprint 1 — make it real (1 week)** · *done*
+B1 font delivery · B3 token bridge · B2 layout sweep · onboarding · B6 screenshots
+and fixes · the state matrix for the three designed screens.
 
 **Sprint 2 — the missing screens (1.5 weeks)**
-Onboarding (3 d) · Science hub + lesson reader (3.5 d) · session live + complete
-(2.5 d).
+Science hub + lesson reader (3.5 d) · session live + complete (2.5 d).
 
 **Sprint 3 — the rest of the app (1 week)**
 Module view · 3D lab controls · progress sub-views · sheets · B4 RTL · B5 finished.
@@ -253,12 +251,65 @@ Decisions I would take, with the reasoning, so you can overrule any of them.
 
 ### The order I would actually work in
 
-1. **B2 — move styling out of `screens.js`.** Everything else is cheaper afterwards.
-   3–4 days, and it is the least glamorous item on the list.
+1. ~~**B2 — move styling out of `screens.js`.**~~ *Done — see §0.3.*
 2. **B6 — your screenshots.** Half a day of fixes after that.
-3. **Onboarding, all nine steps.** Where the product is won. 3 days.
+3. ~~**Onboarding, all nine steps.**~~ *Done — see §0.3.*
 4. **B4 + Arabic.** 2 days.
 5. **The Science screens (B5).** 3 days.
 6. **State matrix.** 3 days.
 7. **Icons + illustrations + data-viz spec + motion.** 4 days.
 8. **Landing page + case study.** 4 days.
+
+---
+
+## §0.3 What shipped after §0.2
+
+Two items off the order, both committed.
+
+**Onboarding, all nine steps** (`2b5d953`). It was nine paragraphs with a
+`Step 5 of 9` sentence at the bottom. It is now one frame:
+
+- a dossier index — `05` over `/ 09 STEP`, the same device as every section
+  header in the app, so the onboarding already speaks the product's language;
+- a 3 px segmented progress bar, inked behind you, with the present segment in
+  burnt orange. The colour means "here", not "done";
+- the question set in display type at `clamp(38px, …)`, which is the one thing
+  that should dominate a screen with a single question on it;
+- answers as 64 px full-width rows with the radio square end-aligned, not a
+  grid of tiles. A thumb, not a fingertip — and the same row in Arabic;
+- all eight footers into one sticky bar: Back at 96 px and quiet, Continue
+  owning the rest of the width, padded for `--safe-b`;
+- range inputs styled for the first time in the app's life;
+- the last step reusing `.factor` rows, so the programme reveal reads as a
+  specification rather than a list of chips.
+
+Nine checks in `design.js` guard it (group 8d).
+
+**The layout sweep** (`4da1647`). 358 inline `style=` attributes → 59.
+
+The rule I used, and the rule to keep using: *if a value is the same on every
+screen, it is a class; if it differs per row, it is data and stays inline.*
+
+- **The scale is closed.** `.mt-1…5`, `.mb-0…5`, `.my-2…4` on the existing
+  `--s1…--s5`. The 6 px and 10 px margins that were sitting next to 8 px and
+  12 px ones are gone — a scale with a 6 in it is not a scale.
+- **The row primitive was not redefined.** `.row` already existed in the app
+  (flex, centred, 12 px gap, wrapping). Adding a second `.row` lower in the
+  file would have silently re-gapped every row in the product. The new layer
+  only narrows it: `.row-1`, `.row-2`, `.row-4`, `.nowrap`, `.row-top`,
+  `.row-base`. A test now asserts `.row` is defined exactly once.
+- **`.end` is `text-align:end`**, not `right`. One fewer physical property to
+  fix in B4.
+- **Named the patterns that were repeating verbatim**: `.td-empty`, `.meta`,
+  `.num-lg`/`.num-xl`, `.panel.heavy`, `.push`, `.tuck`, `.fld-cap`,
+  `.sw.sleep/.shift/.now/.direct/.indirect`.
+
+Two bugs fell out of it, both invisible in tests and both real:
+
+1. `.sheet-bh .stamp` — the printed block number — had a rule in the standalone
+   `design/print-sheet.html` and no rule in `app.css`. The card the app actually
+   prints rendered `01` `02` `03` `04` as plain text. Now inked.
+2. A science tab button carried a duplicate `class` attribute, so `seamless`
+   was never applied.
+
+Eight checks in `design.js` guard the sweep (group 8e).
