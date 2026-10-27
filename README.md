@@ -21,6 +21,7 @@ site/      the landing page (one file; figures copied from the app)
 | what is still missing | `design/ROADMAP.md` |
 | how the software is put together | `app/ARCHITECTURE.md` |
 | the states, audited | `design/STATES.md` |
+| this pass, end to end | `design/REPORT.md` |
 
 ```bash
 cd app && python3 -m http.server 8000      # the app

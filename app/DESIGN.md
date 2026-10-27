@@ -460,9 +460,10 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 - **The atlas and the profile were measured, not seen.** Row density, the 72 px
   row height, the sheet hand-off and four stacked records are structural claims;
   nobody has looked at them on a 390 px screen.
-- **Heading levels still jump on Progress, Science and Body** (h1 → h3 inside the
-  first panel). The panels share one component and were left alone rather than
-  half-converted.
+- **Heading levels still jump on Body, Progress and the session plan** (h1 → h3
+  inside the first panel; measured at the end of this pass: Body `h1,h3`,
+  Progress `h1,h3×6`, session plan `h1,h3` — Science is now `h1,h2`). The
+  panels share one `h3` component and were left alone rather than half-converted.
 - **No rest-timer, no print-layout and no offline-persistence re-verification**
   in this pass; those suites are green, which is not the same as inspected.
 
