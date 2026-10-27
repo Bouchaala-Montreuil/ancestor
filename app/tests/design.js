@@ -987,6 +987,69 @@ group('9. Reusable component vocabulary');
       /\.setcard \.fld\{[^}]*grid-template-columns/s.test(css));
 }
 
+group('8p. Every evidence capture runs to the full document');
+{
+  /* The two findings that no screenshot had ever caught — a 547 px tap icon and
+     a raw i18n key — were both below the fold of a first-screen shot. A capture
+     that stops at the viewport is a claim about the top of the page wearing the
+     title of a claim about the page. */
+  const br = fs.readFileSync(path.join(ROOT, 'tests/browser.js'), 'utf8');
+  chk('no capture stops at the viewport height', !/fullPage:\s*false/.test(br));
+  const direct = (br.match(/page\.screenshot\(/g) || []).length;
+  chk('every capture goes through the one helper that sets fullPage',
+      direct === 1 && /fullPage:\s*true/.test(br), direct + ' direct page.screenshot calls');
+  const named = (br.match(/await shot\(page, '[^']+'/g) || []).length;
+  chk('and the thirteen named captures are all taken through it', named >= 13, named + ' named captures');
+
+  /* A capture gated on a width the loop never visits is a file in a directory
+     listing that no run ever wrote: six of these sat at 360 and 1280 while the
+     loop walked 320, 375, 390, 768, 1024 and 1440. */
+  const wid = /const widths = \[([^\]]+)\]/.exec(br);
+  const walked = wid ? wid[1].split(',').map(x => parseInt(x, 10)).filter(Boolean) : [];
+  const gates = (br.match(/vw === (\d+)/g) || []).map(x => parseInt(x.replace(/\D/g, ''), 10));
+  chk('every capture gate names a width the loop actually walks',
+      gates.length > 0 && gates.every(g => walked.indexOf(g) >= 0),
+      'gates ' + JSON.stringify(gates) + ' vs widths ' + JSON.stringify(walked));
+}
+
+group('8q. The exercise register is a grid it actually uses');
+{
+  /* `.ex-grid` was display:block while a >=560 px rule set
+     grid-template-columns on it — a declaration with no effect, which is how 88
+     rows stayed one 1,440 px-wide column, 7 684 px tall, at every width. */
+  const base = /\.ex-grid\{([^}]*)\}/.exec(css);
+  chk('.ex-grid is a grid, not a block', !!base && /display:\s*grid/.test(base[1]),
+      base ? base[1].trim().slice(0, 60) : 'rule missing');
+  chk('it declares one column of its own before any breakpoint',
+      !!base && /grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(base[1]));
+  /* Two columns of 300 px each need a 720 px page, not 560: at 560 the columns
+     came out 244 px wide and 85 of 88 cards clipped their own text. */
+  /* Brace-matched, because a lazy regex reads past the end of one media block
+     and finds the rule in the next one. */
+  const blocks = (opening) => {
+    const out = [];
+    let i = css.indexOf(opening);
+    while(i >= 0){
+      let j = css.indexOf('{', i), depth = 0, k = j;
+      for(; k < css.length; k++){
+        if(css[k] === '{') depth++;
+        else if(css[k] === '}' && --depth === 0) break;
+      }
+      out.push(css.slice(j + 1, k));
+      i = css.indexOf(opening, k);
+    }
+    return out;
+  };
+  const at720 = blocks('@media (min-width:720px){');
+  const at560 = blocks('@media (min-width:560px){');
+  chk('the two-column rule lives at 720 px, where two columns fit',
+      at720.some(b => /\.ex-grid\{grid-template-columns:repeat\(2/.test(b)),
+      at720.length + ' blocks at 720 px');
+  chk('and nothing asks for two columns at 560 px',
+      at560.length > 0 && !at560.some(b => /\.ex-grid\{grid-template-columns:repeat\(2/.test(b)),
+      at560.length + ' blocks at 560 px');
+}
+
 /* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' DESIGN TESTS PASSED\x1b[0m');

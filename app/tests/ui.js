@@ -635,6 +635,22 @@ group('17. Profile: four records that name their own value');
         return v && v.textContent.trim().length > 0;
       }), groups.map(g => (g.querySelector('.prof-val') || {}).textContent).join(' | '));
 
+  /* A fold has to advertise what it holds. The four summaries are the whole
+     table of contents for a page of 160+ controls, so the things people arrive
+     looking for — the unit, the shift pattern, the backup — are named in them,
+     not only inside. */
+  groups.forEach(g => g.removeAttribute('open'));
+  const vals = groups.map(g => g.querySelector('.prof-val').textContent.replace(/\s+/g, ' ').trim());
+  const joined = vals.join(' | ');
+  const shiftWord = w8.t('onb.shift.' + ({none:'no', night:'night', rotating:'rot'}[w8.getState().profile.shiftType]));
+  chk('a closed fold still names the unit in use',
+      new RegExp('\\b' + w8.getState().profile.unit + '\\b').test(joined), joined);
+  chk('a closed fold still names the shift pattern in use',
+      joined.indexOf(shiftWord) >= 0, joined);
+  chk('and still says when the data was last exported',
+      joined.indexOf(w8.t('you.lastBackup')) >= 0, joined);
+  groups[0].setAttribute('open', '');   /* back to the page as it ships */
+
   /* The claim is collapse, not delete: the settings are all still there. */
   const all = body().querySelectorAll('button,[role=button],input,select,textarea').length;
   const vis = Array.from(body().querySelectorAll('button,[role=button],input,select,textarea'))
@@ -659,6 +675,28 @@ group('17. Profile: four records that name their own value');
   const langTiles = Array.from(body().querySelectorAll('.tile'))
     .filter(b => (b.getAttribute('onclick') || '').indexOf('switchLang') === 0).length;
   chk('the language selector is still seven full rows', langTiles === 7, langTiles + ' rows');
+}
+
+group('18b. No screen nests one staggered group inside another');
+{
+  /* The atlas shipped with two identical wrapper divs around the same 88 rows:
+     one open tag too many, one close, and the browser nested the register
+     inside itself — which cost it half the page width, because the outer grid
+     spent its second column on nothing. Nothing asserted the shape. */
+  const dom = await boot();
+  const w = dom.window, d = w.document;
+  completeOnboarding(w, d);
+  const offenders = [];
+  for(const view of ['home','session','library','body','progress','profile','science']){
+    if(view === 'library') w.openExerciseLibrary(); else w.go(view);
+    const nested = d.getElementById('screenBody').querySelectorAll('[data-stagger] [data-stagger]');
+    if(nested.length) offenders.push(view + ':' + nested.length);
+    const empty = Array.from(d.getElementById('screenBody').querySelectorAll('[data-stagger]'))
+      .filter(el => !el.children.length).length;
+    if(empty) offenders.push(view + ':empty' + empty);
+  }
+  chk('every staggered group is a single container with children in it',
+      offenders.length === 0, offenders.join(' ') || '7 screens clean');
 }
 
 group('19. Today answers three questions, not nine');

@@ -15,22 +15,23 @@ document: it found eleven rendered defects that every structural suite had
 passed. Each pass since has found more, and the most recent ones came from four
 places: a capture that covered the whole page instead of the first screen, reusing
 a component outside the screen it was written for, a surface nobody had opened at
-all, and a test whose scope was wider than the claim it made.
+all, and a test whose scope was wider than the claim it made, and an instrument that
+was quietly not measuring what it said it measured.
 
 **How to re-verify**
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
-node tests/browser.js          # 37 real Chromium: WebGL, layouts, keyboard, plan rows, SW offline
+node tests/browser.js          # 52 real Chromium: WebGL, layouts, keyboard, plan rows, atlas, SW offline
 node tools/keyscan.js          # 1,668 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,316 checks over ten headless suites**, all green —
-design 217, premium 213, ui 256, run 142, inclusive 65, personas 68, science 124,
-logic 123, anatomy 64, print 44 — plus **37 real-browser checks** in
+Current: **1,328 checks over ten headless suites**, all green —
+design 225, premium 213, ui 260, run 142, inclusive 65, personas 68, science 124,
+logic 123, anatomy 64, print 44 — plus **52 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---
@@ -306,6 +307,9 @@ run against this build — was executed.
 | the workout plan, the last unaudited screen | full-page at 1280 and 390 px, plus a per-row measurement | the exercise column was laid out at **26 px**: every title wrapped one word per line and overflowed its row, with no document-level overflow for the audit to catch (`DESIGN.md` §3.22) |
 | rest alerts, with the tab in the background | `Notification` + service worker stubbed in jsdom; real `showNotification` call asserted | opt-in, asked only from its own switch, posted only when the tab is hidden and permitted (`DESIGN.md` §3.20) |
 | the new rest-alert switch, on Profile | 1280 px, element capture | the tile component rendered as `High contrastStronger borders…` with a 0 × 0 checkbox **outside onboarding** — a fix that had been written against one screen (`DESIGN.md` §3.21) |
+| the exercise atlas, whole page at 1440 px | full-page capture, then measured at five widths | the register was **7 684 px** tall in one column: a doubled wrapper and a `grid-template-columns` rule on a `display:block` element, so its two columns had never existed (`DESIGN.md` §3.23) |
+| the capture harness itself | read the code that takes the shots | six of thirteen captures were gated on widths the loop never walked, and the shots it did take were 60 ms into the stagger reveal — an "empty" atlas nobody had ever seen (§3.23) |
+| the folded settings on Profile, closed | every summary line read with all four groups shut | the unit in use and the export appeared nowhere on the page until a group was opened (`DESIGN.md` §3.24) |
 | a full-page capture of Body, not just the first screen | 1280 and 390 px, whole document | a tap icon with no width rendering as a **547 × 547 px** glyph, 560 px of empty page between the figure and the muscle list (`DESIGN.md` §3.17); plus the raw key `body.selectBody` in all seven languages (§3.19) |
 
 **What the screenshots changed.** Nine of the eleven defects found visually were
@@ -496,8 +500,12 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
    the line back (`DESIGN.md` §3.18).
 7. **Watch five people onboard.** Everything about the eight-step flow is an
    argument; ten minutes of observation would replace most of it.
-8. **Measure discoverability of the folded settings** — instrument or test
-   whether anyone finds units, shift pattern and export after the fold.
+8. ~~**Measure discoverability of the folded settings.**~~ **Answered on the page,
+   not on people.** With all four groups closed, the summaries named the shift
+   pattern and *neither* the unit in use nor the export; both are named now, and a
+   check closes every group and fails if they stop being named (`DESIGN.md`
+   §3.24). What is still open is the half a test cannot do: five people looking
+   for the unit, timed.
 9. ~~**A browser pass at 320, 390, 768 and 1440 px.**~~ **Done**, twice — and it
    was worth more than any other item on this list, which is why it now lives in
    the evidence rather than the plan. The second pass went where the first had
@@ -514,11 +522,16 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
    it (`DESIGN.md` §3.15). What replaces it: **a real device**, because a
    simulated keyboard height is still a simulation — iOS Safari's viewport
    behaviour on focus is not the same as a short window.
-11. **Capture the whole page, not the first screen.** The 547 px tap icon on
-   Body (§3.17) and the raw `body.selectBody` key (§3.19) both sat below the
-   fold of every screenshot ever taken of that screen. Both were found in the
-   same minute once the capture ran to the full document height. This is the
-   cheapest item on this list and it has already paid.
+11. ~~**Capture the whole page, not the first screen.**~~ **Done, and it paid
+   three times.** The 547 px tap icon on Body (§3.17) and the raw
+   `body.selectBody` key (§3.19) were below the fold of every screenshot ever
+   taken; the atlas was 7 684 px tall because of a fault no viewport-sized shot
+   could show (§3.23). Making it the default exposed the harness itself: six
+   captures gated on widths the loop never walked, and every capture taken 60 ms
+   into the reveal animation. One helper now takes all thirteen, at full height,
+   after the animations settle (`DESIGN.md` §3.23).
 
-Ranked by user impact, then by cost: 8 and 11 are cheap guards; 7 and 9 are the
-investments that would make every other claim in this document checkable.
+Ranked by user impact, then by cost: 7 — five people, ten minutes — is now the
+only item on this list that a test cannot substitute for; 10's remainder (a real
+device) is the other. Everything else here is done, and what was learned from
+doing it is in `app/DESIGN.md` §3.13–§3.24.

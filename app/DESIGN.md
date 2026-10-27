@@ -697,6 +697,83 @@ and that no row holds content wider than itself. Falsified by setting the wrappe
 back to `display:flex`: the exercise column collapses to 26 px and two checks go
 red, one naming it (`{"mainW":26,"idxW":12,"squeezed":1}`).
 
+### 3.23 The exercise atlas: a grid declaration with nothing behind it
+
+The whole-page capture (§3.21's method, applied to every screen) turned up the
+tallest page in the product: the Exercise Atlas, **7 684 px** at 1 440 px, one
+column of 88 rows, each row 1 000 px wide with 400 px of content in it. Three
+faults stacked on each other:
+
+1. **The wrapper was doubled.** `h += '<div class="ex-grid" data-stagger>'` was
+   written twice in a row and closed once. The browser nested the register inside
+   itself, and the outer grid spent one of its two columns on the inner wrapper —
+   so every card was laid out at **268 px** inside a 560 px column while 560 px of
+   the page sat empty beside it.
+2. **The two-column rule was inert.** `.ex-grid` was `display:block`, while a
+   `@media (min-width:560px)` rule set `grid-template-columns` on it. A block
+   element ignores that property. The intent had been on the page since the atlas
+   was written and had never once taken effect.
+3. **And 560 px is the wrong breakpoint anyway.** With the grid switched on, the
+   columns at 560 px came out 244 px wide and **85 of 88 cards clipped their own
+   text**. Two rows of exercise need 300 px each: a 56 px drawing, a title, a
+   chevron. The rule moved to 720 px.
+
+| | before | after |
+|---|---|---|
+| document height, 1 440 px | 7 684 px | **4 118 px** |
+| width of an exercise card at 1 440 px | 268 px, in a 560 px column | 560 px, in a 1 144 px register |
+| columns at ≥720 px | 1 (a block that wanted to be a grid) | 2 |
+| cards clipping their text at 560 px | 85 of 88 | 0 |
+
+A fourth, smaller fault came with them: the search field was the only child of
+the toolbar that could shrink, so beside a row of muscle chips it collapsed to
+**215 px** and cut its own placeholder mid-word — *"Search by movement, m"*. It
+now asks for 280 px, caps at 520 and takes a line of its own rather than a stump.
+
+Guarded at three levels: a jsdom check walks seven screens and fails if any
+`[data-stagger]` contains another one (or is empty); `tests/browser.js` group 3d
+measures the register at 1440, 1024, 720, 560 and 390 px and asserts the column
+count, that a card owns its column, that the search field is never narrower than
+280 px, and that nothing is clipped; and
+`tests/design.js` 8q reads the stylesheet and fails if `.ex-grid` is not
+`display:grid` or if the two-column rule is back at 560 px. Each was falsified
+once by restoring the fault.
+
+**The instrument had to be fixed first.** Applying the whole-page capture to
+every screen meant looking at the capture code, and it was lying in two ways. Six
+of its thirteen shots were gated on widths the loop never walked (`vw === 360`
+and `vw === 1280` inside a loop over `[320, 375, 390, 768, 1024, 1440]`), so they
+had never been taken — evidence in a directory listing, not on disk. And the
+shots it did take were made 60 ms after a screen rendered, while the stagger
+reveal was still running: the atlas was photographed with three rows in, a fourth
+fading, and eighty-five waiting, which is a page of pure margin that nobody has
+ever seen. Every capture now goes through one helper that runs to the full
+document height and waits for `document.getAnimations()` (raced against a 1 200 ms
+cap, so a spinner cannot hold the camera). `tests/design.js` 8p fails if any
+capture sets `fullPage:false`, if a capture bypasses the helper, or if a capture
+gate names a width the loop does not walk. Both were falsified by putting the
+fault back.
+
+### 3.24 A fold has to name what it holds
+
+The profile is four `<details>` records that state their own value (§3.11). A
+person who has forgotten where the unit lives reads four summary lines, and until
+now those lines said *"Standard volume · 3d · 50 minutes · Full gym"*,
+*"Night shifts · 7 hours per night"*, *"100% · English"*, *"0 Sessions"*. The
+kilogram setting was inside the one group that opens by default and named
+nowhere; export was inside the Data fold with no word for it anywhere on the page.
+
+Watching five people would answer the question properly, and that is still open.
+What can be done without them is to make the page answer the question it creates:
+the Programme summary now ends with the unit in use (**kg**), and the Data
+summary always states the last export (*"Last JSON backup 12 Oct 2026"*, or
+*"—"* when there has never been one). Both are the values themselves, not
+advertisements for a button — the fold still reads as a record.
+
+`tests/ui.js` group 17 closes all four groups and fails if the summaries stop
+naming the unit, the shift pattern or the backup. Falsified by removing `unit()`
+from the summary: one check fails, naming the summary text it read.
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was
@@ -769,7 +846,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (217 checks), the 37 real-browser checks in `tests/browser.js`
+`tests/design.js` (225 checks), the 52 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 

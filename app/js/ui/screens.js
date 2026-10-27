@@ -1786,9 +1786,15 @@ Screens.profile = function(){
   const backupDue = s.sessions.length >= 5 && (!s.lastExportAt || (Date.now() - s.lastExportAt) > 30*86400000);
   const needCount = NEEDS.filter(n => needOn(p, n.id)).length;
   const styleName = t('onb.style.' + (p.style || 'std'));
+  /* The summary has to answer the question the fold creates: "where do I change
+     X?". Units sit inside the open Programme group, but a person scanning for
+     them reads the summary first, so the unit in use is one of the four facts
+     it states. Data states when it was last exported for the same reason —
+     "Export" was the one setting with no sign it existed until you opened it. */
   const valProgramme = [styleName, p.daysPerWeek + 'd',
                         t('onb.avail.len.' + (p.sessionMinutes || 50)),
-                        t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))].join(' · ');
+                        t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym'))),
+                        unit()].join(' · ');
   const valBody = [t('onb.shift.' + ({none:'no', night:'night', rotating:'rot'}[p.shiftType] || 'no')),
                    p.sleepHours + ' ' + t('onb.sleep.h'),
                    needCount ? needCount + ' ' + t('a11y.needsTitle') : ''].filter(Boolean).join(' · ');
@@ -1796,7 +1802,7 @@ Screens.profile = function(){
                    p.display.highContrast ? t('a11y.contrast') : '',
                    langName(CURRENT_LANG)].filter(Boolean).join(' · ');
   const valData = [s.sessions.length + ' ' + t('progress.sessions'),
-                   backupDue ? t('you.backupDue') : ''].filter(Boolean).join(' · ');
+                   t('you.lastBackup') + ' ' + (s.lastExportAt ? dateLabel(s.lastExportAt) : '—')].join(' · ');
   const groupOpen = (title, value, open) =>
     '<details class="prof-group"' + (open ? ' open' : '') + '><summary>' +
     '<h2>' + esc(title) + '</h2>' +

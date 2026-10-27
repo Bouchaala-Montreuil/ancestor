@@ -1265,7 +1265,6 @@ function renderExerciseLibrary(){
     return h;
   }
 
-  h += '<div class="ex-grid" data-stagger>';
   /* A register, not a grid of cards. Eighty-eight exercises each carried a
      heading, four flags, a contribution bar, a three-muscle sentence and four
      controls: 382 buttons and 1 304 words in one scroll, which is a wall you

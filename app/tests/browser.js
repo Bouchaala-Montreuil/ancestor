@@ -21,6 +21,25 @@ const puppeteer = require('puppeteer');
 const ROOT = path.resolve(__dirname, '..');
 const SHOT_DIR = process.env.ANC_SHOTS || '';
 
+/* Every capture runs to the full document height.
+   Twice now the finding was below the fold of a first-screen shot — the 547 px
+   tap icon on Body and the raw `body.selectBody` key — and both times the
+   picture said the screen was fine. If a capture stops at 780 px, it is a claim
+   about the top of the page only. */
+async function shot(page, name){
+  if(!SHOT_DIR) return;
+  /* Let the reveal finish first. The stagger runs for up to half a second after
+     a screen renders, and the capture ran 60 ms later — so the atlas was
+     photographed with its first three rows in, a fourth fading and eighty-five
+     waiting, a page of pure margin that no one has ever seen. Infinite
+     animations are raced against a cap so a spinner cannot hold the camera. */
+  await page.evaluate(() => Promise.race([
+    Promise.all(document.getAnimations().map(a => a.finished.catch(() => {}))),
+    new Promise(r => setTimeout(r, 1200))
+  ])).catch(() => {});
+  await page.screenshot({ path: path.join(SHOT_DIR, name), fullPage: true });
+}
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -143,10 +162,10 @@ function startServer(){
       };
       go('home');
     });
-    if(SHOT_DIR){ await new Promise(r => setTimeout(r, 350)); await page.screenshot({ path: path.join(SHOT_DIR, '01_dashboard_desktop.png'), fullPage: false }); }
+    if(SHOT_DIR){ await new Promise(r => setTimeout(r, 350)); await shot(page, '01_dashboard_desktop.png'); }
 
     await page.evaluate(() => { go('session'); startSession(); });
-    if(SHOT_DIR){ await new Promise(r => setTimeout(r, 350)); await page.screenshot({ path: path.join(SHOT_DIR, '02_session_live.png'), fullPage: false }); }
+    if(SHOT_DIR){ await new Promise(r => setTimeout(r, 350)); await shot(page, '02_session_live.png'); }
 
     const completed = await page.evaluate(() => {
       setVal(0, 0, 'w', '60'); setVal(0, 0, 'r', '9'); toggleSet(0, 0); stopRest();
@@ -161,7 +180,7 @@ function startServer(){
     chk('live session logs barbell + timed sets and shows completion sequence',
         completed.overlayShown && completed.sessions === 3 && completed.view === 'progress',
         JSON.stringify(completed));
-    if(SHOT_DIR) await page.screenshot({ path: path.join(SHOT_DIR, '03_progress_charts.png'), fullPage: false });
+    if(SHOT_DIR) await shot(page, '03_progress_charts.png');
 
     /* ================================================================== */
     group('2. Real WebGL 2.0 3D Anatomy Lab — asset load, pixels, picking & disposal');
@@ -195,7 +214,7 @@ function startServer(){
     const frontPx = await page.evaluate(() => labSamplePixels());
     chk('WebGL framebuffer draws real non-empty anatomy pixels',
         frontPx && frontPx.nonEmpty > 400, JSON.stringify(frontPx));
-    if(SHOT_DIR) await page.screenshot({ path: path.join(SHOT_DIR, '04_anatomy_3d_front.png'), fullPage: false });
+    if(SHOT_DIR) await shot(page, '04_anatomy_3d_front.png');
 
     /* Switch to back view and verify canvas survives render() AND pixels change */
     const backPx = await page.evaluate(() => {
@@ -226,7 +245,7 @@ function startServer(){
     chk('selecting Chest renders burnt-orange highlight pixels on the 3D mesh',
         chestPx.px.orange > frontPx.orange + 15,
         'orange pixels ' + frontPx.orange + ' -> ' + chestPx.px.orange);
-    if(SHOT_DIR) await page.screenshot({ path: path.join(SHOT_DIR, '05_anatomy_3d_selected.png'), fullPage: false });
+    if(SHOT_DIR) await shot(page, '05_anatomy_3d_selected.png');
 
     /* Real hardware pointer click on the 3D canvas picks an individual anatomical structure */
     const clickTarget = await page.evaluate(() => {
@@ -342,7 +361,7 @@ function startServer(){
         modCheck.bal === '+600', modCheck.bal);
     chk('Module C recovery model sliders & branded boot veil dismissal work in Chromium',
         modCheck.recDays > 3.5 && modCheck.bootDismissed, 'days=' + modCheck.recDays);
-    if(SHOT_DIR){ await new Promise(r => setTimeout(r, 250)); await page.screenshot({ path: path.join(SHOT_DIR, '06_module_interactive.png'), fullPage: false }); }
+    if(SHOT_DIR){ await new Promise(r => setTimeout(r, 250)); await shot(page, '06_module_interactive.png'); }
 
     /* ================================================================== */
     group('3b. A 390 px phone with the on-screen keyboard up (390 x 420)');
@@ -386,7 +405,7 @@ function startServer(){
       chk('the Log button is not behind the navigation',
           kbd.logHit === 'logbtn_0_0' && kbd.logBottom <= kbd.vh,
           'log ' + kbd.logTop + '..' + kbd.logBottom + ' of ' + kbd.vh + ', hit=' + kbd.logHit);
-      if(SHOT_DIR) await page.screenshot({ path: path.join(SHOT_DIR, '13_keyboard_390x420.png') });
+      if(SHOT_DIR) await shot(page, '13_keyboard_390x420.png');
 
       await page.evaluate(() => { document.activeElement && document.activeElement.blur(); });
       await new Promise(r => setTimeout(r, 300));
@@ -452,6 +471,41 @@ function startServer(){
     }
 
     /* ================================================================== */
+    group('3d. The exercise atlas uses the width it is given');
+    for(const [vw, wantCols] of [[1440, 2], [1024, 2], [720, 2], [560, 1], [390, 1]]){
+      await page.setViewport({ width: vw, height: 900, deviceScaleFactor: 1 });
+      await page.evaluate(() => { openExerciseLibrary(); });
+      await new Promise(r => setTimeout(r, 250));
+      const m = await page.evaluate(() => {
+        const grid = document.querySelector('.ex-grid');
+        const cards = [...document.querySelectorAll('.ex-card')];
+        const cs = getComputedStyle(grid);
+        const clipped = cards.filter(c => c.scrollWidth > c.clientWidth + 2).length;
+        const search = document.getElementById('libSearchInput');
+        return {
+          searchW: search ? Math.round(search.getBoundingClientRect().width) : 0,
+          cols: cs.gridTemplateColumns.split(' ').length,
+          gridW: Math.round(grid.getBoundingClientRect().width),
+          cardW: cards.length ? Math.round(cards[0].getBoundingClientRect().width) : 0,
+          cards: cards.length,
+          clipped,
+          docH: Math.round(document.documentElement.scrollHeight)
+        };
+      });
+      chk('the atlas is ' + wantCols + ' column(s) at ' + vw + ' px',
+          m.cols === wantCols && m.cards === 88, JSON.stringify(m));
+      /* In two columns a card owns half the register; in one, all of it. */
+      const share = m.gridW ? m.cardW / m.gridW : 0;
+      /* Next to a row of muscle chips the search field used to shrink to 215 px
+         and cut its placeholder mid-word. */
+      chk('and the search field is never a stump at ' + vw + ' px',
+          m.searchW >= 280, 'input ' + m.searchW + ' px');
+      chk('and each card owns its column at ' + vw + ' px',
+          share > 0.42 && m.cardW >= 240 && m.clipped === 0,
+          'card ' + m.cardW + ' of ' + m.gridW + ' (' + Math.round(share * 100) + '%), ' + m.clipped + ' clipped');
+    }
+    await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
+
     group('4. Real viewport horizontal-overflow audit (320 / 375 / 390 / 768 / 1024 / 1440 px, LTR & RTL)');
     const widths = [320, 375, 390, 768, 1024, 1440];
     const views = ['home', 'session', 'library', 'body', 'progress', 'profile', 'science', 'module'];
@@ -478,19 +532,23 @@ function startServer(){
           if(res.sw > res.iw + 1){
             overflows.push(lang + '@' + vw + 'px/' + v + ': scrollWidth=' + res.sw + ' > ' + res.iw);
           }
-          if(SHOT_DIR && vw === 360 && v === 'body' && lang === 'en'){
+          /* These gates used to say 360 and 1280, and the loop above walks
+             [320, 375, 390, 768, 1024, 1440] — so six of the thirteen captures
+             were never taken, and nothing said so. A capture that cannot run is
+             worse than no capture: it is evidence in the directory listing. */
+          if(SHOT_DIR && vw === 390 && v === 'body' && lang === 'en'){
             await page.waitForFunction(() => typeof labIsLoaded === 'function' && labIsLoaded(), { timeout: 10000 }).catch(()=>{});
             await new Promise(r => setTimeout(r, 250));
-            await page.screenshot({ path: path.join(SHOT_DIR, '07_anatomy_mobile_360.png'), fullPage: false });
+            await shot(page, '07_anatomy_mobile_390.png');
           }
-          if(SHOT_DIR && vw === 360 && v === 'home' && lang === 'ar'){
-            await page.screenshot({ path: path.join(SHOT_DIR, '08_arabic_rtl_360.png'), fullPage: false });
+          if(SHOT_DIR && vw === 390 && v === 'home' && lang === 'ar'){
+            await shot(page, '08_arabic_rtl_390.png');
           }
-          if(SHOT_DIR && vw === 1280 && lang === 'en'){
-            if(v === 'session'){ await page.evaluate(() => { togglePlanEdit(); }); await new Promise(r => setTimeout(r, 150)); await page.screenshot({ path: path.join(SHOT_DIR, '09_session_planner.png') }); await page.evaluate(() => { togglePlanEdit(); }); }
-            if(v === 'library') await page.screenshot({ path: path.join(SHOT_DIR, '10_exercise_atlas.png') });
-            if(v === 'science'){ await page.evaluate(() => { setSciView('lessons'); }); await new Promise(r => setTimeout(r, 150)); await page.screenshot({ path: path.join(SHOT_DIR, '11_science_hub.png') }); }
-            if(v === 'profile') await page.screenshot({ path: path.join(SHOT_DIR, '12_profile_studio.png') });
+          if(SHOT_DIR && vw === 1440 && lang === 'en'){
+            if(v === 'session'){ await page.evaluate(() => { togglePlanEdit(); }); await new Promise(r => setTimeout(r, 150)); await shot(page, '09_session_planner.png'); await page.evaluate(() => { togglePlanEdit(); }); }
+            if(v === 'library') await shot(page, '10_exercise_atlas.png');
+            if(v === 'science'){ await page.evaluate(() => { setSciView('lessons'); }); await new Promise(r => setTimeout(r, 150)); await shot(page, '11_science_hub.png'); }
+            if(v === 'profile') await shot(page, '12_profile_studio.png');
           }
         }
       }

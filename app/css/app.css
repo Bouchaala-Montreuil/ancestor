@@ -1407,13 +1407,21 @@ table.data tbody tr:last-child td{border-bottom:0}
   text-transform:uppercase;color:var(--tech-ink);width:100%;margin-bottom:4px;
 }
 .atlas-toolbar{display:flex;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s3)}
+/* The search field was the one child that could shrink, so next to a row of
+   muscle chips it collapsed to 215 px and cut the placeholder mid-word. It now
+   asks for 280 px and takes a line of its own rather than a stump. */
+.atlas-toolbar > .field{flex:1 1 280px;min-width:280px;max-width:520px}
 
 /* ------------------------------------------------------------- EXERCISES */
 /* The atlas is a register: one ruled row per exercise, one tap to the sheet
    that already holds every action. It was a grid of unboxed stacks — 88
    headings, four flags and four controls each, 382 buttons and 1 304 words in
    one scroll, which is a wall you scroll past rather than a library. */
-.ex-grid{display:block;border-top:2px solid var(--ink)}
+/* A list, but a grid declaration: the two-column rule at >=560 px below was
+   writing grid-template-columns on a display:block element, so it did nothing
+   and 88 rows stayed one column 1,440 px wide and 7,132 px tall on a desktop.
+   Found by the first capture that ran to the full document height. */
+.ex-grid{display:grid;grid-template-columns:minmax(0,1fr);border-top:2px solid var(--ink)}
 .ex-card{
   display:grid;grid-template-columns:56px minmax(0,1fr) 14px;
   gap:var(--s3);align-items:center;
@@ -2655,10 +2663,13 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   .metric + .metric{padding-inline-start:var(--s3)}
   .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
   .done-stats{grid-template-columns:repeat(4,1fr)}
-  .ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 @media (min-width:720px){
+  /* Two columns of exercises need 300 px each — a 56 px drawing, a title and a
+     chevron. At 560 px the columns came out 244 px wide and 85 of 88 cards
+     clipped their own text, so the atlas splits at 720 px and not before. */
+  .ex-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--s5)}
   :root{--s7:56px}
   .shell{padding:0 var(--s6)}
   .hd{padding:var(--s3) var(--s6)}
