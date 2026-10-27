@@ -210,7 +210,7 @@ arithmetically, not seen.
 |---|---|
 | Bundle | 2.1 MB, one file, 41 scripts, zero requests |
 | Checks | 1,068 across 10 suites, all green |
-| Content | 68 exercises, 11 movement patterns, 11 lessons, 39 citations |
+| Content | 68 exercises, 11 movement patterns, 11 lessons, 14 evidence records |
 | Languages | 7, including Arabic RTL and the printed sheet |
 | Artefacts | the app, the A4 training record, the identity sheet, the pattern sheet, the chart grammar, this page |
 

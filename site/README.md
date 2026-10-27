@@ -11,8 +11,11 @@ figures/        the app's own drawings, copied out of the running DOM
 ```
 
 ```bash
-python3 site/build.py     # writes site/index.html  (~87 KB)
-python3 site/check.py     # 46 checks: no network, structure, colour, type, motion
+python3 site/build.py            # writes site/index.html  (~88 KB)
+python3 site/check.py            # 61 checks: no network, structure, colour, type,
+                                 # motion, inline styles, and the numbers in the copy
+python3 site/measure_type.py     # real advance widths vs the column at 11 widths
+                                 # (needs: pip install fonttools brotli)
 ```
 
 ## Why there is a template
@@ -49,7 +52,10 @@ network in the environment it was built in, so the layout was reasoned from the
 stylesheet and checked structurally — no external reference, unique ids, heading
 order, every link resolving, every colour inside the palette, every text/background
 pair at AA, no font below 9 px, motion only behind `prefers-reduced-motion`,
-nothing animating in a loop, and the un-animated chart still drawn.
+nothing animating in a loop, and the un-animated chart still drawn. The numbers in the copy are read back out
+of the app's data files — 68 exercises, 11 lessons, 14 evidence records, 7
+languages, the size of the single file — so the page cannot claim something the
+code stopped being true.
 
 The figures *were* looked at: they are rendered to PNG through `librsvg` and
 judged at size, which is how the drawings in `design/icons/` were fixed.

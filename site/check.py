@@ -203,6 +203,35 @@ def main():
     chk('the un-animated chart is still drawn',
         not re.search(r'\.chart-path\{[^}]*stroke-dashoffset', css))
 
+    print('\n8. The numbers on the page are the numbers in the code')
+    app = (ROOT.parent / 'app')
+    ex = (app / 'js/data/exercises.js').read_text()
+    n_ex = len(re.findall(r"\{id:'", ex))
+    chk('68 exercises', n_ex == 68, str(n_ex))
+
+    les = (app / 'js/data/lessons.js').read_text()
+    body = les[les.index('const LESSONS = ['):]
+    n_les = len(re.findall(r"\n\{\n  id:'", body))
+    chk('11 lessons', n_les == 11, str(n_les))
+
+    ev = (app / 'js/data/evidence.js').read_text()
+    # the records are JSON, so every key is quoted
+    n_ev = len(re.findall(r'"identifierVerified":', ev))
+    chk('14 evidence records', n_ev == 14, str(n_ev))
+
+    langs = (app / 'js/i18n/ui.js').read_text()
+    m = re.search(r"const LANGS = \[([^\]]+)\]", langs)
+    n_lang = len(re.findall(r"'", m.group(1))) // 2 if m else 0
+    chk('7 languages, one of them RTL', n_lang == 7 and "RTL_LANGS" in
+        (app / 'js/i18n/locale.js').read_text(), str(n_lang))
+
+    rel = app / 'release/ancestor.html'
+    size_mb = rel.stat().st_size / (1024 * 1024) if rel.exists() else 0
+    chk('the single file is about 2.1 MB', 1.9 <= size_mb <= 2.3, '%.2f MB' % size_mb)
+    chk('the single file asks for nothing',
+        not re.search(r'(?:src|href)\s*=\s*["\']https?:', rel.read_text())
+        if rel.exists() else False)
+
     print('\n' + '=' * 60)
     if fails:
         print('  %d FAILED, %d passed' % (len(fails), passes))
