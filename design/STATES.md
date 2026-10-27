@@ -85,6 +85,10 @@ the reason a column would have been a lie.
    last write, not set once. Same for offline, same for the failure state's retry.
 8. **A confirmation is a claim about a write, so it checks the write.** No screen
    says *saved* on the strength of having called the function that saves.
+9. **A wash is light, so the word on it is ink.** The state colour lives in the
+   dot, the rule and the tint. Two flags had been painting a 9px label in its own
+   state colour on its own tint — 4.00:1 and 3.98:1, under AA, on the two states
+   that mean *caution* and *new*. Measured after compositing, not assumed.
 
 ## What is verified
 
@@ -105,7 +109,13 @@ history, the storage strip is styled *and* produced by the save path in seven
 languages, the eight confirmations all pass through one guard, and no fourth
 spinner has crept in.
 
-The whole suite is 1,105 checks over ten files; `python3 build.py` plus
+`tests/design.js` group **8m** (3 checks) measures the other half: every tint
+composited over the page before the contrast is computed, no state flag allowed
+to paint its own label, and no token declared without a reader — which is how
+`--ease-spring`, `--line-hair`, `--nodata-tint` and `--burnt-deep` were found
+dead in a file that had been through five audits.
+
+The whole suite is 1,108 checks over ten files; `python3 build.py` plus
 `tools/smoke_dist.js` boots the built single file and repeats the walk there.
 
 ## What is not verified, and what this matrix cannot say

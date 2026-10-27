@@ -100,6 +100,14 @@ accent *word* in the app is `#A8461F` (4.96:1), and the loud orange is kept for
 marks, rules and figures. That distinction exists in the tokens, not in a
 designer's memory.
 
+Contrast against the page is only half the audit, though. Half the state
+vocabulary is a word on a *tint*, and a tint is measured after it is composited,
+not before: `#A8461F` on paper is 4.96:1, but on the burnt wash it was 3.98:1, and
+the warn label was 4.00:1 on its own. Both passed every test that compared a
+colour to the page. State flags now keep their word in ink and carry the state in
+the dot, the rule and the wash — ink on the same washes is 10.9:1 — and the suite
+composites every tint before it computes anything.
+
 ### The mark
 
 A tally: four strokes of recorded work, and the fifth that closes the set. Six

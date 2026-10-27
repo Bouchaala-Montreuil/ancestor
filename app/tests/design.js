@@ -614,6 +614,69 @@ group('8l. Every state has a producer and a way out');
       !/@keyframes\s+spin\b/.test(codeOnly));
 }
 
+group('8m. Text on a wash is measured, not assumed');
+{
+  /* Contrast against paper is not the whole story: half the state vocabulary is a
+     word on a tint. Compositing the wash first is the only way to know. */
+  const tint = name => {
+    const v = token(name) || '';
+    const m = /rgba?\(([^)]+)\)/.exec(v);
+    if(!m) return null;
+    const p = m[1].split(',').map(x => parseFloat(x));
+    return { hex:'#' + p.slice(0,3).map(n => Math.round(n).toString(16).padStart(2,'0')).join(''),
+             a: p.length > 3 ? p[3] : 1 };
+  };
+  const over = (t, base) => {
+    const f = rgb(t.hex), b = rgb(base);
+    return '#' + f.map((c,i) => Math.round(c*t.a + b[i]*(1-t.a))
+      .toString(16).padStart(2,'0')).join('');
+  };
+  const paper = hex(token('paper'));
+  const wash = n => over(tint(n), paper);
+
+  const pairs = [
+    ['a warn flag',        hex(token('ink')),   wash('warn-tint')],
+    ['a new flag',         hex(token('ink')),   wash('burnt-tint')],
+    ['an ok flag',         hex(token('ink')),   wash('ok-tint')],
+    ['an alert flag',      hex(token('ink')),   wash('alert-tint')],
+    ['a banner sentence',  hex(token('ink-2')), wash('alert-tint')],
+    ['the strip sentence', hex(token('ink-2')), wash('alert-tint')],
+    ['the strip title',    hex(token('alert')), wash('alert-tint')],
+    ['the strip mark',     hex(token('ivory')), hex(token('alert'))],
+    ['a saved toast',      hex(token('ivory')), hex(token('ok'))],
+    ['a failed toast',     hex(token('ivory')), hex(token('alert'))]
+  ];
+  const bad = pairs.filter(([,f,b]) => contrast(f,b) < 4.5);
+  chk('every state label clears AA on the wash it actually sits on',
+      bad.length === 0,
+      bad.map(([n,f,b]) => n + ' ' + contrast(f,b).toFixed(2)).join(', ') ||
+      pairs.map(([,f,b]) => contrast(f,b).toFixed(1)).join(' '));
+
+  /* The wash is decoration; the word is ink. So no state flag may colour its own
+     text, which is how two of them came to sit at 4.00:1 and 3.98:1. */
+  const flagRules = (css.match(/\.flag\.(?:ok|warn|alert|new)[^{]*\{[^}]*\}/g) || []);
+  const tinted = flagRules.filter(r => /(?:^|;)\s*color\s*:/.test(r));
+  chk('no state flag paints its own label — the dot carries the state',
+      tinted.length === 0, flagRules.length + ' rules, ' + tinted.length + ' tinted');
+
+  /* A token nothing uses is a colour somebody will re-invent. SVG drawn from JS
+     reads tokens through token('name'), so both readers are counted. */
+  const js = ['app.js','ui/components.js','ui/screens.js','ui/workout.js','ui/science.js',
+              'ui/modules.js','ui/anatomy3d.js','ui/motion.js']
+    .map(f => fs.readFileSync(path.join(ROOT, 'js', f), 'utf8')).join('\n');
+  const declared = (css.match(/--[a-z0-9-]+\s*:/g) || [])
+    .map(x => x.replace(/\s*:$/, ''))
+    .filter(n => !/^--(f|fs|s|r|t|hair|lh|w)-?/.test(n));
+  const unused = [...new Set(declared)].filter(n => {
+    const name = n.replace(/^--/, '');
+    const inCss = (css.match(new RegExp('var\\(' + n + '\\)', 'g')) || []).length;
+    const inJs = (js.match(new RegExp("token\\(\\s*'" + name + "'", 'g')) || []).length;
+    return inCss + inJs === 0;
+  });
+  chk('no declared token is dead — in the stylesheet or in the drawings',
+      unused.length === 0, unused.join(', '));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

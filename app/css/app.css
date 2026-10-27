@@ -75,7 +75,6 @@
   --recess:        #E7E0CF;
   --recess-2:      #DED6C4;
   --line-soft:     rgba(200,192,178,.55);
-  --line-hair:     rgba(32,33,31,.14);
 
   /* ink family */
   --ink:           #20211F;
@@ -84,7 +83,6 @@
   --tech-ink:      #636559;
 
   /* signal family */
-  --burnt-deep:    #B8532A;
   --burnt-text:    #A8461F;
   --burnt-tint:    rgba(214,106,58,.12);
   --burnt-tint-2:  rgba(214,106,58,.22);
@@ -97,7 +95,6 @@
   --alert:         #963F28;
   --alert-tint:    rgba(150,63,40,.12);
   --nodata:        #7F7D73;
-  --nodata-tint:   rgba(140,138,128,.16);
 
   /* ------------------------------------------------------------ TYPOGRAPHY
      display  condensed, for words that are the point
@@ -135,7 +132,9 @@
   /* motion */
   --ease:cubic-bezier(.22,.61,.36,1);
   --ease-in-out:cubic-bezier(.45,.05,.35,1);
-  --ease-spring:cubic-bezier(.34,1.42,.64,1);
+  /* There is deliberately no spring curve here. The motion spec has nothing
+     that overshoots; a leftover --ease-spring sat unused for months, which is
+     how a rule that nothing follows gets copied into the next component. */
   --t-instant:0ms;
   --t-fast:120ms;
   --t:180ms;
@@ -611,10 +610,18 @@ textarea{min-height:96px;border:var(--hair) solid var(--line);padding:var(--s3)}
 }
 .flag::before{content:"";width:5px;height:5px;background:currentColor;flex:none;opacity:.9}
 .flag.plain::before,.flag.sm.plain::before{display:none}
-.flag.ok{color:var(--ok);border-color:rgba(70,96,63,.35);background:var(--ok-tint)}
-.flag.warn{color:var(--warn);border-color:rgba(138,94,18,.35);background:var(--warn-tint)}
-.flag.alert{color:var(--alert);border-color:rgba(150,63,40,.32);background:var(--alert-tint)}
-.flag.new,.flag-new{color:var(--burnt-text);border-color:var(--burnt-tint-2)}
+/* A state flag is a word on a wash. The wash, the rule and the 5px dot carry the
+   state; the word stays ink, because a coloured 9px label on its own tint was the
+   only place in the app where text missed AA — warn at 4.00:1 and new at 3.98:1,
+   both against the wash they sit on. Ink on those same washes is 10.9:1. */
+.flag.ok{border-color:rgba(70,96,63,.38);background:var(--ok-tint)}
+.flag.warn{border-color:rgba(138,94,18,.38);background:var(--warn-tint)}
+.flag.alert{border-color:rgba(150,63,40,.35);background:var(--alert-tint)}
+.flag.new,.flag-new{border-color:var(--burnt-tint-2);background:var(--burnt-tint)}
+.flag.ok::before{background:var(--ok)}
+.flag.warn::before{background:var(--warn)}
+.flag.alert::before{background:var(--alert)}
+.flag.new::before,.flag-new::before{background:var(--burnt)}
 .flag.plain{background:transparent;border-color:var(--line);color:var(--ink-3)}
 .flag.sm{min-height:22px;font-size:8px;padding:3px 6px}
 button.flag{cursor:pointer}
