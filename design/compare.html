@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANCESTOR — before / after</title>
+<style>
+  :root{
+    --ink:#20211F; --paper:#F1EBDD; --burnt:#D66A3A; --line:#C8C0B2;
+    --tech-ink:#636559; --surface:#FCF9F2;
+    --f-display:"Arial Narrow","Helvetica Neue Condensed","Roboto Condensed","Liberation Sans Narrow",system-ui,sans-serif;
+    --f-body:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    --f-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body)}
+  body::after{content:"";position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.03;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>")}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 64px}
+  .mono{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tech-ink)}
+
+  header{padding:56px 0 20px;border-bottom:1px solid var(--ink)}
+  h1{font-family:var(--f-display);font-size:clamp(40px,8vw,80px);line-height:.84;
+    letter-spacing:-.01em;text-transform:uppercase;margin:0 0 14px;font-weight:700}
+  .sub{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:0}
+  .sub span{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink)}
+  .lede{font-family:var(--f-display);font-size:clamp(18px,2.6vw,26px);line-height:1.12;
+    max-width:30ch;margin:0 0 18px}
+  .body{max-width:64ch;font-size:15px;line-height:1.65;color:#3F4139;margin:0 0 14px}
+
+  .pair{display:grid;grid-template-columns:1fr;gap:20px;margin-top:32px}
+  @media(min-width:820px){.pair{grid-template-columns:1fr 1fr;gap:28px}}
+  figure{margin:0}
+  .lab{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .stamp{display:inline-flex;align-items:center;justify-content:center;
+    min-width:22px;height:17px;padding:0 5px;background:var(--ink);color:var(--paper);
+    font-family:var(--f-mono);font-size:9px;font-weight:600}
+  .lab b{font-family:var(--f-display);font-size:14px;letter-spacing:.1em;
+    text-transform:uppercase;font-weight:700}
+  .lab i{flex:1;height:1px;background:var(--line)}
+  .lab span{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--tech-ink);white-space:nowrap}
+
+  .frame{border:1px solid var(--ink);background:#fff;overflow:hidden;position:relative}
+  .frame::before{content:"";position:absolute;top:0;left:0;right:0;height:22px;z-index:2;
+    background:repeating-linear-gradient(90deg,#E7E0CF 0 3px,transparent 3px 6px);opacity:.5;
+    display:none}
+  iframe{display:block;width:100%;height:760px;border:0;background:#fff}
+  figcaption{margin-top:10px;font-size:13px;line-height:1.55;color:#3F4139}
+  figcaption b{color:var(--ink)}
+
+  .notes{margin-top:44px;display:grid;grid-template-columns:1fr;gap:26px}
+  @media(min-width:820px){.notes{grid-template-columns:1fr 1fr}}
+  .col{border-top:1px solid var(--ink);padding-top:12px}
+  .col h3{font-family:var(--f-display);font-size:13px;letter-spacing:.12em;
+    text-transform:uppercase;margin:0 0 10px}
+  .col ul{margin:0;padding-left:16px}
+  .col li{font-size:14px;line-height:1.5;margin-bottom:7px;color:#3F4139}
+  .col.keep li::marker{color:#46603F}
+  .col.drop li::marker{color:#963F28}
+
+  .toggle{display:flex;gap:0;margin-top:26px;border:1px solid var(--ink);width:fit-content}
+  .toggle button{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;background:transparent;border:0;padding:11px 18px;
+    cursor:pointer;color:var(--ink);border-right:1px solid var(--line);min-height:40px}
+  .toggle button:last-child{border-right:0}
+  .toggle button.on{background:var(--ink);color:var(--paper)}
+  .hintline{margin-top:10px;font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--tech-ink)}
+  footer{margin-top:48px;border-top:1px solid var(--ink);padding-top:16px;
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="mono" style="margin:0 0 12px">Design record · 27 Oct 2026</p>
+    <h1>Before / after</h1>
+    <div class="sub">
+      <span>Same engine</span><span>Same markup</span><span>Same data</span>
+      <span style="color:var(--burnt)">Different design</span>
+    </div>
+  </header>
+
+  <section style="padding:28px 0 0">
+    <p class="lede">Two frames, one stylesheet apart.</p>
+    <p class="body">The left frame runs the original stylesheet against the current
+    markup and the current engine. The right frame runs the rebuild. Nothing else
+    differs — not a line of JavaScript, not a string, not a row of data. That is the
+    honest way to show a redesign: if the improvement survives being measured
+    against everything except the design, it was the design.</p>
+    <p class="body">Both frames open on the same seeded log: 112&nbsp;kg, three days a
+    week, 5.5&nbsp;hours of sleep, rotating nights.</p>
+
+    <div class="toggle" role="group" aria-label="Screen">
+      <button class="on" data-s="home">Today</button>
+      <button data-s="session">Session</button>
+      <button data-s="body">Body</button>
+      <button data-s="progress">Progress</button>
+    </div>
+    <p class="hintline">Both frames navigate together · scroll inside either one</p>
+  </section>
+
+  <div class="pair">
+    <figure>
+      <div class="lab"><span class="stamp">01</span><b>Before</b><i></i><span>original CSS</span></div>
+      <div class="frame"><iframe id="before" src="before/index.html" title="Original design"></iframe></div>
+      <figcaption><b>Performance Lab.</b> Ivory, charcoal and burnt orange were
+      already right. What was missing was hierarchy: every block framed, every label
+      at the same volume, and the one thing the app exists to say set smaller than a
+      section title.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="lab"><span class="stamp">02</span><b>After</b><i></i><span>The Clinic</span></div>
+      <div class="frame"><iframe id="after" src="../app/index.html" title="Redesigned"></iframe></div>
+      <figcaption><b>Paper, ink, one signal.</b> Boxes became rules. The verdict became
+      the only inverted block on the page. Scale does the work borders were doing
+      badly, and every section is numbered like a file.</figcaption>
+    </figure>
+  </div>
+
+  <div class="notes">
+    <div class="col keep">
+      <h3>Kept on purpose</h3>
+      <ul>
+        <li>The palette — ivory, charcoal, one burnt orange</li>
+        <li>Condensed display type, monospace for every unit</li>
+        <li>Near-square corners</li>
+        <li>Every disclosure the engine makes: estimates called estimates</li>
+      </ul>
+    </div>
+    <div class="col drop">
+      <h3>Removed on purpose</h3>
+      <ul>
+        <li>Borders and shadows on content blocks</li>
+        <li>Pills for everything that could be a rule</li>
+        <li>Equal weight given to labels and to figures</li>
+        <li>Anything orange that was not a signal</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <span class="mono">design/compare.html · frames: design/before/ and app/</span>
+    <span class="mono">No build step · no external requests</span>
+  </footer>
+</div>
+
+<script>
+/* Drive both frames from one control. Same record, same screen. */
+(function(){
+  const before = document.getElementById('before');
+  const after  = document.getElementById('after');
+  const buttons = [...document.querySelectorAll('.toggle button')];
+
+  function seeded(win){
+    try {
+      if (typeof win.getState !== 'function') return false;
+      return !!win.getState().onboarded;
+    } catch(e){ return false; }
+  }
+
+  function boot(win){
+    try {
+      const s = win.getState();
+      if (!s.onboarded) {
+        s.onboarded = true; s.consented = true;
+        Object.assign(s.profile, {
+          name:'Yanis', experience:'i', goal:'h', goals:['h'], equipment:'gym',
+          shiftType:'night', sleepHours:5.5, sleepVariability:2, usualWake:7,
+          style:'hit', daysPerWeek:3, sessionMinutes:50, unit:'kg', bodyweight:112
+        });
+        if (typeof win.buildPlan === 'function') s.plan = win.buildPlan(s.profile);
+        const DAY = 864e5, now = Date.now();
+        if (s.plan) {
+          [26,23,21,18,16,13,11,8,6,3].forEach((ago, i) => {
+            const sn = s.plan.sessions[i % s.plan.sessions.length];
+            s.sessions.push({
+              id:'c'+ago, date: now - ago*DAY, planId: sn.id, name: sn.name, focus: sn.focus,
+              exercises: sn.exercises.map((e, ei) => ({
+                id: e.id,
+                sets: Array.from({length: e.sets}, (_, k) => ({
+                  w: 55 + ei*5 + Math.round(i*1.25), r: 8, rir: k ? 0 : 1,
+                  warmup:false, skipped:false, committed:true
+                }))
+              }))
+            });
+          });
+          const key = ms => { const d = new Date(ms), p = n => (n<10?'0':'')+n;
+            return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); };
+          [0,1,2,4,5].forEach(ago => s.sleep.push({
+            id:'cs'+ago, start: key(now-ago*DAY)+'T23:30',
+            end: key(now-(ago-1)*DAY)+'T05:20', quality:3 }));
+          [1,2,3,5].forEach(ago => s.shifts.push({
+            id:'ch'+ago, start: key(now-ago*DAY)+'T19:00',
+            end: key(now-(ago-1)*DAY)+'T07:00' }));
+        }
+        win.saveState();
+      }
+      if (typeof win.go === 'function') win.go('home');
+      return true;
+    } catch(e){ return false; }
+  }
+
+  function ready(fn){
+    let n = 0;
+    const step = () => { if (++n >= 2) setTimeout(fn, 300); };
+    [before, after].forEach(f => {
+      const w = f.contentWindow;
+      if (w && typeof w.getState === 'function') step();
+      else f.addEventListener('load', step, { once: true });
+    });
+  }
+
+  ready(() => {
+    boot(before.contentWindow);
+    boot(after.contentWindow);
+  });
+
+  buttons.forEach(b => b.addEventListener('click', () => {
+    buttons.forEach(x => x.classList.toggle('on', x === b));
+    const view = b.dataset.s;
+    [before, after].forEach(f => {
+      try { f.contentWindow.go(view); } catch(e){}
+    });
+  }));
+})();
+</script>
+</body>
+</html>

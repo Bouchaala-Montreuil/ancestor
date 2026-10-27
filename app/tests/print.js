@@ -179,6 +179,10 @@ const SEED = `
   {
     const ui = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
     chk('the planner offers a print action', /openPrintCard\(/.test(ui));
+    const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+    chk('the Today verdict offers a print action', /openPrintCard\(/.test(screens));
+    chk('Today prints the session the verdict is about',
+        /openPrintCard\(\s*' \+/.test(screens) || /next\.session\.id/.test(screens));
     const build = fs.readFileSync(path.join(ROOT, 'build.py'), 'utf8');
     chk('the new scripts are picked up by the build',
         /index\.html/.test(build));

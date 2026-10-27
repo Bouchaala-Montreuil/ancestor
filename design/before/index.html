@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ANCESTOR — Recovery Engine</title>
+<meta name="theme-color" content="#20211F">
+<meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ancestor">
+<link rel="manifest" href="../../app/manifest.webmanifest">
+<link rel="icon" href="../../app/img/favicon-32.png" sizes="32x32">
+<link rel="icon" href="../../app/img/ancestor-mark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../app/img/apple-touch-icon.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<a class="skip-link" href="#screenBody">Skip to main content</a>
+
+<div class="app-boot" id="appBoot" role="status" aria-live="polite" aria-label="Loading ANCESTOR">
+  <div class="app-boot-in">
+    <p class="app-boot-k">PERFORMANCE LAB // OFFLINE ENGINE</p>
+    <strong class="app-boot-w">ANCESTOR</strong>
+    <div class="app-boot-track" aria-hidden="true"><i></i></div>
+  </div>
+</div>
+
+<header>
+  <div class="hd">
+    <div class="wordmark">
+      <span class="mark" aria-hidden="true"></span>
+      <b id="wordmark">ANCESTOR</b>
+      <span id="ver"></span>
+    </div>
+    <div class="hd-right">
+      <span class="flag sm plain" id="netFlag" hidden></span>
+      <div class="langsel" id="langs" role="group" aria-label="Language"></div>
+    </div>
+  </div>
+</header>
+
+<main class="shell" id="main" role="main" aria-label="Main content">
+  <div class="screens" id="screenBody"></div>
+</main>
+
+<div id="restHost"></div>
+<div id="sheetHost"></div>
+<div id="printRoot"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<nav id="nav" class="tabbar" role="navigation" aria-label="Primary"></nav>
+
+<script src="../../app/js/i18n/core.js"></script>
+<script src="../../app/js/i18n/ui.js"></script>
+<script src="../../app/js/i18n/exercises.js"></script>
+<script src="../../app/js/i18n/screens.js"></script>
+<script src="../../app/js/i18n/acc.js"></script>
+<script src="../../app/js/i18n/ar.js"></script>
+<script src="../../app/js/i18n/v2.js"></script>
+<script src="../../app/js/i18n/science.js"></script>
+<script src="../../app/js/i18n/science2.js"></script>
+<script src="../../app/js/i18n/ex_modes.js"></script>
+<script src="../../app/js/i18n/modes.js"></script>
+<script src="../../app/js/i18n/lesson_bodies_en.js"></script>
+<script src="../../app/js/i18n/lesson_bodies_fr.js"></script>
+<script src="../../app/js/i18n/lesson_bodies_es_de.js"></script>
+<script src="../../app/js/i18n/lesson_bodies_it_nl_ar.js"></script>
+<script src="../../app/js/i18n/print.js"></script>
+<script src="../../app/js/i18n/locale.js"></script>
+<script src="../../app/js/data/exercises.js"></script>
+<script src="../../app/js/data/ex_meta.js"></script>
+<script src="../../app/js/data/ex_logging.js"></script>
+<script src="../../app/js/data/anatomy_map.js"></script>
+<script src="../../app/js/data/modules.js"></script>
+<script src="../../app/js/data/evidence.js"></script>
+<script src="../../app/js/data/lessons.js"></script>
+<script src="../../app/js/core/time.js"></script>
+<script src="../../app/js/core/profile.js"></script>
+<script src="../../app/js/core/store.js"></script>
+<script src="../../app/js/engine/progression.js"></script>
+<script src="../../app/js/engine/recovery.js"></script>
+<script src="../../app/js/engine/readiness.js"></script>
+<script src="../../app/js/engine/program.js"></script>
+<script src="../../app/js/engine/why.js"></script>
+<script src="../../app/js/ui/components.js"></script>
+<script src="../../app/js/ui/screens.js"></script>
+<script src="../../app/js/ui/workout.js"></script>
+<script src="../../app/js/ui/printsheet.js"></script>
+<script src="../../app/js/ui/science.js"></script>
+<script src="../../app/js/ui/motion.js"></script>
+<script src="../../app/js/ui/modules.js"></script>
+<script src="../../app/js/ui/anatomy3d.js"></script>
+<!-- Lazy payloads. type="text/plain" so the browser never parses or executes
+     them on load; the Anatomy Lab materialises them on first open. -->
+<script type="text/plain" id="three-runtime" src="../../app/js/vendor/three-bundle.js"></script>
+<script type="text/plain" id="anatomy-glb" src="../../app/assets/anatomy-male-mobile.glb"></script>
+<script src="../../app/js/app.js"></script>
+</body>
+</html>

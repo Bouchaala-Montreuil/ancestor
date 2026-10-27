@@ -193,6 +193,10 @@ Screens.home = function(){
   }
   h += '<button class="btn quiet" onclick="setSessionSub(\'plan\');go(\'session\')">' + esc(t('plan.tabPlan')) + '</button>';
   h += '<button class="btn quiet" onclick="openAnalysis()">' + esc(t('home.analysis')) + '</button>';
+  /* The paper is one tap from the answer: print the session the verdict is
+     about, not whichever day happens to be selected in the planner. */
+  h += '<button class="btn quiet" onclick="openPrintCard(' +
+       (next ? "'" + next.session.id + "'" : '') + ')">' + esc(t('pa.button')) + '</button>';
   h += '<button class="btn quiet" onclick="openWhy(\'decision\')">' + esc(t('sci.whyOpen')) + '</button>';
   h += '</div>';
   h += '</div></div>';

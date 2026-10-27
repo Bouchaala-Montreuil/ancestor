@@ -304,3 +304,43 @@ present and numbered, figures come from real state, absent data stays absent,
 all seven languages print without an untranslated key, Arabic mirrors, the
 action fails safely, and the button is reachable from the planner. Added to
 `npm test`.
+
+---
+
+## 13. Before / after — and the print action on Today
+
+Two additions this pass.
+
+### Print, one tap from the answer
+
+The verdict on Today now carries **Print card**, and it prints the session the
+verdict is *about* rather than whichever day happens to be selected in the
+planner. That distinction matters: on a REST day the planner might be showing a
+different day, and printing that would contradict the thing you just read.
+
+### `design/compare.html`
+
+The comparison that a redesign should have to survive:
+
+> **Same engine. Same markup. Same data. Different design.**
+
+The left frame runs the **original stylesheet** against the **current** markup
+and engine. The right frame runs the rebuild. Nothing else differs — not a line
+of JavaScript, not a string, not a row of data.
+
+That is the honest way to show this work. A redesign shown only in its finished
+state is a claim. A redesign shown next to its own starting point, running on
+identical inputs, is evidence. If the improvement survives being measured
+against everything except the design, then it was the design.
+
+`design/before/` is the original `app.css` plus a copy of `index.html` wired to
+the current scripts, so both frames are genuinely alive: you can tap through,
+switch screens (the toggle drives both), and scroll.
+
+### Kept on purpose
+The palette. Condensed display type and monospace for every unit. Near-square
+corners. Every disclosure the engine makes — estimates still called estimates.
+
+### Removed on purpose
+Borders and shadows on content blocks. Pills where a rule would do. Equal weight
+given to labels and to figures. Anything orange that was not a signal.

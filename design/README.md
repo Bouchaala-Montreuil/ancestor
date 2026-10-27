@@ -5,6 +5,8 @@ Everything visual that is not the app itself.
 ```
 CLINIC.md            the design direction, the rules, and what changed
 identity.html        the identity sheet — mark, lockups, colour, type, verdict
+compare.html         before / after, both frames live, same data
+before/              the original stylesheet + a page wired to the current app
 print-sheet.html     the A4 training record — static specimen
 print-sheet-live.html the same sheet rendered from the app's own engine
 build-live-sheet.js  regenerates print-sheet-live.html from a seeded log
