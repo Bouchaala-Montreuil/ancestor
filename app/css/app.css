@@ -1328,6 +1328,11 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .ex-mbar i{display:block;height:100%;background:var(--ink)}
 .ex-mbar i.sec{background:var(--line)}
+.onb-ex-group{margin-top:var(--s3)}
+/* The step's groups are sections, not asides: the pattern name is the label a
+   person scans, so it is set a step up from the disclosure's default. */
+.onb-ex-group .dis-t{font-size:11px;letter-spacing:.12em;color:var(--ink)}
+.onb-ex-group .chips{margin-inline-start:0}
 .atlas-more{margin-top:var(--s3)}
 .atlas-more summary{gap:var(--s2)}
 .atlas-more-body{margin-top:var(--s2);padding-bottom:var(--s2)}

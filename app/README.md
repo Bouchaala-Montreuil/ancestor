@@ -174,7 +174,7 @@ npm run test:browser               # the one that needs a real Chrome
 
 node tests/design.js               # 190 design system, states, targets, disclosures
 node tests/premium.js              # 213 motion, dashboard, charts, states, boundaries
-node tests/ui.js                   # 156 end-to-end DOM tests
+node tests/ui.js                   # 168 end-to-end DOM tests
 node tests/run.js                  # 142 engine / i18n tests
 node tests/inclusive.js            #  65 migration / a11y / locale tests
 node tests/personas.js             #  66 persona journey checks
@@ -288,7 +288,7 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 ```
 node tests/design.js   →  190 passed   palette, contrast on washes, states, 44px targets, disclosures
 node tests/premium.js  →  213 passed   motion, dashboard, charts, the state matrix, boundaries
-node tests/ui.js       →  156 passed   onboarding, logging, anatomy, charts, restart, disclosure
+node tests/ui.js       →  168 passed   onboarding, logging, anatomy, charts, restart, disclosure
 node tests/run.js      →  142 passed   progression, recovery, shifts, persistence, honesty, i18n
 node tests/inclusive.js→   65 passed   v1→v3 migration, a11y model, filtering, units, locale
 node tests/personas.js →   66 passed   the ten inclusive user journeys

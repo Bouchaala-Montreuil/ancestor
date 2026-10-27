@@ -1702,7 +1702,9 @@ Screens.profile = function(){
          '<span class="flag sm plain">' + patOn + ' / ' + byPat[pat].length + '</span></summary>' +
          '<div class="acc-body"><div class="chips">' + byPat[pat].map(e => {
            const on = p.exercises ? p.exercises[e.id] !== false : true;
-           return '<button class="chip sm ' + (on?'on':'') + '" onclick="toggleEx(\'' + e.id + '\')">' +
+           return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
+                  'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
+                  'onclick="toggleEx(\'' + e.id + '\')">' +
                   esc(t('ex.'+e.id)) + '</button>';
          }).join('') + '</div></div></details>';
   });
@@ -2037,6 +2039,8 @@ function saveFeel(){
 /*  ONBOARDING (restyled, same data model)                                */
 /* ===================================================================== */
 const ONB_STEPS = ['welcome','exp','equip','avail','shift','sleep','style','ex','ready'];
+let ONB_EX_OPEN = {};
+function onbExOpen(pat, open){ if(open) ONB_EX_OPEN[pat] = true; else delete ONB_EX_OPEN[pat]; }
 let onbIdx = 0;
 function onbGo(i){ onbIdx = Math.max(0, Math.min(ONB_STEPS.length-1, i)); render(); window.scrollTo(0,0); }
 function onbNext(){ onbGo(onbIdx+1); }
@@ -2189,15 +2193,31 @@ Screens.onb = function(){
     const pool = EX.filter(e => eq.indexOf(e.equip) >= 0);
     const byPat = {};
     pool.forEach(e => { (byPat[e.pat] = byPat[e.pat] || []).push(e); });
+    /* The step asks you to remove what you cannot do, and it arrived as eighty
+       chips all already switched on. Everything your equipment allows is in the
+       plan by default, so the list starts as eleven collapsed groups that say
+       how many each still holds; only a group you have changed starts open. */
     b = head + '<h1 class="display pre mb-2">' +
-      esc(t('onb.ex.t')) + '</h1><p class="onb-prose">' + esc(t('onb.ex.d')) + '</p>';
+      esc(t('onb.ex.t')) + '</h1><p class="onb-prose">' + esc(t('onb.ex.d')) + '</p>' +
+      '<p class="hint mb-3">' + esc(t('onb.ex.hint')) + '</p>';
     Object.keys(byPat).forEach(pat => {
-      b += '<div class="mb-4"><p class="eyebrow mb-2">' +
-        esc(t('pat.' + pat)) + '</p><div class="chips">' + byPat[pat].map(e => {
+      const list = byPat[pat];
+      const kept = list.filter(e => !p.exercises || p.exercises[e.id] !== false).length;
+      /* an explicit open/close wins; otherwise a group you have changed
+         starts open so your removals are visible */
+      const open = (pat in ONB_EX_OPEN) ? ONB_EX_OPEN[pat] : kept < list.length;
+      b += '<details class="dis onb-ex-group"' + (open ? ' open' : '') +
+        ' ontoggle="onbExOpen(\'' + pat + '\', this.open)">' +
+        '<summary><span class="dis-t">' + esc(t('pat.' + pat)) + '</span>' +
+        '<span class="flag sm ' + (kept === list.length ? 'plain' : 'warn') + '">' +
+        kept + ' / ' + list.length + '</span></summary>' +
+        '<div class="chips mt-2">' + list.map(e => {
           const on = p.exercises ? p.exercises[e.id] !== false : true;
-          return '<button class="chip sm ' + (on?'on':'') + '" onclick="toggleEx(\'' + e.id + '\')">' +
+          return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
+            'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
+            'onclick="toggleEx(\'' + e.id + '\')">' +
             esc(t('ex.'+e.id)) + '</button>';
-        }).join('') + '</div></div>';
+        }).join('') + '</div></details>';
     });
     b += '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +

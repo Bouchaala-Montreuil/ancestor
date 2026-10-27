@@ -171,7 +171,29 @@ title was an `h2`, so each screen's outline began at level 2 and then jumped to
 `h3` inside its first panel. Today, Session, Progress, Body, Science, Profile and
 the plan/library mastheads are all `h1` now.
 
-### 3.6 Small things that were wrong
+### 3.6 Onboarding: the step that asks you to remove, not to select
+
+The last step before a programme is built asked *"Which of these can you perform
+comfortably?"* and answered it for you: **88 chips, every one already switched
+on**, in twelve unlabelled rows. The task is really subtraction — almost nobody
+removes twenty exercises — but the screen asked for confirmation ninety times.
+
+It is now twelve collapsed groups, each stating how many it still holds
+(`Horizontal push 12 / 12`), with one line above them saying everything your
+equipment allows is already included. A group you have changed opens itself and
+stays open across the re-render a tap causes, so your removals stay visible.
+
+| | before | after |
+|---|---|---|
+| controls in the document | 90 | 90 (the pool is unchanged) |
+| controls reachable at once | 90 | **14** (12 groups + back/continue) |
+| toggles that state their state to a screen reader | 0 of 88 | **88 of 88** |
+
+The chips also gained `aria-pressed`. Until this pass a selected exercise was
+communicated by colour alone — the one thing the design rules forbid and the one
+thing nobody had checked, in the same control, on the same screen.
+
+### 3.7 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -251,7 +273,7 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 | screen | state | what is still weak |
 |---|---|---|
-| Onboarding | untouched | not re-audited this pass |
+| Onboarding | exercise step regrouped; eight steps, one question each | the middle steps are still one long column of chips; the step order has never been tested with a real first-run user |
 | Today | action hierarchy fixed, figure fixed | **nine `h2` sections**, 381 words; the section system is deliberate but flat — a "today / this week / understand" grouping is designed, not built |
 | Plan | untouched | not re-audited this pass |
 | Active session | headings, disclosures, discard moved, field names | 774 words with every set expanded; no per-exercise collapse; rest timer not visually verified |
@@ -272,6 +294,9 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
   flat figure was the only anatomy surface exercised.
 - **The census counts are structural.** "Words" is text content, not reading
   effort; "controls exposed" ignores visual weight.
+- **Onboarding is the one journey never watched.** Eight steps, one question
+  each, all measured structurally and none of them tested by a person who has
+  never seen the app.
 - **Discoverability was not tested.** Collapsing a settings page is a bet that
   the summary line is enough to make someone open it. Nobody has watched a real
   user look for "units".
@@ -288,15 +313,13 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 ## 9. Next, ranked by user impact
 
-1. **Onboarding's exercise step** — 90 controls on the last screen before the
-   programme is built. The one place a first-run user can be lost for good.
-2. **The exercise pool inside Programme** — 84 chips in six disclosures; the
-   same register treatment the atlas just got would fit it.
-3. **Session: 774 words.** One exercise expanded at a time, user-controlled, with
+1. **The exercise pool inside Programme** — 84 chips in six disclosures; it now
+   has a good pattern to copy from the onboarding step it sits beside.
+2. **Session: 774 words.** One exercise expanded at a time, user-controlled, with
    a visible "next" — plus a rest timer that survives a locked screen.
-4. **Today's nine sections.** Group into *today / this week / understand*; the
+3. **Today's nine sections.** Group into *today / this week / understand*; the
    content already exists, only the outline changes.
-5. **Body screen.** Drop the duplicate muscle list once the figure carries the
+4. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
-6. **The exercise sheet** — now the atlas's only action surface; it has never been
+5. **The exercise sheet** — now the atlas's only action surface; it has never been
    audited on its own.

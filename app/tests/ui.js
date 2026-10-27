@@ -661,6 +661,75 @@ group('17. Profile: four records that name their own value');
   chk('the language selector is still seven full rows', langTiles === 7, langTiles + ' rows');
 }
 
+group("18. Onboarding's exercise step: remove, do not select");
+{
+  const dom9 = await boot();
+  const w9 = dom9.window, d9 = w9.document;
+  const body = () => d9.getElementById('screenBody');
+  const exposed = el => {
+    let n = el;
+    while(n && n !== body()){
+      if(n.tagName === 'DETAILS' && !n.hasAttribute('open')) return false;
+      n = n.parentElement;
+    }
+    return true;
+  };
+
+  /* walk to the exercise step the way a person does */
+  w9.setConsent();
+  w9.setP('experience','i'); w9.setP('goal','h'); w9.onbNext();
+  w9.setP('equipment','gym'); w9.onbNext();
+  w9.setP('daysPerWeek',3); w9.onbNext();
+  w9.setP('shiftType','night'); w9.onbNext();
+  w9.onbNext(); w9.setP('style','std'); w9.onbNext();
+
+  const groups = Array.from(body().querySelectorAll('details.onb-ex-group'));
+  chk('the step is groups, not a wall of chips', groups.length >= 8 && groups.length <= 14,
+      groups.length + ' groups');
+  chk('every group is closed until you open it',
+      groups.every(g => !g.hasAttribute('open')),
+      groups.filter(g => g.hasAttribute('open')).length + ' open');
+  chk('every group says how many it still holds',
+      groups.every(g => /\d+\s*\/\s*\d+/.test(g.querySelector('summary').textContent)),
+      groups[0].querySelector('summary').textContent.trim());
+  const chips = body().querySelectorAll('.chip');
+  chk('every chip is in the document; the pool is unchanged', chips.length > 60, chips.length + ' chips');
+  chk('a chip that is on says so, in words a screen reader has',
+      Array.from(chips).every(c => c.getAttribute('aria-pressed') === 'true'));
+
+  /* removing one exercise: the group opens itself and the count follows */
+  const first = groups[0];
+  const before = first.querySelector('summary').textContent.trim();
+  first.querySelector('.chip').dispatchEvent(new w9.MouseEvent('click', {bubbles:true}));
+  const after = Array.from(body().querySelectorAll('details.onb-ex-group'))
+    .filter(g => g.querySelector('summary').textContent.indexOf(
+      first.querySelector('.dis-t').textContent) >= 0)[0];
+  chk('a group you have changed opens itself', after.hasAttribute('open'));
+  chk('its count drops by one and the state is announced',
+      after.querySelector('summary').textContent.trim() !== before &&
+      after.querySelector('.chip[aria-pressed="false"]') !== null,
+      before.trim() + ' → ' + after.querySelector('summary').textContent.trim());
+  chk('the profile keeps the same choice',
+      Object.keys(w9.getState().profile.exercises || {}).some(k => w9.getState().profile.exercises[k] === false));
+
+  /* opening a group and closing it again is remembered across a re-render */
+  w9.onbExOpen('core', true); w9.render();
+  const coreLabel = w9.t('pat.core');
+  const openNow = Array.from(body().querySelectorAll('details.onb-ex-group'))
+    .filter(g => g.querySelector('.dis-t').textContent === coreLabel)[0];
+  chk('an open group survives the re-render a tap causes',
+      !!openNow && openNow.hasAttribute('open'));
+  w9.onbExOpen('core', false); w9.render();
+  const closedNow = Array.from(body().querySelectorAll('details.onb-ex-group'))
+    .filter(g => g.querySelector('.dis-t').textContent === coreLabel)[0];
+  chk('and closing it again is remembered too',
+      !!closedNow && !closedNow.hasAttribute('open'));
+
+  /* the step is reachable without a pointer, and the next action still exists */
+  chk('the step still has back and continue', body().querySelectorAll('.onb-actions button').length === 2);
+  chk('back is available: the step is editable', /Back/.test(body().querySelector('.onb-actions').textContent));
+}
+
 group('15. The boot veil and the offline state');
 {
   const dom6 = await boot();
