@@ -449,37 +449,6 @@ function skeletonBlock(rows){
 }
 
 /* ------------------------------------------------------------- PRINT CARD */
-function printCard(state, now){
-  const plan = state.plan;
-  if(!plan) return '';
-  let h = '<div style="font-family:var(--f-mono);font-size:11px">';
-  h += '<h1 style="font-family:var(--f-display);font-size:20px;letter-spacing:.1em">ANCESTOR — ' +
-       esc(dateLabel(now)) + '</h1>';
-  plan.sessions.forEach(s => {
-    /* The number of columns follows the plan. Three was a hard-coded guess
-       and produced empty columns for a one-set programme and missing columns
-       for a five-set one. */
-    const maxSets = s.exercises.reduce((a,e) => Math.max(a, e.sets || 0), 0);
-    let cols = '';
-    for(let i=1;i<=maxSets;i++) cols += '<th>' + i + '</th>';
-    h += '<h2 style="font-family:var(--f-display);font-size:13px;margin:14px 0 4px;border-bottom:1px solid #000">' +
-         esc(s.name) + '</h2><table style="width:100%;border-collapse:collapse;font-size:10px">' +
-         '<tr><th style="text-align:left">' + esc(t('progress.exercise')) + '</th><th>' + esc(t('c.sets')) +
-         '</th><th>' + esc(t('c.target')) + '</th><th>RIR</th>' + cols + '</tr>';
-    s.exercises.forEach(e => {
-      const pex = EX_BY_ID[e.id];
-      let cells = '';
-      for(let i=0;i<(e.sets||0);i++) cells += '<td></td>';
-      h += '<tr style="border-bottom:1px solid #ccc"><td>' + esc(t('ex.'+e.id)) + '</td><td>' + e.sets +
-           '</td><td>' + esc(pex ? targetRangeText(pex) : (e.reps[0] + '–' + e.reps[1])) + '</td><td>' + e.rir + '</td>' +
-           cells + '</tr>';
-    });
-    h += '</table>';
-  });
-  h += '</div>';
-  return h;
-}
-
 /* ============================================================================
    Sparkline — a compact trend line for real session data.
    Includes an accessible table-free summary so the information is not locked

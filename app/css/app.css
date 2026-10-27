@@ -1339,18 +1339,170 @@ table.data tbody tr:last-child td{border-bottom:0}
 .warn{color:var(--warn)}
 .info{color:var(--ink-2)}
 
-/* ------------------------------------------------------------------ PRINT */
+/* ------------------------------------------------------------------ PRINT
+   The sheet. It is a document, not a screen: millimetres, points, black on
+   white, and a footer pinned to the bottom of the paper. On screen the root
+   stays hidden so it can never leak into the layout. */
 #printRoot{display:none}
+
+.sheet{
+  --pa-ink:#000;
+  --pa-line:#B9B3A6;
+  --pa-line-soft:#E3DFD5;
+  background:#fff;color:var(--pa-ink);
+  width:210mm;min-height:297mm;
+  padding:13mm 14mm 11mm;
+  display:flex;flex-direction:column;
+  font-family:var(--f-body);
+  font-size:8pt;line-height:1.45;
+}
+/* The app's own utility classes must not tint the paper. */
+#printRoot .sheet *{color:inherit}
+#printRoot .sheet .sheet-cap{color:#6B6A63}
+
+.sheet-rule{height:2px;background:#000}
+.sheet-rule.thin{height:1px}
+
+.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8mm;
+  padding:3mm 0 2.4mm}
+.sheet-brand{display:flex;align-items:center;gap:2.6mm}
+.sheet-mark{display:block;flex:none}
+.sheet-word{font-family:var(--f-display);font-size:15pt;letter-spacing:.16em;
+  text-transform:uppercase;line-height:1}
+.sheet-brand .sheet-cap{display:block;margin-top:1mm}
+.sheet-meta{text-align:right;font-family:var(--f-mono);font-size:6.2pt;letter-spacing:.1em;
+  text-transform:uppercase;line-height:1.9;color:#4A4C45}
+
+.sheet-fill{display:flex;gap:7mm;padding:0 0 3mm;border-bottom:1px solid var(--pa-line)}
+.sheet-fill div{flex:1;display:flex;align-items:flex-end;gap:2mm;
+  font-family:var(--f-mono);font-size:5.2pt;letter-spacing:.12em;
+  text-transform:uppercase;color:#6B6A63}
+.sheet-fill i{flex:1;border-bottom:1px solid var(--pa-line);height:4.6mm}
+
+.sheet-title{display:flex;align-items:flex-end;justify-content:space-between;gap:8mm;
+  padding:2.6mm 0 3mm}
+.sheet-title h1{font-family:var(--f-display);font-size:38pt;line-height:.82;
+  letter-spacing:-.01em;text-transform:uppercase;margin:0;font-weight:700;color:#000}
+
+.sheet-verdict{background:#20211F;color:#fff;padding:4mm 5mm 4mm 6mm;position:relative;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8mm}
+.sheet-verdict::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#fff}
+.sheet-lab{font-family:var(--f-mono);font-size:6pt;letter-spacing:.2em;text-transform:uppercase;
+  opacity:.65;display:flex;align-items:center;gap:1.6mm}
+.sheet-lab::before{content:"";width:1.6mm;height:1.6mm;background:#fff}
+.sheet-state{font-family:var(--f-display);font-size:24pt;line-height:.85;
+  text-transform:uppercase;margin-top:1.4mm;letter-spacing:.01em}
+.sheet-why{margin-top:2.2mm;display:flex;flex-direction:column;gap:.9mm;max-width:104mm}
+.sheet-why span{display:flex;gap:1.4mm;align-items:flex-start;
+  font-family:var(--f-mono);font-size:5.4pt;letter-spacing:.03em;line-height:1.5;
+  text-transform:none;opacity:.86}
+.sheet-why span::before{content:"";width:1.3mm;height:1.3mm;flex:none;margin-top:1.1mm;
+  background:#fff;opacity:.7}
+.sheet-vright{text-align:right;font-family:var(--f-mono);font-size:6pt;letter-spacing:.1em;
+  text-transform:uppercase;line-height:1.8;opacity:.9}
+.sheet-vright b{font-family:var(--f-display);font-size:14pt;letter-spacing:.02em;
+  display:block;line-height:1;margin-bottom:1mm}
+
+.sheet-block{padding:4.4mm 0 0}
+.sheet-bh{display:flex;align-items:center;gap:2mm;border-top:1px solid #000;
+  padding-top:1.6mm;margin-bottom:2.6mm}
+.sheet-bh h2{font-family:var(--f-display);font-size:8.4pt;letter-spacing:.12em;
+  text-transform:uppercase;margin:0;font-weight:700;color:#000}
+.sheet-bh .rule{flex:1;height:1px;background:var(--pa-line)}
+.sheet-cap{font-family:var(--f-mono);font-size:5.4pt;letter-spacing:.12em;
+  text-transform:uppercase;color:#6B6A63;white-space:nowrap}
+
+.sheet-table{width:100%;border-collapse:collapse}
+.sheet-table th{font-family:var(--f-mono);font-size:5.4pt;letter-spacing:.1em;
+  text-transform:uppercase;color:#4A4C45;text-align:left;font-weight:600;
+  padding:0 1.6mm 1.2mm 0;border-bottom:1px solid #000;white-space:nowrap}
+.sheet-table td{border-bottom:1px solid var(--pa-line-soft);
+  padding:1.9mm 1.6mm 1.9mm 0;vertical-align:middle;height:9mm;color:#000}
+.sheet-table tr:last-child td{border-bottom:1px solid var(--pa-line)}
+.sheet-table .c-idx{font-family:var(--f-mono);font-size:5.4pt;color:#6B6A63;width:6mm}
+.sheet-table .c-mono{font-family:var(--f-mono);font-size:6.2pt;letter-spacing:.04em;
+  white-space:nowrap}
+.sheet-table .c-rir{width:9mm;text-align:center}
+.sheet-table th.c-rir{text-align:center}
+.sheet-table .c-name{font-family:var(--f-display);font-size:9pt;text-transform:uppercase;
+  letter-spacing:.03em;line-height:1.1;width:44mm}
+.sheet-table .c-name small{display:block;font-family:var(--f-mono);font-size:5pt;
+  letter-spacing:.08em;color:#6B6A63;margin-top:.7mm;text-transform:uppercase}
+.sheet .box{display:inline-block;width:100%;height:5.4mm;border:1px solid #B0AA9D;
+  background:#fff}
+.sheet .box.rir{width:7mm}
+
+.sheet-legend{display:flex;gap:5mm;flex-wrap:wrap;margin-top:2mm;
+  font-family:var(--f-mono);font-size:5pt;letter-spacing:.08em;text-transform:uppercase;
+  color:#6B6A63}
+
+.sheet-rec{display:grid;grid-template-columns:1fr 1fr;gap:0 10mm}
+.sheet-rec-row{display:grid;grid-template-columns:22mm 1fr 9mm;align-items:center;
+  gap:2.6mm;padding:1.05mm 0;border-bottom:1px solid var(--pa-line-soft)}
+.sheet-rec-row .n{font-family:var(--f-mono);font-size:5.8pt;letter-spacing:.08em;
+  text-transform:uppercase;color:#000}
+.sheet-rec-row .scale{position:relative;height:2mm;display:flex;align-items:center}
+.sheet-rec-row .scale::before{content:"";position:absolute;inset:0;
+  border-top:1px solid var(--pa-line);border-bottom:1px solid var(--pa-line)}
+.sheet-rec-row .scale i{display:block;height:100%;background:#000}
+.sheet-rec-row.rest .scale i{background:#8C877B}
+.sheet-rec-row.rest .d{color:#6B6A63}
+.sheet-rec-row .d{font-family:var(--f-mono);font-size:5.8pt;text-align:right;
+  letter-spacing:.04em;color:#000}
+
+.sheet-week{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid #000}
+.sheet-week .d{border-right:1px solid var(--pa-line);padding:1.4mm}
+.sheet-week .d:last-child{border-right:0}
+.sheet-week .d b{display:block;font-family:var(--f-mono);font-size:5.4pt;letter-spacing:.1em;
+  text-transform:uppercase;font-weight:600;margin-bottom:1.4mm}
+.sheet-week .k{display:block;font-family:var(--f-mono);font-size:4.6pt;color:#6B6A63;
+  letter-spacing:.08em;text-transform:uppercase}
+.sheet-week .v{display:block;font-family:var(--f-mono);font-size:6.4pt;min-height:3.4mm;
+  border-bottom:1px solid var(--pa-line-soft);margin-bottom:1.2mm}
+
+.sheet-notes i{display:block;border-bottom:1px solid var(--pa-line);height:6.6mm}
+.sheet-notes i:last-child{border-bottom:1px solid #000}
+
+.sheet-foot{margin-top:auto;padding-top:5mm}
+.sheet-foot-top{display:flex;align-items:flex-end;justify-content:space-between;gap:8mm;
+  border-top:2px solid #000;padding-top:2mm}
+.sheet-tally-wrap .sheet-cap{display:block;margin-bottom:1.6mm}
+.sheet-tallies{display:flex;gap:3mm;align-items:center;color:#000}
+.sheet-tally-empty{color:#B0AA9D}
+.sheet-note{display:block;margin-top:1.6mm;max-width:74mm;
+  font-family:var(--f-mono);font-size:5pt;letter-spacing:.06em;line-height:1.7;
+  text-transform:uppercase;color:#6B6A63}
+.sheet-sign{display:flex;gap:6mm;align-items:flex-end}
+.sheet-sign div{font-family:var(--f-mono);font-size:5pt;letter-spacing:.1em;
+  text-transform:uppercase;color:#6B6A63}
+.sheet-sign i{display:block;width:30mm;border-bottom:1px solid #000;height:5.4mm;
+  margin-bottom:1.2mm}
+.sheet-fine{margin-top:2.4mm;font-family:var(--f-mono);font-size:4.8pt;letter-spacing:.08em;
+  text-transform:uppercase;color:#8C877B}
+.sheet-empty{padding:20mm;justify-content:center}
+
+/* RTL: the sheet mirrors, because a printed Arabic page reads right to left. */
+.sheet[dir="rtl"] .sheet-meta{text-align:left}
+.sheet[dir="rtl"] .sheet-table th,
+.sheet[dir="rtl"] .sheet-table td{text-align:right}
+.sheet[dir="rtl"] .sheet-verdict{padding:4mm 6mm 4mm 5mm}
+.sheet[dir="rtl"] .sheet-verdict::before{left:auto;right:0}
+.sheet[dir="rtl"] .sheet-vright{text-align:left}
+.sheet[dir="rtl"] .sheet-rec-row .d{text-align:left}
+.sheet[dir="rtl"] .sheet-cap{white-space:normal}
+
 @media print{
-  body{background:#fff;color:#000;padding:0}
-  body::after,header,nav.tabbar,.restbar,.toast,#restHost,.dash-actions,
-  .fig-controls,.anat-toolbar,.skip-link{display:none !important}
-  .shell{max-width:none;padding:0}
-  .panel{border-top:1px solid #000 !important;break-inside:avoid;page-break-inside:avoid}
-  .decision{background:#fff !important;color:#000 !important;border:1px solid #000}
-  *.num,.metric .v{font-variant-numeric:tabular-nums}
-  a{color:#000;border:0}
-  @page{margin:16mm}
+  @page{size:A4;margin:0}
+  html,body{background:#fff !important;padding:0 !important;margin:0}
+  body::after{display:none !important}
+  header,nav.tabbar,.shell,#restHost,#sheetHost,#printCard,.toast,.restbar,
+  .skip-link,.body-mob-bar,.app-boot{display:none !important}
+  #printRoot{display:block !important}
+  #printRoot .sheet{width:100%;min-height:auto;margin:0;box-shadow:none}
+  .sheet-verdict{background:#20211F !important;color:#fff !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sheet-block,.sheet-foot{break-inside:avoid;page-break-inside:avoid}
+  .sheet .box{border-color:#8C877B}
 }
 
 /* ------------------------------------------------------------------ TILES */

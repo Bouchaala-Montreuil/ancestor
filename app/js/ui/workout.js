@@ -230,6 +230,8 @@ function renderWorkoutPlanner(){
        esc(t('plan.addEx')) + '</button>' +
        '<button class="btn quiet sm" onclick="startCustomSession()">' +
        esc(t('plan.custom')) + '</button>' +
+       '<button class="btn quiet sm" onclick="openPrintCard(\'' + selected.id + '\')">' +
+       esc(t('pa.button')) + '</button>' +
        '<button class="btn quiet sm" onclick="go(\'profile\')">' + esc(t('prog.change')) + '</button>' +
        '</div>';
 

@@ -19,25 +19,12 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(ROOT, "dist")
 os.makedirs(DIST, exist_ok=True)
 
-SCRIPTS = [
-    "js/i18n/core.js", "js/i18n/ui.js", "js/i18n/exercises.js", "js/i18n/screens.js",
-    "js/i18n/acc.js", "js/i18n/ar.js", "js/i18n/v2.js", "js/i18n/science.js", "js/i18n/science2.js", "js/i18n/ex_modes.js", "js/i18n/modes.js",
-    "js/i18n/lesson_bodies_en.js", "js/i18n/lesson_bodies_fr.js",
-    "js/i18n/lesson_bodies_es_de.js",
-    "js/i18n/lesson_bodies_it_nl_ar.js", "js/i18n/locale.js",
-    "js/data/exercises.js", "js/data/ex_meta.js",
-    "js/data/ex_logging.js",
-    "js/data/anatomy_map.js",
-    "js/data/modules.js",
-    "js/data/evidence.js", "js/data/lessons.js",
-    "js/core/time.js", "js/core/profile.js", "js/core/store.js",
-    "js/engine/progression.js", "js/engine/recovery.js",
-    "js/engine/readiness.js", "js/engine/program.js", "js/engine/why.js",
-    "js/ui/components.js", "js/ui/screens.js", "js/ui/workout.js", "js/ui/motion.js",
-    "js/ui/modules.js", "js/ui/science.js",
-    "js/ui/anatomy3d.js",
-    "js/app.js",
-]
+# Derived from index.html, in document order. This used to be a hand-kept
+# list, which meant a new script could ship in the app and be silently missing
+# from the single-file build. The lazy payloads are `type="text/plain"`, so
+# they do not match this pattern and stay external until inlined below.
+SCRIPTS = re.findall(r'<script src="([^"]+)"></script>',
+                     open(os.path.join(ROOT, "index.html"), encoding="utf-8").read())
 
 def read(p):
     with open(os.path.join(ROOT, p), encoding="utf-8") as f:

@@ -5,7 +5,9 @@ Everything visual that is not the app itself.
 ```
 CLINIC.md            the design direction, the rules, and what changed
 identity.html        the identity sheet — mark, lockups, colour, type, verdict
-print-sheet.html     the A4 training record (print / save as PDF)
+print-sheet.html     the A4 training record — static specimen
+print-sheet-live.html the same sheet rendered from the app's own engine
+build-live-sheet.js  regenerates print-sheet-live.html from a seeded log
 build-marks.js       the mark's six numbers → every SVG and PNG the product uses
 build-sheet.py       generates print-sheet.html
 marks/               mark + icons at every size, plus a contact sheet
@@ -15,7 +17,8 @@ marks/               mark + icons at every size, plus a contact sheet
 
 ```bash
 node design/build-marks.js      # marks + icons (writes design/marks/)
-python3 design/build-sheet.py   # the A4 sheet
+python3 design/build-sheet.py   # the A4 specimen
+node design/build-live-sheet.js # the A4 sheet as the app actually prints it
 python3 app/build.py            # the single-file app
 ```
 

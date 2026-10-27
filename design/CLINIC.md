@@ -249,3 +249,58 @@ can never collide with the content — an absolutely-positioned footer was the f
 version and it was a bug waiting to happen.
 
 Print it from the preview with the button at the bottom of the page, or `⌘P`.
+
+---
+
+## 12. The sheet is now a feature
+
+The sheet stopped being a design artifact and became part of the product.
+**Print card** sits in the Session planner and prints the day you have selected,
+filled from your own log.
+
+| It prints | From |
+|---|---|
+| The verdict, the availability figure, the duration | the same `decide()` the Today screen uses |
+| **Why** — two reasons, translated | `decide().reasons`, the engine's own sentences |
+| Every exercise, with target and tempo | the selected plan day |
+| `LAST 23 OCT · 60 KG × 8` under each exercise | the most recent logged set for that movement |
+| All twelve muscle groups with days left | `allRecovery()` |
+| Sleep hours and shift length per day | your sleep and shift log, last seven days |
+| Blank where there is no data | never a guess: no history means no line |
+
+Implementation notes that matter:
+
+- **`printSheet(state, now, opts)` is pure.** Same log in, same sheet out. That is
+  what makes it testable, and it is why the live sheet below can be generated
+  from a seeded log with confidence.
+- **The tally is drawn from the same six numbers** as the app icon, in
+  `js/ui/printsheet.js`. One geometry, three languages: CSS, SVG files, print.
+- **Translated into all seven languages** (`js/i18n/print.js`, ~42 keys each),
+  including a mirrored RTL layout for Arabic. A sheet that prints in English
+  because a key was missing is worse than no sheet.
+- **Fails safe.** If there is no programme, it prints a single honest line instead
+  of throwing; the root is emptied again after printing, and on a timer as a
+  fallback for browsers that never fire `afterprint`.
+- **`build.py` no longer keeps a hand-written list of scripts.** It derives them
+  from `index.html`. The previous list meant a new script could ship in the app
+  and be silently missing from the single-file build — which is exactly what
+  happened to the two new files before this was fixed.
+
+### See the real thing
+
+```bash
+node design/build-live-sheet.js     # renders the app's own output
+open design/print-sheet-live.html
+```
+
+`print-sheet-live.html` is not a mock-up: it boots the app in jsdom, seeds four
+weeks of training and a night-shift week, and calls the same `printSheet()` the
+button calls. `print-sheet.html` remains the static specimen.
+
+### Verified
+
+`tests/print.js` — **42 checks**: the document exists and is A4, every block is
+present and numbered, figures come from real state, absent data stays absent,
+all seven languages print without an untranslated key, Arabic mirrors, the
+action fails safely, and the button is reachable from the planner. Added to
+`npm test`.
