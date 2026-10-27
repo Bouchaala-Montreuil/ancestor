@@ -345,6 +345,70 @@ function startServer(){
     if(SHOT_DIR){ await new Promise(r => setTimeout(r, 250)); await page.screenshot({ path: path.join(SHOT_DIR, '06_module_interactive.png'), fullPage: false }); }
 
     /* ================================================================== */
+    group('3b. A 390 px phone with the on-screen keyboard up (390 x 420)');
+    /* The keyboard is not in the page, so it is simulated the only honest way:
+       a viewport with the height the keyboard leaves. This is the geometry in
+       which the Log button of the set being typed into sat underneath the tab
+       bar — the one action the screen exists for, painted over by navigation. */
+    {
+      await page.setViewport({ width: 390, height: 420, deviceScaleFactor: 1 });
+      await page.evaluate(() => {
+        /* The earlier groups finished their session, so there is nothing to
+           type into until one is running. */
+        go('session');
+        if(typeof ACTIVE === 'undefined' || !ACTIVE){ startSession(); }
+        setSessionSub('live');
+      });
+      await new Promise(r => setTimeout(r, 500));
+      const inp = await page.$('#sf_0_0_reps');
+      if(inp) await inp.focus();
+      await new Promise(r => setTimeout(r, 450));
+      const kbd = await page.evaluate(() => {
+        const input = document.querySelector('#sf_0_0_reps');
+        const log = document.getElementById('logbtn_0_0');
+        const nav = document.querySelector('nav.tabbar');
+        const ir = input && input.getBoundingClientRect();
+        const lr = log && log.getBoundingClientRect();
+        const nr = nav && nav.getBoundingClientRect();
+        const hit = lr ? document.elementFromPoint(lr.left + lr.width/2, lr.top + lr.height/2) : null;
+        return {
+          typing: document.body.classList.contains('typing'),
+          inputVisible: !!ir && ir.top >= 0 && ir.bottom <= innerHeight,
+          navOffScreen: !!nr && nr.top >= innerHeight,
+          logTop: lr ? Math.round(lr.top) : null,
+          logBottom: lr ? Math.round(lr.bottom) : null,
+          logHit: hit ? hit.id || hit.className : null,
+          vh: innerHeight
+        };
+      });
+      chk('the field being typed into is scrolled into view', kbd.inputVisible);
+      chk('the tab bar steps aside for the keyboard', kbd.typing && kbd.navOffScreen);
+      chk('the Log button is not behind the navigation',
+          kbd.logHit === 'logbtn_0_0' && kbd.logBottom <= kbd.vh,
+          'log ' + kbd.logTop + '..' + kbd.logBottom + ' of ' + kbd.vh + ', hit=' + kbd.logHit);
+      if(SHOT_DIR) await page.screenshot({ path: path.join(SHOT_DIR, '13_keyboard_390x420.png') });
+
+      await page.evaluate(() => { document.activeElement && document.activeElement.blur(); });
+      await new Promise(r => setTimeout(r, 300));
+      const back = await page.evaluate(() => ({
+        typing: document.body.classList.contains('typing'),
+        navTop: Math.round(document.querySelector('nav.tabbar').getBoundingClientRect().top)
+      }));
+      chk('and the bar comes back when the keyboard closes',
+          !back.typing && back.navTop < 420, JSON.stringify(back));
+
+      /* a desktop with a rail must not lose its navigation */
+      await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
+      await page.evaluate(() => { const i = document.querySelector('#sf_0_0_reps'); if(i) i.focus(); });
+      await new Promise(r => setTimeout(r, 250));
+      const rail = await page.evaluate(() => {
+        const n = document.querySelector('nav.tabbar').getBoundingClientRect();
+        return { typing: document.body.classList.contains('typing'), left: Math.round(n.left), w: Math.round(n.width) };
+      });
+      chk('the side rail stays put while typing', rail.w === 200 && rail.left === 0, JSON.stringify(rail));
+    }
+
+    /* ================================================================== */
     group('4. Real viewport horizontal-overflow audit (320 / 375 / 390 / 768 / 1024 / 1440 px, LTR & RTL)');
     const widths = [320, 375, 390, 768, 1024, 1440];
     const views = ['home', 'session', 'library', 'body', 'progress', 'profile', 'science', 'module'];

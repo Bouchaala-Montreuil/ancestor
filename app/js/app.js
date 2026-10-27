@@ -401,6 +401,29 @@ function boot(){
   window.addEventListener('offline', () => render());
   window.addEventListener('hashchange', () => handleHashShortcut());
   window.addEventListener('resize',  () => { try { renderNav(!!getState().onboarded); } catch(e){} });
+
+  /* Typing. On a phone the on-screen keyboard covers the bottom half of the
+     screen — which is exactly where the tab bar sits, and often where the set's
+     own Log button lands. Measured at 390x420 (a 390 px phone with the numeric
+     keyboard up): the Log button sat at y=368..404 and the tab bar was painted
+     from y=355 down, so the one action a session exists for was underneath the
+     navigation. The bar steps aside while a field has focus — it is behind the
+     keyboard in reality anyway — and the set being typed into pins its action to
+     the bottom of what is left. See .typing in the stylesheet. */
+  document.addEventListener('focusin', e => {
+    const el = e.target;
+    const typing = !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT');
+    document.body.classList.toggle('typing', typing);
+  });
+  document.addEventListener('focusout', () => {
+    /* Deferred by a tick: moving between two fields fires focusout then focusin,
+       and clearing here would flash the bar back in between them. */
+    setTimeout(() => {
+      const a = document.activeElement;
+      const still = !!a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT');
+      if(!still) document.body.classList.remove('typing');
+    }, 0);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', boot);

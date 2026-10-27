@@ -496,7 +496,31 @@ nav.tabbar{
   background:var(--paper);
   border-top:var(--hair) solid var(--ink);
   padding-bottom:var(--safe-b);
+  transition:transform var(--t) var(--ease);
 }
+/* While a field has the keyboard, the tab bar is where the keyboard is. On a
+   phone it is literally behind it; in a 390 px-tall viewport it was painted over
+   the Log button of the set being edited. It steps aside instead of covering
+   the one action the screen exists for. The side rail (>=1024 px) stays: there
+   is no keyboard sitting on top of it. */
+@media (max-width:1023px){
+  body.typing nav.tabbar{transform:translateY(110%);pointer-events:none}
+}
+@media (prefers-reduced-motion:reduce){
+  nav.tabbar{transition:none}
+}
+/* And the set you are typing into keeps its action in reach: bottom-sticky
+   inside the card, opaque, so the fields scroll under it rather than past it. */
+.setcard:focus-within .set-actions{
+  position:sticky;bottom:0;z-index:5;
+  background:var(--surface);
+  margin-inline:calc(-1 * var(--s3));
+  padding:var(--s2) var(--s3);
+  border-top:var(--hair) solid var(--line);
+}
+/* A running rest timer outranks it: when the timer is on screen the sticky
+   action sits above the strip rather than under it. */
+body.typing:has(.restbar) .setcard:focus-within .set-actions{bottom:76px}
 .tabbar .inner{
   position:relative;display:flex;align-items:stretch;
   max-width:var(--shell-max);margin:0 auto;

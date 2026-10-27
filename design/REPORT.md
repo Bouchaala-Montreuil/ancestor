@@ -18,16 +18,16 @@ passed.
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
-node tests/browser.js          # 28 real Chromium: WebGL, 96 layouts, SW offline
+node tests/browser.js          # 33 real Chromium: WebGL, layouts, keyboard, SW offline
 node tools/keyscan.js          # 1,656 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,272 checks over ten headless suites**, all green —
-design 207, premium 213, ui 225, run 142, inclusive 65, personas 66, science 124,
-logic 122, anatomy 64, print 44 — plus **28 real-browser checks** in
+Current: **1,280 checks over ten headless suites**, all green —
+design 210, premium 213, ui 230, run 142, inclusive 65, personas 66, science 124,
+logic 122, anatomy 64, print 44 — plus **33 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---
@@ -298,6 +298,8 @@ run against this build — was executed.
 | the shipped single-file bundle | `dist/ancestor.html`, gzip-b64 decompressed in-page, network severed | renders offline, zero console errors |
 | accessibility tree | CDP `Accessibility` domain in real Chromium | every interactive control and dialog has a non-empty name |
 | the screens themselves | full-page and clipped screenshots at 320, 390, 768, 1024, 1280, 1440 px, English and Arabic | eleven visual defects, listed in §8 and in `app/DESIGN.md` §3.13 |
+| a second pass over the screens the first one skipped | exercise sheet, plan editor, lesson, settings fold, progress drill-down, print card, onboarding at 320 px, rest timer | the exercise sheet was rendering as an A4 poster on a phone, with no visible way out (`DESIGN.md` §3.14). The rest held. |
+| the on-screen keyboard | 390 × 420, a numeric field focused in a live session | the tab bar was painted over the set's **Log Set** button (`DESIGN.md` §3.15); fixed |
 
 **What the screenshots changed.** Nine of the eleven defects found visually were
 invisible to every check that existed: clipped layouts hidden by
@@ -463,9 +465,14 @@ component and were left alone rather than half-converted.
    timer. It found the exercise sheet rendering as an A4 poster on a phone with
    no visible way out (`DESIGN.md` §3.14) — a surface this list had described
    only as "unaudited". Everything else held.
-10. **The keyboard.** No pass has yet photographed a numeric field with the
-   on-screen keyboard up, which at 390 px is half the viewport. It is the most
-   likely place for the next real defect to be hiding.
+10. ~~**The keyboard.**~~ **Done, and it was hiding a real defect.** At
+   390 × 420 the tab bar was painted over the Log Set button of the set being
+   typed into — the one action a session exists for, under the navigation. The
+   bar now steps aside while a field has focus and the set pins its action row;
+   five real-browser checks, five behavioural checks and three static ones hold
+   it (`DESIGN.md` §3.15). What replaces it: **a real device**, because a
+   simulated keyboard height is still a simulation — iOS Safari's viewport
+   behaviour on focus is not the same as a short window.
 
 Ranked by user impact, then by cost: 1 and 2 are small changes with daily
 consequences; 3, 4 and 5 are audits and mechanical fixes; 6 and 8 are cheap

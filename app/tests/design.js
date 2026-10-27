@@ -909,6 +909,17 @@ group('9. Reusable component vocabulary');
       /#printRoot \.sheet\{/.test(css) && !/\n\.sheet\{[^}]*210mm/s.test(css));
   chk('the sheet is anchored to the bottom, not the top',
       /\.sheet\{[^}]*top:auto/s.test(css) && /\.sheet\{[^}]*bottom:0/s.test(css));
+  /* A phone keyboard covers the bottom half of the screen, which is where the
+     tab bar is and where the set's Log button lands. The bar steps aside and
+     the set keeps its action in reach — but only below the rail breakpoint,
+     and not at all under reduced motion. */
+  chk('the tab bar steps aside while a field has the keyboard',
+      /@media \(max-width:1023px\)\{\s*body\.typing nav\.tabbar\{[^}]*translateY/s.test(css));
+  chk('the set being typed into keeps its action in reach',
+      /\.setcard:focus-within \.set-actions\{[^}]*sticky/s.test(css));
+  chk('the motion it uses is switched off under reduced motion',
+      /prefers-reduced-motion:reduce\)\{\s*nav\.tabbar\{transition:none\}/s.test(css));
+
   chk('the sheet carries its own way out, in the title row',
       /\.sheet-hd\{/.test(css) && /\.sheet-x\{/.test(css));
   chk('the exercise figures sit side by side, not stacked',

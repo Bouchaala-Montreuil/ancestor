@@ -33,7 +33,7 @@ python3 -m http.server 8080                # the repo (app, site and design/ doc
 ```bash
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do
   node tests/$t.js
-done                                        # 1,272 checks over 10 suites
+done                                        # 1,280 checks over 10 suites
 python3 build.py && node tools/smoke_dist.js   # the single file, booted and used
 python3 ../site/build.py && python3 ../site/check.py
 ```

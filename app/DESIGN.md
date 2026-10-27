@@ -443,6 +443,48 @@ LOAD        REPS        RIR
 62   kg     9   6–10   —   optional
 ```
 
+### 3.15 The keyboard: the one control the session exists for, covered
+
+The third browser pass photographed the live session at **390 × 420** — a 390 px
+phone with the numeric keyboard up, which is the screen a person actually uses
+while standing over a bench.
+
+| | before focus | while typing |
+|---|---|---|
+| the reps field | y 582–624, below a 420 px viewport | scrolled to y 189–231, visible |
+| the set's **Log Set** button | — | y 368–404 |
+| the tab bar | — | painted from y 355 down, **over the button** |
+
+Chrome scrolls a focused field into view, so the field was fine. The button that
+commits it was not: `nav.tabbar` is `position:fixed;bottom:0`, and with the
+keyboard up it sat exactly on the row the session exists to produce. A thumb
+would have hit *Progress*.
+
+Three changes, one rule — **while a field has the keyboard, the thing the screen
+exists for stays reachable**:
+
+- a `focusin`/`focusout` pair on `document` sets `body.typing` (deferred by a
+  tick, so moving between two fields does not flash the bar in and out);
+- below 1024 px the tab bar translates off the screen while that class is
+  present — it is behind the keyboard in reality anyway — and returns when the
+  field is left. The side rail at ≥1024 px is untouched: no keyboard sits on it;
+- the set being edited pins its action row to the bottom of the card
+  (`.setcard:focus-within .set-actions{position:sticky}`), so the button is in
+  reach without scrolling, and sits above a running rest timer rather than
+  under it.
+
+Measured after: Log button y 377–413, tab bar top 427 (off screen), the field
+visible, the button still the top element at its own centre
+(`elementFromPoint` returns `logbtn_0_0`), and the bar back at 355 the moment
+focus is released. With a rest timer running the action row sits at 368–421 and
+the strip at 272–356: no overlap.
+
+Guarded by five real-browser checks (group 3b in `tests/browser.js`), five
+behavioural checks in `tests/ui.js` group 26, and three static assertions in
+`tests/design.js`. Falsified: disabling the one CSS rule that hides the bar
+turns two of the browser checks red, and one of them names the overlap:
+`log 377..413 of 420, hit=`.
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was
@@ -515,7 +557,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (203 checks), the 28 real-browser checks in `tests/browser.js`
+`tests/design.js` (210 checks), the 33 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 

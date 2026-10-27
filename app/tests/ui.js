@@ -887,6 +887,49 @@ group('23. Today states the decision, not the whole case for it');
       !!body().querySelector('.dash-actions .btn'));
 }
 
+group('26. The bar knows when a field has the keyboard');
+{
+  const dom17 = await boot();
+  const w17 = dom17.window, d17 = w17.document;
+  completeOnboarding(w17, d17);
+  const S = o => Object.assign({w:null,r:null,t:null,d:null,a:null,rir:null}, o);
+  w17.addSession({ date: Date.now()-5*864e5, startedAt: Date.now()-5*864e5, planId:'A', name:'S',
+    exercises:[{ id:'bb-bench', sets:[S({w:60, r:8, rir:2})] }] });
+  w17.go('session'); w17.setSessionSub('plan'); w17.startSession && w17.startSession('A');
+  const body = d17.body;
+
+  const field = () => d17.getElementById('sf_0_0_reps');
+  chk('the live session has a field to type into', !!field(),
+      body.querySelectorAll('input[type=number]').length + ' number fields');
+
+  /* Real focus, not synthetic events: jsdom fires focusin/focusout itself when
+     an element is focused, and document.activeElement is what the deferred
+     focusout check reads. */
+  field().focus();
+  chk('typing marks the document', body.classList.contains('typing'));
+
+  field().blur();
+  await new Promise(r => setTimeout(r, 20));
+  chk('leaving the field clears the mark', !body.classList.contains('typing'));
+
+  /* moving from one field to the next must not flash the bar back in */
+  field().focus();
+  const load = d17.getElementById('sf_0_0_load');
+  load.focus();
+  await new Promise(r => setTimeout(r, 20));
+  chk('moving between two fields stays "typing"', body.classList.contains('typing'),
+      'active=' + (d17.activeElement && d17.activeElement.id));
+  load.blur();
+  await new Promise(r => setTimeout(r, 20));
+
+  /* a button is not a keyboard */
+  const btn = d17.querySelector('#screenBody .btn');
+  btn.focus();
+  await new Promise(r => setTimeout(r, 20));
+  chk('focusing a button is not typing', !body.classList.contains('typing'),
+      body.className);
+}
+
 group('25. A record in the log is asked about with the rows that came before it');
 {
   const dom16 = await boot();
