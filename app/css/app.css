@@ -1559,10 +1559,21 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .plan-ex-list{border-top:var(--hair) solid var(--line)}
 .plan-ex-row{
-  display:grid;grid-template-columns:26px 1fr auto;gap:var(--s3);
+  display:grid;grid-template-columns:26px minmax(0,1fr);gap:var(--s2) var(--s3);
   align-items:start;padding:var(--s3) 0;
   border-bottom:var(--hair) solid var(--line-soft);
 }
+/* The row is a 26 px index column and then the exercise. The markup wraps both
+   in .plan-ex-top, so the wrapper was itself being placed in the 26 px column
+   and the whole header — title, chips, target — was squeezed into it: every
+   exercise title wrapped one word per line, overflowed its 26 px cell and ran
+   under the row below. display:contents puts the index and the main column back
+   where the grid expects them; every other child of the row is content and
+   belongs in the second column. */
+.plan-ex-top{display:contents}
+.plan-ex-idx{grid-column:1;grid-row:1}
+.plan-ex-main{grid-column:2;grid-row:1}
+.plan-ex-row > *:not(.plan-ex-top){grid-column:2}
 .plan-ex-row.done{opacity:.55}
 .plan-ex-idx{
   font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;

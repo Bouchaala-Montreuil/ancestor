@@ -409,6 +409,49 @@ function startServer(){
     }
 
     /* ================================================================== */
+    group('3c. The workout plan is a list of exercises, not of 26 px columns');
+    {
+      /* The row is a 26 px index column and then the exercise. The markup
+         wraps both in .plan-ex-top, and while that wrapper was being placed in
+         the index column every title wrapped one word per line and ran under
+         the row below — with no document overflow, so the audit in group 4 was
+         blind to it. Measure the thing itself. */
+      for(const vw of [390, 1280]){
+        await page.setViewport({ width: vw, height: 820, deviceScaleFactor: 1 });
+        /* an earlier group left a session running, and the "plan" subtab of a
+           running session is the live view — clear it first */
+        await page.evaluate(() => {
+          /* discardSession asks for confirmation; a modal blocks CDP */
+          try { window.confirm = () => true; } catch(e){}
+          if(typeof ACTIVE !== 'undefined' && ACTIVE){ discardSession(); }
+          go('session'); setSessionSub('plan');
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const m = await page.evaluate(() => {
+          const rows = [...document.querySelectorAll('.plan-ex-row')];
+          const row = rows[0];
+          const main = row && row.querySelector('.plan-ex-main');
+          const idx = row && row.querySelector('.plan-ex-idx');
+          const squeezed = rows.filter(r =>
+            [...r.querySelectorAll('*')].some(e => e.scrollWidth > e.clientWidth + 2 && e.clientWidth > 0)).length;
+          return {
+            rowW: row ? Math.round(row.getBoundingClientRect().width) : 0,
+            mainW: main ? Math.round(main.getBoundingClientRect().width) : 0,
+            idxW: idx ? Math.round(idx.getBoundingClientRect().width) : 0,
+            rows: rows.length,
+            squeezed
+          };
+        });
+        /* the exercise gets everything except a 26 px index column and a gap */
+        chk('an exercise gets the row, not the index column @' + vw,
+            m.rows >= 1 && m.idxW >= 20 && m.idxW <= 34 && m.mainW >= m.rowW - 60,
+            JSON.stringify(m));
+        chk('and no plan row hides overflow inside itself @' + vw, m.squeezed === 0,
+            m.squeezed + ' rows with clipped content');
+      }
+    }
+
+    /* ================================================================== */
     group('4. Real viewport horizontal-overflow audit (320 / 375 / 390 / 768 / 1024 / 1440 px, LTR & RTL)');
     const widths = [320, 375, 390, 768, 1024, 1440];
     const views = ['home', 'session', 'library', 'body', 'progress', 'profile', 'science', 'module'];

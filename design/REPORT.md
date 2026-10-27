@@ -12,24 +12,25 @@ exactly what was seen and what a headless browser still cannot tell you.
 
 The visual pass happened last, and it is the most useful thing in this
 document: it found eleven rendered defects that every structural suite had
-passed. Each pass since has found more, and the most recent ones came from two
-places: a capture that covered the whole page instead of the first screen, and
-reusing a component outside the screen it was written for.
+passed. Each pass since has found more, and the most recent ones came from four
+places: a capture that covered the whole page instead of the first screen, reusing
+a component outside the screen it was written for, a surface nobody had opened at
+all, and a test whose scope was wider than the claim it made.
 
 **How to re-verify**
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
-node tests/browser.js          # 33 real Chromium: WebGL, layouts, keyboard, SW offline
+node tests/browser.js          # 37 real Chromium: WebGL, layouts, keyboard, plan rows, SW offline
 node tools/keyscan.js          # 1,668 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,315 checks over ten headless suites**, all green —
+Current: **1,316 checks over ten headless suites**, all green —
 design 217, premium 213, ui 256, run 142, inclusive 65, personas 68, science 124,
-logic 122, anatomy 64, print 44 — plus **33 real-browser checks** in
+logic 123, anatomy 64, print 44 — plus **37 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---
@@ -302,6 +303,7 @@ run against this build — was executed.
 | the screens themselves | full-page and clipped screenshots at 320, 390, 768, 1024, 1280, 1440 px, English and Arabic | eleven visual defects, listed in §8 and in `app/DESIGN.md` §3.13 |
 | a second pass over the screens the first one skipped | exercise sheet, plan editor, lesson, settings fold, progress drill-down, print card, onboarding at 320 px, rest timer | the exercise sheet was rendering as an A4 poster on a phone, with no visible way out (`DESIGN.md` §3.14). The rest held. |
 | the on-screen keyboard | 390 × 420, a numeric field focused in a live session | the tab bar was painted over the set's **Log Set** button (`DESIGN.md` §3.15); fixed |
+| the workout plan, the last unaudited screen | full-page at 1280 and 390 px, plus a per-row measurement | the exercise column was laid out at **26 px**: every title wrapped one word per line and overflowed its row, with no document-level overflow for the audit to catch (`DESIGN.md` §3.22) |
 | rest alerts, with the tab in the background | `Notification` + service worker stubbed in jsdom; real `showNotification` call asserted | opt-in, asked only from its own switch, posted only when the tab is hidden and permitted (`DESIGN.md` §3.20) |
 | the new rest-alert switch, on Profile | 1280 px, element capture | the tile component rendered as `High contrastStronger borders…` with a 0 × 0 checkbox **outside onboarding** — a fix that had been written against one screen (`DESIGN.md` §3.21) |
 | a full-page capture of Body, not just the first screen | 1280 and 390 px, whole document | a tap icon with no width rendering as a **547 × 547 px** glyph, 560 px of empty page between the figure and the muscle list (`DESIGN.md` §3.17); plus the raw key `body.selectBody` in all seven languages (§3.19) |
@@ -474,7 +476,13 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
    (794 px wide, 4 937 px tall, 200 px of it clipped) with its only Close button
    1 845 px down the page. Now 390 px wide, 1 845 px tall, bottom-anchored, with
    a sticky title row and a 61 × 44 px Close at the top (`DESIGN.md` §3.14).
-4. **Audit the plan screen** — the only surface untouched by this phase.
+4. ~~**Audit the plan screen.**~~ **Done, and it was the worst surface left.**
+   The row's exercise column was 26 px wide — it was being placed in its own
+   index column — so every title wrapped one word per line and ran under the row
+   below; the document only got shorter by a third once fixed. Each row also
+   stated "first time" twice, and the test meant to catch that was matching the
+   inlined dictionary rather than the screen. `DESIGN.md` §3.22; guarded by
+   measurements at 390 and 1280 px in `tests/browser.js` group 3c.
 5. ~~**Fix the heading levels.**~~ **Done, whole component.** `.sub` moved from
    the `h3` tag to the class, so Body, Progress and the session plan are `h1,h2`;
    a lesson gained the `h1` it never had; `emptyState()` takes its level instead
@@ -512,6 +520,5 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
    same minute once the capture ran to the full document height. This is the
    cheapest item on this list and it has already paid.
 
-Ranked by user impact, then by cost: 4 is the last unaudited surface; 8 and 11
-are cheap guards; 7 and 9 are the investments that would make every other claim
-in this document checkable.
+Ranked by user impact, then by cost: 8 and 11 are cheap guards; 7 and 9 are the
+investments that would make every other claim in this document checkable.

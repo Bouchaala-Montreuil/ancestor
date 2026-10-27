@@ -218,7 +218,10 @@ group('4. A timed exercise accepts duration without requiring repetitions');
   const ls = labels(w, d, card);
   chk('a duration field is offered', hasField(w, d, card, w.t('log.time')), ls.join(', '));
   chk('no repetition field is offered', lacksField(w, d, card, w.t('session.reps')), ls.join(', '));
-  chk('the target is stated in seconds', d.body.textContent.indexOf(w.t('log.holdTarget',{lo:20,hi:60})) >= 0);
+  /* #screenBody, not d.body: this harness inlines the dictionaries into the
+     document, so a d.body search matches the script text and can never fail. */
+  chk('the target is stated in seconds',
+      d.querySelector('#screenBody').textContent.indexOf(w.t('log.holdTarget',{lo:20,hi:60})) >= 0);
   fill(w, d, card, w.t('log.time'), '45');
   w.toggleSet(0,0);
   chk('the set commits on duration alone', w.ANC.active.exercises[0].sets[0].committed === true);
@@ -244,12 +247,22 @@ group('5. An exercise with no history does not show fabricated previous results'
   const { w, d } = boot();
   onboard(w, d);
   oneSession(w, [{ id:'bb-bench', sets:2, reps:[6,10], rir:2 }]);
+  /* These two checks used to read d.body.textContent, which in this harness
+     contains the inlined i18n script — so they matched the dictionary itself and
+     were true whatever the screen said. They read #screenBody now, and they
+     assert the sentence the product actually prints. */
   w.go('session');
+  const planned = d.querySelector('#screenBody').textContent;
   chk('the planned screen states there is no previous result',
-      d.body.textContent.indexOf(w.t('log.noPrev')) >= 0);
+      planned.indexOf(w.t('train.firsttime')) >= 0 && planned.indexOf(w.t('log.noPrev')) < 0,
+      w.t('train.firsttime') + ' · no empty "previous" slot');
+  chk('and it does not print the same fact twice',
+      planned.split(w.t('train.firsttime')).length - 1 ===
+      d.querySelectorAll('.plan-ex-row').length,
+      'one line per exercise');
   w.startSession();
   chk('the live row states there is no previous result',
-      d.body.textContent.indexOf(w.t('log.noPrev')) >= 0);
+      d.querySelector('#screenBody').textContent.indexOf(w.t('log.noPrev')) >= 0);
   chk('no load is prescribed without history',
       w.recommend(w.getState(), 'bb-bench', Date.now()).load === null);
   chk('the previous-performance accessor returns null, not a zero row',
@@ -549,7 +562,7 @@ group('13. Journey: open a planned session, log sets, finish, review');
   chk('progress renders', d.querySelectorAll('.metric').length >= 4);
   chk('a chart is drawn for the logged exercise', d.querySelectorAll('.chart').length > 0);
   chk('the session log table offers a correction action',
-      d.body.textContent.indexOf(w.t('hist.edit')) >= 0);
+      d.querySelector('#screenBody').textContent.indexOf(w.t('hist.edit')) >= 0);
 
   /* correct a historical set through the editor */
   const chestBefore = w.muscleVolume(st, 0).chest.load;

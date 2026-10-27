@@ -297,12 +297,14 @@ function renderWorkoutPlanner(){
 
     h += '<p class="body-sm mb-0 mt-2">' + esc(t('cue.' + e.id)) + '</p>';
 
+    /* The "previous" slot is for a previous. With no history it used to say
+       "First time with this exercise" and the recommendation banner said
+       "First time — establish a baseline" directly underneath — the same fact
+       twice in a four-line row, six rows in a row. The banner carries it now,
+       once, because the banner is the line that also says what to do. */
     if(prev && prev.text){
       h += '<div class="prev-line"><span class="k">' + esc(t('c.previous')) + '</span>' +
            '<b>' + esc(prev.text) + '</b><span class="d">' + esc(dateLabel(prev.date)) + '</span></div>';
-    } else {
-      h += '<div class="prev-line"><span class="k">' + esc(t('c.previous')) + '</span>' +
-           '<span class="d">' + esc(t('log.noPrev')) + '</span></div>';
     }
 
     /* Recommendation banner — NEVER repeat the baseline phrase twice! */

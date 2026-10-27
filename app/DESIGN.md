@@ -657,6 +657,46 @@ description are `display:block`; falsified by deleting one `display:block`.
 This is the same failure as §3.17 and §3.19 in a different costume: the thing was
 never seen because the screen it lives on was never captured whole.
 
+### 3.22 The plan screen: a row laid out at 26 px
+
+The plan screen was the last surface in this phase nobody had looked at, which is
+also the reason it was the worst. At 1280 px:
+
+| | before | after |
+|---|---|---|
+| width given to the exercise column | **26 px** | 946 px |
+| an exercise title | one word per line, overflowing into the row below | 17 px display, one line |
+| document height, 1280 px | 3 200 px | 2 198 px |
+| document height, 390 px | 3 417 px | 2 720 px |
+
+The row was always a 26 px index column and then the exercise —
+`grid-template-columns:26px 1fr auto` — but the markup wraps the index *and* the
+exercise in `.plan-ex-top`, and that wrapper was being placed in the first
+column. The title, the prescription chips, everything, was laid out inside 26 px.
+`display:contents` on the wrapper puts the two back where the grid expects them,
+and every other child of the row is content in the second column.
+
+**The duplicate nobody had noticed.** Each row then said the same thing twice:
+*"Previous · First time with this exercise"*, and immediately below it
+*"First time — establish a baseline"*. Six rows, twelve statements, one fact. The
+recommendation banner carries it now, once, because the banner is the line that
+also says what to do; the "previous" slot is reserved for an actual previous.
+
+**And the test that could not fail.** The check that noticed this duplication was
+passing for the wrong reason: `logic.js` asserted
+`d.body.textContent.indexOf(t('log.noPrev')) >= 0`, and in this harness the i18n
+dictionaries are **inlined into the document**, so `d.body.textContent` contains
+the key's own definition and the assertion is true whatever the screen says. Three
+such checks existed; they read `#screenBody` now. This is the same class of
+mistake as §3.19 — a check whose scope was wider than the thing it claimed to
+check — and it is why the guard for this screen is a *measurement*:
+
+`tests/browser.js` group 3c loads the plan at 390 and 1280 px and asserts that the
+main column gets at least (row width − 60) px, that the index column is 20–34 px,
+and that no row holds content wider than itself. Falsified by setting the wrapper
+back to `display:flex`: the exercise column collapses to 26 px and two checks go
+red, one naming it (`{"mainW":26,"idxW":12,"squeezed":1}`).
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was
@@ -729,7 +769,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (217 checks), the 33 real-browser checks in `tests/browser.js`
+`tests/design.js` (217 checks), the 37 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 
