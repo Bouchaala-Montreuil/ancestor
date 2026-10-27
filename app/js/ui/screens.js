@@ -1802,6 +1802,12 @@ function rebuildPlan(){
 function replayOnboarding(){ const s = getState(); s.onboarded = false; saveState(); onbIdx = 0; go('onb'); }
 
 function doExport(){
+  /* Exporting an empty log while the real one sits unreadable would be a claim
+     about the wrong data. The strip has the action that makes sense. */
+  if(typeof LOAD_FAILED !== 'undefined' && LOAD_FAILED){
+    toast(t('app.load.title'), 'alert');
+    return;
+  }
   const s = getState();
   s.lastExportAt = Date.now();
   saveState();
@@ -1835,9 +1841,9 @@ function doImport(btn){
     r.onload = () => {
       setBtnBusy(btn, false);
       try{ importJSON(r.result); savedToast('you.saved'); go('home'); }
-      catch(e){ toast(t('err.generic'),'err'); }
+      catch(e){ toast(t('err.generic'),'alert'); }
     };
-    r.onerror = () => { setBtnBusy(btn, false); toast(t('err.generic'),'err'); };
+    r.onerror = () => { setBtnBusy(btn, false); toast(t('err.generic'),'alert'); };
     r.readAsText(f);
   };
   i.click();
@@ -1945,7 +1951,7 @@ function openSheet(kind){
 function saveBodyweightSheet(){
   const v = parseFloat((document.getElementById('bw_v') || {}).value);
   const dStr = (document.getElementById('bw_d') || {}).value;
-  if(!isFinite(v) || v <= 0){ toast(t('err.generic'), 'err'); return; }
+  if(!isFinite(v) || v <= 0){ toast(t('err.generic'), 'alert'); return; }
   const ts = dStr ? new Date(dStr + 'T12:00:00').getTime() : Date.now();
   addBodyweight(v, isFinite(ts) ? ts : Date.now());
   closeSheet(); savedToast('you.saved'); render();
@@ -1962,13 +1968,13 @@ function pickQuality(q){
 }
 function saveSleep(){
   const a = ($('#sl_s')||{}).value, b = ($('#sl_e')||{}).value;
-  if(!a || !b){ toast(t('err.generic'),'err'); return; }
+  if(!a || !b){ toast(t('err.generic'),'alert'); return; }
   addSleep({ start:a, end:b, quality:QUALITY });
   closeSheet(); savedToast('sleep.saved'); render();
 }
 function saveShift(){
   const a = ($('#sf_s')||{}).value, b = ($('#sf_e')||{}).value;
-  if(!a || !b){ toast(t('err.generic'),'err'); return; }
+  if(!a || !b){ toast(t('err.generic'),'alert'); return; }
   addShift({ start:a, end:b });
   closeSheet(); savedToast('shift.saved'); render();
 }

@@ -2,11 +2,14 @@
 
 Six tabs × five states, audited rather than remembered. The matrix below is
 what each screen actually renders when there is no data, when something breaks,
-when the radio is off, and when work is genuinely in flight. A sixth state — the
-device refusing to save — is not per-screen, so it gets its own place at the
-end: it is the one state that outlives navigation.
+when the radio is off, and when work is genuinely in flight.
 
-Three things came out of writing it down.
+Two more states are not per-screen at all, so they get their own place at the
+end: the device refusing to save, and the record it cannot open. Both outlive
+navigation, both live in the header, and both are about the one thing the app
+cannot rebuild — the log.
+
+Four things came out of writing it down.
 
 **Most of the matrix is empty, and that is the design.** The app is synchronous:
 nothing on Today, Session, Body or Progress waits for a network. So "waiting" is
@@ -34,6 +37,13 @@ produced a green *Saved* toast directly above a red *Not saved* strip, on the
 same screen, at the same moment. Confirmations now go through `savedToast()`,
 which reads the last write before it congratulates anyone.
 
+**And its mirror was worse.** The same audit, one layer down: `loadState()` caught
+every read error and started clean — and then the next save wrote the clean state
+over the damaged one. A truncated record (a crash mid-write, a bad import, a
+browser that died) became a *deleted* log, silently, on the next keystroke. There
+was no error message in the product for that, because there was no error: the app
+looked like a first run.
+
 ---
 
 ## The states, one primitive each
@@ -46,6 +56,7 @@ which reads the last write before it congratulates anyone.
 | **offline** | the device has no network, which changes nothing | `#netFlag` in the header — "Offline · everything works" | global |
 | **busy** | a control is working and cannot be pressed twice | `.btn.loading[aria-busy]` | import |
 | **refused** | the device declined the write; the data exists only in memory | `.store-flag` — alert rule, `!` mark, one sentence, and the export button | header, every screen |
+| **unreadable** | there is a record, and this build cannot open it | the same strip, a different sentence, and one action that keeps a copy before the log restarts | header, every screen |
 
 ## The matrix
 
@@ -87,6 +98,9 @@ the reason a column would have been a lie.
    one. Same for offline, same for the failure state's retry.
 8. **A confirmation is a claim about a write, so it checks the write.** No screen
    says *saved* on the strength of having called the function that saves.
+   And a kind with no rule is not a kind: six error toasts passed `'err'` for
+   eleven passes while the stylesheet only knew `.toast.ok` and `.toast.alert`, so
+   every error looked exactly like a message.
 9. **A wash is light, so the word on it is ink.** The state colour lives in the
    dot, the rule and the tint. Two flags had been painting a 9px label in its own
    state colour on its own tint — 4.00:1 and 3.98:1, under AA, on the two states
@@ -94,7 +108,7 @@ the reason a column would have been a lie.
 
 ## What is verified
 
-`tests/premium.js` group **10** (28 checks) drives the matrix in jsdom: all six
+`tests/premium.js` group **10** (35 checks) drives the matrix in jsdom: all six
 tabs on an empty record, Body with no selection, Progress with no sessions and
 with one, a log made only of unknown exercise ids (no crash, a note, and the set
 still in the export), a screen forced to throw, the offline flag, the busy
@@ -104,14 +118,19 @@ export, still carrying the unsaved session, staying silent about success while t
 write is failing, clearing on the next good write with the confirmation returning
 only then, and coming back to life on its own: the retry armed while the write is
 refused, fired by the app regaining focus, landing the session that failed, and
-stopping itself once it has.
+stopping itself once it has. And, with a truncated record seeded into storage
+before boot: the strip rises with a different sentence, `saveState()` refuses, a
+logged session does not replace the bytes, the action archives the original under
+its own key, and writes resume only after that.
 
-`tests/design.js` group **8l** (14 checks) holds the structural side: the busy
+`tests/design.js` group **8l** (17 checks) holds the structural side: the busy
 style has a producer, there is one failure state, the stack is disclosed not
 printed, every empty state is titled and bodied, unknown ids cannot have a
 history, the storage strip is styled *and* produced by the save path in seven
 languages, the eight confirmations all pass through one guard, the retry has a
-producer and a cancel, and no fourth spinner has crept in.
+producer and a cancel, an unreadable record is held rather than overwritten and is
+explained in all seven languages, every toast kind has a rule, and no fourth
+spinner has crept in.
 
 `tests/design.js` group **8m** (3 checks) measures the other half: every tint
 composited over the page before the contrast is computed, no state flag allowed
@@ -119,7 +138,7 @@ to paint its own label, and no token declared without a reader — which is how
 `--ease-spring`, `--line-hair`, `--nodata-tint` and `--burnt-deep` were found
 dead in a file that had been through five audits.
 
-The whole suite is 1,116 checks over ten files; `python3 build.py` plus
+The whole suite is 1,126 checks over ten files; `python3 build.py` plus
 `tools/smoke_dist.js` boots the built single file and repeats the walk there.
 
 ## What is not verified, and what this matrix cannot say
@@ -131,6 +150,10 @@ The whole suite is 1,116 checks over ten files; `python3 build.py` plus
   jsdom; a genuinely full quota on a real device, Safari's private mode, and an
   embedded browser with storage disabled have not been reproduced. Neither has the
   case where the write fails while the strip is already on screen at boot.
+- **The damaged-record path was tested by seeding a truncated string.** A real
+  half-written record from a real crash — a phone dying mid-save, a browser killed
+  by the OS — has not been reproduced. Neither has the case where the *archived*
+  copy itself cannot be written because the disk is full.
 - **The retry is not a queue.** It re-saves the whole state from memory every
   fifteen seconds, on focus, and on a visibility change — so a quota that frees up
   is recovered without the user doing anything. What it cannot survive is the app

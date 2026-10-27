@@ -115,7 +115,8 @@ function paintStoreFlag(){
   const el = document.getElementById('storeFlag');
   if(!el) return;
   const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
-  if(!failing){
+  const damaged = (typeof LOAD_FAILED !== 'undefined') && LOAD_FAILED;
+  if(!failing && !damaged){
     if(!el.hidden){ el.hidden = true; }
     cancelStoreRetry();
     return;
@@ -123,11 +124,39 @@ function paintStoreFlag(){
   const tEl = el.querySelector('.sf-t');
   const bEl = el.querySelector('.sf-b');
   const xEl = el.querySelector('.sf-x');
-  if(tEl) tEl.textContent = t('app.store.title');
-  if(bEl) bEl.textContent = t('app.store.body');
-  if(xEl) xEl.textContent = t('you.export');
+  if(damaged){
+    if(tEl) tEl.textContent = t('app.load.title');
+    if(bEl) bEl.textContent = t('app.load.body');
+    if(xEl){ xEl.textContent = t('app.load.get'); xEl.onclick = keepDamagedRecord; }
+  } else {
+    if(tEl) tEl.textContent = t('app.store.title');
+    if(bEl) bEl.textContent = t('app.store.body');
+    if(xEl){ xEl.textContent = t('you.export'); xEl.onclick = doExport; }
+  }
   el.hidden = false;
-  scheduleStoreRetry();
+  /* A refused write is retried; an unreadable one is not, because the retry would
+     be the overwrite. There the only way forward is the button. */
+  if(failing) scheduleStoreRetry();
+}
+
+/* The one action that is safe when the record will not open: hand the bytes back,
+   put them somewhere they can be found again, and only then let the log start. */
+function keepDamagedRecord(){
+  const raw = (typeof RAW_RECORD === 'string') ? RAW_RECORD : '';
+  try{
+    const blob = new Blob([raw], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ancestor-unreadable-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  }catch(e){ /* the archive below is the second copy */ }
+  archiveDamagedRecord();
+  saveState();
+  paintStoreFlag();
+  try{ render(); }catch(e){}
+  toast(t('app.load.kept'), 'ok');
 }
 
 /* A refused write is retried, not just reported. STATE is still the whole truth
@@ -237,6 +266,10 @@ function bindFigure(){
 }
 
 function toast(msg, kind){
+  /* Six call sites passed 'err' for eleven passes while the stylesheet only knew
+     .toast.ok and .toast.alert — so every error looked exactly like a message.
+     A kind with no rule is not a kind. */
+  if(kind === 'err') kind = 'alert';
   const el = $('#toast');
   el.textContent = msg;
   el.className = 'toast on' + (kind ? ' ' + kind : '');

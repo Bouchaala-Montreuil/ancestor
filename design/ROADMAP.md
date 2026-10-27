@@ -613,6 +613,43 @@ element the overlay is positioned against, because a `::after` without
 `position:relative` on its parent is still in the file and no longer a target. I
 verified the check fails both ways before shipping it.
 
+---
+
+## §0.11 The record that would not open
+
+The state audit produced two findings about the write path. This is the one it
+missed on the first pass, and it is worse than the other two put together.
+
+`loadState()` wrapped the read in a try/catch and fell through to a clean state —
+deliberately, and it reads as defensive code. But "no record yet" and "a record
+that will not open" arrived at the same line, and the *next* save then wrote the
+clean state over the damaged one. A log truncated by a crash mid-write, by a
+browser killed by the OS, by a stolen phone, became a deleted log on the next
+keystroke. No error, no message: the app looked like a first run.
+
+Three changes:
+
+- **The read is a decision, not a fall-through.** A stored record that will not
+  parse is kept in memory as bytes, `LOAD_FAILED` is set, and `saveState()` refuses
+  to write at all — a refusal that is the opposite of the retry: the retry exists
+  to save, this one exists to *not* save.
+- **The strip grows a second sentence.** Same component, same position, different
+  words: the log could not be opened, nothing has been overwritten, and here is
+  the one action that is safe — take a copy, and only then start again.
+- **The copy is taken twice.** It is handed to the browser as a file *and* written
+  to its own key with the moment it was set aside, so a full disk cannot lose it
+  if the download did not happen. Only after both attempts does the log restart.
+
+**The toast bug came out of the same hour.** Six error paths passed `'err'` to
+`toast()`; the stylesheet only knew `.toast.ok` and `.toast.alert`. Every error the
+app has ever shown was rendered in the neutral ink of an informational message. A
+kind with no rule is not a kind — the suite now fails on one.
+
+Tests: premium group 10 grew to 35 checks, design 8l to 17. The load-failure path
+is driven by seeding a truncated record into storage before boot: the strip, the
+refusal, the untouched bytes, the archive and the resumed writes are all asserted,
+and the guard was removed once to watch two of them fail.
+
 Two honest notes about this pair. The figures were rasterised and looked at; **the
 page itself was not** — there is no browser here, so `site/index.html` is verified
 structurally, numerically and by measurement of the real font metrics, and nobody

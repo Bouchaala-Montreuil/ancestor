@@ -144,17 +144,55 @@ function requestPersistentStorage(onDone){
   }catch(e){}
 }
 
+/* "No record" and "a record that will not open" used to land in the same place:
+   a clean state, and then the next save replaced the only copy of the user's log
+   with an empty one. The second case is a state now — the bytes are held, writes
+   are refused, and the header offers to keep a copy before anything is replaced. */
+let LOAD_FAILED = false;
+let RAW_RECORD = null;
+
 function loadState(){
+  let raw = null;
   try{
-    const raw = localStorage.getItem(STORE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      STATE = migrate(parsed);
-      return STATE;
-    }
-  }catch(e){ /* corrupted or unavailable — fall through to a clean state */ }
-  STATE = defaultState();
-  return STATE;
+    raw = localStorage.getItem(STORE_KEY);
+  }catch(e){
+    /* Storage is unavailable, not damaged. A clean start is the only option and
+       there is nothing to protect. */
+    STATE = defaultState();
+    return STATE;
+  }
+  if(!raw){
+    STATE = defaultState();
+    return STATE;
+  }
+  try{
+    STATE = migrate(JSON.parse(raw));
+    LOAD_FAILED = false;
+    RAW_RECORD = null;
+    return STATE;
+  }catch(e){
+    /* There is a record and this build cannot open it. Keep the bytes, refuse to
+       overwrite them, and say so. */
+    LOAD_FAILED = true;
+    RAW_RECORD = raw;
+    STATE = defaultState();
+    return STATE;
+  }
+}
+
+/* Take the damaged record out of the way without destroying it: it is copied to
+   its own key with the moment it was set aside, and only then may the log start
+   again. Returns the bytes that were held, so the caller can hand them over. */
+function archiveDamagedRecord(){
+  const raw = RAW_RECORD;
+  const stamped = STORE_KEY + '.damaged.' + Date.now();
+  try{
+    if(raw != null) localStorage.setItem(stamped, raw);
+    localStorage.removeItem(STORE_KEY);
+  }catch(e){ /* a full disk cannot hold the copy; the download still can */ }
+  LOAD_FAILED = false;
+  RAW_RECORD = null;
+  return raw;
 }
 
 /* Fill in anything a older/partial record is missing, without losing data. */
@@ -185,7 +223,14 @@ function migrate(s){
    completely healthy while the last session existed only until the next reload.
    Now the failure is a state, and the header says so until a write succeeds. */
 let STORAGE_FAILED = false;
+
 function saveState(){
+  if(LOAD_FAILED){
+    if(typeof paintStoreFlag === 'function'){
+      try{ paintStoreFlag(); } catch(e){ /* the flag must never break a save */ }
+    }
+    return false;
+  }
   let ok = false;
   try{
     const raw = JSON.stringify(STATE);
@@ -206,6 +251,8 @@ function getState(){ return STATE || loadState(); }
 function eraseAll(){
   try{ localStorage.removeItem(STORE_KEY); }catch(e){}
   idbMirrorClear();
+  LOAD_FAILED = false;
+  RAW_RECORD = null;
   STATE = defaultState();
   return STATE;
 }

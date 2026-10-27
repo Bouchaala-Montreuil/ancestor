@@ -742,6 +742,44 @@ console.log('\n\x1b[1m10. The state matrix\x1b[0m');
     chk('busy clears cleanly', !btn.classList.contains('loading') && !btn.hasAttribute('aria-busy'));
   }
 
+  /* unreadable: the record exists and will not open */
+  {
+    const RAW = '{"version":3,"sessions":[{"id":"kept"';   // truncated, as a crash leaves it
+    const { w, d } = boot({ 'ancestor.state.v1': RAW });
+    const strip = d.getElementById('storeFlag');
+    const txt = strip.textContent.replace(/\s+/g,' ');
+
+    chk('a record that will not open is a state, not a clean start',
+        !strip.hidden && /could not be opened|n'a pas pu|no se pudo/i.test(txt));
+    chk('…and it is not the same sentence as a refused write',
+        !/not saved|non enregistr/i.test(txt));
+
+    chk('…nothing overwrites the bytes, not even a save on top of them',
+        w.saveState() === false && w.localStorage.getItem('ancestor.state.v1') === RAW);
+
+    w.addSession({ date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A', name:'Push',
+      exercises:[{ id:'bb-bench', sets:[S({w:60,r:8,rir:2})] }] });
+    chk('…and a logged session waits rather than replacing the only copy',
+        w.localStorage.getItem('ancestor.state.v1') === RAW);
+
+    /* The export button must not offer to export the empty state the app is
+       showing, as if that were the log. */
+    const before = w.eval('getState().lastExportAt');
+    w.eval('doExport()');
+    chk('…and Export refuses while the real record is unreadable',
+        w.eval('getState().lastExportAt') === before);
+
+    w.eval('keepDamagedRecord()');
+    const keys = [];
+    for(let i = 0; i < w.localStorage.length; i++) keys.push(w.localStorage.key(i));
+    const archived = keys.filter(k => k.indexOf('.damaged.') >= 0)
+                         .map(k => w.localStorage.getItem(k));
+    chk('…the action keeps the damaged copy before the log starts again',
+        archived.length === 1 && archived[0] === RAW && strip.hidden);
+    chk('…and from then on the log is written again',
+        w.saveState() === true && /bb-bench/.test(w.localStorage.getItem('ancestor.state.v1') || ''));
+  }
+
   /* storage refused: the write is lost but the data is not silent */
   {
     const { w, d } = boot(); onboard(w, d);

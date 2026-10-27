@@ -597,10 +597,28 @@ group('8l. Every state has a producer and a way out');
       (i18n.match(/"app\.store\.title"/g) || []).length === 7 &&
       (i18n.match(/"app\.store\.body"/g) || []).length === 7);
 
+  /* A record that will not open must not be replaced by an empty one. */
+  chk('an unreadable record is held, not overwritten',
+      /LOAD_FAILED/.test(store) && /RAW_RECORD\s*=\s*raw/.test(store) &&
+      /if\(LOAD_FAILED\)/.test(store) && /archiveDamagedRecord/.test(store));
+  chk('…and it is explained in every language the app ships',
+      ['app.load.title','app.load.body','app.load.get','app.load.kept'].every(k =>
+        (i18n.match(new RegExp('"' + k.replace(/\./g, '\\.') + '"', 'g')) || []).length === 7));
+
   /* A confirmation is a claim about a write, so it goes through one guard. */
   const app = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
   const ui = ['screens.js','workout.js','science.js']
     .map(f => fs.readFileSync(path.join(ROOT, 'js/ui', f), 'utf8')).join('\n');
+
+  /* A toast kind with no rule is a message that looks like no message. */
+  const toastSrc = (ui + fs.readFileSync(path.join(ROOT,'js/app.js'), 'utf8'))
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+  const kinds = [...new Set(toastSrc.match(/toast\([^;]*?,\s*'(ok|err|alert|warn|info)'\s*\)/g) || [])]
+    .map(m => /'(ok|err|alert|warn|info)'\s*\)/.exec(m)[1]);
+  const unstyled = kinds.filter(k => css.indexOf('.toast.' + k) < 0);
+  chk('every toast kind has a rule — six errors used to look like six messages',
+      unstyled.length === 0, kinds.join(', ') + (unstyled.length ? ' | no rule: ' + unstyled.join(', ') : ''));
+
   chk('success is confirmed by a guard that reads the write, not by eight toasts',
       /function savedToast/.test(app) && /STORAGE_FAILED/.test(app) &&
       (ui.match(/savedToast\(/g) || []).length === 8 &&

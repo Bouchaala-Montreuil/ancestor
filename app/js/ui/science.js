@@ -550,7 +550,7 @@ function openWhy(kind, id){
   if(kind === 'decision')    ex = explainDecision(s, s.plan ? (nextSession(s, Date.now())||{session:{exercises:[]}}).session.exercises.map(e=>e.id) : [], Date.now());
   if(kind === 'recovery')    ex = explainRecovery(s, id, Date.now());
   if(kind === 'volume')      ex = explainVolume(s, Date.now());
-  if(!ex){ toast(t('err.generic'),'err'); return; }
+  if(!ex){ toast(t('err.generic'),'alert'); return; }
   sheet(t('sci.whyTitle'), whyPanel(ex, kind, id));
 }
 

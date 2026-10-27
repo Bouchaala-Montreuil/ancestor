@@ -146,7 +146,7 @@ value; line charts start at the nice floor because a line's value is its height.
 
 ## 5. The part that is usually skipped
 
-Five defects in this project were not taste, and each one is more useful than a
+Six defects in this project were not taste, and each one is more useful than a
 screenshot.
 
 ### 5.1 Three rules that never met their element
@@ -200,7 +200,36 @@ with the claim never checking the write. Those eight now go through one guard,
 `savedToast()`, so the app cannot congratulate a user for a save that did not
 happen.
 
-The pattern in all five: **a claim that no one had rendered.** Which is why the
+### 5.6 The log that deleted itself
+
+The worst defect in the project is four lines long:
+
+```js
+try{
+  const raw = localStorage.getItem(STORE_KEY);
+  if(raw){ STATE = migrate(JSON.parse(raw)); return STATE; }
+}catch(e){ /* corrupted or unavailable — fall through to a clean state */ }
+STATE = defaultState();
+```
+
+That reads as defensive code, and it was written as defensive code. But it puts
+"there is no record yet" and "there is a record and it will not open" on the same
+line, and the second one is followed by a save. A log truncated by a crash
+mid-write, a browser killed by the OS, an import that half-applied: the next tap
+anywhere in the app wrote an empty state over it. The user's entire training
+history, gone, with no message, on a screen that looked like a first run.
+
+The fix keeps the bytes instead of the shape: an unreadable record sets a flag,
+`saveState()` refuses — the mirror image of the retry added the same week, which
+exists to save — and the header strip offers the only safe action, which hands the
+original back as a file, writes it to its own key as a second copy, and only then
+lets the log start again.
+
+The same hour turned up a smaller one of the same shape: six error paths passed
+`'err'` to `toast()`, and the stylesheet only knew `.toast.ok` and `.toast.alert`.
+Every error the app has ever shown looked exactly like a message.
+
+The pattern in all six: **a claim that no one had rendered.** Which is why the
 process changed.
 
 ---
