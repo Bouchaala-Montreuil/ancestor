@@ -455,3 +455,51 @@ screenshots to be worth doing.
 **7–8. Illustrations, data-viz, motion spec, landing, case study.** The icons
 are done; the exercise drawings are the next real design object (four styles
 today, one rule needed).
+
+---
+
+## §0.7 The exercise drawings
+
+`56f9948`. The eleven movement-pattern diagrams were the last place in the app
+where the design system did not reach: four drawing styles (stroke weights from
+1.6 to 3, round caps on some and square on others, heads as circles of two
+sizes) and **47 hexes baked into the strings**, so they could never follow the
+palette, a theme, or a dark mode.
+
+They now follow the mark's grammar — 3.2 body with square caps, a 3.2 square
+joint, an 11 square head, a bar with two plates, one burnt arrow, a dashed
+range arc, a hairline ground — and take their colour from `.k-i` / `.k-b` /
+`.k-r` against `--ink` / `--burnt` / `--line`.
+
+`design/icons/PATTERNS.md` has the rule; `patterns-before.png` and
+`patterns-after.png` are side by side.
+
+### How this was actually done, and why it matters
+
+The drawings were rasterised and looked at, four times, between rounds. Three
+things that no test would have caught:
+
+- the first pass made **every figure a stick person**, with a square head and
+  square joints at nearly the same size — the load and the body read as one
+  mass;
+- the push diagrams had the bar drawn *through* the head;
+- the squat and the calf raise did not read at all until the joints were
+  reduced to 3.2 and the head raised to 11, which is only visible at size.
+
+And one thing worth writing down before anything else is drawn this way:
+**librsvg will not honour `var()` inside SVG presentation CSS.** The diagrams
+looked invisible in the rasteriser while being perfectly fine in a browser. The
+verification harness substitutes literal palette values; the app itself keeps
+the tokens.
+
+### What is left on the order
+
+| | |
+|---|---|
+| **3 B6 his screenshots** | **still blocked on you** |
+| 6 state matrix, per screen | ~1 d, better after the screenshots |
+| 7 data-viz + motion spec | ~2 d |
+| 8 landing page + case study | ~4 d |
+
+The icons, the loading/failure/empty states and the exercise drawings are now
+done — the three things that were listed under 7 as "4 days".
