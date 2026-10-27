@@ -193,7 +193,31 @@ The chips also gained `aria-pressed`. Until this pass a selected exercise was
 communicated by colour alone — the one thing the design rules forbid and the one
 thing nobody had checked, in the same control, on the same screen.
 
-### 3.7 Small things that were wrong
+### 3.7 Today answers three questions, not nine
+
+The dashboard opened with a verdict and then nine numbered sections in the order
+the data happened to exist: Recent work, Muscle-group coverage, This week, Worth
+knowing, Your next seven days, Muscle map, Learn. Each was labelled like a
+chapter of equal weight, including the ones a returning lifter never reads.
+
+Three bands now, and the sections inside them are evidence rather than peers:
+
+> **Today** — the verdict, the next session, one action
+> **This week** — the ring, recent work, muscle-group coverage, your next seven days
+> **Understand** — worth knowing, the muscle map, the next lesson
+
+| | before | after |
+|---|---|---|
+| `h2` sections competing at the top level | 9 | **3** |
+| heading outline | h1 → nine h2 → h3 | **h1 → 3 h2 → 7 h3** |
+| the weekly ring's duplicate heading | "This week" under nothing | band carries it; the ring is the band's lead panel |
+
+Nothing was cut: same words (381 before, 381 after), same seventeen controls,
+same one primary action. The page was re-pitched as three answers instead of a
+ledger — which is the only kind of change that can make a dashboard of the same
+content feel smaller.
+
+### 3.8 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -261,6 +285,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | words on the exercise atlas | 1 304 | 591 |
 | controls exposed on Profile | 160 | 59 |
 | page titles that are `h1` | 1 of 7 | 7 of 7 |
+| top-level sections on Today | 9 | 3 |
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
@@ -274,7 +299,7 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 | screen | state | what is still weak |
 |---|---|---|
 | Onboarding | exercise step regrouped; eight steps, one question each | the middle steps are still one long column of chips; the step order has never been tested with a real first-run user |
-| Today | action hierarchy fixed, figure fixed | **nine `h2` sections**, 381 words; the section system is deliberate but flat — a "today / this week / understand" grouping is designed, not built |
+| Today | action hierarchy, figure, and three bands | 381 words is still a lot for a screen you open in a gym car park; the verdict's `factors` list has never been trimmed |
 | Plan | untouched | not re-audited this pass |
 | Active session | headings, disclosures, discard moved, field names | 774 words with every set expanded; no per-exercise collapse; rest timer not visually verified |
 | Exercise atlas | register rows, one control each, filters behind a disclosure | the sheet is now the only action surface — everything a row used to duplicate has to be there, and that is worth auditing next |
@@ -317,8 +342,8 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
    has a good pattern to copy from the onboarding step it sits beside.
 2. **Session: 774 words.** One exercise expanded at a time, user-controlled, with
    a visible "next" — plus a rest timer that survives a locked screen.
-3. **Today's nine sections.** Group into *today / this week / understand*; the
-   content already exists, only the outline changes.
+3. **Today's 381 words.** The outline is fixed; the prose inside the verdict and
+   the insight card is not.
 4. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
 5. **The exercise sheet** — now the atlas's only action surface; it has never been

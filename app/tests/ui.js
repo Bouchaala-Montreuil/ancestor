@@ -661,6 +661,46 @@ group('17. Profile: four records that name their own value');
   chk('the language selector is still seven full rows', langTiles === 7, langTiles + ' rows');
 }
 
+group('19. Today answers three questions, not nine');
+{
+  const dom10 = await boot();
+  const w10 = dom10.window, d10 = w10.document;
+  completeOnboarding(w10, d10);
+  w10.go('home');
+  const body = () => d10.getElementById('screenBody');
+
+  const heads = Array.from(body().querySelectorAll('h1,h2,h3'));
+  const h1s = heads.filter(h => h.tagName === 'H1');
+  const h2s = heads.filter(h => h.tagName === 'H2');
+  const h3s = heads.filter(h => h.tagName === 'H3');
+  chk('the dashboard has one heading and three bands',
+      h1s.length === 1 && h2s.length === 3,
+      h1s.length + ' h1, ' + h2s.length + ' h2 (' + h2s.map(h => h.textContent.trim()).join(' · ') + ')');
+  chk('the bands are today, this week, understand',
+      h2s.map(h => h.textContent.trim()).join('|') ===
+      [w10.t('home.bandToday'), w10.t('home.bandWeek'), w10.t('home.bandUnderstand')].join('|'),
+      h2s.map(h => h.textContent.trim()).join('|'));
+  chk('the sections inside a band are h3, never h2',
+      h3s.length >= 5 && heads.every(h => ['H1','H2','H3'].indexOf(h.tagName) >= 0),
+      h3s.length + ' h3');
+  chk('no section repeats its band name',
+      h3s.filter(h => h2s.some(b => b.textContent.trim() === h.textContent.trim())).length === 0,
+      h3s.map(h => h.textContent.trim()).join(' · '));
+  chk('every band heading is inside a column, not orphaned at the end',
+      h2s.every(h => h.parentElement &&
+        h.parentElement.classList.contains('bento-col')));
+  chk('the band heading is not a link and has no control in it',
+      h2s.every(h => h.querySelectorAll('button,a').length === 0));
+  /* the outline order matches reading order: Today before This week before Understand */
+  const idx = k => heads.indexOf(h2s[k]);
+  chk('the bands appear in the order they are meant to be read',
+      idx(0) < idx(1) && idx(1) < idx(2));
+  /* the week ring lost its duplicate heading but not its content */
+  chk('the weekly ring is still on the page', !!body().querySelector('.dash-week'));
+  chk('the dashboard still has exactly one primary action',
+      body().querySelectorAll('.dash-actions .btn:not(.quiet):not(.secondary)').length === 1);
+}
+
 group("18. Onboarding's exercise step: remove, do not select");
 {
   const dom9 = await boot();

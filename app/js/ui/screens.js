@@ -148,6 +148,7 @@ Screens.home = function(){
 
   /* ==================== LEFT COLUMN ==================== */
   h += '<div class="bento-col">';
+  h += bandHead(t('home.bandToday'));
 
   /* 2. Readiness Verdict + Next Session Blueprint */
   h += '<div class="decision s-' + shown + '"><div class="bar"></div><div class="inner">';
@@ -211,9 +212,12 @@ Screens.home = function(){
   h += '</div></details>';
   h += '</div></div>';
 
+  /* The page answers three questions in three bands. It used to answer nine,
+     in the order the data happened to exist. */
+  h += bandHead(t('home.bandWeek'));
   /* 3. Training Progress Sparkline */
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.progressTitle')) +
-       '</h2><span class="rule"></span></div>';
+  h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.progressTitle')) +
+       '</h3><span class="rule"></span></div>';
   h += '<div class="panel dash-progress">';
   h += '<div class="dash-bignum">';
   h += '<div class="k">' + esc(t('home.weeklySets')) + '</div>';
@@ -233,19 +237,14 @@ Screens.home = function(){
   h += '</div></div></div>';
 
   /* 5. Muscle-Group Coverage Matrix */
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.coverageTitle')) +
-       '</h2><span class="rule"></span>' +
+  h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.coverageTitle')) +
+       '</h3><span class="rule"></span>' +
        '<span class="aside">' + esc(t('home.coverageNote')) + '</span></div>';
   h += '<div class="panel">' + coverageBars(s, now) + '</div></div>';
 
-  h += '</div>'; /* end left bento-col */
-
-  /* ==================== RIGHT COLUMN ==================== */
-  h += '<div class="bento-col">';
-
-  /* 4. Weekly Activity & Metrics */
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.weekTitle')) +
-       '</h2><span class="rule"></span></div>';
+  /* 4. Weekly Activity & Metrics — the band's lead panel, so it carries no
+     second heading saying "This week" under a band that already says it. */
+  h += '<div>';
   h += '<div class="panel">';
   const targetDays = Math.max(1, +p.daysPerWeek || 3);
   const weekGoalMet = thisWeek >= targetDays;
@@ -288,19 +287,9 @@ Screens.home = function(){
   ]);
   h += '</div></div>';
 
-  /* 6. Contextual Lab Insight */
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.insightTitle')) +
-       '</h2><span class="rule"></span></div>';
-  h += '<div class="panel dash-insight">';
-  h += '<p class="eyebrow">' + esc(t(insight.basisKey)) + '</p>';
-  h += '<p class="dash-insight-t">' + esc(insight.text) + '</p>';
-  h += '<p class="body-sm mb-0 mt-2">' + esc(insight.because) + '</p>';
-  if(insight.action) h += '<div class="row mt-3">' + insight.action + '</div>';
-  h += '</div></div>';
-
   /* 7. Bio-Timeline & Quick Logs */
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.timeline')) +
-       '</h2><span class="rule"></span></div>';
+  h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.timeline')) +
+       '</h3><span class="rule"></span></div>';
   h += '<div class="panel">' + timelineStrip(s, now) +
        '<div class="mt-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">' +
        '<button class="btn quiet sm" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>' +
@@ -308,11 +297,27 @@ Screens.home = function(){
        '<button class="btn quiet sm" onclick="openSheet(\'feel\')">' + esc(t('home.logfeel')) + '</button>' +
        '</div></div></div>';
 
+  h += '</div>'; /* end left bento-col */
+
+  /* ==================== RIGHT COLUMN ==================== */
+  h += '<div class="bento-col">';
+  h += bandHead(t('home.bandUnderstand'));
+
+  /* 6. Contextual Lab Insight */
+  h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.insightTitle')) +
+       '</h3><span class="rule"></span></div>';
+  h += '<div class="panel dash-insight">';
+  h += '<p class="eyebrow">' + esc(t(insight.basisKey)) + '</p>';
+  h += '<p class="dash-insight-t">' + esc(insight.text) + '</p>';
+  h += '<p class="body-sm mb-0 mt-2">' + esc(insight.because) + '</p>';
+  if(insight.action) h += '<div class="row mt-3">' + insight.action + '</div>';
+  h += '</div></div>';
+
   /* 8. Anatomy & Science Launchpad */
   const recMap = allRecovery(s, now);
   const readyCount = MUSCLES.filter(m => !recMap[m] || recMap[m].state === 'ready' || recMap[m].state === 'fresh').length;
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.map')) +
-       '</h2><span class="rule"></span>' +
+  h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.map')) +
+       '</h3><span class="rule"></span>' +
        '<span class="aside"><button class="chip sm" onclick="go(\'body\')">' + esc(t('lab.open')) + '</button></span></div>';
   h += '<div class="panel dash-figlink">' +
        '<div class="fig-stage bare">' +
@@ -328,14 +333,18 @@ Screens.home = function(){
          '<span class="flag sm ok">' + readyCount + ' / ' + MUSCLES.length + ' ' + esc(t('mst.ready')) + '</span>' +
        '</div></div></div>';
 
-  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.learnTitle')) +
-       '</h2><span class="rule"></span></div>' + nextLessonCard(s) + '</div>';
+  h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.learnTitle')) +
+       '</h3><span class="rule"></span></div>' + nextLessonCard(s) + '</div>';
 
   h += '</div>'; /* end right bento-col */
   h += '</div>'; /* end bento-home */
 
   return { html: h };
 };
+
+function bandHead(label){
+  return '<h2 class="band-h">' + esc(label) + '</h2>';
+}
 
 /* --------------------------------------------------------- dashboard pieces
    Every number below is derived from the session log. Nothing is synthesised
