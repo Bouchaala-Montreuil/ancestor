@@ -445,6 +445,39 @@ group('8i. The navigation marks are drawn, not borrowed');
       (body.match(/_frame\(/g) || []).length + ' framed marks');
 }
 
+/* ================================================================ */
+group('8j. The exercise drawings obey one rule');
+{
+  const comp = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const i0 = comp.indexOf('Movement patterns, drawn once');
+  const i1 = comp.indexOf('function exerciseVisualSvg');
+  const kin = comp.slice(i0, i1);
+
+  chk('all eleven movement patterns are drawn', (kin.match(/^\s*KIN\.\w+ =/gm) || []).length >= 11,
+      (kin.match(/^\s*KIN\.\w+ =/gm) || []).length + ' patterns');
+
+  /* 47 hardcoded hexes were baked into these strings; no theme could reach them. */
+  chk('the drawings carry no colour of their own', !/#[0-9a-fA-F]{3,6}/.test(kin));
+  chk('colour comes from classes the stylesheet defines',
+      /\.k-i\{fill:var\(--ink\)/.test(css) && /\.k-b\{fill:var\(--burnt\)/.test(css) &&
+      /\.k-r\{stroke:var\(--line\)/.test(css));
+
+  chk('one body weight, not four', /seg[\s\S]{0,80}stroke-width="3\.2"/.test(kin) &&
+      !/stroke-width="1\.8"/.test(kin) && !/stroke-width="2\.6"/.test(kin));
+  chk('a head is mass, not a circle', !/<circle[^>]*head/.test(kin) &&
+      /const head = \(x, y\) =>/.test(kin) && /width="11" height="11"/.test(kin));
+  chk('a joint is a 3.2 square, so it cannot be read as a head',
+      /s = s \|\| 3\.2/.test(kin));
+  chk('the arrowhead is drawn, not a <marker> with a baked fill',
+      !/<marker/.test(kin) && !/marker-end/.test(kin));
+  chk('square caps everywhere, so nothing reads as a pen stroke',
+      /stroke-linecap:square/.test(css));
+
+  /* Still true from the token pass, now for the drawings too. */
+  chk('no literal stroke colour survives anywhere in components.js',
+      !/stroke="#[0-9a-fA-F]{3,6}"/.test(comp));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

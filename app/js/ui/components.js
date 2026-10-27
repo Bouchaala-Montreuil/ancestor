@@ -624,7 +624,7 @@ function exerciseFigureSideSvg(ex, side){
     const op  = info.primary ? '0.88' : Math.min(0.65, 0.28 + info.w).toFixed(2);
     (FIG.regions[side][m] || []).forEach(d => {
       s += '<path d="' + d + '" fill="' + col + '" fill-opacity="' + op +
-           '" stroke="#20211F" stroke-width="' + (info.primary ? '1.3' : '0.7') + '"/>';
+           '" stroke="' + token('ink','#20211F') + '" stroke-width="' + (info.primary ? '1.3' : '0.7') + '"/>';
     });
   });
   s += '</svg>';
@@ -638,61 +638,206 @@ function exerciseThumbSvg(ex){
   return '<span class="ex-thumb" aria-hidden="true">' + exerciseFigureSideSvg(ex, side) + '</span>';
 }
 
+/* Movement patterns, drawn once, in one grammar.
+   ---------------------------------------------------------------------
+   These eleven diagrams were four different drawing styles: stroke widths from
+   1.6 to 3, round caps on some and not others, heads as circles of two sizes,
+   and 47 hardcoded hex colours that no theme could reach. They now share one
+   rule, and it is the mark's rule:
+
+     body    ink, 3.2, square caps, straight segments only
+     joint   a 3.2 solid square
+     head    an 11 solid square — mass, never a circle
+     load    a bar with two plates
+     force   one burnt arrow: the direction the load is driven
+     range   a dashed burnt arc and a dot at the joint doing the work
+     ground  a hairline, only under a supported body
+
+   Colour comes from classes (.k-i, .k-b, .k-r) defined in the stylesheet, so
+   the drawings finally follow the palette like everything else. */
+const INK = 'k-i', BURNT = 'k-b', RULE = 'k-r';   /* classes, not hexes */
+const seg = (x1, y1, x2, y2) =>
+  `<path class="${INK}" d="M${x1} ${y1}L${x2} ${y2}" stroke-width="3.2"/>`;
+/* Small, solid, square. Four of these and a head should never be confused:
+   the head is 11, a joint is 3.2. */
+const joint = (x, y, s) => {
+  s = s || 3.2;
+  return `<rect class="${INK}" x="${(x - s / 2).toFixed(1)}" y="${(y - s / 2).toFixed(1)}" width="${s}" height="${s}"/>`;
+};
+const head = (x, y) =>
+  `<rect class="${INK}" x="${x - 5.5}" y="${y - 5.5}" width="11" height="11"/>`;
+const ground = (y, x1, x2) =>
+  `<path class="${RULE}" d="M${x1 === undefined ? 14 : x1} ${y}L${x2 === undefined ? 126 : x2} ${y}" stroke-width="1.6"/>`;
+const force = (x1, y1, x2, y2) => {
+  const a = Math.atan2(y2 - y1, x2 - x1), L = 7;
+  const p1 = [x2 - L * Math.cos(a - 0.42), y2 - L * Math.sin(a - 0.42)];
+  const p2 = [x2 - L * Math.cos(a + 0.42), y2 - L * Math.sin(a + 0.42)];
+  return `<path class="${BURNT}" d="M${x1} ${y1}L${x2} ${y2}" stroke-width="2.4"/>` +
+         `<path class="${BURNT}" d="M${p1[0].toFixed(1)} ${p1[1].toFixed(1)}L${x2} ${y2}L${p2[0].toFixed(1)} ${p2[1].toFixed(1)}" stroke-width="2.4"/>`;
+};
+const bar = (x, y, w) =>
+  `<path class="${INK}" d="M${x - w / 2} ${y}L${x + w / 2} ${y}" stroke-width="2.4"/>` +
+  `<rect class="${INK}" x="${x - w / 2 - 4}" y="${y - 6.5}" width="5" height="13"/>` +
+  `<rect class="${INK}" x="${x + w / 2 - 1}" y="${y - 6.5}" width="5" height="13"/>`;
+const arc = (cx, cy, r, a0, a1) => {
+  const p = a => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  const s = p(a0), e = p(a1);
+  const large = Math.abs(a1 - a0) > Math.PI ? 1 : 0;
+  const sweep = a1 > a0 ? 1 : 0;
+  return `<path class="${BURNT}" d="M${s[0].toFixed(1)} ${s[1].toFixed(1)}A${r} ${r} 0 ${large} ${sweep} ${e[0].toFixed(1)} ${e[1].toFixed(1)}" stroke-width="1.6" stroke-dasharray="4 3"/>`;
+};
+const hot = (x, y) => `<circle class="${BURNT}" cx="${x}" cy="${y}" r="2.6"/>`;
+
+const KIN = {};
+
+/* Horizontal push, lying: a bench, a body on it, the bar above the hands. */
+KIN.pushH =
+  ground(88, 16, 124) +
+  seg(24, 70, 104, 70) +                      /* the bench */
+  seg(34, 70, 34, 86) + seg(94, 70, 94, 86) + /* its legs */
+  seg(56, 64, 92, 64) +                       /* the torso, lying */
+  head(46, 62) +
+  joint(56, 64) + joint(92, 64) +
+  seg(92, 64, 104, 68) + joint(104, 68) +     /* legs to the floor */
+  seg(104, 68, 108, 86) +
+  seg(56, 64, 56, 44) + joint(56, 44) +       /* upper arm */
+  seg(56, 44, 76, 40) + joint(76, 40) +       /* forearm */
+  bar(76, 34, 34) +                           /* the bar */
+  force(120, 64, 120, 26) +
+  hot(56, 44);
+
+/* Vertical push: standing, pressing overhead. */
+KIN.pushV =
+  ground(88) +
+  head(70, 14) + seg(70, 24, 70, 60) + joint(70, 60) +
+  seg(70, 60, 58, 74) + joint(58, 74) + seg(58, 74, 56, 88) +
+  seg(70, 60, 82, 74) + joint(82, 74) + seg(82, 74, 84, 88) +
+  seg(70, 34, 46, 30) + joint(46, 30) +       /* upper arm, out and up */
+  seg(46, 30, 44, 14) + joint(44, 14) +       /* forearm, vertical */
+  seg(70, 34, 94, 30) + joint(94, 30) +
+  seg(94, 30, 96, 14) + joint(96, 14) +
+  bar(70, 8, 48) +
+  force(122, 66, 122, 26) +
+  hot(44, 14);
+
+/* Horizontal pull: folded over the bar, pulling it to the ribs. */
+KIN.pullH =
+  ground(88) +
+  head(84, 30) +
+  seg(84, 42, 52, 56) +                       /* the back, folded */
+  joint(84, 42) + joint(52, 56) +
+  seg(52, 56, 46, 72) + joint(46, 72) + seg(46, 72, 44, 88) +
+  seg(52, 56, 62, 72) + joint(62, 72) + seg(62, 72, 66, 88) +
+  seg(84, 42, 78, 58) + joint(78, 58) +       /* arm from the shoulder */
+  seg(78, 58, 66, 52) + joint(66, 52) +       /* forearm pulled to the ribs */
+  bar(64, 48, 26) +
+  force(126, 48, 92, 48) +
+  hot(78, 58);
+
+/* Vertical pull: hanging, pulling the bar down to the chest. */
+KIN.pullV =
+  seg(26, 8, 114, 8) +                        /* the frame */
+  bar(70, 14, 44) +
+  head(70, 38) +
+  seg(70, 48, 70, 62) + joint(70, 62) +       /* torso */
+  seg(70, 62, 58, 78) + joint(58, 78) + seg(58, 78, 56, 88) +
+  seg(70, 62, 82, 78) + joint(82, 78) + seg(82, 78, 84, 88) +
+  seg(70, 46, 50, 26) + joint(50, 26) +       /* arm up and out */
+  seg(50, 26, 54, 18) + joint(54, 18) +
+  seg(70, 46, 90, 26) + joint(90, 26) +
+  seg(90, 26, 86, 18) + joint(86, 18) +
+  force(120, 22, 120, 58) +
+  hot(50, 26);
+
+/* Squat: the bar across the shoulders, the hips travelling down and back. */
+KIN.squat =
+  ground(88) +
+  head(56, 20) + seg(56, 30, 54, 54) + joint(54, 54) +
+  bar(54, 34, 46) +                           /* across the shoulders */
+  seg(54, 54, 70, 68) + joint(70, 68) +       /* thigh, down and forward */
+  seg(70, 68, 62, 86) +                       /* shin, back to the floor */
+  seg(54, 54, 62, 68) + joint(62, 68) +
+  seg(62, 68, 54, 86) +
+  arc(70, 68, 24, -2.4, -1.0) +
+  hot(70, 68) +
+  force(116, 66, 116, 30);
+
+/* Hinge: a straight back folding at the hip, the bar hanging from the hands. */
+KIN.hinge =
+  ground(88) +
+  head(92, 34) +
+  seg(92, 44, 58, 54) +                       /* a straight back */
+  joint(92, 44) + joint(58, 54) +
+  seg(58, 54, 52, 70) + joint(52, 70) + seg(52, 70, 48, 88) +
+  seg(58, 54, 68, 70) + joint(68, 70) + seg(68, 70, 74, 88) +
+  seg(92, 44, 88, 60) + joint(88, 60) +       /* both arms hanging */
+  seg(88, 60, 88, 74) +
+  bar(88, 78, 30) +
+  arc(58, 54, 20, 1.9, 3.3) +
+  hot(58, 54);
+
+/* Elbow flexion: the forearm travels up around the elbow. */
+KIN.curl =
+  ground(88) +
+  head(52, 16) + seg(52, 26, 52, 58) + joint(52, 58) +
+  seg(52, 58, 44, 72) + joint(44, 72) + seg(44, 72, 42, 88) +
+  seg(52, 58, 62, 72) + joint(62, 72) + seg(62, 72, 66, 88) +
+  seg(52, 32, 52, 54) + joint(52, 54) +       /* upper arm, at the side */
+  seg(52, 54, 74, 64) + joint(74, 64) +       /* forearm, down */
+  bar(78, 68, 26) +
+  arc(52, 54, 26, 0.35, -0.95) +
+  hot(52, 54);
+
+/* Elbow extension: the forearm travelling out. */
+KIN.extend =
+  ground(84) +
+  head(52, 16) + seg(52, 24, 52, 56) + joint(52, 56) +
+  seg(52, 56, 44, 80) + seg(52, 56, 60, 80) +
+  seg(52, 34, 52, 54) + joint(52, 54) +
+  seg(52, 54, 78, 62) + joint(78, 62) +
+  seg(78, 62, 96, 50) + joint(96, 50) +       /* forearm extended */
+  bar(96, 46, 20) +
+  arc(78, 62, 22, -0.9, 0.2) +
+  hot(78, 62);
+
+/* Plantar flexion: the heel raised, the whole body on the ball of the foot. */
+KIN.calf =
+  ground(88) +
+  head(64, 14) + seg(64, 24, 64, 56) + joint(64, 56) +
+  seg(64, 56, 62, 70) + joint(62, 70) +
+  seg(62, 70, 60, 80) + joint(60, 80) +       /* shin to the ankle */
+  seg(60, 80, 80, 84) +                       /* the foot, heel high */
+  seg(64, 56, 74, 70) + joint(74, 70) +
+  seg(74, 70, 72, 80) +
+  arc(60, 80, 18, -1.5, -0.2) +
+  hot(60, 80);
+
+/* Trunk: the plank, held. */
+KIN.core =
+  ground(84) +
+  head(28, 52) + seg(34, 54, 92, 70) + joint(92, 70) +
+  seg(32, 56, 30, 78) + joint(30, 78) +       /* the support arm */
+  seg(30, 78, 42, 86) +
+  seg(92, 70, 76, 84) +                       /* the leg */
+  seg(92, 70, 104, 80) +
+  force(62, 44, 62, 62) +
+  hot(62, 58);
+
+/* Locomotion: stride, with the direction of travel. */
+KIN.cardio =
+  ground(84, 20, 122) +
+  head(58, 26) + seg(58, 34, 54, 56) + joint(54, 56) +
+  seg(54, 56, 34, 78) + joint(34, 78) + seg(34, 78, 30, 84) +
+  seg(54, 56, 72, 72) + joint(72, 72) + seg(72, 72, 78, 84) +
+  seg(58, 36, 44, 46) + seg(58, 36, 74, 40) +
+  force(88, 46, 118, 46) +
+  hot(54, 56);
+
 function patternKinematicSvg(ex){
   const pat = (ex && ex.pat) || 'pushH';
-  const mk = '<defs><marker id="kv" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">' +
-             '<path d="M0,1 L7,4 L0,7 z" fill="#D66A3A"/></marker></defs>';
-  /* Schematic joint-segment + force-vector diagrams per movement pattern */
-  const DIAGRAMS = {
-    pushH: '<line x1="22" y1="68" x2="118" y2="68" stroke="#77796F" stroke-width="2"/>' +
-           '<circle cx="42" cy="58" r="7" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<path d="M52,58 L98,58" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M62,58 L54,40 L68,26" fill="none" stroke="#20211F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<line x1="88" y1="54" x2="88" y2="20" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    pushV: '<circle cx="70" cy="34" r="7" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<line x1="70" y1="42" x2="70" y2="82" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M70,48 L50,36 L54,16 M70,48 L90,36 L86,16" fill="none" stroke="#20211F" stroke-width="2.2" stroke-linecap="round"/>' +
-           '<line x1="108" y1="58" x2="108" y2="16" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    pullH: '<circle cx="46" cy="30" r="7" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<line x1="48" y1="38" x2="58" y2="76" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M52,48 L88,48" fill="none" stroke="#20211F" stroke-width="2.2" stroke-linecap="round"/>' +
-           '<line x1="112" y1="48" x2="74" y2="48" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    pullV: '<line x1="36" y1="14" x2="104" y2="14" stroke="#77796F" stroke-width="2.2"/>' +
-           '<circle cx="70" cy="40" r="7" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<path d="M52,14 L58,34 L70,48 L82,34 L88,14" fill="none" stroke="#20211F" stroke-width="2.2" stroke-linejoin="round"/>' +
-           '<line x1="70" y1="48" x2="70" y2="82" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<line x1="108" y1="22" x2="108" y2="64" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    squat: '<circle cx="64" cy="22" r="6.5" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<path d="M64,30 L52,54 L78,60 L66,84" fill="none" stroke="#20211F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<line x1="50" y1="84" x2="88" y2="84" stroke="#77796F" stroke-width="1.6"/>' +
-           '<line x1="104" y1="74" x2="104" y2="24" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    hinge: '<circle cx="84" cy="28" r="6.5" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<path d="M78,34 L48,54 L58,84" fill="none" stroke="#20211F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<path d="M40,54 A16,16 0 0,1 58,38" fill="none" stroke="#D66A3A" stroke-width="2" marker-end="url(#kv)"/>' +
-           '<line x1="82" y1="40" x2="82" y2="76" stroke="#77796F" stroke-width="1.6" stroke-dasharray="3 2"/>',
-    curl:  '<circle cx="58" cy="24" r="6.5" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<line x1="58" y1="32" x2="58" y2="78" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M58,38 L62,58 L86,42" fill="none" stroke="#20211F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<path d="M90,66 A24,24 0 0,0 84,32" fill="none" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    extend:'<circle cx="58" cy="24" r="6.5" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<line x1="58" y1="32" x2="58" y2="78" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M58,38 L74,50 L92,68" fill="none" stroke="#20211F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<path d="M80,34 A26,26 0 0,1 96,64" fill="none" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    calf:  '<line x1="64" y1="18" x2="64" y2="62" stroke="#20211F" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M64,62 L52,78 L80,82" fill="none" stroke="#20211F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<line x1="40" y1="84" x2="96" y2="84" stroke="#77796F" stroke-width="1.6"/>' +
-           '<line x1="98" y1="76" x2="98" y2="34" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>',
-    core:  '<line x1="20" y1="74" x2="120" y2="74" stroke="#77796F" stroke-width="1.6"/>' +
-           '<circle cx="34" cy="48" r="6" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<path d="M42,50 L106,64 M46,52 L42,74" fill="none" stroke="#20211F" stroke-width="2.8" stroke-linecap="round"/>' +
-           '<line x1="74" y1="36" x2="74" y2="54" stroke="#D66A3A" stroke-width="2" marker-end="url(#kv)"/>',
-    cardio:'<line x1="18" y1="74" x2="122" y2="74" stroke="#77796F" stroke-width="1.6" stroke-dasharray="4 3"/>' +
-           '<circle cx="52" cy="26" r="6" fill="none" stroke="#20211F" stroke-width="1.8"/>' +
-           '<path d="M52,33 L46,54 L32,72 M46,54 L66,60 L62,74 M50,40 L68,46" fill="none" stroke="#20211F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-           '<line x1="74" y1="46" x2="116" y2="46" stroke="#D66A3A" stroke-width="2.2" marker-end="url(#kv)"/>'
-  };
-  const body = DIAGRAMS[pat] || DIAGRAMS.pushH;
-  return '<svg viewBox="0 0 140 94" role="img" aria-label="' + esc(t('pat.' + pat)) + '">' + mk + body + '</svg>';
+  const body = KIN[pat] || KIN.pushH;
+  return '<svg viewBox="0 0 140 94" role="img" aria-label="' + esc(t('pat.' + pat)) + '">' +
+         body + '</svg>';
 }
 
 function exerciseVisualSvg(ex){

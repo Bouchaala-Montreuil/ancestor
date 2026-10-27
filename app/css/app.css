@@ -1971,6 +1971,23 @@ html[data-motion="on"] .onb-bar i{transition:none}
 .meta-b{font-weight:700;color:var(--burnt-text)}
 /* Empty state inside a table, where there is no row to style. */
 .td-empty{text-align:center;color:var(--tech-ink);padding:var(--s5)}
+/* ============================================================ KINEMATIC
+   The eleven movement-pattern drawings. One grammar, and it is the mark's:
+   3.2 body, 3.2 joint squares, an 11 head square, a bar with two plates, one
+   burnt arrow for the force and a dashed burnt arc for the range. Stroke caps
+   are square, curves appear only in the range arc. Colours come from tokens —
+   before this, 47 hexes were baked into the markup and no theme could reach
+   them. */
+
+.k-i{fill:var(--ink);stroke:var(--ink);stroke-linecap:square;stroke-linejoin:miter}
+.k-i[stroke-width]{fill:none}
+.k-b{fill:var(--burnt);stroke:var(--burnt);stroke-linecap:square}
+.k-b[stroke-dasharray]{fill:none}
+.k-r{stroke:var(--line);fill:none;stroke-linecap:square}
+/* The arrowhead used to be a <marker> with a hex fill; it is a drawn path now,
+   for the same reason. */
+.ex-vis-kin svg{color:var(--ink)}
+
 /* A factor list: one line per reason, a dot, a value at the end. It was styled
    only inside .decision and .onb-frame, so the lesson takeaways — the third
    place it is used — rendered as loose text with a stray empty dot. This is the
