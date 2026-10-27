@@ -564,5 +564,10 @@ the work was verified without a browser, what is still unproven, and what comes
 next.
 
 What is left on the whole order: **the device screenshots** (yours) and the
-**state matrix** that wants them. Everything else has been through at least one
-round of looking.
+**state matrix** that wants them.
+
+Two honest notes about this pair. The figures were rasterised and looked at; **the
+page itself was not** — there is no browser here, so `site/index.html` is verified
+structurally, numerically and by measurement of the real font metrics, and nobody
+has seen it composed. And `CASE_STUDY.md` says the same things the roadmap does,
+in one place, for a reader who is not going to open the repository.
