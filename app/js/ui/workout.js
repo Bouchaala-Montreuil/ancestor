@@ -89,8 +89,7 @@ function sessionSubnavHtml(){
          esc(t('plan.tabActive')) + '<span class="subnav-cnt">●</span></button>';
   }
   h += '<button type="button" role="tab" aria-selected="' + (cur==='plan' && !ACTIVE ? 'true' : (cur==='plan'?'true':'false')) +
-       '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) +
-       '" onclick="setSessionSub(\'' + (ACTIVE ? 'plan-peek' : 'plan') + '\')">' +
+       '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) + '" onclick="setSessionSub(\'' + (ACTIVE ? 'plan-peek' : 'plan') + '\')">' +
        esc(t('plan.tabPlan')) + '</button>';
   h += '<button type="button" role="tab" aria-selected="' + (cur==='library'?'true':'false') +
        '" class="subnav-btn ' + (cur==='library'?'on':'') + '" onclick="setSessionSub(\'library\')">' +
@@ -206,22 +205,22 @@ function renderWorkoutPlanner(){
   h += '</div>';
 
   /* --- Selected Day Blueprint Header --- */
-  h += '<div class="panel" style="border-top:3px solid var(--charcoal)">';
-  h += '<div class="panel-hd"><div style="min-width:0">' +
+  h += '<div class="panel heavy">';
+  h += '<div class="panel-hd"><div class="shrink">' +
        '<p class="eyebrow">' + esc(isRec ? t('plan.nextUp') : t('session.planned')) + '</p>' +
-       '<h3 class="sub" style="font-size:18px;color:var(--ink);margin-top:2px">' + esc(selected.name) + '</h3></div>' +
+       '<h3 class="sub ex-title mt-1">' + esc(selected.name) + '</h3></div>' +
        '<span class="hint">~' + estimatedMinutes(selected, s.plan.restSec) + ' min · ' +
        esc(t('session.rest')) + ' ' + (s.plan.restSec || 120) + 's</span></div>';
 
   if((selected.focus || []).length){
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<div class="chips mb-3">' +
          selected.focus.slice(0, 6).map(m =>
-           '<button type="button" class="flag plain" style="cursor:pointer" onclick="selectMuscle(\'' + m + '\');go(\'body\')">' +
+           '<button type="button" class="flag plain tap" onclick="selectMuscle(\'' + m + '\');go(\'body\')">' +
            esc(t('mg.' + m)) + '</button>'
          ).join('') + '</div>';
   }
 
-  h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center">' +
+  h += '<div class="row">' +
        '<button class="btn" onclick="startSession(\'' + selected.id + '\')">' +
        esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>' +
        '<button class="btn quiet sm" onclick="togglePlanEdit()" aria-pressed="' + (PLAN_EDIT?'true':'false') + '">' +
@@ -236,25 +235,24 @@ function renderWorkoutPlanner(){
        '</div>';
 
   if(PLAN_EDIT){
-    h += '<div style="margin-top:var(--s3);padding-top:var(--s3);border-top:var(--hair) solid var(--line);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap">' +
+    h += '<div class="row mt-3" style="padding-top:var(--s3);border-top:var(--hair) solid var(--line)">' +
          '<span class="eyebrow">' + esc(t('session.rest')) + ':</span>' +
          [60, 90, 120, 180].map(sec =>
-           '<button type="button" class="chip sm ' + ((s.plan.restSec||120)===sec?'on':'') +
-           '" onclick="setPlanRest(' + sec + ')">' + sec + 's</button>'
+           '<button type="button" class="chip sm ' + ((s.plan.restSec||120)===sec?'on':'') + '" onclick="setPlanRest(' + sec + ')">' + sec + 's</button>'
          ).join('') + '</div>';
   }
   h += '</div>';
 
   /* --- Exercise Blueprint Rows --- */
   if(!(selected.exercises || []).length){
-    h += '<div style="margin-top:var(--s3)">' +
+    h += '<div class="mt-3">' +
          emptyState('plan.emptyDay', 'plan.emptyDayBody', 'plan',
            '<button class="btn" onclick="openAddExerciseSheet(\'plan\',\'' + selected.id + '\')">+ ' +
            esc(t('plan.addEx')) + '</button>') + '</div>';
     return { html: h, noRefresh: true };
   }
 
-  h += '<div class="plan-ex-list" style="margin-top:var(--s3)">';
+  h += '<div class="plan-ex-list mt-3">';
   (selected.exercises || []).forEach((e, i) => {
     const ex = EX_BY_ID[e.id]; if(!ex) return;
     const r = recommend(s, e.id, now);
@@ -267,7 +265,7 @@ function renderWorkoutPlanner(){
     h += '<div class="plan-ex-main">';
     h += '<button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
          esc(t('ex.' + e.id)) + '</button>';
-    h += '<div class="chips" style="margin-top:6px">' +
+    h += '<div class="chips mt-1">' +
          '<span class="flag accent">' + e.sets + ' × ' + targetRangeText(ex) + '</span>' +
          '<span class="flag plain">' + esc(t('session.rir')) + ' ' + e.rir + '</span>' +
          '<span class="flag plain">' + esc(t('equip.' + ex.equip)) + '</span>' +
@@ -294,7 +292,7 @@ function renderWorkoutPlanner(){
     }
     h += '</div>';
 
-    h += '<p class="body-sm" style="margin:var(--s2) 0">' + esc(t('cue.' + e.id)) + '</p>';
+    h += '<p class="body-sm mb-0 mt-2">' + esc(t('cue.' + e.id)) + '</p>';
 
     if(prev && prev.text){
       h += '<div class="prev-line"><span class="k">' + esc(t('c.previous')) + '</span>' +
@@ -309,11 +307,11 @@ function renderWorkoutPlanner(){
       const recLine = recommendationText(r, ex);
       const whyLine = (r.reasons && r.reasons[0]) ? r.reasons[0].text : '';
       const sameText = (r.kind === 'baseline') || !whyLine || (recLine === esc(whyLine));
-      h += '<div class="banner info" style="margin-top:var(--s2);margin-bottom:0"><span class="ic">i</span><span>' +
+      h += '<div class="banner info mb-0 mt-2"><span class="ic">i</span><span>' +
            recLine + (sameText ? '' : '<br>' + esc(whyLine)) + '</span></div>';
     }
 
-    h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s2)">' +
+    h += '<div class="row mt-2">' +
          '<button type="button" class="btn quiet sm" onclick="openWhy(\'progression\',\'' + e.id + '\')">' +
            esc(t('sci.whyOpen')) + '</button>' +
          '<button type="button" class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' +
@@ -365,7 +363,7 @@ function openPlanSub(dayId, exIdx){
   const curId = day.exercises[exIdx].id;
   const subs = substitutesFor(s.profile, curId);
   sheet(t('session.sub'), subs.length ? (
-    '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('session.keep')) + '</p><div class="tiles">' +
+    '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p><div class="tiles">' +
     subs.map(e => '<button class="tile" onclick="applyPlanSub(\'' + dayId + '\',' + exIdx + ',\'' + e.id + '\')"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('ex.'+e.id)) + '</span><span class="d">' +
       esc(e.m.map(x => t('mg.'+x[0])).join(', ')) + '</span></span></button>').join('') + '</div>')
@@ -389,7 +387,7 @@ function openAddExerciseSheet(targetKind, dayId){
   let h = '<div class="field"><label for="addExFilter">' + esc(t('sci.search')) + '</label>' +
           '<input type="text" id="addExFilter" placeholder="' + esc(t('plan.searchEx')) +
           '" oninput="filterAddExSheet(this.value)"></div>';
-  h += '<div class="tiles" id="addExList" style="max-height:54vh;overflow:auto">';
+  h += '<div class="tiles scroll" id="addExList">';
   list.forEach(e => {
     const spec = exLogSpec(e);
     const searchBlob = (t('ex.'+e.id) + ' ' + t('pat.'+e.pat) + ' ' + e.m.map(x=>t('mg.'+x[0])).join(' ')).toLowerCase();
@@ -397,7 +395,7 @@ function openAddExerciseSheet(targetKind, dayId){
       ? 'addExerciseToActive(\'' + e.id + '\')'
       : 'addExerciseToPlan(\'' + (dayId || '') + '\',\'' + e.id + '\')';
     h += '<button type="button" class="tile" data-q="' + esc(searchBlob) + '" onclick="' + action + '">' +
-         '<span class="box"></span><span style="flex:1;min-width:0">' +
+         '<span class="box"></span><span class="grow">' +
          '<span class="t">' + esc(t('ex.' + e.id)) + '</span>' +
          '<span class="d">' + esc(t('pat.' + e.pat)) + ' · ' + esc(t('equip.' + e.equip)) +
          ' · ' + esc(t('exd.mode.' + spec.mode)) + ' · ' +
@@ -584,7 +582,7 @@ function renderLive(){
   h += '<div class="live-hud-top">';
   h += '<div><p class="eyebrow" style="color:var(--burnt)">' +
        esc(ACTIVE.paused ? t('session.restPaused') : t('plan.liveBadge')) + '</p>' +
-       '<div style="display:flex;align-items:baseline;gap:var(--s3);margin-top:2px">' +
+       '<div class="row nowrap row-base mt-1">' +
        '<strong style="font-family:var(--f-display);font-size:20px;letter-spacing:.04em;text-transform:uppercase">' +
        esc(ACTIVE.name || t('session.title')) + '</strong>' +
        '<span class="live-clock" id="liveClock">' + formatElapsed(activeElapsedMs()) + '</span>' +
@@ -614,21 +612,21 @@ function renderLive(){
     const isCurrent = (ei === curEi);
 
     h += '<div class="panel" style="' + (isCurrent ? 'border-color:var(--burnt);box-shadow:var(--shadow-2)' : '') + '">';
-    h += '<div class="panel-hd" style="align-items:center"><div style="display:flex;align-items:center;gap:var(--s3);min-width:0">' +
+    h += '<div class="panel-hd row nowrap"><div class="row nowrap" style="min-width:0">' +
          (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(ex) : '') +
-         '<div style="min-width:0">' +
-           '<div style="display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap">' +
+         '<div class="shrink">' +
+           '<div class="row row-base">' +
              '<span class="mono" style="font-size:11px;color:var(--burnt-text);font-weight:700">' + String(ei+1).padStart(2,'0') + '</span>' +
              '<button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
              esc(t('ex.'+e.id)) + '</button>' +
            '</div>' +
-           '<div class="hint" style="margin-top:2px">' +
+           '<div class="hint mt-1">' +
              (ex.m || []).map(([m,w], idx) => esc(t('mg.' + m)) + (idx===0 ? ' (' + Math.round(w*100) + '%)' : '')).join(' · ') +
            '</div>' +
          '</div></div>' +
          '<span class="hint">' + (ei+1) + '/' + ACTIVE.exercises.length + '</span></div>';
 
-    h += '<div class="chips" style="margin-bottom:var(--s2)">' +
+    h += '<div class="chips mb-2">' +
          '<span class="flag accent">' + targetRangeText(ex) + '</span>' +
          '<span class="flag plain">' + esc(t('session.rir')) + ' ' + e.rir + '</span>' +
          '<span class="flag plain">' + esc(t('session.rest')) + ' ' + (ACTIVE.restSec || 120) + 's</span>' +
@@ -647,7 +645,7 @@ function renderLive(){
            '<span class="d">' + esc(t('log.noPrev')) + '</span></div>';
     }
     if(prevNote){
-      h += '<p class="hint" style="margin:-4px 0 var(--s2)"><b>' + esc(t('log.prevNote')) + ':</b> ' +
+      h += '<p class="hint tuck"><b>' + esc(t('log.prevNote')) + ':</b> ' +
            esc(prevNote.note) + ' (' + esc(dateLabel(prevNote.date)) + ')</p>';
     }
 
@@ -659,7 +657,7 @@ function renderLive(){
          '<input id="exnote_' + ei + '" type="text" value="' + esc(e.note || '') +
          '" placeholder="' + esc(t('log.notePlaceholder')) + '" oninput="setExNote(' + ei + ',this.value)"></div>';
 
-    h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s2);align-items:center">';
+    h += '<div class="row mt-2">';
     h += '<button class="btn quiet sm" onclick="addSet(' + ei + ')">' + esc(t('log.addSet')) + '</button>';
     h += '<button class="btn quiet sm" onclick="skipSet(' + ei + ')">' + esc(t('session.skipset')) + '</button>';
     h += '<button class="btn quiet sm" onclick="skipExercise(' + ei + ')">' + esc(t('log.skipEx')) + '</button>';
@@ -667,15 +665,15 @@ function renderLive(){
     h += '<button class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' + esc(t('exd.open')) + '</button>';
     h += '</div>';
 
-    h += '<p class="hint" style="margin-top:var(--s2);margin-bottom:4px">' +
+    h += '<p class="hint mb-1 mt-2">' +
          esc(spec.mode === 'assisted' ? t('log.assistHint')
            : spec.loadRole === 'added' ? t('log.addedHint')
            : t('log.warmupNote')) + '</p>';
-    h += '<p class="body-sm" style="margin:0">' + esc(t('cue.'+e.id)) + '</p>';
+    h += '<p class="body-sm m-0">' + esc(t('cue.'+e.id)) + '</p>';
     h += '</div>';
   });
 
-  h += '<div class="panel" style="margin-top:var(--s4);border-top:2px solid var(--charcoal)">';
+  h += '<div class="panel mt-4 heavy">';
   h += '<button class="btn ' + (logged ? '' : 'secondary') + ' block" onclick="finishSession()">' +
        esc(t('session.finish')) + ' (' + logged + '/' + total + ')</button>';
   h += '</div>';
@@ -702,9 +700,9 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
            (set.lrSplit ? 'true' : 'false') + '">' + esc(t('log.lrSplit')) + '</button>' : '') +
        '</div>';
 
-  h += '<div style="min-width:0">';
+  h += '<div class="shrink">';
   if(!locked){
-    h += '<div class="row">';
+    h += '<div class="row nowrap">';
     spec.fields.concat(spec.optional).forEach(f => {
       if(set.lrSplit && (f.key === 'reps' || f.key === 'time')){
         h += sideFieldsHtml(f, ei, si, set, range);
@@ -715,7 +713,7 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
     h += '</div>';
     if(!ready){
       const missing = missingFields(set, ex);
-      h += '<p class="hint" style="margin-top:6px">' + esc(emptyHintFor(spec, missing)) + '</p>';
+      h += '<p class="hint mt-1">' + esc(emptyHintFor(spec, missing)) + '</p>';
     }
   }
   h += '</div>';
@@ -959,7 +957,7 @@ function removeSet(ei, si){
 function openSub(ei){
   const subs = substitutesFor(getState().profile, ACTIVE.exercises[ei].id);
   sheet(t('session.sub'), subs.length ? (
-    '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('session.keep')) + '</p><div class="tiles">' +
+    '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p><div class="tiles">' +
     subs.map(e => '<button class="tile" onclick="applySub(' + ei + ',\'' + e.id + '\')"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('ex.'+e.id)) + '</span><span class="d">' +
       esc(e.m.map(function(x){ return t('mg.'+x[0]); }).join(', ')) + '</span></span></button>').join('') + '</div>')
@@ -1047,7 +1045,7 @@ function showCompletion(sum){
   render();
   let h = '<div class="done-overlay" id="doneOverlay" role="dialog" aria-modal="true" ' +
           'aria-label="' + esc(t('done.title')) + '"><div class="done-card" tabindex="-1">';
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s3)">' +
+  h += '<div class="row nowrap between">' +
        '<div class="done-mark" aria-hidden="true">' +
        '<svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></div>' +
        (sum.targetDays ? progressRing(Math.min(1, (sum.thisWeek||0)/sum.targetDays),
@@ -1067,7 +1065,7 @@ function showCompletion(sum){
 
   if(sum.volume !== null && sum.volume !== undefined && sum.volume > 0){
     h += '<div class="done-block"><p class="eyebrow">' + esc(t('progress.volume')) + '</p>' +
-         '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap">' +
+         '<div class="row between row-base">' +
          '<strong class="num" style="font-size:18px">' + Math.round(sum.volume).toLocaleString() + ' ' + esc(unit()) + '·' + esc(t('log.repsShort')) + '</strong>' +
          (sum.muscles && sum.muscles.length
            ? '<span class="hint">' + sum.muscles.map(m => esc(t('mg.' + m))).join(' · ') + '</span>' : '') +
@@ -1096,7 +1094,7 @@ function showCompletion(sum){
   }
 
   h += '<div class="done-block"><p class="eyebrow">' + esc(t('done.nextStep')) + '</p>' +
-       '<p class="body-sm" style="margin-bottom:0">' + esc(t('done.nextStepBody')) + '</p></div>';
+       '<p class="body-sm mb-0">' + esc(t('done.nextStepBody')) + '</p></div>';
 
   h += '<div class="done-actions">' +
        '<button class="btn" onclick="closeCompletion(\'progress\')">' + esc(t('done.viewHistory')) + '</button>' +
@@ -1177,13 +1175,13 @@ function renderExerciseLibrary(){
   });
 
   let h = '<div class="atlas-toolbar">';
-  h += '<div class="field" style="margin-bottom:var(--s3)"><label for="libSearchInput">' +
+  h += '<div class="field mb-3"><label for="libSearchInput">' +
        esc(t('plan.searchLabel')) + ' (' + filtered.length + ' / ' + EX.length + ')</label>' +
        '<input id="libSearchInput" type="text" value="' + esc(LIB_QUERY) +
        '" placeholder="' + esc(t('plan.searchEx')) + '" oninput="setLibQuery(this.value)"></div>';
 
   /* Muscle filter */
-  h += '<div class="anat-filter-row" style="margin-bottom:var(--s2)">' +
+  h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('exd.muscles')) + '</span><div class="chips">' +
        '<button type="button" class="chip sm ' + (LIB_MUSCLE==='all'?'on':'') + '" onclick="setLibMuscle(\'all\')">' + esc(t('sci.all')) + '</button>' +
        MUSCLES.map(m =>
@@ -1192,7 +1190,7 @@ function renderExerciseLibrary(){
        ).join('') + '</div></div>';
 
   /* Equipment filter */
-  h += '<div class="anat-filter-row" style="margin-bottom:var(--s2)">' +
+  h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('plan.equipLabel')) + '</span><div class="chips">' +
        '<button type="button" class="chip sm ' + (LIB_EQUIP==='all'?'on':'') + '" onclick="setLibEquip(\'all\')">' + esc(t('sci.all')) + '</button>' +
        ['barbell','dumbbell','machine','cable','bodyweight','band'].map(eq =>
@@ -1228,14 +1226,14 @@ function renderExerciseLibrary(){
     h += '<div class="ex-card ' + (inPool ? '' : 'excluded') + '">';
     h += '<div>';
     h += '<div class="ex-card-hd">' +
-         '<div style="display:flex;align-items:flex-start;gap:var(--s2);min-width:0;flex:1">' +
+         '<div class="row nowrap row-top grow">' +
            (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(e) : '') +
-           '<div style="min-width:0"><button type="button" class="ex-card-t" onclick="openExerciseDetail(\'' + e.id + '\')">' +
+           '<div class="shrink"><button type="button" class="ex-card-t" onclick="openExerciseDetail(\'' + e.id + '\')">' +
              esc(t('ex.' + e.id)) + '</button>' +
-           '<div style="margin-top:4px"><span class="flag sm plain">' + esc(t('equip.' + e.equip)) + '</span></div></div>' +
+           '<div class="mt-1"><span class="flag sm plain">' + esc(t('equip.' + e.equip)) + '</span></div></div>' +
          '</div></div>';
 
-    h += '<div class="chips" style="margin:8px 0">' +
+    h += '<div class="chips mb-0 mt-2">' +
          '<span class="flag sm accent">' + esc(targetRangeText(e)) + '</span>' +
          '<span class="flag sm plain">' + esc(t('pat.' + e.pat)) + '</span>' +
          '<span class="flag sm plain">' + esc(t('exd.mode.' + spec.mode)) + '</span>' +
@@ -1249,11 +1247,11 @@ function renderExerciseLibrary(){
     h += '<p class="hint">' +
          e.m.map(x => esc(t('mg.' + x[0])) + ' ' + Math.round(x[1]*100) + '%').join(' · ') + '</p>';
     if(excl){
-      h += '<p class="hint" style="color:var(--warn);margin-top:4px">' + esc(t(excl)) + '</p>';
+      h += '<p class="hint mt-1" style="color:var(--warn)">' + esc(t(excl)) + '</p>';
     }
     h += '</div>';
 
-    h += '<div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:var(--s2);border-top:var(--hair) solid var(--recess)">' +
+    h += '<div class="row row-1" style="padding-top:var(--s2);border-top:var(--hair) solid var(--recess)">' +
          '<button type="button" class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' +
            esc(t('exd.open')) + '</button>' +
          (ACTIVE
@@ -1261,7 +1259,7 @@ function renderExerciseLibrary(){
            : (targetDay
                ? '<button type="button" class="btn quiet sm" onclick="addExerciseToPlan(\'' + targetDay + '\',\'' + e.id + '\')">+ ' + esc(t('plan.tabPlan')) + '</button>'
                : '')) +
-         '<button type="button" class="chip sm ' + (inPool?'on':'') + '" style="margin-inline-start:auto" ' +
+         '<button type="button" class="chip sm push ' + (inPool?'on':'') + '" ' +
            'onclick="toggleEx(\'' + e.id + '\')" aria-pressed="' + (inPool?'true':'false') + '">' +
            esc(inPool ? t('plan.inPool') : t('plan.excluded')) + '</button>' +
          '</div>';

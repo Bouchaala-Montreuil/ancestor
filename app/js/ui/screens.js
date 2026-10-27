@@ -151,7 +151,7 @@ Screens.home = function(){
 
   /* 2. Readiness Verdict + Next Session Blueprint */
   h += '<div class="decision s-' + shown + '"><div class="bar"></div><div class="inner">';
-  h += '<div class="top"><div style="min-width:0;flex:1">';
+  h += '<div class="top"><div class="grow">';
   h += '<p class="eyebrow">' + esc(t('decision.label')) + '</p>';
   h += '<div class="dec-state">' + esc(t('decision.' + shown)) + '</div>';
   h += '</div>';
@@ -202,7 +202,7 @@ Screens.home = function(){
   h += '</div></div>';
 
   /* 3. Training Progress Sparkline */
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.progressTitle')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.progressTitle')) +
        '</h2><span class="rule"></span></div>';
   h += '<div class="panel dash-progress">';
   h += '<div class="dash-bignum">';
@@ -223,7 +223,7 @@ Screens.home = function(){
   h += '</div></div></div>';
 
   /* 5. Muscle-Group Coverage Matrix */
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.coverageTitle')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.coverageTitle')) +
        '</h2><span class="rule"></span>' +
        '<span class="aside">' + esc(t('home.coverageNote')) + '</span></div>';
   h += '<div class="panel">' + coverageBars(s, now) + '</div></div>';
@@ -234,7 +234,7 @@ Screens.home = function(){
   h += '<div class="bento-col">';
 
   /* 4. Weekly Activity & Metrics */
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.weekTitle')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.weekTitle')) +
        '</h2><span class="rule"></span></div>';
   h += '<div class="panel">';
   const targetDays = Math.max(1, +p.daysPerWeek || 3);
@@ -258,9 +258,9 @@ Screens.home = function(){
   }
   h += '</div></div>';
   if(weekGoalMet || milesEarned > 0){
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<div class="chips mb-3">' +
          (weekGoalMet ? '<span class="flag ok">' + esc(t('mile.weeklyGoal')) + '</span>' : '') +
-         '<button type="button" class="flag plain" style="cursor:pointer" onclick="go(\'progress\')">' +
+         '<button type="button" class="flag plain tap" onclick="go(\'progress\')">' +
            esc(t('mile.title')) + ': ' + milesEarned + '/' + miles.length + '</button>' +
          '</div>';
   }
@@ -279,20 +279,20 @@ Screens.home = function(){
   h += '</div></div>';
 
   /* 6. Contextual Lab Insight */
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.insightTitle')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.insightTitle')) +
        '</h2><span class="rule"></span></div>';
   h += '<div class="panel dash-insight">';
   h += '<p class="eyebrow">' + esc(t(insight.basisKey)) + '</p>';
   h += '<p class="dash-insight-t">' + esc(insight.text) + '</p>';
-  h += '<p class="body-sm" style="margin-top:var(--s2);margin-bottom:0">' + esc(insight.because) + '</p>';
-  if(insight.action) h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3)">' + insight.action + '</div>';
+  h += '<p class="body-sm mb-0 mt-2">' + esc(insight.because) + '</p>';
+  if(insight.action) h += '<div class="row mt-3">' + insight.action + '</div>';
   h += '</div></div>';
 
   /* 7. Bio-Timeline & Quick Logs */
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.timeline')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.timeline')) +
        '</h2><span class="rule"></span></div>';
   h += '<div class="panel">' + timelineStrip(s, now) +
-       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:var(--s3)">' +
+       '<div class="mt-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">' +
        '<button class="btn quiet sm" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>' +
        '<button class="btn quiet sm" onclick="openSheet(\'shift\')">' + esc(t('home.logshift')) + '</button>' +
        '<button class="btn quiet sm" onclick="openSheet(\'feel\')">' + esc(t('home.logfeel')) + '</button>' +
@@ -301,23 +301,23 @@ Screens.home = function(){
   /* 8. Anatomy & Science Launchpad */
   const recMap = allRecovery(s, now);
   const readyCount = MUSCLES.filter(m => !recMap[m] || recMap[m].state === 'ready' || recMap[m].state === 'fresh').length;
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.map')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.map')) +
        '</h2><span class="rule"></span>' +
        '<span class="aside"><button class="chip sm" onclick="go(\'body\')">' + esc(t('lab.open')) + '</button></span></div>';
   h += '<button class="panel dash-figlink" onclick="go(\'body\')">' +
-       '<div class="fig-stage" style="border:0;background:transparent">' +
+       '<div class="fig-stage bare">' +
        '<div class="dash-fig-duo">' +
          '<div class="fig-wrap">' + anatomyFigure(s, {side:'front', now:now}) +
            '<span class="dash-fig-cap">' + esc(t('body.front')) + '</span></div>' +
          '<div class="fig-wrap">' + anatomyFigure(s, {side:'back', now:now}) +
            '<span class="dash-fig-cap">' + esc(t('body.back')) + '</span></div>' +
        '</div></div>' +
-       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:var(--s2)">' +
-         '<span class="dash-figlink-t" style="margin-top:0">' + esc(t('home.mapCta')) + '</span>' +
+       '<div class="row between mt-2">' +
+         '<span class="dash-figlink-t mt-0">' + esc(t('home.mapCta')) + '</span>' +
          '<span class="flag sm ok">' + readyCount + ' / ' + MUSCLES.length + ' ' + esc(t('mst.ready')) + '</span>' +
        '</div></button></div>';
 
-  h += '<div><div class="sect" style="margin-top:0"><h2 class="title">' + esc(t('home.learnTitle')) +
+  h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.learnTitle')) +
        '</h2><span class="rule"></span></div>' + nextLessonCard(s) + '</div>';
 
   h += '</div>'; /* end right bento-col */
@@ -404,7 +404,7 @@ function milestonesPanel(state, now){
   list.forEach(m => {
     const pct = m.max > 0 ? Math.round(m.cur / m.max * 100) : 0;
     h += '<div class="mile-card ' + (m.earned ? 'earned' : 'locked') + '">' +
-         '<div><div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px">' +
+         '<div><div class="row nowrap between row-1 mb-1">' +
            '<span class="mile-card-t">' + esc(t(m.titleKey)) + '</span>' +
            '<span class="flag sm ' + (m.earned ? 'ok' : 'plain') + '">' + m.cur + '/' + m.max + '</span></div>' +
          '<p class="hint">' + esc(t(m.descKey)) + '</p></div>' +
@@ -471,7 +471,7 @@ function coverageBars(state, now){
          '</span></div>';
   });
   h += '</div>';
-  h += '<p class="hint" style="margin-top:var(--s3)">' + esc(t('home.coverageHint')) + '</p>';
+  h += '<p class="hint mt-3">' + esc(t('home.coverageHint')) + '</p>';
   return h;
 }
 
@@ -539,10 +539,10 @@ function nextLessonCard(state){
   if(!l) return '';
   let h = '<button class="panel dash-lesson" onclick="openLesson(\'' + l.id + '\')">';
   h += '<p class="eyebrow">' + esc(t('sci.nextLesson')) + '</p>';
-  h += '<h3 class="sub" style="margin:var(--s2) 0">' + esc(t(l.titleKey)) + '</h3>';
-  h += '<p class="body-sm" style="margin-bottom:0">' + esc(t(l.summaryKey)) + '</p>';
+  h += '<h3 class="sub mb-0 mt-2">' + esc(t(l.titleKey)) + '</h3>';
+  h += '<p class="body-sm mb-0">' + esc(t(l.summaryKey)) + '</p>';
   const cat = (SCIENCE_CATEGORIES || []).filter(c => c.id === l.cat)[0];
-  h += '<div class="chips" style="margin-top:var(--s3)">' +
+  h += '<div class="chips mt-3">' +
        (cat ? '<span class="flag plain">' + esc(t(cat.label)) + '</span>' : '') +
        '<span class="flag plain">' + esc(t('sci.minutes')) + ' ' + (l.mins || 5) + '</span>' +
        '</div>';
@@ -583,14 +583,14 @@ function openAnalysis(){
   if(ss.avg === null) missing.push(t('unc.noSleep'));
   if(!s.shifts.length && s.profile.shiftType !== 'none') missing.push(t('unc.noShift'));
 
-  let h = '<div class="eyebrow" style="margin-bottom:10px">' + esc(t('decision.label')) + ' — ' +
+  let h = '<div class="eyebrow mb-2">' + esc(t('decision.label')) + ' — ' +
           esc(t('decision.' + displayState(d.state))) + '</div>';
-  h += '<div class="factors" style="border-top:0">' + rows + '</div>';
+  h += '<div class="factors bare">' + rows + '</div>';
   if(missing.length){
-    h += '<div class="uncertain" style="margin-top:var(--s4)"><b>' + esc(t('body.missing')) + '</b>' +
+    h += '<div class="uncertain mt-4"><b>' + esc(t('body.missing')) + '</b>' +
          esc(missing.join(' ')) + '</div>';
   }
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('decision.limits')) + '</b>' +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('decision.limits')) + '</b>' +
        esc(t('unc.estimate')) + ' ' + esc(t('body.estimateNote')) + '</div>';
   sheet(t('home.analysis'), h);
 }
@@ -769,7 +769,7 @@ Screens.body = function(){
   h += anatomyLegend();
 
   /* muscle list */
-  h += '<div class="panel flush" style="margin-top:var(--s3)"><div class="muscle-list">';
+  h += '<div class="panel flush mt-3"><div class="muscle-list">';
   MUSCLES.forEach(m => {
     const r = rec[m];
     const st = r ? r.state : 'fresh';
@@ -809,7 +809,7 @@ Screens.body = function(){
     if(LAB_STRUCT) h += labStructPanel(LAB_STRUCT);
     h += '<div class="panel"><div class="panel-hd">' +
          '<h3 class="sub">' + esc(t('mg.'+m)) + '</h3>' +
-         '<span style="display:flex;align-items:center;gap:var(--s2)">' +
+         '<span class="row nowrap">' +
          '<span class="flag ' + (r.state==='ready'?'ok':r.state==='caution'?'warn':r.state==='rest'?'alert':'nodata') + '">' +
          esc(t('mst.'+r.state)) + '</span>' +
          '<button class="btn quiet sm" onclick="clearMuscle()" aria-label="' + esc(t('body.close')) + '">' +
@@ -817,7 +817,7 @@ Screens.body = function(){
 
     const grpAction = groupAnatomicalAction(m);
     if(grpAction){
-      h += '<p class="body-sm" style="margin-bottom:var(--s3)"><b>' + esc(t('lab3d.action')) + ':</b> ' +
+      h += '<p class="body-sm mb-3"><b>' + esc(t('lab3d.action')) + ':</b> ' +
            esc(grpAction) + '</p>';
     }
 
@@ -830,7 +830,7 @@ Screens.body = function(){
       { k:t('body.exercises'), v: related.length, d: esc(t('progress.exercise')) }
     ]);
 
-    h += '<div class="sect" style="margin:var(--s4) 0 var(--s2)"><h3 class="sub">' +
+    h += '<div class="sect mb-2 mt-4"><h3 class="sub">' +
          esc(t('body.exercises')) + '</h3><span class="rule"></span></div>';
     h += dataTable(
       [{label:t('progress.exercise')},{label:t('exd.role')},{label:t('body.contribution'),n:true}],
@@ -843,11 +843,11 @@ Screens.body = function(){
       t('body.contributionNote'));
 
     if(!hist.length){
-      h += '<div class="uncertain" style="margin-top:var(--s4)"><b>' + esc(t('body.missing')) +
+      h += '<div class="uncertain mt-4"><b>' + esc(t('body.missing')) +
            '</b>' + esc(t('body.nodataNote')) + '</div>';
     }
     if(hist.length){
-      h += '<div class="sect" style="margin:var(--s4) 0 var(--s2)"><h3 class="sub">' +
+      h += '<div class="sect mb-2 mt-4"><h3 class="sub">' +
            esc(t('body.sets')) + '</h3><span class="rule"></span></div>';
       h += dataTable(
         [{label:t('progress.date')},{label:t('progress.exercise')},
@@ -862,23 +862,23 @@ Screens.body = function(){
                   workingSets(x.sets).length];
         }));
     } else {
-      h += '<div style="margin-top:var(--s4)">' + emptyState('body.neverBody','body.neverHint','inbox') + '</div>';
+      h += '<div class="mt-4">' + emptyState('body.neverBody','body.neverHint','inbox') + '</div>';
     }
 
-    h += '<div class="sect" style="margin:var(--s4) 0 var(--s2)"><h3 class="sub">' +
-         esc(t('body.factors')) + '</h3><span class="rule"></span></div><div class="factors" style="border-top:0">';
+    h += '<div class="sect mb-2 mt-4"><h3 class="sub">' +
+         esc(t('body.factors')) + '</h3><span class="rule"></span></div><div class="factors bare">';
     r.parts.forEach(p => {
       h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(p.label) +
-           (p.note ? ' <span style="color:var(--tech-ink)">(' + esc(p.note) + ')</span>' : '') +
+           (p.note ? ' <span class="meta">(' + esc(p.note) + ')</span>' : '') +
            '</span><span class="w">×' + p.f.toFixed(2) + '</span></div>';
     });
     h += '</div>';
-    h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('body.missing')) + '</b>' +
+    h += '<div class="uncertain mt-3"><b>' + esc(t('body.missing')) + '</b>' +
          esc(t('body.estimateNote')) + ' ' + r.observations + ' ' + esc(t('body.observations')) + '.</div>';
-    h += '<div class="chips" style="margin:var(--s3) 0">' +
+    h += '<div class="chips mb-0 mt-3">' +
          lessonsForMuscle(m).map(function(lid){ return '<button class="chip sm" onclick="openLesson(\'' + lid +
          '\')">' + esc(t((lesson(lid)||{titleKey:'sci.title'}).titleKey)) + '</button>'; }).join('') + '</div>';
-    h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s4)">' +
+    h += '<div class="row mt-4">' +
          '<button class="btn quiet" onclick="openWhy(\'recovery\',\'' + m + '\')">' +
          esc(t('sci.whyOpen')) + '</button>' +
          '<button class="btn" onclick="go(\'session\')">' + esc(t('body.train')) + '</button>' +
@@ -915,22 +915,22 @@ function labStructPanel(info){
   h += '<div class="panel-hd"><h3 class="sub">' + esc(info.label) + '</h3>' +
        '<button class="btn quiet sm" onclick="clearMuscle()" aria-label="' +
        esc(t('body.close')) + '">' + esc(t('body.close')) + '</button></div>';
-  h += '<div class="chips" style="margin-bottom:var(--s2)">' +
+  h += '<div class="chips mb-2">' +
        (info.side ? '<span class="flag plain">' + side + '</span>' : '') +
        (info.layer ? '<span class="flag plain">' + esc(t('lab3d.layer.' + info.layer)) + '</span>' : '') +
        (info.group ? '<span class="flag plain">' + esc(info.group) + '</span>' : '') +
        '</div>';
   if(info.sourceName)
-    h += '<p class="hint" style="margin-bottom:var(--s2)">' + esc(t('lab3d.taName')) + ': ' +
+    h += '<p class="hint mb-2">' + esc(t('lab3d.taName')) + ': ' +
          esc(info.sourceName) + '</p>';
   if(info.action)
-    h += '<p class="body-sm" style="margin-bottom:0"><b>' + esc(t('lab3d.action')) + '</b><br>' +
+    h += '<p class="body-sm mb-0"><b>' + esc(t('lab3d.action')) + '</b><br>' +
          esc(info.action) + '</p>';
   if(!info.trainingGroup)
-    h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('lab3d.noGroup')) +
+    h += '<div class="uncertain mt-3"><b>' + esc(t('lab3d.noGroup')) +
          '</b> ' + esc(t('lab3d.noGroupBody')) + '</div>';
   else
-    h += '<p class="hint" style="margin-top:var(--s2)">' +
+    h += '<p class="hint mt-2">' +
          esc(t('lab3d.mapsTo', { group: t('mg.' + info.trainingGroup) })) + '</p>';
   h += '</div>';
   return h;
@@ -1083,7 +1083,7 @@ function openExerciseDetail(exId){
   const prime = ex.m && ex.m[0] ? ex.m[0][0] : null;
   const action = prime ? groupAnatomicalAction(prime) : '';
 
-  let h = '<div class="chips" style="margin-bottom:var(--s3)">' +
+  let h = '<div class="chips mb-3">' +
     '<span class="flag accent">' + esc(targetRangeText(ex)) + '</span>' +
     '<span class="flag plain">' + esc(t('pat.' + ex.pat)) + '</span>' +
     '<span class="flag plain">' + esc(t('equip.' + ex.equip)) + '</span>' +
@@ -1096,15 +1096,15 @@ function openExerciseDetail(exId){
     h += exerciseVisualSvg(ex);
   }
 
-  h += '<p class="body-sm" style="margin-bottom:var(--s3)"><b>' + esc(t('session.cue')) + ':</b> ' +
+  h += '<p class="body-sm mb-3"><b>' + esc(t('session.cue')) + ':</b> ' +
        esc(t('cue.' + ex.id)) + '</p>';
   if(action){
-    h += '<p class="body-sm" style="margin-bottom:var(--s3)"><b>' + esc(t('lab3d.action')) +
+    h += '<p class="body-sm mb-3"><b>' + esc(t('lab3d.action')) +
          ' (' + esc(t('mg.' + prime)) + '):</b> ' + esc(action) + '</p>';
   }
 
-  h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('exd.muscles')) + '</p>';
-  h += '<div class="factors" style="border-top:0;margin-bottom:var(--s4)">';
+  h += '<p class="eyebrow mb-2">' + esc(t('exd.muscles')) + '</p>';
+  h += '<div class="factors mb-4 bare">';
   (ex.m || []).forEach(([m, w], idx) => {
     h += '<div class="factor"><span class="dot"></span><span class="txt">' +
          '<button type="button" class="link-btn" onclick="closeSheet();selectMuscle(\'' + m + '\');go(\'body\')">' +
@@ -1115,8 +1115,8 @@ function openExerciseDetail(exId){
   h += '</div>';
 
   if((ex.pos || []).length){
-    h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('exd.positions')) + '</p>';
-    h += '<div class="chips" style="margin-bottom:var(--s4)">' +
+    h += '<p class="eyebrow mb-2">' + esc(t('exd.positions')) + '</p>';
+    h += '<div class="chips mb-4">' +
          ex.pos.map(p => '<span class="flag plain">' + esc(t('exd.pos.' + p)) + '</span>').join('') +
          '</div>';
   }
@@ -1131,21 +1131,21 @@ function openExerciseDetail(exId){
     });
   }
   if(inPlanRows.length){
-    h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('plan.tabPlan')) + '</p>' +
-         '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<p class="eyebrow mb-2">' + esc(t('plan.tabPlan')) + '</p>' +
+         '<div class="chips mb-3">' +
          inPlanRows.map(pr =>
            '<span class="flag ok">' + esc(pr.dayName) + ' · ' + pr.sets + ' × ' + esc(targetRangeText(ex)) +
            ' · RIR ' + pr.rir + ' · ' + esc(t('session.rest')) + ' ' + pr.rest + 's</span>'
          ).join('') + '</div>';
   }
 
-  h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('sci.history')) + '</p>';
+  h += '<p class="eyebrow mb-2">' + esc(t('sci.history')) + '</p>';
   const lastExNote = (typeof previousExerciseNote === 'function') ? previousExerciseNote(s, exId, now + 1) : null;
   if(prev && prev.text){
     h += '<div class="prev-line"><span class="k">' + esc(t('c.previous')) + '</span>' +
          '<b>' + esc(prev.text) + '</b><span class="d">' + esc(dateLabel(prev.date)) + '</span></div>';
     if(lastExNote){
-      h += '<p class="hint" style="margin:-4px 0 var(--s2)"><b>' + esc(t('log.prevNote')) + ':</b> ' +
+      h += '<p class="hint tuck"><b>' + esc(t('log.prevNote')) + ':</b> ' +
            esc(lastExNote.note) + ' (' + esc(dateLabel(lastExNote.date)) + ')</p>';
     }
     if(pb && hist.length >= 2){
@@ -1154,32 +1154,32 @@ function openExerciseDetail(exId){
     }
     const pts = sessionSeries(s, exId, 0);
     if(pts.length >= 2){
-      h += '<div style="margin:var(--s2) 0 var(--s3)">' +
+      h += '<div class="mt-2 mb-3">' +
            sparkline(pts, { compact:true, label: t(chartLabelKey(ex)), unit: chartUnit(ex, unit()) }) +
            '</div>';
     }
   } else {
-    h += '<p class="hint" style="margin-bottom:var(--s3)">' + esc(t('log.noPrev')) + '</p>';
+    h += '<p class="hint mb-3">' + esc(t('log.noPrev')) + '</p>';
   }
 
   if(rec){
     const recLine = recommendationText(rec, ex);
     const whyLine = (rec.reasons && rec.reasons[0]) ? rec.reasons[0].text : '';
     const sameText = (rec.kind === 'baseline') || !whyLine || (recLine === esc(whyLine));
-    h += '<div class="banner info" style="margin:var(--s3) 0"><span class="ic">i</span><span>' +
+    h += '<div class="banner info mb-0 mt-3"><span class="ic">i</span><span>' +
          recLine + (sameText ? '' : '<br>' + esc(whyLine)) + '</span></div>';
   }
 
   if(subs.length){
-    h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('session.sub')) + '</p>';
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<p class="eyebrow mb-2">' + esc(t('session.sub')) + '</p>';
+    h += '<div class="chips mb-3">' +
          subs.map(sb => '<button type="button" class="chip sm" onclick="openExerciseDetail(\'' + sb.id + '\')">' +
            esc(t('ex.' + sb.id)) + '</button>').join('') + '</div>';
   }
 
   const targetDay = (typeof PLAN_DAY !== 'undefined' && PLAN_DAY)
     || (s.plan && s.plan.sessions && s.plan.sessions[0] ? s.plan.sessions[0].id : '');
-  h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3)">' +
+  h += '<div class="row mt-3">' +
        (prime ? '<button type="button" class="btn quiet sm" onclick="closeSheet();selectMuscle(\'' + prime + '\');go(\'body\')">' +
          esc(t('home.mapCta')) + '</button>' : '') +
        (ACTIVE
@@ -1235,13 +1235,13 @@ Screens.progress = function(){
   if(!s.sessions.length){
     /* Say what is going on first. The fictional example is shown below it,
        explicitly labelled and visually separated from anything personal. */
-    h += '<div style="margin-top:var(--s3)">' +
+    h += '<div class="mt-3">' +
       emptyState('progress.nodata', 'progress.nodataBody', 'chart',
         '<button class="btn" onclick="go(\'session\')">' + esc(t('progress.start')) + '</button>') +
       '</div>';
-    h += '<div class="panel" style="margin-top:var(--s3)">' +
-      '<div class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('progress.sample')) + '</div>' +
-      '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('progress.sampleNote')) + '</p>' +
+    h += '<div class="panel mt-3">' +
+      '<div class="eyebrow mb-2">' + esc(t('progress.sample')) + '</div>' +
+      '<p class="body-sm mb-3">' + esc(t('progress.sampleNote')) + '</p>' +
       sampleChart() + '</div>';
     h += bodyweightTrendPanel(s);
     return { html: h };
@@ -1251,14 +1251,14 @@ Screens.progress = function(){
   const volRows = MUSCLES.map(m => ({ v: vol[m], name: t('mg.'+m),
                                       short: esc(t('mg.'+m)).slice(0,3).toUpperCase(),
                                       col: 'var(--burnt)' })).filter(r => r.v > 0);
-  h += '<div class="panel" style="margin-top:var(--s3)">';
+  h += '<div class="panel mt-3">';
   if(volRows.length){
     h += barChart({ title: t('progress.volume'), period: periodLabel, unit: unit() + '·reps', rows: volRows });
   } else {
     h += '<div class="uncertain"><b>' + esc(t('log.notApplicable')) + '</b> ' +
          esc(t('log.volumeNote')) + '</div>';
   }
-  h += '<p class="hint" style="margin-top:var(--s2)">' + esc(t('progress.volumeDef')) +
+  h += '<p class="hint mt-2">' + esc(t('progress.volumeDef')) +
        (volumePartiallyUnknown(s, from) ? ' ' + esc(t('log.volumeNote')) : '') + '</p></div>';
 
   /* --- per-exercise detail --- */
@@ -1269,15 +1269,14 @@ Screens.progress = function(){
 
   h += '<div class="sect"><h3 class="sub">' + esc(t('progress.detail')) + '</h3><span class="rule"></span></div>';
   h += '<div class="panel">';
-  h += '<div class="chips" style="margin-bottom:var(--s3)">';
+  h += '<div class="chips mb-3">';
   [30,90,0].forEach(pd => {
     h += '<button class="chip sm ' + (PROG_PERIOD===pd?'on':'') + '" onclick="setPeriod(' + pd + ')">' +
          esc(pd===0?t('progress.pall'):pd===30?t('progress.p30'):t('progress.p90')) + '</button>';
   });
   h += '</div>';
-  h += '<div class="chips" style="margin-bottom:var(--s3)">' +
-       exIds.map(id => '<button class="chip sm ' + (PROG_EX===id?'on':'') +
-       '" onclick="setProgEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div>';
+  h += '<div class="chips mb-3">' +
+       exIds.map(id => '<button class="chip sm ' + (PROG_EX===id?'on':'') + '" onclick="setProgEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div>';
 
   const progEx = EX_BY_ID[PROG_EX];
   const eps = exerciseHistory(PROG_EX).filter(h2 => h2.date >= from).map(h2 => {
@@ -1296,12 +1295,12 @@ Screens.progress = function(){
   availMetrics.push({ id:'sets', label: t('progress.sets') });
   const activeMetric = availMetrics.some(m => m.id === PROG_METRIC) ? PROG_METRIC : 'primary';
 
-  h += '<div class="chips" style="margin-bottom:var(--s4)" role="group" aria-label="' + esc(t('chart.metric')) + '">' +
+  h += '<div class="chips mb-4"  role="group" aria-label="' + esc(t('chart.metric')) + '">' +
        availMetrics.map(m =>
          '<button class="chip sm ' + (activeMetric===m.id?'on':'') + '" onclick="setProgMetric(\'' + m.id + '\')">' +
          esc(m.label) + '</button>'
        ).join('') +
-       '<button class="btn quiet sm" style="margin-inline-start:auto" onclick="openExerciseDetail(\'' + PROG_EX + '\')">' +
+       '<button class="btn quiet sm push" onclick="openExerciseDetail(\'' + PROG_EX + '\')">' +
        esc(t('exd.open')) + '</button></div>';
 
   if(activeMetric === 'e1rm'){
@@ -1318,7 +1317,7 @@ Screens.progress = function(){
                      period: periodLabel, unit: chartUnit(progEx, unit()),
                      label: t(chartLabelKey(progEx)), points: pts });
   }
-  h += '<p class="hint" style="margin-top:var(--s2)">' +
+  h += '<p class="hint mt-2">' +
        esc(t('chart.basis')) + ': ' + esc(t(chartBasisKey(progEx, s.profile))) + ' · ' + esc(t('hist.note')) + '</p>';
   h += '</div>';
 
@@ -1327,12 +1326,12 @@ Screens.progress = function(){
   h += '<div class="panel flush"><div class="table-wrap"><table class="data">' +
        '<caption>' + esc(periodLabel) + '</caption><thead><tr>' +
        '<th>' + esc(t('progress.date')) + '</th><th>' + esc(t('progress.exercise')) + '</th>' +
-       '<th style="text-align:right">' + esc(t('progress.sets')) + '</th>' +
-       '<th style="text-align:right">' + esc(t('progress.best')) + '</th>' +
-       '<th style="text-align:right">' + esc(t('hist.edit')) + '</th></tr></thead><tbody>';
+       '<th class="end">' + esc(t('progress.sets')) + '</th>' +
+       '<th class="end">' + esc(t('progress.best')) + '</th>' +
+       '<th class="end">' + esc(t('hist.edit')) + '</th></tr></thead><tbody>';
   const rows = s.sessions.filter(x => x.date >= from).sort((a,b)=>b.date-a.date).slice(0,40);
   if(!rows.length){
-    h += '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--tech-ink)">' +
+    h += '<tr><td colspan="5" class="td-empty">' +
          esc(t('state.noresult')) + '</td></tr>';
   }
   rows.forEach(sess => {
@@ -1370,7 +1369,7 @@ Screens.progress = function(){
          esc(formatSet(pb.set, ex, s.profile)) + '</td><td class="n">' +
          esc(dateLabel(pb.date)) + '</td></tr>';
   });
-  if(!any) h += '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--tech-ink)">' +
+  if(!any) h += '<tr><td colspan="3" class="td-empty">' +
                 esc(t('hist.pr.none')) + '</td></tr>';
   h += '</tbody></table></div></div>';
 
@@ -1397,10 +1396,10 @@ function bodyweightTrendPanel(s){
           esc(t('bw.log')) + '</button></span></div>';
   h += '<div class="panel">';
   if(!list.length){
-    h += '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('bw.empty')) + '</p>' +
+    h += '<p class="body-sm mb-3">' + esc(t('bw.empty')) + '</p>' +
          '<button type="button" class="btn quiet sm" onclick="openSheet(\'bw\')">+ ' + esc(t('bw.log')) + '</button>';
   } else {
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<div class="chips mb-3">' +
          '<span class="flag accent">' + esc(t('bw.latest')) + ': ' + latest.w + ' ' + esc(u) + '</span>' +
          (avg7 !== null ? '<span class="flag plain">' + esc(t('bw.rolling')) + ': ' + avg7 + ' ' + esc(u) + '</span>' : '') +
          '<span class="flag plain">' + list.length + ' ' + esc(t('sleep.entries')) + '</span></div>';
@@ -1411,7 +1410,7 @@ function bodyweightTrendPanel(s){
     } else {
       h += '<p class="body-sm">' + esc(t('bw.oneNote')) + '</p>';
     }
-    h += '<p class="hint" style="margin-top:var(--s2)">' + esc(t('modB.s4.cap')) + '</p>';
+    h += '<p class="hint mt-2">' + esc(t('modB.s4.cap')) + '</p>';
   }
   h += '</div>';
   return h;
@@ -1431,7 +1430,7 @@ function countPRs(s){
 /* A clearly-labelled fictional example, shown only when there is no real data. */
 function sampleChart(){
   return '<div style="border:1px dashed var(--line);padding:var(--s3);border-radius:var(--r-sm)">' +
-    '<div class="eyebrow" style="margin-bottom:8px">' + esc(t('progress.sample')) + ' — ' +
+    '<div class="eyebrow mb-2">' + esc(t('progress.sample')) + ' — ' +
     esc(t('progress.sampleNote')) + '</div>' +
     lineChart({ title: t('chart.load') + ' — ' + t('progress.sample'),
       period: '8 ' + t('progress.sessions'), unit: 'kg', label: t('chart.load'),
@@ -1471,8 +1470,8 @@ function renderSessionEditor(){
   const ex = EX_BY_ID[e.id];
   const spec = exLogSpec(ex);
   const u = unit();
-  let h = '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('hist.hint')) + '</p>';
-  h += '<div class="panel-hd" style="margin-bottom:var(--s3)"><h3 class="sub">' +
+  let h = '<p class="body-sm mb-3">' + esc(t('hist.hint')) + '</p>';
+  h += '<div class="panel-hd mb-3"><h3 class="sub">' +
        esc(t('ex.'+e.id)) + '</h3><span class="hint">' + esc(dateLabel(sess.date)) + '</span></div>';
 
   EDIT.draft.forEach((set, i) => {
@@ -1485,8 +1484,7 @@ function renderSessionEditor(){
       let val = set[f.attr];
       if(f.key === 'distance') val = (val === '' || val === null) ? '' : (Math.round(toDisplayDistance(+val, u)*10)/10);
       const labelKey = f.key === 'load' ? (spec.loadRole === 'added' ? 'log.added' : 'log.load') : f.labelKey;
-      h += '<div class="fld"><label for="ed_' + i + '_' + f.attr + '" style="display:block;font-family:var(--f-mono);font-size:9px;' +
-           'letter-spacing:.1em;text-transform:uppercase;color:var(--tech-ink);margin-bottom:2px">' +
+      h += '<div class="fld"><label class="fld-cap" for="ed_' + i + '_' + f.attr + '">' +
            esc(t(labelKey)) + '</label>' +
            '<input id="ed_' + i + '_' + f.attr + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' +
            esc(val === null || val === undefined ? '' : val) + '" oninput="editField(' + i + ',\'' +
@@ -1502,7 +1500,7 @@ function renderSessionEditor(){
     h += '</div></div>';
   });
 
-  h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s4)">' +
+  h += '<div class="row mt-4">' +
        '<button class="btn" onclick="closeSessionEditor()">' + esc(t('btn.done')) + '</button>' +
        '<button class="btn danger" onclick="deleteWholeSession()">' + esc(t('hist.delSession')) + '</button></div>';
   sheet(t('hist.title'), h);
@@ -1584,7 +1582,7 @@ Screens.profile = function(){
           '<p class="masthead-idx">' + esc(t('onb.style.' + (p.style || 'std'))) + ' · ' +
           esc(t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))) + '</p>' +
           '<h2 class="masthead-title">' + esc(t('profile.title')) + '</h2></div>' +
-          '<div style="display:flex;gap:var(--s2);flex-wrap:wrap">' +
+          '<div class="row">' +
           '<button class="btn sm" onclick="rebuildPlan()">' + esc(t('profile.rebuild')) + '</button>' +
           '<button class="btn quiet sm" onclick="go(\'onb\')">' + esc(t('onb.redo')) + '</button></div></div>';
 
@@ -1597,20 +1595,17 @@ Screens.profile = function(){
   h += '<div class="field"><label for="pf_name">' + esc(t('onb.name')) + '</label>' +
        '<input id="pf_name" type="text" value="' + esc(p.name) + '" oninput="setP(\'name\',this.value)"></div>';
   h += '<div class="field"><label>' + esc(t('onb.exp.t')) + '</label><div class="chips">' +
-       ['b','i','a'].map(g => '<button class="chip sm ' + (p.experience===g?'on':'') +
-       '" onclick="setP(\'experience\',\'' + g + '\')">' + esc(t('onb.exp.'+g)) + '</button>').join('') + '</div></div>';
+       ['b','i','a'].map(g => '<button class="chip sm ' + (p.experience===g?'on':'') + '" onclick="setP(\'experience\',\'' + g + '\')">' + esc(t('onb.exp.'+g)) + '</button>').join('') + '</div></div>';
   h += '<div class="grid2"><div class="field"><label>' + esc(t('onb.avail.t')) + '</label><div class="chips">' +
-       [2,3,4,5,6].map(d => '<button class="chip sm ' + (p.daysPerWeek===d?'on':'') +
-       '" onclick="setP(\'daysPerWeek\',' + d + ')">' + d + '</button>').join('') + '</div></div>' +
+       [2,3,4,5,6].map(d => '<button class="chip sm ' + (p.daysPerWeek===d?'on':'') + '" onclick="setP(\'daysPerWeek\',' + d + ')">' + d + '</button>').join('') + '</div></div>' +
        '<div class="field"><label>' + esc(t('onb.avail.len')) + '</label><div class="chips">' +
-       [20,35,50,70].map(m => '<button class="chip sm ' + (p.sessionMinutes===m?'on':'') +
-       '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
+       [20,35,50,70].map(m => '<button class="chip sm ' + (p.sessionMinutes===m?'on':'') + '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
        '</div></div></div>';
-  h += '<div class="field" style="margin-bottom:0"><label>' + esc(t('profile.limits')) + '</label><div class="chips">' +
+  h += '<div class="field mb-0"><label>' + esc(t('profile.limits')) + '</label><div class="chips">' +
        [['shoulder','shoulder'],['knee','knee'],['lowerback','lowback'],['wrist','wrist'],['elbow','elbow']].map(x =>
        '<button class="chip sm ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" onclick="setLimit(\'' + x[0] + '\')">' +
        esc(t('onb.limits.'+x[1])) + '</button>').join('') + '</div>' +
-       '<p class="hint" style="margin-top:6px">' + esc(t('onb.limits.note')) + '</p></div>';
+       '<p class="hint mt-1">' + esc(t('onb.limits.note')) + '</p></div>';
   h += '</div>';
 
   /* Goals */
@@ -1627,12 +1622,12 @@ Screens.profile = function(){
       '<button class="tile radio ' + (p.style===k?'on':'') + '" onclick="setP(\'style\',\'' + k + '\')">' +
       '<span class="box"></span><span><span class="t">' + esc(t('onb.style.'+k)) + '</span>' +
       '<span class="d">' + esc(t('onb.style.'+k+'.d')) + '</span></span></button>').join('') + '</div>';
-  h += '<div class="grid2" style="margin-top:var(--s4)"><div class="field" style="margin-bottom:0"><label for="pf_bw">' +
+  h += '<div class="grid2 mt-4"><div class="field mb-0"><label for="pf_bw">' +
        esc(t('profile.bodyweight')) + ' <span class="hint">' + esc(t('c.optional')) + '</span></label>' +
        '<input id="pf_bw" type="number" inputmode="decimal" step="any" min="0" placeholder="—" value="' +
        (p.bodyweight === null || p.bodyweight === undefined ? '' : esc(p.bodyweight)) +
-       '" oninput="setBodyweight(this.value)"><p class="hint" style="margin-top:4px">' + esc(t('profile.bodyweightHint')) + '</p></div>' +
-       '<div class="field" style="margin-bottom:0"><label>' + esc(t('onb.units.t')) + '</label><div class="chips">' +
+       '" oninput="setBodyweight(this.value)"><p class="hint mt-1">' + esc(t('profile.bodyweightHint')) + '</p></div>' +
+       '<div class="field mb-0"><label>' + esc(t('onb.units.t')) + '</label><div class="chips">' +
        '<button class="chip ' + (p.unit==='kg'?'on':'') + '" onclick="setP(\'unit\',\'kg\')">' + esc(t('onb.units.kg')) + '</button>' +
        '<button class="chip ' + (p.unit==='lb'?'on':'') + '" onclick="setP(\'unit\',\'lb\')">' + esc(t('onb.units.lb')) + '</button></div></div></div>';
   h += '</div>';
@@ -1640,16 +1635,15 @@ Screens.profile = function(){
   /* Unified Environment & Equipment */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.environment')) + '</h3></div>' +
        '<div class="tiles">' + ENVIRONMENTS.map(env =>
-       '<button class="tile radio ' + (p.environment === env.id ? 'on' : '') +
-       '" onclick="setEnvEquip(\'' + env.id + '\')"><span class="box"></span>' +
+       '<button class="tile radio ' + (p.environment === env.id ? 'on' : '') + '" onclick="setEnvEquip(\'' + env.id + '\')"><span class="box"></span>' +
        '<span><span class="t">' + esc(t(env.label)) + '</span><span class="d">' + esc(t(env.desc)) +
        '</span></span></button>').join('') + '</div></div>';
 
   /* Exercise Pool Summary + Full Atlas Launchpad */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.exercises')) + '</h3>' +
        '<span class="hint">' + enabledCount + ' / ' + avail.length + '</span></div>';
-  h += '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('onb.ex.d')) + '</p>';
-  h += '<button type="button" class="btn quiet block" style="margin-bottom:var(--s3)" onclick="openExerciseLibrary()">' +
+  h += '<p class="body-sm mb-3">' + esc(t('onb.ex.d')) + '</p>';
+  h += '<button type="button" class="btn quiet block mb-3"  onclick="openExerciseLibrary()">' +
        esc(t('plan.tabLibrary')) + ' (' + EX.length + ')</button>';
   const byPat = {};
   avail.forEach(e => { (byPat[e.pat] = byPat[e.pat] || []).push(e); });
@@ -1676,18 +1670,17 @@ Screens.profile = function(){
        '</h3><span class="hint">' + esc(t('onb.shift.note')) + '</span></div>';
   h += '<div class="field"><label>' + esc(t('onb.shift.t')) + '</label><div class="chips">' +
        [['none','no'],['night','night'],['rotating','rot']].map(x =>
-       '<button class="chip sm ' + (p.shiftType===x[0]?'on':'') +
-       '" onclick="setP(\'shiftType\',\'' + x[0] + '\')">' + esc(t('onb.shift.'+x[1])) + '</button>').join('') + '</div></div>';
+       '<button class="chip sm ' + (p.shiftType===x[0]?'on':'') + '" onclick="setP(\'shiftType\',\'' + x[0] + '\')">' + esc(t('onb.shift.'+x[1])) + '</button>').join('') + '</div></div>';
   h += '<div class="field"><label for="pf_slp">' + esc(t('onb.sleep.t')) + '</label>' +
-       '<div style="display:flex;align-items:baseline;gap:var(--s3)">' +
-       '<span class="num" style="font-size:24px">' + p.sleepHours + '</span>' +
+       '<div class="row nowrap row-base">' +
+       '<span class="num num-lg">' + p.sleepHours + '</span>' +
        '<span class="hint">' + esc(t('onb.sleep.h')) + '</span></div>' +
        '<input id="pf_slp" type="range" min="3" max="11" step="0.5" value="' + p.sleepHours +
        '" oninput="setP(\'sleepHours\',+this.value)"></div>';
-  h += '<div class="field" style="margin-bottom:0"><label for="pf_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
+  h += '<div class="field mb-0"><label for="pf_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
        '<input id="pf_wake" type="time" value="' + String(p.usualWake).padStart(2,'0') +
        ':00" oninput="setP(\'usualWake\',+this.value.slice(0,2))"></div>';
-  h += '<div style="display:flex;gap:var(--s2);margin-top:var(--s3);flex-wrap:wrap">' +
+  h += '<div class="row mt-3">' +
        '<button class="btn quiet sm" onclick="openSheet(\'shift\')">' + esc(t('home.logshift')) + '</button>' +
        '<button class="btn quiet sm" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>' +
        '<button class="btn quiet sm" onclick="openSheet(\'feel\')">' + esc(t('home.logfeel')) + '</button></div>';
@@ -1695,45 +1688,40 @@ Screens.profile = function(){
 
   /* Adaptations */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('a11y.needsTitle')) +
-       '</h3></div><p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('a11y.needsHint')) + '</p>';
+       '</h3></div><p class="body-sm mb-3">' + esc(t('a11y.needsHint')) + '</p>';
   h += '<div class="chips">' + NEEDS.map(n =>
     '<button class="chip ' + (needOn(p, n.id) ? 'on' : '') + '" onclick="toggleNeedP(\'' + n.id +
     '\')" aria-pressed="' + (needOn(p, n.id) ? 'true' : 'false') + '">' + esc(t(n.label)) + '</button>').join('') + '</div>';
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('a11y.disclaimer')) + '</b></div>';
+  h += '<div class="uncertain mt-3"><b>' + esc(t('a11y.disclaimer')) + '</b></div>';
   if(hasAnyNeed(p)){
     const excluded = EX.filter(e => !exerciseAllowed(e, p) && (EQUIP_SETS[p.equipment] || []).indexOf(e.equip) >= 0);
-    h += '<p class="hint" style="margin-top:var(--s2)">' + excluded.length + ' ' + esc(t('a11y.adaptedOut')) + '</p>';
+    h += '<p class="hint mt-2">' + excluded.length + ' ' + esc(t('a11y.adaptedOut')) + '</p>';
   }
-  h += '<div style="margin-top:var(--s3)"><button class="btn quiet sm" onclick="rebuildPlan()">' +
+  h += '<div class="mt-3"><button class="btn quiet sm" onclick="rebuildPlan()">' +
        esc(t('profile.rebuild')) + '</button></div></div>';
 
   /* Display & Accessibility */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('a11y.title')) + '</h3></div>';
   h += '<div class="field"><label>' + esc(t('a11y.textSize')) + '</label><div class="chips">' +
-       [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') +
-       '" onclick="setDisplay(\'textScale\',' + v + ')">' + Math.round(v*100) + '%</button>').join('') +
-       '</div><p class="hint" style="margin-top:6px">' + esc(t('a11y.textSizeHint')) + '</p></div>';
+       [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') + '" onclick="setDisplay(\'textScale\',' + v + ')">' + Math.round(v*100) + '%</button>').join('') +
+       '</div><p class="hint mt-1">' + esc(t('a11y.textSizeHint')) + '</p></div>';
   h += '<div class="tiles">' +
-    '<button class="tile ' + (p.display.highContrast ? 'on' : '') +
-      '" onclick="setDisplay(\'highContrast\',' + (p.display.highContrast ? 'false' : 'true') +
+    '<button class="tile ' + (p.display.highContrast ? 'on' : '') + '" onclick="setDisplay(\'highContrast\',' + (p.display.highContrast ? 'false' : 'true') +
       ')" role="switch" aria-checked="' + (p.display.highContrast ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.contrast')) + '</span><span class="d">' + esc(t('a11y.contrastHint')) + '</span></span></button>' +
-    '<button class="tile ' + (p.display.reducedMotion === 'on' ? 'on' : '') +
-      '" onclick="setDisplay(\'reducedMotion\',\'' + (p.display.reducedMotion === 'on' ? 'auto' : 'on') +
+    '<button class="tile ' + (p.display.reducedMotion === 'on' ? 'on' : '') + '" onclick="setDisplay(\'reducedMotion\',\'' + (p.display.reducedMotion === 'on' ? 'auto' : 'on') +
       '\')" role="switch" aria-checked="' + (p.display.reducedMotion === 'on' ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.motion')) + '</span><span class="d">' + esc(t('a11y.motionHint')) + '</span></span></button>' +
-    '<button class="tile ' + (p.display.simpleUI ? 'on' : '') +
-      '" onclick="setDisplay(\'simpleUI\',' + (p.display.simpleUI ? 'false' : 'true') +
+    '<button class="tile ' + (p.display.simpleUI ? 'on' : '') + '" onclick="setDisplay(\'simpleUI\',' + (p.display.simpleUI ? 'false' : 'true') +
       ')" role="switch" aria-checked="' + (p.display.simpleUI ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.simple')) + '</span><span class="d">' + esc(t('a11y.simpleHint')) + '</span></span></button>' +
     '</div>';
-  h += '<p class="hint" style="margin-top:var(--s2)">' + esc(t('keyboard.hint')) + '</p></div>';
+  h += '<p class="hint mt-2">' + esc(t('keyboard.hint')) + '</p></div>';
 
   /* Language */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.language')) +
        '</h3></div><div class="tiles">' +
-       LANGS.map(l => '<button class="tile radio ' + (CURRENT_LANG===l?'on':'') +
-         '" onclick="switchLang(\'' + l + '\')"><span class="box"></span>' +
+       LANGS.map(l => '<button class="tile radio ' + (CURRENT_LANG===l?'on':'') + '" onclick="switchLang(\'' + l + '\')"><span class="box"></span>' +
          '<span><span class="t">' + esc(langName(l)) + ' (' + esc(langLabel(l)) + ')</span></span></button>').join('') +
        '</div></div>';
 
@@ -1747,13 +1735,13 @@ Screens.profile = function(){
   if(backupDue){
     h += banner('warn', t('you.backupDue'), t('you.backupDueBody'));
   }
-  h += '<div class="grid3" style="margin-bottom:var(--s3)">' +
+  h += '<div class="grid3 mb-3">' +
        metric(t('progress.sessions'), s.sessions.length) +
        metric(t('profile.sleepLog'), (s.sleep||[]).length) +
        metric(t('profile.workshifts'), (s.shifts||[]).length) + '</div>';
-  h += '<p class="hint" style="margin-bottom:var(--s3)">' + esc(t('you.lastBackup')) + ': ' +
+  h += '<p class="hint mb-3">' + esc(t('you.lastBackup')) + ': ' +
        esc(s.lastExportAt ? dateLabel(s.lastExportAt) : t('state.none')) + ' · ' + esc(t('you.idbNote')) + '</p>';
-  h += '<div style="display:flex;flex-direction:column;gap:var(--s2)">' +
+  h += '<div class="stack">' +
        '<button class="btn quiet" onclick="openSheet(\'bw\')">+ ' + esc(t('bw.log')) + '</button>' +
        '<button class="btn quiet" onclick="doExport()">' + esc(t('you.export')) + '</button>' +
        '<button class="btn quiet" onclick="doImport()">' + esc(t('you.import')) + '</button>' +
@@ -1761,9 +1749,9 @@ Screens.profile = function(){
 
   /* About */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.about')) + '</h3></div>';
-  [1,2,3,4,5].forEach(i => { h += '<p class="body-sm" style="margin-bottom:var(--s2)">' +
+  [1,2,3,4,5].forEach(i => { h += '<p class="body-sm mb-2">' +
     esc(t('about.p'+i)) + '</p>'; });
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('lab3d.credits')) +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('lab3d.credits')) +
        '</b> ' + esc(t('body.note2d')) + '</div></div>';
 
   h += '</div>'; /* end right profile-col */
@@ -1862,7 +1850,7 @@ function sheet(title, bodyHtml){
   host.innerHTML = '<div class="sheet sheet-backdrop" onclick="if(event.target===this)closeSheet()">' +
     '<div class="panel sheet-panel" role="dialog" aria-modal="true" aria-label="' + esc(title) + '" tabindex="-1">' +
     '<div class="grip"></div><h2>' + esc(title) + '</h2>' + bodyHtml +
-    '<div style="height:var(--s4)"></div><button class="btn quiet block" onclick="closeSheet()">' +
+    '<div class="sp-4"></div><button class="btn quiet block" onclick="closeSheet()">' +
     esc(t('btn.close')) + '</button></div></div>';
   const panel = host.querySelector('.panel');
   if(panel){
@@ -1886,9 +1874,8 @@ function openSheet(kind){
     '<div class="field"><label for="sl_e">' + esc(t('sleep.end')) + '</label>' +
     '<input type="datetime-local" id="sl_e" value="' + toLocalInput(Date.now()) + '"></div>' +
     '<div class="field"><label>' + esc(t('sleep.quality')) + '</label><div class="chips" id="sl_q">' +
-    [1,2,3,4,5].map(q => '<button class="chip sm ' + (q===3?'on':'') +
-      '" onclick="pickQuality(' + q + ')">' + esc(t('sleep.q'+q)) + '</button>').join('') + '</div></div>' +
-    '<p class="hint" style="margin-bottom:var(--s4)">' + esc(t('sleep.note')) + '</p>' +
+    [1,2,3,4,5].map(q => '<button class="chip sm ' + (q===3?'on':'') + '" onclick="pickQuality(' + q + ')">' + esc(t('sleep.q'+q)) + '</button>').join('') + '</div></div>' +
+    '<p class="hint mb-4">' + esc(t('sleep.note')) + '</p>' +
     '<button class="btn block" onclick="saveSleep()">' + esc(t('btn.save')) + '</button>');
 
   if(kind === 'shift') return sheet(t('shift.title'),
@@ -1896,7 +1883,7 @@ function openSheet(kind){
     '<input type="datetime-local" id="sf_s" value="' + toLocalInput(Date.now()-10*3600000) + '"></div>' +
     '<div class="field"><label for="sf_e">' + esc(t('shift.end')) + '</label>' +
     '<input type="datetime-local" id="sf_e" value="' + toLocalInput(Date.now()) + '"></div>' +
-    '<p class="hint" style="margin-bottom:var(--s4)">' + esc(t('onb.shift.note')) + '</p>' +
+    '<p class="hint mb-4">' + esc(t('onb.shift.note')) + '</p>' +
     '<button class="btn block" onclick="saveShift()">' + esc(t('btn.save')) + '</button>');
 
   if(kind === 'feel') return sheet(t('feel.title'),
@@ -1905,7 +1892,7 @@ function openSheet(kind){
         [0,1,2,3].map(v => '<button class="chip sm ' + (v===0?'on':'') + '" onclick="pickFeel(\'' + k + '\',' + v + ')">' +
           (v===0?esc(t('feel.none')):esc(t('feel.'+['mild','moderate','high'][v-1]))) + '</button>').join('') +
         '</div></div>').join('') +
-    '<div class="banner warn" style="margin-bottom:var(--s4)"><span class="ic">i</span><span>' +
+    '<div class="banner warn mb-4"><span class="ic">i</span><span>' +
     esc(t('feel.stop')) + '</span></div>' +
     '<button class="btn block" onclick="saveFeel()">' + esc(t('btn.save')) + '</button>');
 
@@ -1918,9 +1905,9 @@ function openSheet(kind){
       '<input type="number" inputmode="decimal" step="0.1" min="20" max="400" id="bw_v" value="' + esc(cur) + '" placeholder="—"></div>' +
       '<div class="field"><label for="bw_d">' + esc(t('progress.date')) + '</label>' +
       '<input type="date" id="bw_d" value="' + dateKey(Date.now()) + '"></div></div>' +
-      '<p class="hint" style="margin-bottom:var(--s3)">' + esc(t('profile.bodyweightHint')) + '</p>' +
+      '<p class="hint mb-3">' + esc(t('profile.bodyweightHint')) + '</p>' +
       '<button class="btn block" onclick="saveBodyweightSheet()">' + esc(t('btn.save')) + '</button>' +
-      (recent.length ? '<div style="margin-top:var(--s4)">' + recent.map(b =>
+      (recent.length ? '<div class="mt-4">' + recent.map(b =>
         '<div class="factor"><span class="dot"></span><span class="txt"><b>' + b.w + ' ' + esc(u) +
         '</b> · ' + esc(dateLabel(b.date)) + '</span>' +
         '<button type="button" class="btn danger sm" onclick="removeBodyweightRow(\'' + b.id + '\')">' +
@@ -2000,75 +1987,71 @@ Screens.onb = function(){
 
   if(step === 'welcome'){
     b = head +
-      '<h1 class="display" style="white-space:pre-line;margin-bottom:var(--s3)">' + esc(t('onb.welcome.t')) + '</h1>' +
+      '<h1 class="display pre mb-3">' + esc(t('onb.welcome.t')) + '</h1>' +
       '<p class="onb-prose">' + esc(t('onb.welcome.d')) + '</p>' +
-      '<div class="panel"><p class="eyebrow" style="margin-bottom:var(--s3)">' + esc(t('onb.privacy.t')) + '</p>';
+      '<div class="panel"><p class="eyebrow mb-3">' + esc(t('onb.privacy.t')) + '</p>';
     [1,2,3,4].forEach(i => { b += '<div class="factor"><span class="dot"></span><span class="txt">' +
       esc(t('onb.privacy.l'+i)) + '</span></div>'; });
-    b += '<div style="margin-top:var(--s4)"><button class="btn block" onclick="setConsent()">' +
+    b += '<div class="mt-4"><button class="btn block" onclick="setConsent()">' +
       esc(t('onb.privacy.agree')) + '</button></div></div>';
     return { html: '<div class="onb-frame">' + bar + b + '</div>', noNav: true };
   }
 
   if(step === 'exp'){
-    b = head + '<h1 class="display" style="white-space:pre-line;margin-bottom:var(--s4)">' + esc(t('onb.exp.t')) + '</h1>' +
+    b = head + '<h1 class="display pre mb-4">' + esc(t('onb.exp.t')) + '</h1>' +
       '<div class="tiles">' +
       tile(p.experience==='b', t('onb.exp.b'), t('onb.exp.b.d'), "setP('experience','b')", true) +
       tile(p.experience==='i', t('onb.exp.i'), t('onb.exp.i.d'), "setP('experience','i')", true) +
       tile(p.experience==='a', t('onb.exp.a'), t('onb.exp.a.d'), "setP('experience','a')", true) +
-      '</div><div style="height:var(--s4)"></div>' +
-      '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('onb.goal.t')) + '</p><div class="chips">' +
-      ['h','s','r','g'].map(g => '<button class="chip ' + (p.goal===g?'on':'') +
-        '" onclick="setP(\'goal\',\'' + g + '\')">' + esc(t('onb.goal.'+g)) + '</button>').join('') +
+      '</div><div class="sp-4"></div>' +
+      '<p class="eyebrow mb-2">' + esc(t('onb.goal.t')) + '</p><div class="chips">' +
+      ['h','s','r','g'].map(g => '<button class="chip ' + (p.goal===g?'on':'') + '" onclick="setP(\'goal\',\'' + g + '\')">' + esc(t('onb.goal.'+g)) + '</button>').join('') +
       '</div>' +
       '<div class="onb-why">' + esc(t('onb.whyBody')) + '</div>' +
       '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" ' + (p.experience && p.goal ? '' : 'disabled') +
+      '<button class="btn grow"  ' + (p.experience && p.goal ? '' : 'disabled') +
       ' onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'equip'){
-    b = head + '<h1 class="display" style="margin-bottom:var(--s4)">' + esc(t('onb.equip.t')) + '</h1>' +
+    b = head + '<h1 class="display mb-4">' + esc(t('onb.equip.t')) + '</h1>' +
       '<div class="tiles">' +
       tile(p.equipment==='gym', t('onb.equip.gym'), t('onb.equip.gym.d'), "setP('equipment','gym')", true) +
       tile(p.equipment==='home', t('onb.equip.home'), t('onb.equip.home.d'), "setP('equipment','home')", true) +
       tile(p.equipment==='minimal', t('onb.equip.min'), t('onb.equip.min.d'), "setP('equipment','minimal')", true) +
-      '</div><div style="height:var(--s5)"></div>' +
-      '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('onb.limits.t').replace('\n',' ')) + '</p>' +
-      '<div class="chips"><button class="chip ' + (p.limits.length===0?'on':'') +
-      '" onclick="setLimit(\'__none__\')">' + esc(t('onb.limits.h')) + '</button>' +
+      '</div><div class="sp-5"></div>' +
+      '<p class="eyebrow mb-2">' + esc(t('onb.limits.t').replace('\n',' ')) + '</p>' +
+      '<div class="chips"><button class="chip ' + (p.limits.length===0?'on':'') + '" onclick="setLimit(\'__none__\')">' + esc(t('onb.limits.h')) + '</button>' +
       [['shoulder','shoulder'],['knee','knee'],['lowerback','lowback'],['wrist','wrist'],['elbow','elbow']].map(x =>
       '<button class="chip ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" onclick="setLimit(\'' + x[0] + '\')">' +
       esc(t('onb.limits.'+x[1])) + '</button>').join('') + '</div>' +
-      '<p class="hint" style="margin-top:var(--s2)">' + esc(t('onb.limits.note')) + '</p>' +
+      '<p class="hint mt-2">' + esc(t('onb.limits.note')) + '</p>' +
       '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'avail'){
-    b = head + '<h1 class="display" style="white-space:pre-line;margin-bottom:var(--s4)">' +
-      esc(t('onb.avail.t')) + '</h1><div class="chips" style="margin-bottom:var(--s5)">' +
-      [2,3,4,5,6].map(d => '<button class="chip ' + (p.daysPerWeek===d?'on':'') +
-      '" onclick="setP(\'daysPerWeek\',' + d + ')">' + d + '</button>').join('') + '</div>' +
-      '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('onb.avail.len')) + '</p>' +
-      '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') +
-      '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
+    b = head + '<h1 class="display pre mb-4">' +
+      esc(t('onb.avail.t')) + '</h1><div class="chips mb-5">' +
+      [2,3,4,5,6].map(d => '<button class="chip ' + (p.daysPerWeek===d?'on':'') + '" onclick="setP(\'daysPerWeek\',' + d + ')">' + d + '</button>').join('') + '</div>' +
+      '<p class="eyebrow mb-2">' + esc(t('onb.avail.len')) + '</p>' +
+      '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') + '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
       '</div><div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'shift'){
-    b = head + '<h1 class="display" style="margin-bottom:var(--s4)">' + esc(t('onb.shift.t')) + '</h1>' +
+    b = head + '<h1 class="display mb-4">' + esc(t('onb.shift.t')) + '</h1>' +
       '<div class="tiles">' +
       tile(p.shiftType==='none', t('onb.shift.no'), '', "setP('shiftType','none')", true) +
       tile(p.shiftType==='night', t('onb.shift.night'), '', "setP('shiftType','night')", true) +
       tile(p.shiftType==='rotating', t('onb.shift.rot'), '', "setP('shiftType','rotating')", true) +
       '</div>';
     if(p.shiftType !== 'none'){
-      b += '<div class="panel" style="margin-top:var(--s4)"><p class="eyebrow" style="margin-bottom:var(--s3)">' +
+      b += '<div class="panel mt-4"><p class="eyebrow mb-3">' +
         esc(t('onb.shift.times')) + '</p><div class="grid2">' +
         '<div class="field"><label for="sh_s">' + esc(t('shift.start')) + '</label>' +
         '<input type="time" id="sh_s" value="19:00" oninput="syncShiftPreview()"></div>' +
@@ -2076,46 +2059,45 @@ Screens.onb = function(){
         '<input type="time" id="sh_e" value="07:00" oninput="syncShiftPreview()"></div></div>' +
         '<p id="sh_prev" class="hint" style="color:var(--burnt-text)"></p>' +
         '<button class="btn quiet sm" onclick="addShiftFromOnb()">' + esc(t('onb.shift.add')) + '</button>';
-      b += '<div style="margin-top:var(--s3)">' + (s.shifts||[]).slice(-4).map(sh =>
+      b += '<div class="mt-3">' + (s.shifts||[]).slice(-4).map(sh =>
         '<div class="factor"><span class="dot"></span><span class="txt">' + esc(sh.start.slice(5)) + ' → ' +
         esc(sh.end.slice(5)) + '</span><span class="w">' + shiftHours(sh).toFixed(1) + ' h</span></div>').join('') + '</div></div>';
     }
-    b += '<p class="hint" style="margin-top:var(--s3)">' + esc(t('onb.shift.note')) + '</p>' +
+    b += '<p class="hint mt-3">' + esc(t('onb.shift.note')) + '</p>' +
       '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'sleep'){
-    b = head + '<h1 class="display" style="white-space:pre-line;margin-bottom:var(--s4)">' +
+    b = head + '<h1 class="display pre mb-4">' +
       esc(t('onb.sleep.t')) + '</h1>' +
-      '<div class="panel"><div style="display:flex;align-items:baseline;gap:var(--s2);margin-bottom:var(--s2)">' +
-      '<span class="num" style="font-size:40px" id="sl_v">' + p.sleepHours + '</span>' +
+      '<div class="panel"><div class="row nowrap row-base mb-2">' +
+      '<span class="num num-xl" id="sl_v">' + p.sleepHours + '</span>' +
       '<span class="hint">' + esc(t('onb.sleep.h')) + '</span></div>' +
       '<input aria-label="' + esc(t('onb.sleep.t')) + '" type="range" min="3" max="11" step="0.5" value="' + p.sleepHours +
       '" oninput="setP(\'sleepHours\',+this.value);document.getElementById(\'sl_v\').textContent=this.value"></div>' +
-      '<div class="panel"><p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('onb.sleep.var')) +
-      '</p><div class="chips">' + [1,2,3].map(v => '<button class="chip ' + (p.sleepVariability===v?'on':'') +
-      '" onclick="setP(\'sleepVariability\',' + v + ')">' + esc(t('onb.sleep.var.'+v)) + '</button>').join('') +
+      '<div class="panel"><p class="eyebrow mb-2">' + esc(t('onb.sleep.var')) +
+      '</p><div class="chips">' + [1,2,3].map(v => '<button class="chip ' + (p.sleepVariability===v?'on':'') + '" onclick="setP(\'sleepVariability\',' + v + ')">' + esc(t('onb.sleep.var.'+v)) + '</button>').join('') +
       '</div></div>' +
-      '<div class="panel"><div class="field" style="margin:0"><label for="onb_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
+      '<div class="panel"><div class="field m-0"><label for="onb_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
       '<input id="onb_wake" type="time" value="' + String(p.usualWake).padStart(2,'0') +
       ':00" oninput="setP(\'usualWake\',+this.value.slice(0,2))"></div></div>' +
       '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'style'){
-    b = head + '<h1 class="display" style="white-space:pre-line;margin-bottom:var(--s4)">' +
+    b = head + '<h1 class="display pre mb-4">' +
       esc(t('onb.style.t')) + '</h1><div class="tiles">' +
       tile(p.style==='hit', t('onb.style.hit'), t('onb.style.hit.d'), "setP('style','hit')", true) +
       tile(p.style==='std', t('onb.style.std'), t('onb.style.std.d'), "setP('style','std')", true) +
       tile(p.style==='min', t('onb.style.min'), t('onb.style.min.d'), "setP('style','min')", true) +
       tile(p.style==='freq', t('onb.style.freq'), t('onb.style.freq.d'), "setP('style','freq')", true) +
-      '</div><div class="banner info" style="margin-top:var(--s4)"><span class="ic">i</span><span>' +
+      '</div><div class="banner info mt-4"><span class="ic">i</span><span>' +
       esc(t('onb.style.note')) + '</span></div>' +
-      '<div class="panel" style="margin-top:var(--s3)"><p class="eyebrow" style="margin-bottom:var(--s2)">' +
+      '<div class="panel mt-3"><p class="eyebrow mb-2">' +
       esc(t('onb.units.t')) + '</p><div class="chips">' +
       '<button class="chip ' + (p.unit==='kg'?'on':'') + '" onclick="setP(\'unit\',\'kg\')">' +
       esc(t('onb.units.kg')) + '</button>' +
@@ -2123,7 +2105,7 @@ Screens.onb = function(){
       esc(t('onb.units.lb')) + '</button></div></div>' +
       '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'ex'){
@@ -2131,10 +2113,10 @@ Screens.onb = function(){
     const pool = EX.filter(e => eq.indexOf(e.equip) >= 0);
     const byPat = {};
     pool.forEach(e => { (byPat[e.pat] = byPat[e.pat] || []).push(e); });
-    b = head + '<h1 class="display" style="white-space:pre-line;margin-bottom:var(--s2)">' +
+    b = head + '<h1 class="display pre mb-2">' +
       esc(t('onb.ex.t')) + '</h1><p class="onb-prose">' + esc(t('onb.ex.d')) + '</p>';
     Object.keys(byPat).forEach(pat => {
-      b += '<div style="margin-bottom:var(--s4)"><p class="eyebrow" style="margin-bottom:var(--s2)">' +
+      b += '<div class="mb-4"><p class="eyebrow mb-2">' +
         esc(t('pat.' + pat)) + '</p><div class="chips">' + byPat[pat].map(e => {
           const on = p.exercises ? p.exercises[e.id] !== false : true;
           return '<button class="chip sm ' + (on?'on':'') + '" onclick="toggleEx(\'' + e.id + '\')">' +
@@ -2143,12 +2125,12 @@ Screens.onb = function(){
     });
     b += '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'ready'){
     const plan = buildPlan(p);
-    b = head + '<h1 class="display" style="margin-bottom:var(--s2)">' + esc(t('onb.ready.t')) + '</h1>' +
+    b = head + '<h1 class="display mb-2">' + esc(t('onb.ready.t')) + '</h1>' +
       '<p class="onb-prose">' + esc(t('onb.ready.d')) + '</p>';
     plan.sessions.forEach(s2 => {
       b += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(s2.name) +
@@ -2161,7 +2143,7 @@ Screens.onb = function(){
     });
     b += '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn" style="flex:1" onclick="finishOnboarding()">' +
+      '<button class="btn grow"  onclick="finishOnboarding()">' +
       esc(t('onb.ready.cta')) + '</button></div>';
   }
 

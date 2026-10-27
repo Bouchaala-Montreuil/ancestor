@@ -49,10 +49,10 @@ Screens.science = function(){
        ' · ' + LEARNING_MODULES.length + ' ' + esc(t('sci.tabModules').toLowerCase()) + '</p>' +
        '<h2 class="masthead-title">' + esc(t('sci.title')) + '</h2>' +
        '<p class="masthead-sub">' + esc(t('sci.sub')) + '</p></div>' +
-       '<div style="display:inline-flex;align-items:center;gap:var(--s2)">' +
+       '<div class="row nowrap inline">' +
        progressRing(LESSONS.length ? read.length / LESSONS.length : 0,
                     { r: 16, stroke: 3.5, ringKey: 'sci.read', label: t('sci.progress') }) +
-       '<span class="mono" style="font-size:11px;color:var(--tech-ink)">' +
+       '<span class="meta">' +
        read.length + ' / ' + LESSONS.length + ' ' + esc(t('sci.lessonsDone')) + '</span></div></div>';
 
   /* architectural sub-tabs (keep .chip in classList so automated tab queries match) */
@@ -60,8 +60,7 @@ Screens.science = function(){
   h += '<div class="subnav" data-subnav="science" role="tablist"><i class="subnav-ind" hidden></i>' +
        TABS.map(v =>
         '<button type="button" role="tab" aria-selected="' + (SCI_VIEW===v?'true':'false') +
-        '" class="subnav-btn chip ' + (SCI_VIEW===v?'on':'') +
-        '" style="border-radius:0;background:transparent;box-shadow:none;border-top:0;border-left:0;border-right:0" ' +
+        '" class="subnav-btn chip seamless ' + (SCI_VIEW===v?'on':'') + '" ' +
         'onclick="setSciView(\'' + v + '\')">' +
         esc(t(v==='lessons' ? 'sci.tabLessons'
              : v==='modules' ? 'sci.tabModules'
@@ -89,8 +88,8 @@ function sciModules(){
   LEARNING_MODULES.forEach(m => {
     h += '<button class="panel mod-card" onclick="openModule(\'' + m.id + '\')">';
     h += '<p class="eyebrow">' + esc(t('sci.tabModules')) + '</p>';
-    h += '<h3 class="sub" style="margin:var(--s2) 0">' + esc(t(m.titleKey)) + '</h3>';
-    h += '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t(m.summaryKey)) + '</p>';
+    h += '<h3 class="sub mb-0 mt-2">' + esc(t(m.titleKey)) + '</h3>';
+    h += '<p class="body-sm mb-3">' + esc(t(m.summaryKey)) + '</p>';
     h += '<div class="chips">' +
          '<span class="flag plain">' + m.steps.length + ' ' + esc(t('mod.stepsLabel')) + '</span>' +
          '<span class="flag plain">' + (m.evidence || []).length + ' ' + esc(t('ev.count')) + '</span>' +
@@ -105,7 +104,7 @@ function sciLessons(){
   let h = '';
   h += '<div class="field"><label for="sciSearchInput">' + esc(t('sci.search')) + '</label>' +
        '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" oninput="setSciQuery(this.value)" placeholder="' + esc(t('sci.search')) + '"></div>';
-  h += '<div class="chips" style="margin-bottom:var(--s4)">' +
+  h += '<div class="chips mb-4">' +
        '<button class="chip sm ' + (SCI_CAT==='all'?'on':'') + '" onclick="setSciCat(\'all\')">' + esc(t('sci.all')) + '</button>' +
        SCIENCE_CATEGORIES.map(c => '<button class="chip sm ' + (SCI_CAT===c.id?'on':'') + '" onclick="setSciCat(\'' + c.id + '\')">' +
        esc(t(c.label)) + '</button>').join('') + '</div>';
@@ -127,16 +126,16 @@ function sciLessons(){
     const numIdx = String(LESSONS.indexOf(l) + 1).padStart(2, '0');
     h += '<button type="button" class="lesson-card ' + (done ? 'done' : '') + '" onclick="openLesson(\'' + l.id + '\')">' +
       '<div style="width:100%">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">' +
+      '<div class="row nowrap between mb-1">' +
         '<span class="lesson-idx">' + numIdx + '</span>' +
         (done ? '<span class="flag sm ok">' + esc(t('sci.read')) + '</span>'
               : '<span class="flag sm plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>') +
       '</div>' +
-      '<div style="font-family:var(--f-display);font-size:17px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);margin-bottom:6px">' +
+      '<div class="mb-1" style="font-family:var(--f-display);font-size:17px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink)">' +
         esc(t(l.titleKey)) + '</div>' +
       '<div class="body-sm">' + esc(t(l.summaryKey)) + '</div>' +
       '</div>' +
-      '<div class="chips" style="margin-top:var(--s2)">' +
+      '<div class="chips mt-2">' +
         '<span class="flag sm plain">' + esc(t('cat.' + l.cat.replace(/-(\w)/g,(m,c)=>c.toUpperCase()))) + '</span>' +
         (done ? '<span class="flag sm plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>' : '') +
       '</div></button>';
@@ -158,21 +157,21 @@ Screens.lesson = function(){
   const q = QUIZ_STATE[l.id] || { answers:[], done:false, correct:0, total:(l.quiz||[]).length };
   let h = '';
 
-  h += '<div style="display:flex;gap:var(--s2);margin-bottom:var(--s3);flex-wrap:wrap">' +
+  h += '<div class="row mb-3">' +
        '<button class="btn quiet sm" onclick="backToScience()">' + esc(t('sci.backToHub')) + '</button>' +
        '<span class="flag plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>' +
        '<span class="flag accent">' + esc(t('cat.' + l.cat.replace(/-(\w)/g,(m,c)=>c.toUpperCase()))) + '</span></div>';
 
-  h += '<h1 class="display" style="font-size:26px;margin-bottom:var(--s2)">' + esc(t(l.titleKey)) + '</h1>';
+  h += '<h1 class="display mb-2" style="font-size:26px">' + esc(t(l.titleKey)) + '</h1>';
   h += '<p class="onb-prose">' + esc(t(l.summaryKey)) + '</p>';
   if(l.langs && l.langs.indexOf(CURRENT_LANG) < 0){
-    h += '<div class="uncertain" style="margin-bottom:var(--s4)"><b>' + esc(t('sci.notLocalised')) + '</b></div>';
+    h += '<div class="uncertain mb-4"><b>' + esc(t('sci.notLocalised')) + '</b></div>';
   }
 
   /* sections */
   l.sections.forEach(sec => {
     // Section text is localised by key; English is the source of last resort.
-    h += '<div class="panel"><h3 class="sub" style="margin-bottom:var(--s2)">' + esc(t(sec.h)) + '</h3>' +
+    h += '<div class="panel"><h3 class="sub mb-2">' + esc(t(sec.h)) + '</h3>' +
          '<p class="body-sm" style="font-size:14.5px;color:var(--ink-2)">' + esc(t(sec.b)) + '</p></div>';
   });
 
@@ -199,17 +198,15 @@ Screens.lesson = function(){
     h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.quiz')) + '</h3></div>';
     l.quiz.forEach((qq, i) => {
       const picked = q.answers[i];
-      h += '<div style="margin-bottom:var(--s4)"><p style="font-size:14px;font-weight:600;margin-bottom:var(--s2)">' +
+      h += '<div class="mb-4"><p class="mb-2" style="font-size:14px;font-weight:600">' +
            esc(t(qq.q)) + '</p><div class="chips">' +
            qq.options.map((o, oi) =>
-             '<button class="chip sm ' + (picked === oi ? 'on' : '') +
-             (q.done ? (oi === qq.answer ? ' on' : '') : '') +
-             '" onclick="answerQuiz(\'' + l.id + '\',' + i + ',' + oi + ')" ' +
+             '<button class="chip sm ' + (picked === oi ? 'on' : '') + (q.done ? (oi === qq.answer ? ' on' : '') : '') + '" onclick="answerQuiz(\'' + l.id + '\',' + i + ',' + oi + ')" ' +
              'aria-pressed="' + (picked === oi ? 'true' : 'false') + '">' + esc(t(o)) + '</button>').join('') +
            '</div>';
       if(q.done && picked !== undefined){
         const good = picked === qq.answer;
-        h += '<div class="banner ' + (good ? 'ok' : 'warn') + '" style="margin-top:var(--s2)">' +
+        h += '<div class="banner ' + (good ? 'ok' : 'warn') + ' mt-2">' +
              '<span class="ic">' + (good ? 'OK' : '!') + '</span><span><b>' +
              esc(t(good ? 'sci.correct' : 'sci.incorrect')) + '</b> ' + esc(t(qq.explain)) + '</span></div>';
       }
@@ -222,7 +219,7 @@ Screens.lesson = function(){
     } else {
       h += '<div class="banner ok"><span class="ic">OK</span><span>' + esc(t('sci.finished')) + ' — ' +
            q.correct + ' / ' + q.total + '</span></div>';
-      if(q.correct < q.total) h += '<button class="btn quiet sm" style="margin-top:var(--s2)" onclick="retryQuiz(\'' + l.id + '\')">' +
+      if(q.correct < q.total) h += '<button class="btn quiet sm mt-2"  onclick="retryQuiz(\'' + l.id + '\')">' +
            esc(t('sci.tryAgain')) + '</button>';
     }
     h += '</div>';
@@ -289,7 +286,7 @@ function personalBlock(l, state){
   if(l.personal === 'overload'){
     const exId = (state.sessions[state.sessions.length-1].exercises[0]||{}).id;
     const hist = exerciseHistory(exId).slice(-3);
-    h += '<p class="body-sm" style="margin-bottom:var(--s3)">' +
+    h += '<p class="body-sm mb-3">' +
          esc(t('ex.'+exId)) + '</p>' + dataTable(
       [{label:t('progress.date')},{label:t('progress.best')},{label:t('progress.sets'),n:true}],
       hist.map(x => {
@@ -316,7 +313,7 @@ function personalBlock(l, state){
     const exId = MECH_EX || (state.sessions[state.sessions.length-1].exercises[0]||{}).id;
     const ex = EX_BY_ID[exId];
     if(ex){
-      h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+      h += '<div class="chips mb-3">' +
         '<span class="flag accent">' + esc(t('lab.primary')) + ': ' + esc(t('mg.'+ex.m[0][0])) + '</span>' +
         ex.m.slice(1).map(([m,w]) => '<span class="flag plain">' + esc(t('mg.'+m)) + ' ' + Math.round(w*100) + '%</span>').join('') +
         '</div><p class="hint">' + esc(t('takeaway.mm.2')) + '</p>';
@@ -337,7 +334,7 @@ function sciExplorers(){
     { id:'timeline',   label:'lab.timeline'     },
     { id:'sim',        label:'sim.title'        }
   ];
-  let h = '<div class="chips" style="margin-bottom:var(--s4)">' +
+  let h = '<div class="chips mb-4">' +
     items.map(i => '<button class="chip ' + (EXPLORER===i.id?'on':'') + '" onclick="openExplorer(\'' + i.id + '\')">' +
       esc(t(i.label)) + '</button>').join('') + '</div>';
 
@@ -365,14 +362,14 @@ function explorerMuscle(){
   let h = '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('lab.muscleGrowth')) + '</h3></div>';
   h += '<div class="tiles">';
   ['mge.stimulus','mge.synthesis','mge.recovery','mge.accretion'].forEach((k,i) => {
-    h += '<div class="panel inset" style="margin:0 0 var(--s2)">' +
-      '<p class="eyebrow" style="margin-bottom:4px">' + esc(t('lab.step')) + ' ' + (i+1) + '</p>' +
-      '<p class="body-sm" style="margin:0">' + esc(t(k)) + '</p></div>';
+    h += '<div class="panel inset mt-0 mb-2">' +
+      '<p class="eyebrow mb-1">' + esc(t('lab.step')) + ' ' + (i+1) + '</p>' +
+      '<p class="body-sm m-0">' + esc(t(k)) + '</p></div>';
   });
   h += '</div>';
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('sci.legendPrin')) + '</b>' +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('sci.legendPrin')) + '</b>' +
        esc(t('mge.modelWarning')) + '</div>';
-  h += '<div style="margin-top:var(--s3)"><button class="btn quiet sm" onclick="go(\'body\')">' +
+  h += '<div class="mt-3"><button class="btn quiet sm" onclick="go(\'body\')">' +
        esc(t('feature.body')) + '</button></div>';
   h += '</div>';
   return h;
@@ -387,10 +384,10 @@ function explorerMetabolism(){
       [esc(t('met.q2')), esc(t('met.a2'))],
       [esc(t('met.q3')), esc(t('met.a3'))]
     ], t('sci.legendPrin'));
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('sim.limits')) + '</b>' +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('sim.limits')) + '</b>' +
        esc(t('met.limits')) + '</div>';
   // The claim is common enough to refuse explicitly, not just omit.
-  h += '<div class="banner alert" style="margin-top:var(--s2)"><span class="ic">!</span><span>' +
+  h += '<div class="banner alert mt-2"><span class="ic">!</span><span>' +
        '<b>' + esc(t('myth.ef.spot')) + '</b> ' + esc(t('myth.ef.spot.v')) + ' — ' +
        esc(t('myth.ef.spot.why')) + '</span></div>';
   h += evidenceCard(evidence('spot-reduction-statement'), true);
@@ -406,18 +403,17 @@ function explorerMechanics(){
   const exId = MECH_EX || ids[0];
   const ex = EX_BY_ID[exId];
   let h = '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('lab.mechanics')) + '</h3></div>';
-  h += '<div class="field"><label>' + esc(t('lab.chooseEx')) + '</label><div class="chips" style="max-height:150px;overflow:auto">' +
-       ids.slice(0,24).map(id => '<button class="chip sm ' + (exId===id?'on':'') +
-       '" onclick="setMechEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div></div>';
+  h += '<div class="field"><label>' + esc(t('lab.chooseEx')) + '</label><div class="chips scroll">' +
+       ids.slice(0,24).map(id => '<button class="chip sm ' + (exId===id?'on':'') + '" onclick="setMechEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div></div>';
   if(ex){
     if(typeof exerciseVisualSvg === 'function') h += exerciseVisualSvg(ex);
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<div class="chips mb-3">' +
       '<span class="flag accent">' + esc(t('lab.primary')) + ': ' + esc(t('mg.'+ex.m[0][0])) + '</span>' +
       ex.m.slice(1).map(([m,w]) => '<span class="flag plain">' + esc(t('mg.'+m)) + ' ' + Math.round(w*100) + '%</span>').join('') +
       '</div>';
     h += '<p class="body-sm">' + esc(t('cue.'+exId)) + '</p>';
-    h += '<p class="hint" style="margin-top:var(--s2)">' + esc(t('takeaway.mm.2')) + '</p>';
-    h += '<div style="margin-top:var(--s3)"><button class="btn quiet sm" onclick="selectMuscle(\'' + ex.m[0][0] + '\');go(\'body\')">' +
+    h += '<p class="hint mt-2">' + esc(t('takeaway.mm.2')) + '</p>';
+    h += '<div class="mt-3"><button class="btn quiet sm" onclick="selectMuscle(\'' + ex.m[0][0] + '\');go(\'body\')">' +
          esc(t('home.mapCta')) + '</button></div>';
   }
   h += '</div>';
@@ -437,7 +433,7 @@ function explorerTimeline(){
     h += '<div class="factor"><span class="dot"></span><span class="txt">' +
       '<b>' + esc(t('lab.tl.week')) + ' ' + st.w + '</b> — ' + esc(t(st.k)) + '</span></div>';
   });
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('sim.limits')) + '</b>' +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('sim.limits')) + '</b>' +
        esc(t('lab.tl.note')) + '</div>';
   h += '</div>';
   return h;
@@ -445,7 +441,7 @@ function explorerTimeline(){
 
 function explorerSim(){
   let h = '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sim.title')) + '</h3></div>';
-  h += '<p class="body-sm" style="margin-bottom:var(--s3)">' + esc(t('sim.note')) + '</p>';
+  h += '<p class="body-sm mb-3">' + esc(t('sim.note')) + '</p>';
   h += '<div class="field"><label for="simSets">' + esc(t('sim.sets')) + ' — ' + SIM.sets + '</label>' +
        '<input id="simSets" type="range" min="1" max="10" value="' + SIM.sets + '" oninput="setSim(\'sets\',+this.value)"></div>';
   h += '<div class="field"><label for="simFreq">' + esc(t('sim.freq')) + ' — ' + SIM.freq + '</label>' +
@@ -453,13 +449,13 @@ function explorerSim(){
   const weekly = SIM.sets * SIM.freq;
   const band = volumeBandFor(weekly);
   const pct = Math.min(100, Math.round(weekly / 30 * 100));
-  h += '<div class="em-bar" style="margin:var(--s2) 0"><i class="in" style="width:' + pct + '%"></i></div>';
-  h += '<div class="metrics" style="margin:var(--s3) 0">' +
+  h += '<div class="em-bar mb-0 mt-2"><i class="in" style="width:' + pct + '%"></i></div>';
+  h += '<div class="metrics mb-0 mt-3">' +
        metric(t('sim.weeklySets'), weekly, '', t('vol.band.' + band.id)) +
        metric(t('sci.confidence'), t('sim.illustrative')) + '</div>';
   h += '<div class="uncertain"><b>' + esc(t('sim.assumptions')) + '</b>' + esc(t('sim.assume')) + '</div>';
-  h += '<div class="uncertain" style="margin-top:var(--s2)"><b>' + esc(t('sim.limits')) + '</b>' + esc(t('sim.limitBody')) + '</div>';
-  h += '<div style="margin-top:var(--s3)"><button class="btn quiet sm" onclick="go(\'progress\')">' +
+  h += '<div class="uncertain mt-2"><b>' + esc(t('sim.limits')) + '</b>' + esc(t('sim.limitBody')) + '</div>';
+  h += '<div class="mt-3"><button class="btn quiet sm" onclick="go(\'progress\')">' +
        esc(t('feature.progress')) + '</button></div>';
   h += '</div>';
   return h;
@@ -472,11 +468,11 @@ function setSim(k,v){ SIM[k] = v; render(); }
 function sciEvidence(){
   const stats = libraryStats();
   let h = '';
-  h += '<div class="metrics" style="margin-bottom:var(--s4)">' +
+  h += '<div class="metrics mb-4">' +
        metric(t('ev.count'), stats.total) +
        metric(t('ev.affecting'), stats.affecting) +
        metric(t('ev.reviewed'), esc(stats.lastReviewed)) + '</div>';
-  h += '<div class="uncertain" style="margin-bottom:var(--s4)"><b>' + esc(t('ev.libraryNote')) + '</b>' +
+  h += '<div class="uncertain mb-4"><b>' + esc(t('ev.libraryNote')) + '</b>' +
        esc(EVIDENCE_LIBRARY_NOTE) + '</div>';
 
   EVIDENCE.forEach(e => { h += evidenceCard(e, false); });
@@ -489,9 +485,9 @@ function evidenceCard(e, compactMode){
   }
   if(!e) return '';
   const driving = canAffectRecommendations(e);
-  let h = '<div class="panel inset" style="margin:0 0 var(--s3)">';
-  h += '<p style="font-size:14px;font-weight:600;margin-bottom:var(--s2)">' + esc(e.title) + '</p>';
-  h += '<div class="chips" style="margin-bottom:var(--s2)">' +
+  let h = '<div class="panel inset mt-0 mb-3">';
+  h += '<p class="mb-2" style="font-size:14px;font-weight:600">' + esc(e.title) + '</p>';
+  h += '<div class="chips mb-2">' +
     '<span class="flag plain">' + esc(t('ev.type.' + e.type)) + '</span>' +
     '<span class="flag ' + (e.quality === 'high' ? 'ok' : e.quality === 'moderate' ? 'accent' : 'nodata') + '">' +
       esc(t('ev.quality.' + e.quality)) + '</span>' +
@@ -501,24 +497,24 @@ function evidenceCard(e, compactMode){
     '</div>';
   h += '<p class="hint">' + esc(e.authors) + (e.year ? ' · ' + e.year : '') + (e.journal ? ' · ' + esc(e.journal) : '') + '</p>';
   if(!compactMode){
-    h += '<div style="margin-top:var(--s2)">' +
+    h += '<div class="mt-2">' +
       '<p class="body-sm"><b>' + esc(t('ev.question')) + ':</b> ' + esc(e.question) + '</p>' +
       '<p class="body-sm"><b>' + esc(t('ev.findings')) + ':</b> ' + esc(e.findings) + '</p>' +
       '<p class="body-sm"><b>' + esc(t('ev.limitations')) + ':</b> ' + esc(e.limitations) + '</p>' +
       '<p class="body-sm"><b>' + esc(t('ev.relevance')) + ':</b> ' + esc(e.relevance) + '</p>' +
       '</div>';
   }
-  h += '<div class="chips" style="margin-top:var(--s2)">' +
+  h += '<div class="chips mt-2">' +
     (e.doi ? '<span class="flag plain">' + esc(t('ev.doi')) + ': ' + esc(e.doi) + '</span>' : '') +
     '<span class="flag ' + (e.identifierVerified ? 'ok' : 'warn') + '">' +
       esc(t('ev.verification')) + ': ' + (e.identifierVerified ? esc(t('sci.verified')) : esc(t('sci.unverified'))) + '</span>' +
     '<span class="flag plain">' + esc(t('ev.reviewed')) + ': ' + esc(e.lastReviewed) + '</span>' +
     '</div>';
   if(!e.identifierVerified){
-    h += '<p class="hint" style="margin-top:var(--s2)">' + esc(t('ev.needsVerification')) + '</p>';
+    h += '<p class="hint mt-2">' + esc(t('ev.needsVerification')) + '</p>';
   }
   if(e.url){
-    h += '<div style="margin-top:var(--s2)"><a class="btn quiet sm" href="' + esc(e.url) +
+    h += '<div class="mt-2"><a class="btn quiet sm" href="' + esc(e.url) +
          '" target="_blank" rel="noopener">' + esc(t('ev.openSource')) + '</a></div>';
   }
   h += '</div>';
@@ -548,27 +544,27 @@ function openWhy(kind, id){
 
 function whyPanel(ex, kind, id){
   let h = '';
-  h += '<div class="panel inset" style="margin:0 0 var(--s3)">' +
-       '<p class="eyebrow" style="margin-bottom:4px">' + esc(t('sci.what')) + '</p>' +
+  h += '<div class="panel inset mt-0 mb-3">' +
+       '<p class="eyebrow mb-1">' + esc(t('sci.what')) + '</p>' +
        '<p style="font-size:15px;font-weight:600">' + esc(ex.what) + '</p></div>';
 
   if(ex.rule){
-    h += '<div class="panel inset" style="margin:0 0 var(--s3)"><p class="eyebrow" style="margin-bottom:4px">' +
+    h += '<div class="panel inset mt-0 mb-3"><p class="eyebrow mb-1">' +
       esc(t('sci.ruleInfo')) + ' — ' + esc(ex.rule.title) + '</p>' +
       '<p class="hint">' + esc(t('sci.ruleVersion')) + ' ' + ex.rule.version + ' · ' +
       esc(t('sci.ruleUpdated')) + ' ' + esc(ex.rule.updated) + ' · ' +
       esc(t('sci.confidence')) + ': ' + esc(t('ev.quality.' + ex.rule.confidence)) + '</p>' +
-      '<p class="body-sm" style="margin-top:var(--s2)">' + esc(ex.rule.how) + '</p></div>';
+      '<p class="body-sm mt-2">' + esc(ex.rule.how) + '</p></div>';
   }
 
   const block = (titleKey, items) => {
     if(!items || !items.length){
       if(titleKey === 'sci.dataUsed')
-        return '<div style="margin-bottom:var(--s3)"><p class="eyebrow" style="margin-bottom:4px">' +
+        return '<div class="mb-3"><p class="eyebrow mb-1">' +
                esc(t(titleKey)) + '</p><p class="hint">' + esc(t('why.noDataUsed')) + '</p></div>';
       return '';
     }
-    return '<div style="margin-bottom:var(--s3)"><p class="eyebrow" style="margin-bottom:4px">' + esc(t(titleKey)) + '</p>' +
+    return '<div class="mb-3"><p class="eyebrow mb-1">' + esc(t(titleKey)) + '</p>' +
       items.map(i => '<div class="factor ' + (i.kind === 'observation' ? 'up' : i.kind === 'principle' ? 'warn' : '') + '">' +
         '<span class="dot"></span><span class="txt">' + esc(i.text || i) + '</span></div>').join('') + '</div>';
   };
@@ -583,7 +579,7 @@ function whyPanel(ex, kind, id){
   /* evidence driving the rule */
   const evs = ex.rule ? drivingEvidence(ex.rule.ruleId) : [];
   if(evs.length){
-    h += '<div style="margin-bottom:var(--s3)"><p class="eyebrow" style="margin-bottom:4px">' + esc(t('sci.affecting')) + '</p>';
+    h += '<div class="mb-3"><p class="eyebrow mb-1">' + esc(t('sci.affecting')) + '</p>';
     evs.forEach(e => { h += evidenceCard(e, true); openEvidence(e.id); });
     h += '</div>';
   }
@@ -591,28 +587,28 @@ function whyPanel(ex, kind, id){
   if(ex.alternatives && ex.alternatives.length){
     /* Framed as the practical next step, because that is what these are:
        things you can actually do with the recommendation in front of you. */
-    h += '<div style="margin-bottom:var(--s3)"><p class="eyebrow" style="margin-bottom:4px">' +
+    h += '<div class="mb-3"><p class="eyebrow mb-1">' +
          esc(t('sci.nextStep')) + ' · ' + esc(t('sci.alternatives')) + '</p>' +
-         '<p class="hint" style="margin-bottom:var(--s2)">' + esc(t('sci.nextStepHint')) + '</p>' +
+         '<p class="hint mb-2">' + esc(t('sci.nextStepHint')) + '</p>' +
       '<div class="tiles">' + ex.alternatives.map(a =>
         '<button class="tile" onclick="closeSheet()"><span class="box"></span><span><span class="t">' + esc(a.label) +
         '</span><span class="d">' + esc(a.note) + '</span></span></button>').join('') + '</div></div>';
   }
 
   if(ex.rule && ex.rule.changelog && ex.rule.changelog.length){
-    h += '<div style="margin-bottom:var(--s3)"><p class="eyebrow" style="margin-bottom:4px">' + esc(t('sci.changelog')) + '</p>' +
+    h += '<div class="mb-3"><p class="eyebrow mb-1">' + esc(t('sci.changelog')) + '</p>' +
       ex.rule.changelog.map(c => '<p class="hint">' + esc(c.date) + ' — v' + c.to + ': ' + esc(c.rationale) + '</p>').join('') + '</div>';
   }
 
   h += '<div class="uncertain"><b>' + esc(t('sci.legendTitle')) + '</b>' +
     (ex.distinguish||[]).map(d => '<div>' + esc(d.text) + '</div>').join('') + '</div>';
 
-  h += '<div style="display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s4)">' +
+  h += '<div class="row mt-4">' +
     '<button class="btn" onclick="acceptWhy()">' + esc(t('sci.accept')) + '</button>' +
     '<button class="btn quiet" onclick="rejectWhy()">' + esc(t('sci.reject')) + '</button></div>';
 
   if(ex.lessons && ex.lessons.length){
-    h += '<div class="chips" style="margin-top:var(--s3)">' + ex.lessons.map(lid =>
+    h += '<div class="chips mt-3">' + ex.lessons.map(lid =>
       '<button class="chip sm" onclick="closeSheet();openLesson(\'' + lid + '\')">' + esc(t((lesson(lid)||{titleKey:'sci.title'}).titleKey)) + '</button>').join('') + '</div>';
   }
   return h;

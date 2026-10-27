@@ -56,15 +56,14 @@ Screens.module = function(){
           '<span class="aside"><button class="chip sm" onclick="closeModule()">' +
           esc(t('sci.backToHub')) + '</button></span></div>';
 
-  h += '<p class="body-sm" style="margin-bottom:var(--s5);max-width:64ch">' +
+  h += '<p class="body-sm mb-5" style="max-width:64ch">' +
        esc(t(m.summaryKey)) + '</p>';
 
   /* stage selector with a shared animated indicator */
-  h += '<div class="modebar" style="margin-bottom:var(--s5);flex-wrap:wrap">' +
+  h += '<div class="modebar mb-5">' +
        '<i class="mode-ind" id="modInd"></i>' +
        m.steps.map((s, i) =>
-         '<button class="chip sm ' + (i === MOD_STEP ? 'on' : '') +
-         '" data-step="' + i + '" onclick="setModStep(' + i + ')" ' +
+         '<button class="chip sm ' + (i === MOD_STEP ? 'on' : '') + '" data-step="' + i + '" onclick="setModStep(' + i + ')" ' +
          'aria-pressed="' + (i === MOD_STEP ? 'true' : 'false') + '">' +
          esc(String(i+1)) + '. ' + esc(t(s.labelKey)) + '</button>').join('') +
        '</div>';
@@ -92,27 +91,27 @@ Screens.module = function(){
   /* explanation */
   h += '<div class="panel">';
   h += '<p class="eyebrow">' + esc(t('mod.stage', { n: MOD_STEP + 1, of: m.steps.length })) + '</p>';
-  h += '<h3 class="sub" style="margin:var(--s2) 0 var(--s3)">' + esc(t(step.titleKey)) + '</h3>';
-  h += '<p class="body-sm" style="margin-bottom:0">' + esc(t(step.bodyKey)) + '</p>';
+  h += '<h3 class="sub mt-2 mb-3">' + esc(t(step.titleKey)) + '</h3>';
+  h += '<p class="body-sm mb-0">' + esc(t(step.bodyKey)) + '</p>';
   h += '</div>';
 
   /* provenance of the claim */
-  h += '<div class="panel" style="margin-top:var(--s3)">';
-  h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('mod.thisIs')) + '</p>';
+  h += '<div class="panel mt-3">';
+  h += '<p class="eyebrow mb-2">' + esc(t('mod.thisIs')) + '</p>';
   if(step.claim.kind === 'principle'){
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<div class="chips mb-3">' +
          '<span class="flag ok">' + esc(t('sci.principle')) + '</span></div>';
-    h += '<p class="hint" style="margin-bottom:var(--s3)">' + esc(t('mod.sourcedTo')) + '</p>';
+    h += '<p class="hint mb-3">' + esc(t('mod.sourcedTo')) + '</p>';
     (step.claim.evidence || []).forEach(id => { h += evidenceCard(id, true); });
   } else {
-    h += '<div class="chips" style="margin-bottom:var(--s3)">' +
+    h += '<div class="chips mb-3">' +
          '<span class="flag plain">' + esc(t('mod.model')) + '</span></div>';
-    h += '<p class="body-sm" style="margin-bottom:0">' + esc(t(step.claim.note)) + '</p>';
+    h += '<p class="body-sm mb-0">' + esc(t(step.claim.note)) + '</p>';
   }
   h += '</div>';
 
   /* navigation between stages */
-  h += '<div style="display:flex;gap:var(--s2);margin-top:var(--s4);flex-wrap:wrap">';
+  h += '<div class="row mt-4">';
   h += '<button class="btn quiet" ' + (MOD_STEP === 0 ? 'disabled' : '') +
        ' onclick="setModStep(' + (MOD_STEP - 1) + ')">' + esc(t('btn.back')) + '</button>';
   h += '<button class="btn" ' + (MOD_STEP === m.steps.length - 1 ? 'disabled' : '') +
@@ -123,7 +122,7 @@ Screens.module = function(){
      is about them. */
   h += modulePersonalNote(m);
 
-  h += '<div class="uncertain" style="margin-top:var(--s5)"><b>' + esc(t('mod.caveatTitle')) +
+  h += '<div class="uncertain mt-5"><b>' + esc(t('mod.caveatTitle')) +
        '</b> ' + esc(t(m.caveatKey)) + '</div>';
 
   h += '</div></div>';
@@ -144,13 +143,13 @@ function bindModuleView(){
 function modulePersonalNote(m){
   const st = getState();
   const week = weeklySetTotals(st, Date.now());
-  let h = '<div class="panel inset" style="margin-top:var(--s4)">';
-  h += '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('sci.personal')) + '</p>';
+  let h = '<div class="panel inset mt-4">';
+  h += '<p class="eyebrow mb-2">' + esc(t('sci.personal')) + '</p>';
   if(m.id === 'muscle-growth'){
     if(!st.sessions.length){
-      h += '<p class="body-sm" style="margin-bottom:0">' + esc(t('modA.personalNone')) + '</p>';
+      h += '<p class="body-sm mb-0">' + esc(t('modA.personalNone')) + '</p>';
     } else {
-      h += '<p class="body-sm" style="margin-bottom:var(--s2)">' +
+      h += '<p class="body-sm mb-2">' +
            esc(t('modA.personal', { sets: Math.round(week.sets*10)/10,
                                     groups: week.groupsTrained })) + '</p>';
       h += '<div class="chips"><span class="flag plain">' +
@@ -159,18 +158,18 @@ function modulePersonalNote(m){
   } else if(m.id === 'adaptation-recovery'){
     const ss = sleepStats(st.sleep, Date.now(), 7);
     if(ss.avg !== null){
-      h += '<p class="body-sm" style="margin-bottom:var(--s2)">' +
+      h += '<p class="body-sm mb-2">' +
            esc(t('why.dec.sleep', { h: Math.round(ss.avg*10)/10, n: ss.n })) + '</p>';
     } else {
-      h += '<p class="body-sm" style="margin-bottom:0">' + esc(t('modC.personalNone')) + '</p>';
+      h += '<p class="body-sm mb-0">' + esc(t('modC.personalNone')) + '</p>';
     }
   } else {
     const bw = st.profile && st.profile.bodyweight;
     if(bw){
-      h += '<p class="body-sm" style="margin-bottom:var(--s2)">' +
+      h += '<p class="body-sm mb-2">' +
            esc(t('modB.personalBw', { bw: bw, u: unit() })) + '</p>';
     }
-    h += '<p class="body-sm" style="margin-bottom:0">' + esc(t('modB.personalNone')) + '</p>';
+    h += '<p class="body-sm mb-0">' + esc(t('modB.personalNone')) + '</p>';
   }
   h += '</div>';
   return h;
@@ -351,18 +350,15 @@ function diagramFor(kind){
   }
   /* intake / expenditure / composition share one node diagram */
   return svg(
-    '<rect x="16" y="46" width="84" height="46" rx="3" class="d-box' +
-      (kind === 'intake' ? ' accent' : '') + '"/>' +
+    '<rect x="16" y="46" width="84" height="46" rx="3" class="d-box' + (kind === 'intake' ? ' accent' : '') + '"/>' +
     '<text x="58" y="73" class="d-t" text-anchor="middle">' + esc(t('modB.s1.label')) + '</text>' +
     '<rect x="120" y="86" width="80" height="6" rx="3" class="d-box"/>' +
-    '<rect x="220" y="46" width="84" height="46" rx="3" class="d-box' +
-      (kind === 'expenditure' ? ' accent' : '') + '"/>' +
+    '<rect x="220" y="46" width="84" height="46" rx="3" class="d-box' + (kind === 'expenditure' ? ' accent' : '') + '"/>' +
     '<text x="262" y="73" class="d-t" text-anchor="middle">' + esc(t('modB.s2.label')) + '</text>' +
     '<path d="M100 69 L212 69" class="d-arrow"/>' +
     '<path d="M212 69 L100 69" class="d-arrow"/>' +
     '<path d="M160 92 L160 112" class="d-arrow"/>' +
-    '<rect x="108" y="112" width="104" height="30" rx="3" class="d-box' +
-      (kind === 'stored' ? ' accent' : '') + '"/>' +
+    '<rect x="108" y="112" width="104" height="30" rx="3" class="d-box' + (kind === 'stored' ? ' accent' : '') + '"/>' +
     '<text x="160" y="131" class="d-t" text-anchor="middle">' + esc(t('modB.s3.label')) + '</text>' +
     '<text x="160" y="26" class="d-cap" text-anchor="middle">' + esc(t('modB.cap')) + '</text>',
     t('modB.title'));
@@ -375,25 +371,22 @@ function energyDiagram(focus){
   const pct = Math.max(0, Math.min(100, (ENERGY.intake / 4500) * 100));
   const pctOut = Math.max(0, Math.min(100, (ENERGY.expenditure / 4500) * 100));
   let h = '<div class="energy-model">';
-  h += '<div class="em-row' + (focus === 'intake' ? ' focus' : '') +
-       '"><label for="emIn">' + esc(t('modB.s1.label')) + '</label>' +
+  h += '<div class="em-row' + (focus === 'intake' ? ' focus' : '') + '"><label for="emIn">' + esc(t('modB.s1.label')) + '</label>' +
        '<input id="emIn" type="range" min="1000" max="4500" step="50" value="' + ENERGY.intake +
        '" oninput="setEnergy(\'intake\',this.value)">' +
        '<output class="num" id="emInV">' + ENERGY.intake + '</output></div>';
   h += '<div class="em-bar"><i class="in" style="width:' + pct.toFixed(1) + '%"></i></div>';
-  h += '<div class="em-row' + (focus === 'expenditure' ? ' focus' : '') +
-       '"><label for="emOut">' + esc(t('modB.s2.label')) + '</label>' +
+  h += '<div class="em-row' + (focus === 'expenditure' ? ' focus' : '') + '"><label for="emOut">' + esc(t('modB.s2.label')) + '</label>' +
        '<input id="emOut" type="range" min="1000" max="4500" step="50" value="' + ENERGY.expenditure +
        '" oninput="setEnergy(\'expenditure\',this.value)">' +
        '<output class="num" id="emOutV">' + ENERGY.expenditure + '</output></div>';
   h += '<div class="em-bar"><i class="out" style="width:' + pctOut.toFixed(1) + '%"></i></div>';
-  h += '<div class="em-result' + (focus === 'stored' ? ' focus' : '') +
-       '"><span class="k">' + esc(t('modB.balance')) + '</span>' +
+  h += '<div class="em-result' + (focus === 'stored' ? ' focus' : '') + '"><span class="k">' + esc(t('modB.balance')) + '</span>' +
        '<span class="v num" id="emBal">' + (bal > 0 ? '+' : '') + bal + '</span>' +
        '<span class="u">' + esc(t('modB.balanceUnit')) + '</span></div>';
-  h += '<p class="hint" style="margin-top:var(--s3);margin-bottom:0" id="emNote">' +
+  h += '<p class="hint mb-0 mt-3"  id="emNote">' +
        esc(bal > 0 ? t('modB.surplus') : bal < 0 ? t('modB.deficit') : t('modB.maintenance')) + '</p>';
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('mod.model')) + '</b> ' +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('mod.model')) + '</b> ' +
        esc(t('mod.modelNote')) + '</div>';
   h += '</div>';
   return h;
@@ -440,7 +433,7 @@ function recoverySimDiagram(){
   h += '<div class="em-result focus"><span class="k">' + esc(t('body.recovery')) + '</span>' +
        '<span class="v num" id="rsDays">' + days + '</span>' +
        '<span class="u">d</span></div>';
-  h += '<div class="uncertain" style="margin-top:var(--s3)"><b>' + esc(t('mod.model')) + '</b> ' +
+  h += '<div class="uncertain mt-3"><b>' + esc(t('mod.model')) + '</b> ' +
        esc(t('mod.modelNote')) + '</div>';
   h += '</div>';
   return h;

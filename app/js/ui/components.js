@@ -223,7 +223,7 @@ function readinessMeter(value, stateKey, opts){
     '<div class="v">' + pct + '<small>%</small></div>' +
     '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
     '<div class="cap">' + esc(t('readiness.label')) + '</div>' +
-    (o.showDef ? '<div class="cap" style="margin-top:6px;max-width:150px;line-height:1.4">' +
+    (o.showDef ? '<div class="cap mt-1" style="max-width:150px;line-height:1.4">' +
       esc(t('readiness.definition')) + '</div>' : '') +
     '</div>';
 }
@@ -256,11 +256,11 @@ function metricsBlock(items){
 function dataTable(cols, rows, caption){
   let h = '<div class="table-wrap"><table class="data">';
   if(caption) h += '<caption>' + esc(caption) + '</caption>';
-  h += '<thead><tr>' + cols.map(c => '<th' + (c.n ? ' style="text-align:right"' : '') + '>' +
-       esc(c.label) + (c.unit ? ' <span style="color:var(--tech-ink)">(' + esc(c.unit) + ')</span>' : '') +
+  h += '<thead><tr>' + cols.map(c => '<th class="end"' + (c.n ? ' ' : '') + '>' +
+       esc(c.label) + (c.unit ? ' <span class="meta">(' + esc(c.unit) + ')</span>' : '') +
        '</th>').join('') + '</tr></thead><tbody>';
   if(!rows.length){
-    h += '<tr><td colspan="' + cols.length + '" style="text-align:center;color:var(--tech-ink);padding:24px">' +
+    h += '<tr><td colspan="' + cols.length + '" class="td-empty">' +
          esc(t('state.none')) + '</td></tr>';
   }
   rows.forEach(r => {
@@ -353,8 +353,8 @@ function lineChart(opts){
     '<line x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) +
       '" stroke="var(--ink)" stroke-width="1"/>' +
     '</svg>' +
-    '<div class="chart-legend"><div><i style="background:var(--burnt)"></i>' + esc(label) +
-    '</div><div><i style="background:var(--burnt);border-radius:50%;width:8px;height:8px"></i>' +
+    '<div class="chart-legend"><div><i class="sw direct"></i>' + esc(label) +
+    '</div><div><i class="sw dot"></i>' +
     esc(t('chart.pr')) + '</div>' +
     '<span class="chart-tip-readout mono" id="' + tipId + '" aria-live="polite">' + esc(latestTip) + '</span></div>' +
     '<p class="sr-only">' + esc(t('chart.summarySpark', {
@@ -438,9 +438,9 @@ function timelineStrip(state, now){
          '<div class="mk">' + new Date(d0).getDate() + '</div></div>';
   }
   h += '</div><div class="legend">' +
-    '<div><i style="background:rgba(70,96,63,.45);border-color:var(--ok)"></i>' + esc(t('tl.sleep')) + '</div>' +
-    '<div><i style="background:var(--burnt-tint-2);border-color:var(--burnt)"></i>' + esc(t('tl.shift')) + '</div>' +
-    '<div><i style="background:var(--burnt);border-color:var(--burnt);height:3px"></i>' + esc(t('tl.now')) + '</div>' +
+    '<div><i class="sw sleep"></i>' + esc(t('tl.sleep')) + '</div>' +
+    '<div><i class="sw shift"></i>' + esc(t('tl.shift')) + '</div>' +
+    '<div><i class="sw now"></i>' + esc(t('tl.now')) + '</div>' +
     '</div>';
   return h;
 }
@@ -472,9 +472,9 @@ function banner(kind, title, body){
 function skeletonBlock(rows){
   let h = '';
   for(let i=0;i<(rows||3);i++){
-    h += '<div style="display:flex;gap:12px;margin-bottom:12px">' +
+    h += '<div class="row nowrap mb-3" style="gap:12px">' +
       '<div class="skeleton" style="width:34%;height:16px"></div>' +
-      '<div class="skeleton" style="flex:1;height:16px"></div></div>';
+      '<div class="skeleton grow" style="height:16px"></div></div>';
   }
   return h;
 }
@@ -640,13 +640,13 @@ function exerciseVisualSvg(ex){
       '<div>' + exerciseFigureSideSvg(ex, 'back')  + '<span class="dash-fig-cap">' + esc(t('body.back'))  + '</span></div>' +
     '</div>' +
     '<div class="ex-vis-kin">' +
-      '<p class="eyebrow" style="margin-bottom:4px">' + esc(t('pat.' + ex.pat)) + '</p>' +
+      '<p class="eyebrow mb-1">' + esc(t('pat.' + ex.pat)) + '</p>' +
       patternKinematicSvg(ex) +
-      '<div class="legend" style="margin-top:4px;gap:8px">' +
-        '<div><i style="background:#D66A3A"></i>' + esc(t('lab.primary')) + '</div>' +
-        '<div><i style="background:#8A5E12;opacity:.65"></i>' + esc(t('vol.indirect')) + '</div>' +
+      '<div class="legend mt-1" style="gap:8px">' +
+        '<div><i class="sw direct"></i>' + esc(t('lab.primary')) + '</div>' +
+        '<div><i class="sw indirect"></i>' + esc(t('vol.indirect')) + '</div>' +
       '</div>' +
-      '<p class="hint" style="margin-top:6px;font-size:11px">' + esc(t('exd.diagramNote')) + '</p>' +
+      '<p class="hint mt-1" style="font-size:11px">' + esc(t('exd.diagramNote')) + '</p>' +
     '</div>' +
   '</div>';
 }

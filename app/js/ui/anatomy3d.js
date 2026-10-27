@@ -166,7 +166,7 @@ function mountAnatomyLab(host, opts){
         '<p class="lab-loading-d">' + esc(t('lab3d.loadingBody')) + '</p>' +
         /* genuine wait: the record panel skeleton mirrors the rows that are
            about to arrive, so the layout does not jump when they do */
-        '<div class="skel-block" style="width:min(260px,80%);margin-top:var(--s4)" aria-busy="true">' +
+        '<div class="skel-block mt-4" style="width:min(260px,80%)" aria-busy="true">' +
           '<span class="sr-only">' + esc(t('lab.loading')) + '</span>' +
           '<div class="skel-row" style="animation-delay:0ms"></div>' +
           '<div class="skel-row" style="animation-delay:70ms;width:70%"></div>' +

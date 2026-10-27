@@ -1440,6 +1440,11 @@ table.data tbody tr:last-child td{border-bottom:0}
 .sheet-bh h2{font-family:var(--f-display);font-size:8.4pt;letter-spacing:.12em;
   text-transform:uppercase;margin:0;font-weight:700;color:#000}
 .sheet-bh .rule{flex:1;height:1px;background:var(--pa-line)}
+/* The block number, inked. It existed in the standalone sheet and was missing
+   from the card the app actually prints, so the numbers rendered as plain text. */
+.sheet-bh .stamp{display:inline-flex;align-items:center;justify-content:center;
+  min-width:6.4mm;height:4.4mm;padding:0 1.2mm;background:#000;color:var(--ivory);
+  font-family:var(--f-mono);font-size:6pt;font-weight:600;letter-spacing:.04em;flex:none}
 .sheet-cap{font-family:var(--f-mono);font-size:5.4pt;letter-spacing:.12em;
   text-transform:uppercase;color:#6B6A63;white-space:nowrap}
 
@@ -1746,6 +1751,83 @@ html[data-motion="on"] .onb-bar i{transition:none}
 }
 .lab-btn:hover{border-color:var(--ink);color:var(--ink)}
 .lab-btn.on{background:var(--ink);border-color:var(--ink);color:var(--ivory)}
+
+/* Stack and row. The screens were carrying three hundred inline margins and
+   flex declarations, which is how a scale quietly stops being a scale: a 6 px
+   gap appears next to an 8 px one and neither can be changed at the source.
+   These are the only steps that exist. Anything data-driven (a percentage
+   width, a plotted top) stays inline, because geometry is not a style. */
+.m-0{margin:0}
+.mb-0{margin-bottom:0}
+.mb-1{margin-bottom:var(--s1)}
+.mb-2{margin-bottom:var(--s2)}
+.mb-3{margin-bottom:var(--s3)}
+.mb-4{margin-bottom:var(--s4)}
+.mb-5{margin-bottom:var(--s5)}
+.mt-0{margin-top:0}
+.mt-1{margin-top:var(--s1)}
+.mt-2{margin-top:var(--s2)}
+.mt-3{margin-top:var(--s3)}
+.mt-4{margin-top:var(--s4)}
+.mt-5{margin-top:var(--s5)}
+.my-2{margin-top:var(--s2);margin-bottom:var(--s2)}
+.my-3{margin-top:var(--s3);margin-bottom:var(--s3)}
+.my-4{margin-top:var(--s4);margin-bottom:var(--s4)}
+/* .row already exists further up: flex, centred, 12 px gap, wrapping. These
+   only narrow it. Never redefine it here or every existing row shifts. */
+.row-1{gap:var(--s1)}
+.row-2{gap:var(--s2)}
+.row-4{gap:var(--s4)}
+.row-top{align-items:flex-start}
+.row-base{align-items:baseline}
+.nowrap{flex-wrap:nowrap}
+.panel-hd.mid{align-items:center}
+.between{justify-content:space-between}
+.stack{display:flex;flex-direction:column;gap:var(--s2)}
+.grow{flex:1;min-width:0}
+.pre{white-space:pre-line}
+/* end, not right: the same rule has to hold in Arabic. */
+.end{text-align:end}
+.shrink{min-width:0}
+.tap{cursor:pointer}
+/* A small annotation under a figure: unit, note, caption. */
+.meta{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--tech-ink)}
+.meta-b{font-weight:700;color:var(--burnt-text)}
+/* Empty state inside a table, where there is no row to style. */
+.td-empty{text-align:center;color:var(--tech-ink);padding:var(--s5)}
+/* A factor list that already sits under a rule does not draw another one. */
+.factors.bare{border-top:0}
+/* A panel that opens a section: the rule is heavier than the shared hairline. */
+.panel.heavy{border-top:3px solid var(--charcoal)}
+/* Two figures that are answers rather than readings. */
+.num-lg{font-size:var(--s5)}
+.num-xl{font-size:40px}
+/* A scroll window, when a list is longer than a thumb will flick. */
+.chips.scroll{max-height:150px;overflow:auto}
+.tiles.scroll{max-height:54vh;overflow:auto}
+/* Legend swatches: the diagram says what each colour means, the stylesheet
+   says which colour that is. Two hexes lived here for six months. */
+.sw.sleep{background:var(--ok);opacity:.45;border-color:var(--ok)}
+.sw.shift{background:var(--burnt-tint-2);border-color:var(--burnt)}
+.sw.now{background:var(--burnt);border-color:var(--burnt);height:3px}
+.sw.direct{background:var(--burnt);border-color:var(--burnt)}
+.sw.dot{background:var(--burnt);border-radius:50%;width:8px;height:8px}
+.sw.indirect{background:var(--warn);opacity:.65;border-color:var(--warn)}
+/* A field label, wherever a field is not already inside a form. */
+.fld-cap{display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tech-ink);margin-bottom:2px}
+/* The exercise name in the session header: one step up from .sub. */
+.ex-title{font-size:18px;color:var(--ink)}
+/* A button that is already inside a ruled block draws no second box. */
+.seamless{border-radius:0;background:transparent;box-shadow:none;border-top:0;border-left:0;border-right:0}
+.fig-stage.bare{border:0;background:transparent}
+.row.inline{display:inline-flex}
+/* Spacers. Only where the neighbour is a button and the gap is not a margin. */
+.sp-4{height:var(--s4)}
+.sp-5{height:var(--s5)}
+.push{margin-inline-start:auto}
+/* A note that belongs to the row above it, not below. */
+.tuck{margin-top:calc(-1 * var(--s1));margin-bottom:var(--s2)}
 
 /* Document fragments used by sheets and print preview. */
 .prev-card{background:var(--surface);border:var(--hair) solid var(--line);padding:var(--s4)}

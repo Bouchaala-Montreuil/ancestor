@@ -286,6 +286,44 @@ group('8d. Onboarding is designed, not inherited');
 }
 
 /* ================================================================ */
+/* ================================================================ */
+group('8e. Layout lives in the stylesheet, not in the screens');
+{
+  const files = fs.readdirSync(path.join(ROOT, 'js/ui')).filter(f => f.endsWith('.js'));
+  const src = files.map(f => fs.readFileSync(path.join(ROOT, 'js/ui', f), 'utf8')).join('\n');
+  const inline = re => (src.match(re) || []).length;
+
+  chk('no screen carries its own margins',
+      inline(/style="[^"]*margin[^"]*"/g) === 0, inline(/style="[^"]*margin[^"]*"/g) + ' left');
+  chk('no screen carries its own text alignment',
+      inline(/style="[^"]*text-align[^"]*"/g) === 0);
+  chk('no screen declares its own flex layout',
+      inline(/style="[^"]*display:flex[^"]*"/g) === 0);
+  chk('no screen carries a hardcoded colour outside a token fallback',
+      inline(/style="[^"]*(?:background|color):#[0-9a-fA-F]{3,6}[^"]*"/g) === 0);
+
+  /* The utility scale is closed: what the screens ask for must exist. */
+  const used = new Set();
+  for(const m of src.matchAll(/class="([^"]*)"/g))
+    for(const c of m[1].split(/\s+/))
+      if(/^(?:m[btxy]?-\d|row-\d|nowrap|between|stack|grow|push|tuck|shrink|tap|pre|end|meta|td-empty|sp-\d|heavy|scroll|bare|seamless|sw|num-lg|num-xl|ex-title)$/.test(c)) used.add(c);
+  const missing = [...used].filter(c => !new RegExp('\\.' + c.replace(/-/g,'\\-') + '(?![\\w-])').test(css));
+  chk('every utility the screens use is defined once in the stylesheet',
+      missing.length === 0, missing.join(', '));
+
+  /* .row is the app's own primitive. Defining it again lower down would have
+     silently re-gapped every row in the product. */
+  const rowDefs = (css.match(/(?:^|\n)\.row[,{]/g) || []).length;
+  chk('.row is defined once, so nothing shadows the app primitive', rowDefs === 1, rowDefs + ' definitions');
+
+  chk('spacing steps are the scale, not new numbers',
+      !/\.(?:m[btxy]?-\d)\{[^}]*:\s*\d+px/.test(css));
+
+  const print = fs.readFileSync(path.join(ROOT, 'js/ui/printsheet.js'), 'utf8');
+  chk('the printed block number is inked, not left as plain text',
+      /class="stamp"/.test(print) && /\.sheet-bh \.stamp\{[^}]*background:#000/.test(css));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',
