@@ -355,3 +355,53 @@ volume, it is hierarchy:
   figure — all still boxes, and only the first should be.
 
 Estimate drops from 3–5 days to ~2.
+
+---
+
+## §0.5 Science hierarchy, and the states nobody designed
+
+**The hub is a register** (`0c81345`). The lesson list was a two-column grid
+(`34px 1fr`) while its markup had a single full-width child — so every lesson
+title was being set inside a 34 px column. It is a list of rows now: number,
+title in the display face, one clamped line, minutes. Read is a tally stroke
+under the number, not a green pill, and the category is not repeated on every
+row because you already filtered by it. Eleven category chips wrapped over five
+rows before the first lesson; they are one rail that scrolls.
+
+**Evidence is a library, so it is collapsed.** Fourteen records were open at
+once — fourteen screen-heights of dense text. The research question stays on
+the line; findings, limitations and relevance open on demand. The disclosure
+sign is drawn in the mono face, because the display face has no arrows.
+
+**`.factor` was a component in two places and not in the third.** It was styled
+only inside `.decision` and `.onb-frame`. The lesson takeaways were the third
+place using it, and were rendering as loose text with a stray empty dot. Now
+generic, with the two scoped versions still overriding. Achievements use it
+too.
+
+**Empty and failed states** (`adff207`). The empty headline was marked up as
+`h4` while the stylesheet styled `h3`, so every "no data yet" screen was
+setting its headline in the default UI font. The six stock line icons are gone;
+an empty state is marked with the app's own tally — four strokes, uninked,
+waiting to be counted. And there was no failure state at all: a screen that
+threw took `render()` with it. Now it lands on a designed block, marked with
+the fifth stroke in the alert colour, because that is exactly what happened.
+
+Three bugs of the same shape surfaced this week — `.sheet-bh .stamp`, `.empty
+h4`, and the lesson's `.factor` — each a rule that never met its element, and
+each invisible to every test. The design tests have grown a check for the
+general case: every utility and component the screens use must exist in the
+stylesheet.
+
+### Where the order stands
+
+| | |
+|---|---|
+| ~~1 B2 layout~~ | shipped |
+| ~~2 onboarding~~ | shipped |
+| ~~4 RTL + Arabic~~ | shipped |
+| ~~5 Science (hub, lesson, evidence)~~ | shipped |
+| **3 his screenshots (B6)** | **blocked on you** |
+| 6 state matrix — loading + offline per screen | ~1 d |
+| 7 icons, illustrations, data-viz, motion spec | ~4 d |
+| 8 landing page + case study | ~4 d |
