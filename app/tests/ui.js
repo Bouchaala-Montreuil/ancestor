@@ -816,6 +816,77 @@ group('21. The rest timer is readable without watching it');
   chk('closing rest leaves nothing behind', !d12.getElementById('restHost').querySelector('[role=region]'));
 }
 
+group('23. Today states the decision, not the whole case for it');
+{
+  const dom14 = await boot();
+  const w14 = dom14.window, d14 = w14.document;
+  completeOnboarding(w14, d14);
+  const S = o => Object.assign({w:null,r:null,t:null,d:null,a:null,rir:null}, o);
+  const now = Date.now();
+  for(let i = 3; i >= 1; i--){
+    w14.addSession({ date: now - i*3*864e5, startedAt: now - i*3*864e5, planId: 'A', name: 'S' + i,
+      exercises: [{ id:'bb-bench', sets:[S({w:60+i*2, r:8, rir:2})] },
+                  { id:'bb-row', sets:[S({w:50+i, r:10, rir:2})] }] });
+  }
+  w14.go('home');
+  const body = () => d14.getElementById('screenBody');
+
+  /* what a person can read without opening anything */
+  const walk = el => {
+    let out = '';
+    Array.from(el.childNodes).forEach(c => {
+      if(c.nodeType === 3){ out += ' ' + c.nodeValue; return; }
+      if(c.nodeType !== 1) return;
+      if(c.classList && c.classList.contains('sr-only')) return;
+      if(c.getAttribute && (c.getAttribute('aria-hidden') === 'true' || c.hasAttribute('hidden'))) return;
+      const tg = String(c.tagName).toLowerCase();
+      if(tg === 'svg' || tg === 'title' || tg === 'desc') return;
+      if(tg === 'details' && !c.hasAttribute('open')) return;
+      out += ' ' + walk(c);
+    });
+    return out;
+  };
+  const visibleWords = () => walk(body()).trim().split(/\s+/).filter(Boolean).length;
+
+  chk('the dashboard reads in under 240 words', visibleWords() < 240, visibleWords() + ' visible words');
+
+  const pills = () => Array.from(body().querySelectorAll('.next-ex-pill'));
+  const openPills = () => pills().filter(el => {
+    let n = el;
+    while(n && n !== body()){
+      if(String(n.tagName).toLowerCase() === 'details' && !n.hasAttribute('open')) return false;
+      n = n.parentElement;
+    }
+    return true;
+  });
+  chk('the verdict shows at most two lifts', openPills().length <= 2,
+      openPills().length + ' visible of ' + pills().length);
+  chk('the rest of the session is one line away',
+      !!body().querySelector('details.next-ex-more') && pills().length > 2,
+      pills().length + ' pills in the document');
+  chk('the glance states the cost of the session instead',
+      /\d+\s*lifts/.test(body().querySelector('.next-blueprint').textContent),
+      body().querySelector('.next-blueprint .hint').textContent.trim());
+
+  /* every caveat is still on the page, one tap down */
+  const reads = Array.from(body().querySelectorAll('details.dis'));
+  const has = txt => reads.some(dt => dt.textContent.indexOf(txt) >= 0);
+  chk('the availability definition is kept, behind its own line',
+      body().textContent.indexOf(w14.t('readiness.definition')) >= 0 &&
+      has(w14.t('readiness.title')) && reads.length >= 2,
+      reads.length + ' disclosures');
+  chk('the insight keeps its "this is not a diagnosis" caveat',
+      body().textContent.indexOf(w14.t('home.insightGapBody')) >= 0);
+  chk('the coverage method note is kept too',
+      body().textContent.indexOf(w14.t('home.coverageHint')) >= 0);
+  chk('a caveat is never a hover or a tooltip alone',
+      reads.every(dt => dt.querySelector('summary') !== null));
+
+  chk('the decision itself does not depend on a disclosure being open',
+      body().querySelectorAll('.dec-state').length === 1 &&
+      !!body().querySelector('.dash-actions .btn'));
+}
+
 group('22. The exercise pool is the same component as the step that fills it');
 {
   const dom13 = await boot();

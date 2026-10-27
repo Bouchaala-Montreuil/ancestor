@@ -1,5 +1,5 @@
 /* ANCESTOR — offline cache. Bump CACHE on every deploy. */
-const CACHE = 'ancestor-v19';  // v19: one accordion in the pool, and a way back
+const CACHE = 'ancestor-v20';  // v20: today states the decision, not the case for it
 const FILES = [
   './', './index.html', './css/app.css',
   './js/i18n/core.js', './js/i18n/ui.js', './js/i18n/exercises.js', './js/i18n/screens.js', './js/i18n/acc.js', './js/i18n/ar.js', './js/i18n/v2.js', './js/i18n/science.js', './js/i18n/science2.js', './js/i18n/ex_modes.js', './js/i18n/modes.js', './js/i18n/lesson_bodies_en.js', './js/i18n/lesson_bodies_fr.js', './js/i18n/lesson_bodies_es_de.js', './js/i18n/lesson_bodies_it_nl_ar.js', './js/i18n/locale.js',

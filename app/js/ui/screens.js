@@ -156,7 +156,13 @@ Screens.home = function(){
   h += '<p class="eyebrow">' + esc(t('decision.label')) + '</p>';
   h += '<div class="dec-state">' + esc(t('decision.' + shown)) + '</div>';
   h += '</div>';
-  h += readinessMeter(ids.length ? d.ratio : null, null, {showDef:true});
+  h += readinessMeter(ids.length ? d.ratio : null, null, {showDef:false});
+  /* The caveat that makes the number honest: an estimate of elapsed time, not a
+     measurement of tissue. It stays on the screen, one tap down, instead of
+     sitting under the meter on every visit. */
+  h += '<details class="dis inline readiness-def"><summary><span class="dis-t">' +
+       esc(t('readiness.title')) + '</span></summary>' +
+       '<p class="body-sm mt-2 mb-0">' + esc(t('readiness.definition')) + '</p></details>';
   h += '</div>';
 
   if(d.reasons.length){
@@ -171,13 +177,28 @@ Screens.home = function(){
 
   /* Next Workout Blueprint Strip right inside the decision card */
   if(next && next.session && (next.session.exercises || []).length){
+    const lifts = next.session.exercises;
+    const sets = lifts.reduce((a, e) => a + (+e.sets || 0), 0);
+    const mins = estimatedMinutes(next.session, (s.plan && s.plan.restSec) || 120);
+    /* The programme is printed on the plan screen. Here the glance is what the
+       session costs — movements, sets, minutes — and the lifts themselves wait
+       behind one line, because six pills repeating "3×5–12 reps" is the plan
+       again, not the decision. */
     h += '<div class="next-blueprint"><div class="next-blueprint-hd">' +
          '<span class="eyebrow">' + esc(t('home.nextSession')) + ': <b>' + esc(next.session.name) + '</b></span>' +
-         '<span class="hint">~' + estimatedMinutes(next.session, (s.plan && s.plan.restSec) || 120) + ' min</span></div>' +
+         '<span class="hint">' + esc(t('home.sessionCost', { n: lifts.length, s: sets, m: mins })) + '</span></div>' +
          '<div class="next-ex-pills">' +
-         next.session.exercises.slice(0, 6).map(e =>
+         lifts.slice(0, 2).map(e =>
            '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + e.sets + '×' + esc(targetRangeText(EX_BY_ID[e.id])) + '</span>'
-         ).join('') + '</div></div>';
+         ).join('') +
+         (lifts.length > 2
+           ? '<details class="next-ex-more"><summary>' + esc(t('home.moreLifts', { n: lifts.length - 2 })) +
+             '</summary><div class="next-ex-pills">' +
+             lifts.slice(2).map(e =>
+               '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + e.sets + '×' + esc(targetRangeText(EX_BY_ID[e.id])) + '</span>'
+             ).join('') + '</div></details>'
+           : '') +
+         '</div></div>';
   }
 
   /* One dominant action. Everything a returning lifter might want is still one
@@ -309,7 +330,11 @@ Screens.home = function(){
   h += '<div class="panel dash-insight">';
   h += '<p class="eyebrow">' + esc(t(insight.basisKey)) + '</p>';
   h += '<p class="dash-insight-t">' + esc(insight.text) + '</p>';
-  h += '<p class="body-sm mb-0 mt-2">' + esc(insight.because) + '</p>';
+  /* The caveat is the honest part, so it stays — one line down, behind the
+     question it answers, instead of forty words of hedging every visit. */
+  h += '<details class="dis dash-insight-why"><summary><span class="dis-t">' +
+       esc(t('home.howToRead')) + '</span></summary>' +
+       '<p class="body-sm mt-2 mb-0">' + esc(insight.because) + '</p></details>';
   if(insight.action) h += '<div class="row mt-3">' + insight.action + '</div>';
   h += '</div></div>';
 
@@ -491,7 +516,11 @@ function coverageBars(state, now){
          '</span></div>';
   });
   h += '</div>';
-  h += '<p class="hint mt-3">' + esc(t('home.coverageHint')) + '</p>';
+  /* The method note explains how the bars are counted and what they are not.
+     It matters, so it stays — behind the same one-tap line the insight uses. */
+  h += '<details class="dis mt-3"><summary><span class="dis-t">' +
+       esc(t('home.howToRead')) + '</span></summary>' +
+       '<p class="hint mt-2 mb-0">' + esc(t('home.coverageHint')) + '</p></details>';
   return h;
 }
 

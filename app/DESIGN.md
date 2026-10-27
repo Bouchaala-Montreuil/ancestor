@@ -230,7 +230,7 @@ single line each that answers "where am I?" without being opened:
 
 | | before | after |
 |---|---|---|
-| visible words | 826 | **205** |
+| visible words | 826 | **153** |
 | controls reachable at once | 152 | **21** |
 | exercises rendered in full | 6 | **1** |
 | set cards in the document | 18 | 18 (nothing deleted) |
@@ -305,7 +305,44 @@ A plural bug surfaced in the new line — *"1 exercises removed"* — and was fi
 phrasing that has no plural to get wrong, in all seven languages, rather than by
 adding a pluralisation engine nobody asked for.
 
-### 3.11 Small things that were wrong
+### 3.11 Today: the decision, not the whole case for it
+
+The outline was fixed last pass; the prose wasn't. Measured as **visible words**
+(text a person can read without opening anything), Today carried:
+
+| block | before | what was in it |
+|---|---|---|
+| the verdict card | 72 | a 14-word definition of the estimate, plus six pills of "3×5–12 reps" |
+| Worth knowing | 56 | a 38-word caveat about not diagnosing anything |
+| muscle coverage | 52 | a 20-word method note under twelve data rows |
+| **whole screen** | **311** | |
+
+Three moves, one rule: **the finding stays visible, the case for it moves one tap
+down.** The availability definition, the "this is not a diagnosis" paragraph and
+the coverage method note are all still on the page — inside the same disclosure
+as everything else — and the verdict's glance now states what the session costs
+(*6 lifts · 18 sets · ~73 min*) instead of reprinting the programme, with the
+first two lifts and *"+4 more"* for the rest.
+
+| | before | after |
+|---|---|---|
+| visible words on Today | 311 | **222** |
+| lifts shown before opening anything | 6 | **2** |
+| caveats deleted | — | **0** |
+
+That last row is the point. This pass could have made the screen shorter by
+deleting the hedges — and the hedges are the honest part of a product that
+estimates recovery from a log. They moved; they did not go. A DOM check asserts
+each caveat string is still present, and another fails if a caveat is reachable
+only by hover.
+
+**A measurement error, corrected.** The earlier figure for the active session was
+205 visible words; it was computed with a walker that did not skip `<svg>`
+subtrees, so it counted the accessible `<title>` of every muscle region and every
+exercise thumbnail. The true figure at that commit was **153**. The table in
+§3.8 has been corrected rather than left flattering.
+
+### 3.12 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -374,12 +411,13 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | controls exposed on Profile | 160 | 41 |
 | page titles that are `h1` | 1 of 7 | 7 of 7 |
 | top-level sections on Today | 9 | 3 |
-| visible words in an active session | 826 | 205 |
+| visible words on Today | 311 | 222 |
+| visible words in an active session | 826 | 153 |
 | controls reachable at once in a session | 152 | 21 |
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (186 checks) and `tools/qa_audit.js` (1 accepted Medium: the
+`tests/design.js` (196 checks) and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 
 ---
@@ -389,9 +427,9 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 | screen | state | what is still weak |
 |---|---|---|
 | Onboarding | exercise step regrouped; eight steps, one question each | the middle steps are still one long column of chips; the step order has never been tested with a real first-run user |
-| Today | action hierarchy, figure, and three bands | 381 words is still a lot for a screen you open in a gym car park; the verdict's `factors` list has never been trimmed |
+| Today | action hierarchy, three bands, prose behind one tap | 222 visible words; whether that is still too many in a gym car park has not been watched |
 | Plan | untouched | not re-audited this pass |
-| Active session | one exercise open, the rest folded; rest timer readable without sight | the block is the only focus surface; whether 205 words is still too many has not been tested with a tired user |
+| Active session | one exercise open, the rest folded; rest timer readable without sight | the block is the only focus surface; whether 153 words is still too many has not been tested with a tired user |
 | Exercise atlas | register rows, one control each, filters behind a disclosure | the sheet is now the only action surface — everything a row used to duplicate has to be there, and that is worth auditing next |
 | Progress | untouched | charts and records re-verified for scale in the previous pass; drill-down not re-audited |
 | Body / anatomy | figure semantics fixed | 59 controls on one screen; the muscle list duplicates what the figure already shows |
@@ -432,12 +470,10 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 ## 9. Next, ranked by user impact
 
-1. **Today's 381 words.** The outline is fixed; the prose inside the verdict and
-   the insight card is not.
-2. **A rest timer that can reach you when the screen is off** — a service-worker
+1. **A rest timer that can reach you when the screen is off** — a service-worker
    notification, or an honest "keep this tab open" note.
-3. **Body screen.** Drop the duplicate muscle list once the figure carries the
+2. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
-4. **The exercise sheet** — now the atlas's only action surface; it has never been
+3. **The exercise sheet** — now the atlas's only action surface; it has never been
    audited on its own.
-5. **The plan screen** — the only surface never audited in this phase.
+4. **The plan screen** — the only surface never audited in this phase.

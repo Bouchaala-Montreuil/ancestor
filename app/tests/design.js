@@ -708,6 +708,13 @@ group('8o. Disclosures are one component, not four improvisations');
   chk('the superseded accordion is gone from both the stylesheet and the code',
       !/\.acc\{/.test(flat) && !/\.acc-body\{/.test(flat) &&
       !/bindAccordions/.test(src));
+  /* The verdict card's own disclosure sits on an ink ground, so it needs its own
+     focus ring and its own touch expander. */
+  chk('the verdict\u2019s "more lifts" line is focusable and hit-sized',
+      /\.next-ex-more > summary:focus-visible\{[^}]*outline/.test(flat) &&
+      /\.next-ex-more > summary\{[^}]*min-height:/.test(flat));
+  chk('and it carries the coarse-pointer expander like every other summary',
+      /\.next-ex-more > summary::before/.test(css));
   chk('the session uses the screen heading it was missing',
       /<h1 class="sess-h">/.test(src) || /'<h1 class="sess-h">'/.test(src));
   function coarseHasDis(){

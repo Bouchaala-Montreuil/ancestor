@@ -719,6 +719,24 @@ button.flag:hover{border-color:var(--ink)}
   color:rgba(241,235,221,.9);border:var(--hair) solid rgba(241,235,221,.2);
   border-radius:var(--r-xs);padding:4px 7px;line-height:1.3;text-transform:none;
 }
+/* "+2 more" inside the verdict card: the same disclosure as everywhere else,
+   sized for the ink ground it sits on. */
+.next-ex-more{margin-top:var(--s1);display:inline-block}
+.next-ex-more > summary{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;
+  min-height:28px;padding:0 2px;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;text-transform:none;
+  color:rgba(241,235,221,.9);border-bottom:1px dotted rgba(241,235,221,.4);
+}
+.next-ex-more > summary::-webkit-details-marker{display:none}
+.next-ex-more > summary::after{content:"+";color:var(--burnt);font-size:12px;line-height:1}
+.next-ex-more[open] > summary::after{content:"\2013"}
+.next-ex-more > summary:focus-visible{outline:2px solid var(--ivory);outline-offset:2px}
+.readiness-def{margin-top:var(--s2);border-top:0;padding-top:0}
+.readiness-def .dis-t{color:rgba(241,235,221,.75)}
+.readiness-def .body-sm{color:rgba(241,235,221,.85)}
+.readiness-def > summary::after{color:var(--burnt)}
+.dash-insight-why{margin-top:var(--s3)}
 .decision .dash-actions{margin-top:var(--s5)}
 .decision .btn{background:var(--ivory);border-color:var(--ivory);color:var(--ink)}
 .decision .btn:hover{background:#fff;border-color:#fff}
@@ -2512,7 +2530,8 @@ html[data-simple="on"] .chart-tip-readout{display:none}
    invisible target on a word that does nothing is not a kindness. */
 @media (pointer: coarse){
   .link-btn,.langsel button,.fail-more summary,.prev-copy-btn,.dis summary,
-  .lab-btn,button.flag,.btn.sm,.prof-group > summary{position:relative}
+  .lab-btn,button.flag,.btn.sm,.prof-group > summary,
+  .next-ex-more > summary{position:relative}
   .link-btn::after,
   .langsel button::after,
   .fail-more summary::after,
@@ -2522,7 +2541,8 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   .btn.sm::after,
   .ev-more summary::before,
   .dis summary::before,
-  .prof-group > summary::before{
+  .prof-group > summary::before,
+  .next-ex-more > summary::before{
     content:"";position:absolute;inset-inline:0;
     inset-block:calc((var(--hit) - 100%) * -0.5);
   }
