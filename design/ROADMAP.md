@@ -405,3 +405,53 @@ stylesheet.
 | 6 state matrix — loading + offline per screen | ~1 d |
 | 7 icons, illustrations, data-viz, motion spec | ~4 d |
 | 8 landing page + case study | ~4 d |
+
+---
+
+## §0.6 Loading, failure, and the six marks
+
+**One loading language** (`6e45d98`). Loading was four different things: a
+shimmering `.skeleton`, a static `.skel-row`, a rotating `.lab-spinner`, and a
+rotating circle inside `.btn.loading` — plus two helper functions nobody called.
+Now one primitive, `skel('label row short row')`, which emits bars shaped like
+the content about to arrive so the layout does not jump; and `waitMark()`, the
+tally with four strokes and the fifth not yet drawn. The busy button uses the
+same mark, masked so it takes the button's colour.
+
+**The boot veil spoke the wrong language, literally.** It said
+`PERFORMANCE LAB // OFFLINE ENGINE` — the source project's name, hardcoded in
+English, in all seven languages. It is now the app's own tag, set at boot from
+`t()`, with a line saying the log never leaves the device. (The Arabic tag still
+read "Performance Lab" from v0.1.) The load itself is the mark being drawn: four
+strokes, then the fifth, in burnt.
+
+**Offline is not a fault here.** The header used to say `Offline`, which reads
+as a warning about a product whose entire argument is that it works offline. It
+now says `Offline · everything works`.
+
+**The six navigation marks** (`44ec786`) were a borrowed 24-px stroke set at
+`stroke-width:1.4`. At 19 px on a 3x screen that is a hairline, and none of them
+related to the tally. They are now solid, built from the wordmark's own numbers
+(24 grid, 2.4 mass, 3.2 margin, 4.2–19.8 span), and checked at 19 px with a
+nearest-neighbour blow-up before shipping — a solid mark that does not survive
+at the size it is used is not a mark.
+
+| | was | now |
+|---|---|---|
+| Today | a house | a calendar with one day inked |
+| Session | a door | a tally of two |
+| Body | a stick figure | the figure as mass |
+| Progress | a bar chart | ascending bars on a baseline |
+| Profile | a person | the dossier stamp, record knocked out |
+| Science | a flask | a stack of spines |
+
+### The remaining item on the order
+
+**6. The state matrix** — what is left of it: the states are now designed
+(empty, failed, waiting, offline, busy), but they have not been *audited per
+screen*. That is a checklist job over 6 tabs × 5 states, and it needs the
+screenshots to be worth doing.
+
+**7–8. Illustrations, data-viz, motion spec, landing, case study.** The icons
+are done; the exercise drawings are the next real design object (four styles
+today, one rule needed).
