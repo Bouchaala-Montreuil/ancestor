@@ -146,8 +146,15 @@ function anatomyFigure(state, opts){
   const rec  = allRecovery(state, now);
   const vb   = viewFor(side, sel);
 
-  let out = '<svg viewBox="' + vb + '" preserveAspectRatio="xMidYMid meet" role="img" ' +
-            'aria-label="' + esc(t('body.title') + '. ' + t('a11y.figureAlt')) + '" ' +
+  /* pointerOnly: the figure is still tappable, but it is not a keyboard
+     destination. Used on the dashboard, where the map is a picture of your week
+     and the accessible action is the link beside it — thirty focus stops for
+     thirty body regions sat between the action card and the rest of the page.
+     Tapping keeps working because the click handler lives on data-m. */
+  const ptr = !!o.pointerOnly;
+  let out = '<svg viewBox="' + vb + '" preserveAspectRatio="xMidYMid meet" ' +
+            'role="img" aria-label="' + esc(t('body.title') + '. ' + t('a11y.figureAlt')) +
+            (ptr ? '. ' + t('home.mapCta') : '') + '" ' +
             'style="transition:all var(--t-slow) var(--ease)">';
 
   FIG.outline.forEach(d => { out += '<path class="fig-outline" d="' + d + '"/>'; });
@@ -187,9 +194,9 @@ function anatomyFigure(state, opts){
       out += '<path class="seg-hit" data-m="' + m + '" d="' + d + '" ' +
              'fill="transparent" stroke="transparent" stroke-width="14" ' +
              'stroke-linejoin="round" stroke-linecap="round" ' +
-             'tabindex="0" role="button" ' +
-             'aria-label="' + esc(t('mg.' + m)) + ' — ' + esc(t('mst.' + (rec[m] ? rec[m].state : 'fresh'))) + '">' +
-             '<title>' + esc(t('mg.' + m)) + '</title></path>';
+             (ptr ? '' : 'tabindex="0" role="button" aria-label="' +
+                esc(t('mg.' + m)) + ' — ' + esc(t('mst.' + (rec[m] ? rec[m].state : 'fresh'))) + '" ') +
+             '><title>' + esc(t('mg.' + m)) + '</title></path>';
     });
   });
   out += '</svg>';

@@ -473,6 +473,111 @@ group('14. The failure state');
 }
 
 /* ================================================================ */
+/* ================================================================ */
+group('16. Progressive disclosure: one action per moment');
+{
+  const dom7 = await boot();
+  const w7 = dom7.window, d7 = w7.document;
+  completeOnboarding(w7, d7);
+  const body = () => d7.getElementById('screenBody');
+  /* what a person actually meets: controls outside a closed <details> */
+  const exposed = el => {
+    let n = el;
+    while(n && n !== body()){
+      if(n.tagName === 'DETAILS' && !n.hasAttribute('open')) return false;
+      n = n.parentElement;
+    }
+    return true;
+  };
+  const visBtns = () => Array.from(body().querySelectorAll('button,[role=button]')).filter(exposed);
+
+  /* --- home: one dominant action --------------------------------------- */
+  w7.go('home');
+  const acts = Array.from(body().querySelectorAll('.dash-actions button'));
+  chk('home offers at most three actions at full weight', acts.length <= 3,
+      acts.length + ' actions');
+  chk('home has exactly one primary action',
+      body().querySelectorAll('.dash-actions .btn:not(.quiet):not(.secondary)').length === 1,
+      body().querySelectorAll('.dash-actions .btn:not(.quiet):not(.secondary)').length + ' primary');
+  chk('the rest wait behind a disclosure',
+      body().querySelectorAll('.dash-actions ~ details.dis').length >= 1 ||
+      body().querySelectorAll('details.dis').length >= 1);
+  chk('the dashboard figure is not one giant button',
+      !body().querySelector('.dash-figlink[onclick]') &&
+      !body().querySelector('button.dash-figlink'));
+  chk('nothing interactive is nested inside a button',
+      Array.from(body().querySelectorAll('button,[role=button]'))
+        .filter(e => e.querySelector('button,[role=button]')).length === 0);
+  chk('the dashboard map is a picture, not thirty tab stops',
+      body().querySelectorAll('.seg-hit[tabindex="0"]').length === 0,
+      body().querySelectorAll('.seg-hit').length + ' tappable regions, 0 in the tab order');
+  const figSvg = body().querySelector('.dash-figlink svg');
+  const figName = (figSvg && figSvg.getAttribute('aria-label')) || '';
+  chk('the dashboard map still says what it is, and what to do next',
+      figName.indexOf(w7.t('body.title')) === 0 && figName.indexOf(w7.t('home.mapCta')) > 0,
+      JSON.stringify(figName));
+
+  /* --- the tappable map still navigates ------------------------------- */
+  const seg = body().querySelector('.seg-hit[data-m="chest"]');
+  seg.dispatchEvent(new w7.MouseEvent('click', {bubbles:true}));
+  chk('tapping a region on the dashboard still opens it',
+      w7.ANC.view === 'body' && w7.ANC.bodySel === 'chest', w7.ANC.view + '/' + w7.ANC.bodySel);
+
+  /* --- session: a heading outline and a smaller wall ------------------- */
+  w7.go('session'); w7.startSession();
+  chk('the active session has a heading', body().querySelectorAll('h1').length === 1,
+      body().querySelectorAll('h1').length + ' h1');
+  const exs = w7.ANC.active.exercises.length;
+  chk('every exercise is a heading of the same rank',
+      body().querySelectorAll('h2.sess-ex-h').length === exs,
+      body().querySelectorAll('h2.sess-ex-h').length + ' / ' + exs);
+  const setCards = body().querySelectorAll('.setcard').length;
+  chk('the control wall is behind disclosures',
+      body().querySelectorAll('details.set-opts').length === setCards &&
+      body().querySelectorAll('details.ex-opts').length === exs,
+      body().querySelectorAll('details.ex-opts').length + ' exercise + ' +
+      body().querySelectorAll('details.set-opts').length + ' set disclosures');
+  const buttons = visBtns().length;
+  chk('fewer than half the session buttons are exposed at once', buttons < 45,
+      buttons + ' of ' + body().querySelectorAll('button').length + ' exposed');
+  chk('discard is not at the top of the session',
+      !body().querySelector('.live-hud [onclick*="discardSession"]'));
+  chk('discard sits under the finish action, in text weight',
+      !!body().querySelector('.heavy [onclick*="discardSession"]') &&
+      !body().querySelector('.heavy button.btn[onclick*="discardSession"]'));
+  chk('the disclosure is native <details>, so it works without script',
+      Array.from(body().querySelectorAll('details.dis')).every(el =>
+        el.querySelector(':scope > summary')));
+  /* fields say which set they belong to */
+  const labelled = Array.from(body().querySelectorAll('.setcard .fld label'));
+  chk('each field names its set for a screen reader', labelled.length > 0 &&
+      labelled.filter(l => /Set \d+|Satz|Série|Serie|Satz|المجموعة|Satz/.test(l.textContent) ||
+        /\d+ \/ \d+/.test(l.textContent)).length === labelled.length,
+      labelled.length + ' field labels, ' +
+      labelled.filter(l => /\d+ \/ \d+/.test(l.textContent)).length + ' carry the set number');
+  /* the sub navigation no longer reads as one word */
+  /* the accessible name is text minus aria-hidden subtrees — textContent is not
+     what a screen reader reads, which is why the count was glued on for months */
+  const accName = el => {
+    const walk = n => Array.from(n.childNodes).map(c => {
+      if(c.nodeType === 3) return c.nodeValue;
+      if(c.nodeType !== 1) return '';
+      if(c.getAttribute('aria-hidden') === 'true') return '';
+      if(c.hasAttribute('aria-label')) return '';
+      return walk(c);
+    }).join(' ');
+    return walk(el).replace(/\s+/g, ' ').trim();
+  };
+  const tabs = Array.from(body().querySelectorAll('.subnav-btn'));
+  const libraryTab = tabs.filter(b => b.textContent.indexOf('88') >= 0)[0];
+  chk('a count in the sub-navigation is not glued to its label',
+      !libraryTab || accName(libraryTab) === w7.t('plan.tabLibrary').trim(),
+      libraryTab ? JSON.stringify(accName(libraryTab)) : 'no count on this tab');
+  chk('the active-session dot is not part of its name',
+      tabs.filter(b => b.textContent.indexOf('●') >= 0)
+          .every(b => accName(b).indexOf('●') < 0));
+}
+
 group('15. The boot veil and the offline state');
 {
   const dom6 = await boot();

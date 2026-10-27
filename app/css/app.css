@@ -1006,15 +1006,14 @@ button.flag:hover{border-color:var(--ink)}
   font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--tech-ink);margin-top:6px;
 }
+/* The dashboard anatomy panel used to be one giant <button> wrapped around
+   fourteen role="button" SVG segments. It is a panel; the only thing that
+   navigates is the link inside it. */
 .dash-figlink{
   display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
   padding:var(--s3) 0;border-top:var(--hair) solid var(--line-soft);
   border-bottom:0;color:var(--ink);text-decoration:none;width:100%;
-  background:none;cursor:pointer;text-align:start;
-}
-.dash-figlink-t{
-  font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
-  text-transform:uppercase;font-weight:600;
+  background:none;text-align:start;
 }
 .dash-bignum .num{font-variant-numeric:tabular-nums}
 .dash-lesson{display:flex;flex-direction:column;gap:var(--s2)}
@@ -1464,6 +1463,32 @@ table.data tbody tr:last-child td{border-bottom:0}
   font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt);
 }
 .ev-more[open] summary::after{content:"\2013"}
+
+/* One disclosure pattern, used wherever a screen was carrying more controls than
+   the moment needs: science evidence, workout exercise options, per-set options.
+   Native <details> so keyboard, focus order, Enter/Space and memory of state are
+   the browser's job, and so a screen that loses its script still opens. */
+.dis{margin-top:var(--s3);border-top:var(--hair) solid var(--line-soft);padding-top:var(--s2)}
+.dis.inline{margin-top:var(--s1);border-top:0;padding-top:0}
+.dis summary{
+  display:flex;align-items:center;gap:var(--s2);
+  cursor:pointer;list-style:none;min-height:32px;
+}
+.dis summary::-webkit-details-marker{display:none}
+.dis-t{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tech-ink);font-weight:600;
+}
+.dis summary::after{
+  content:"+";margin-inline-start:auto;flex:none;
+  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt);
+}
+.dis[open] summary::after{content:"\2013"}
+.dis summary:focus-visible{outline:2px solid var(--burnt);outline-offset:3px}
+
+/* The session exercise name is a heading for the outline, not for the eye:
+   the type scale on this screen is already set by .plan-ex-title. */
+.sess-ex-h{margin:0;font:inherit;line-height:1;display:inline-flex}
 .ev-more[open] .ev-q{white-space:normal;text-overflow:clip}
 .ev-abstract{margin-top:var(--s2);max-width:64ch}
 .ev-abstract p{font-size:13.5px;line-height:1.6;color:var(--ink-2);margin:0 0 var(--s2)}
@@ -2144,7 +2169,8 @@ html[data-motion="on"] .onb-bar i{transition:none}
    in the live session. */
 .sci-h{font-family:var(--f-display);font-size:17px;font-weight:700;
   letter-spacing:.03em;text-transform:uppercase;color:var(--ink)}
-.sess-h{font-family:var(--f-display);font-size:20px;letter-spacing:.04em;text-transform:uppercase}
+.tac{text-align:center}
+.sess-h{margin:0;font-family:var(--f-display);font-size:20px;letter-spacing:.04em;text-transform:uppercase}
 /* The exercise name in the session header: one step up from .sub. */
 .ex-title{font-size:18px;color:var(--ink)}
 /* A button that is already inside a ruled block draws no second box. */
@@ -2374,7 +2400,7 @@ html[data-simple="on"] .chart-tip-readout{display:none}
    Only the two clickable flags get this. The other sixty-seven are labels: an
    invisible target on a word that does nothing is not a kindness. */
 @media (pointer: coarse){
-  .link-btn,.langsel button,.fail-more summary,.prev-copy-btn,
+  .link-btn,.langsel button,.fail-more summary,.prev-copy-btn,.dis summary,
   .lab-btn,button.flag,.btn.sm{position:relative}
   .link-btn::after,
   .langsel button::after,
@@ -2383,7 +2409,8 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   .lab-btn::after,
   button.flag::after,
   .btn.sm::after,
-  .ev-more summary::before{
+  .ev-more summary::before,
+  .dis summary::before{
     content:"";position:absolute;inset-inline:0;
     inset-block:calc((var(--hit) - 100%) * -0.5);
   }

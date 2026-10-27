@@ -654,6 +654,38 @@ group('8l. Every state has a producer and a way out');
       !/@keyframes\s+spin\b/.test(codeOnly));
 }
 
+group('8o. Disclosures are one component, not four improvisations');
+{
+  /* Every screen that had grown a wall of controls now uses the same native
+     <details>. These checks keep that convergence from drifting apart again. */
+  const uiFiles = fs.readdirSync(path.join(ROOT, 'js/ui')).filter(f => f.endsWith('.js'));
+  const src = uiFiles.map(f => fs.readFileSync(path.join(ROOT, 'js/ui', f), 'utf8')).join('\n');
+  const flat = css.replace(/\n/g,'');
+
+  chk('the disclosure is styled once', /\.dis\{/.test(flat) && /\.dis summary\{/.test(flat));
+  chk('a disclosure summary is a real focus stop',
+      /\.dis summary:focus-visible\{[^}]*outline/.test(flat));
+  chk('it is big enough to hit on a phone',
+      /\.dis summary\{[^}]*min-height:32px/.test(flat) && coarseHasDis(),
+      '32px summary + a ' + '--hit expander under a coarse pointer');
+  chk('the open state says "open" without an icon font',
+      /\.dis\[open\] summary::after\{content:/.test(flat));
+  chk('the dashboard panel is no longer a button',
+      !/button class="panel dash-figlink"/.test(src) &&
+      !/\.dash-figlink-t\{/.test(flat));
+  chk('a heading was added without changing its size',
+      /\.sess-ex-h\{[^}]*font:inherit/.test(flat));
+  chk('the session uses the screen heading it was missing',
+      /<h1 class="sess-h">/.test(src) || /'<h1 class="sess-h">'/.test(src));
+  function coarseHasDis(){
+    const i = css.indexOf('@media (pointer: coarse)');
+    if(i < 0) return false;
+    const j = css.indexOf('\n}', i);
+    const block = css.slice(i, j);
+    return /\.dis summary/.test(block);
+  }
+}
+
 group('8m. Text on a wash is measured, not assumed');
 {
   /* Contrast against paper is not the whole story: half the state vocabulary is a

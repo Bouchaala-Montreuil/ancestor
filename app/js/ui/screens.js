@@ -179,26 +179,36 @@ Screens.home = function(){
          ).join('') + '</div></div>';
   }
 
+  /* One dominant action. Everything a returning lifter might want is still one
+     tap away, but it waits behind a disclosure instead of competing for the
+     thumb: seven equal buttons is the same as no instruction. */
   h += '<div class="dash-actions">';
   if(ACTIVE){
     h += '<button class="btn" onclick="go(\'session\')">' + esc(t('plan.resumeLive')) + '</button>';
   } else if(d.state === 'stop'){
-    h += '<button class="btn quiet" onclick="go(\'profile\')">' + esc(t('home.correct')) + '</button>';
+    /* The estimate says rest. The only useful action is to change what it reads. */
+    h += '<button class="btn" onclick="go(\'profile\')">' + esc(t('home.correct')) + '</button>';
   } else if(shown === 'rest'){
-    h += '<button class="btn quiet" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>';
+    h += '<button class="btn" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>';
     h += '<button class="btn secondary" onclick="startSession()">' + esc(t('btn.start')) + '</button>';
   } else if(next){
     h += '<button class="btn" onclick="startSession()">' +
          esc(t('home.startNext', { name: next.session.name })) + '</button>';
   }
   h += '<button class="btn quiet" onclick="setSessionSub(\'plan\');go(\'session\')">' + esc(t('plan.tabPlan')) + '</button>';
-  h += '<button class="btn quiet" onclick="openAnalysis()">' + esc(t('home.analysis')) + '</button>';
+  h += '</div>';
+  h += '<details class="dis"><summary><span class="dis-t">' + esc(t('home.moreWays')) +
+       '</span></summary><div class="row mt-2">';
+  h += '<button class="btn quiet sm" onclick="openAnalysis()">' + esc(t('home.analysis')) + '</button>';
   /* The paper is one tap from the answer: print the session the verdict is
      about, not whichever day happens to be selected in the planner. */
-  h += '<button class="btn quiet" onclick="openPrintCard(' +
+  h += '<button class="btn quiet sm" onclick="openPrintCard(' +
        (next ? "'" + next.session.id + "'" : '') + ')">' + esc(t('pa.button')) + '</button>';
-  h += '<button class="btn quiet" onclick="openWhy(\'decision\')">' + esc(t('sci.whyOpen')) + '</button>';
-  h += '</div>';
+  h += '<button class="btn quiet sm" onclick="openWhy(\'decision\')">' + esc(t('sci.whyOpen')) + '</button>';
+  if(d.state === 'stop' && !ACTIVE){
+    h += '<button class="btn quiet sm" onclick="go(\'profile\')">' + esc(t('home.correct')) + '</button>';
+  }
+  h += '</div></details>';
   h += '</div></div>';
 
   /* 3. Training Progress Sparkline */
@@ -304,18 +314,19 @@ Screens.home = function(){
   h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.map')) +
        '</h2><span class="rule"></span>' +
        '<span class="aside"><button class="chip sm" onclick="go(\'body\')">' + esc(t('lab.open')) + '</button></span></div>';
-  h += '<button class="panel dash-figlink" onclick="go(\'body\')">' +
+  h += '<div class="panel dash-figlink">' +
        '<div class="fig-stage bare">' +
        '<div class="dash-fig-duo">' +
-         '<div class="fig-wrap">' + anatomyFigure(s, {side:'front', now:now}) +
+         '<div class="fig-wrap">' + anatomyFigure(s, {side:'front', now:now, pointerOnly:true}) +
            '<span class="dash-fig-cap">' + esc(t('body.front')) + '</span></div>' +
-         '<div class="fig-wrap">' + anatomyFigure(s, {side:'back', now:now}) +
+         '<div class="fig-wrap">' + anatomyFigure(s, {side:'back', now:now, pointerOnly:true}) +
            '<span class="dash-fig-cap">' + esc(t('body.back')) + '</span></div>' +
        '</div></div>' +
        '<div class="row between mt-2">' +
-         '<span class="dash-figlink-t mt-0">' + esc(t('home.mapCta')) + '</span>' +
+         '<button type="button" class="link-btn" onclick="go(\'body\')">' +
+         esc(t('home.mapCta')) + '</button>' +
          '<span class="flag sm ok">' + readyCount + ' / ' + MUSCLES.length + ' ' + esc(t('mst.ready')) + '</span>' +
-       '</div></button></div>';
+       '</div></div></div>';
 
   h += '<div><div class="sect mt-0"><h2 class="title">' + esc(t('home.learnTitle')) +
        '</h2><span class="rule"></span></div>' + nextLessonCard(s) + '</div>';

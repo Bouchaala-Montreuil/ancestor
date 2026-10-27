@@ -86,14 +86,14 @@ function sessionSubnavHtml(){
   if(ACTIVE){
     h += '<button type="button" role="tab" aria-selected="' + (cur==='live'?'true':'false') +
          '" class="subnav-btn ' + (cur==='live'?'on':'') + '" onclick="setSessionSub(\'live\')">' +
-         esc(t('plan.tabActive')) + '<span class="subnav-cnt">●</span></button>';
+         esc(t('plan.tabActive')) + '<span class="subnav-cnt" aria-hidden="true">●</span></button>';
   }
   h += '<button type="button" role="tab" aria-selected="' + (cur==='plan' && !ACTIVE ? 'true' : (cur==='plan'?'true':'false')) +
        '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) + '" onclick="setSessionSub(\'' + (ACTIVE ? 'plan-peek' : 'plan') + '\')">' +
        esc(t('plan.tabPlan')) + '</button>';
   h += '<button type="button" role="tab" aria-selected="' + (cur==='library'?'true':'false') +
        '" class="subnav-btn ' + (cur==='library'?'on':'') + '" onclick="setSessionSub(\'library\')">' +
-       esc(t('plan.tabLibrary')) + '<span class="subnav-cnt">' + EX.length + '</span></button>';
+       esc(t('plan.tabLibrary')) + '<span class="subnav-cnt" aria-hidden="true">' + EX.length + '</span></button>';
   h += '</div>';
   return h;
 }
@@ -583,8 +583,8 @@ function renderLive(){
   h += '<div><p class="eyebrow" style="color:var(--burnt)">' +
        esc(ACTIVE.paused ? t('session.restPaused') : t('plan.liveBadge')) + '</p>' +
        '<div class="row nowrap row-base mt-1">' +
-       '<strong class="sess-h">' +
-       esc(ACTIVE.name || t('session.title')) + '</strong>' +
+       '<h1 class="sess-h">' +
+       esc(ACTIVE.name || t('session.title')) + '</h1>' +
        '<span class="live-clock" id="liveClock">' + formatElapsed(activeElapsedMs()) + '</span>' +
        '</div></div>';
   h += '<div class="live-hud-meta">' +
@@ -594,8 +594,6 @@ function renderLive(){
        '<button type="button" class="btn quiet sm" onclick="startRest(' + (ACTIVE.restSec || 120) + ')">' +
        esc(t('session.rest')) + ' ' + (ACTIVE.restSec || 120) + 's</button>' +
        '<button type="button" class="btn quiet sm" onclick="openAddExerciseSheet(\'active\')">+ ' + esc(t('plan.addEx')) + '</button>' +
-       '<button type="button" class="btn danger sm" style="border-color:rgba(241,235,221,.35);color:var(--ivory)" onclick="discardSession()">' +
-       esc(t('session.discard')) + '</button>' +
        '</div></div>';
   h += '<div class="session-progress" id="sessProg"><span class="eyebrow">' +
        esc(t('log.remaining', { n: logged, m: total })) +
@@ -617,8 +615,8 @@ function renderLive(){
          '<div class="shrink">' +
            '<div class="row row-base">' +
              '<span class="mono" style="font-size:11px;color:var(--burnt-text);font-weight:700">' + String(ei+1).padStart(2,'0') + '</span>' +
-             '<button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
-             esc(t('ex.'+e.id)) + '</button>' +
+             '<h2 class="sess-ex-h"><button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
+             esc(t('ex.'+e.id)) + '</button></h2>' +
            '</div>' +
            '<div class="hint mt-1">' +
              (ex.m || []).map(([m,w], idx) => esc(t('mg.' + m)) + (idx===0 ? ' (' + Math.round(w*100) + '%)' : '')).join(' · ') +
@@ -657,13 +655,14 @@ function renderLive(){
          '<input id="exnote_' + ei + '" type="text" value="' + esc(e.note || '') +
          '" placeholder="' + esc(t('log.notePlaceholder')) + '" oninput="setExNote(' + ei + ',this.value)"></div>';
 
-    h += '<div class="row mt-2">';
+    h += '<details class="dis ex-opts"><summary><span class="dis-t">' +
+         esc(t('log.exOptions')) + '</span></summary><div class="row mt-2">';
     h += '<button class="btn quiet sm" onclick="addSet(' + ei + ')">' + esc(t('log.addSet')) + '</button>';
     h += '<button class="btn quiet sm" onclick="skipSet(' + ei + ')">' + esc(t('session.skipset')) + '</button>';
     h += '<button class="btn quiet sm" onclick="skipExercise(' + ei + ')">' + esc(t('log.skipEx')) + '</button>';
     h += '<button class="btn quiet sm" onclick="openSub(' + ei + ')">' + esc(t('session.sub')) + '</button>';
     h += '<button class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' + esc(t('exd.open')) + '</button>';
-    h += '</div>';
+    h += '</div></details>';
 
     h += '<p class="hint mb-1 mt-2">' +
          esc(spec.mode === 'assisted' ? t('log.assistHint')
@@ -676,6 +675,11 @@ function renderLive(){
   h += '<div class="panel mt-4 heavy">';
   h += '<button class="btn ' + (logged ? '' : 'secondary') + ' block" onclick="finishSession()">' +
        esc(t('session.finish')) + ' (' + logged + '/' + total + ')</button>';
+  /* Discard is destructive and reversible by nobody: it sits below the primary
+     action, in text weight, and still asks before it throws the session away. */
+  h += '<p class="hint mt-2 mb-0 tac">' +
+       '<button type="button" class="link-btn" onclick="discardSession()">' +
+       esc(t('session.discard')) + '</button></p>';
   h += '</div>';
   return h;
 }
@@ -707,7 +711,7 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
       if(set.lrSplit && (f.key === 'reps' || f.key === 'time')){
         h += sideFieldsHtml(f, ei, si, set, range);
       } else {
-        h += fieldHtml(f, ei, si, set, ex, range, u);
+        h += fieldHtml(f, ei, si, set, ex, range, u, e.sets.length);
       }
     });
     h += '</div>';
@@ -725,16 +729,21 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
     h += '<button class="btn ' + (set.committed ? 'quiet' : '') + ' sm" id="logbtn_' + ei + '_' + si + '" ' +
          (ready ? '' : 'disabled') + ' onclick="toggleSet(' + ei + ',' + si + ')">' +
          esc(set.committed ? t('log.correct') : t('log.logSet')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="toggleWarmup(' + ei + ',' + si + ')" aria-pressed="' +
-         (set.warmup ? 'true' : 'false') + '">' + esc(t('log.warmup')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="removeSet(' + ei + ',' + si + ')">' + esc(t('log.removeSet')) + '</button>';
   }
   h += '</div>';
+  if(!locked){
+    h += '<details class="dis inline set-opts"><summary><span class="dis-t">' +
+         esc(t('log.setOptions')) + '</span></summary><div class="row mt-1">' +
+         '<button class="btn quiet sm" onclick="toggleWarmup(' + ei + ',' + si + ')" aria-pressed="' +
+         (set.warmup ? 'true' : 'false') + '">' + esc(t('log.warmup')) + '</button>' +
+         '<button class="btn quiet sm" onclick="removeSet(' + ei + ',' + si + ')">' +
+         esc(t('log.removeSet')) + '</button></div></details>';
+  }
   h += '</div>';
   return h;
 }
 
-function fieldHtml(f, ei, si, set, ex, range, u){
+function fieldHtml(f, ei, si, set, ex, range, u, nSets){
   const raw = set[f.attr];
   let val = raw, suffix = '';
   if(f.key === 'distance'){
@@ -753,7 +762,8 @@ function fieldHtml(f, ei, si, set, ex, range, u){
   const optional = exLogSpec(ex).optional.indexOf(f) >= 0;
   const fid = 'sf_' + ei + '_' + si + '_' + f.key;
   return '<div class="fld"><label for="' + fid + '">' + esc(t(labelKey)) +
-         (optional ? ' <span class="opt">' + esc(t('c.optional')) + '</span>' : '') + '</label>' +
+         (optional ? ' <span class="opt">' + esc(t('c.optional')) + '</span>' : '') +
+         '<span class="sr-only">, ' + esc(t('session.setOf')) + ' ' + (si+1) + ' / ' + nSets + '</span></label>' +
          '<input id="' + fid + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' + esc(val) + '" ' +
          'oninput="setVal(' + ei + ',' + si + ',\'' + f.attr + '\',this.value)">' +
          '<span class="u">' + esc(suffix) + '</span></div>';
