@@ -108,6 +108,21 @@ group('3. WCAG contrast on every text pair (AA = 4.5:1)');
   chk('ivory on charcoal >= 4.5:1', hdr >= 4.5, hdr.toFixed(2) + ':1');
   const accent = contrast(hex(token('burnt')), hex(token('charcoal')));
   chk('burnt accent on charcoal >= 4.5:1', accent >= 4.5, accent.toFixed(2) + ':1');
+  /* The accent used as *text* on ink is lightened: at 9 px the base orange is
+     4.6:1 on charcoal, which passes and still reads as work. */
+  const accInk = contrast(hex(token('accent-on-ink')), hex(token('charcoal')));
+  chk('accent-on-ink on charcoal >= 4.5:1', accInk >= 4.5, accInk.toFixed(2) + ':1');
+
+  /* --tech (3.72) and --burnt (2.95) are fills and strokes, not text. A test
+     rather than a note, because a note is what let them reach body copy in the
+     first place: the text-safe pair is --tech-ink / --burnt-text on paper and
+     --accent-on-ink on ink. */
+  const js = ['js/ui/screens.js','js/ui/workout.js','js/ui/components.js','js/ui/science.js','js/ui/modules.js']
+    .map(f => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
+  const colourProp = /(?<![-\w])color\s*:\s*(?:[^;{}]*?)var\(\s*--(tech|burnt)\s*\)/g;
+  const offenders = (css + '\n' + js).match(colourProp) || [];
+  chk('the two sub-AA signals are never used as text colour', offenders.length === 0,
+      offenders.length ? offenders.join(' , ') : 'no color:var(--tech) or color:var(--burnt)');
 }
 
 /* ================================================================ */
@@ -121,8 +136,12 @@ group('4. Status is never communicated by colour alone');
       'flag markup wraps t() labels');
   chk('muscle rows carry a text state, not just a swatch',
       /class="when"/.test(screens) && /mst\.|daysLeft/.test(screens));
-  chk('anatomy legend pairs swatches with labels',
-      /<div><i style="background:' \+ STATE_HEX\[s\].*?<\/div>/.test(comps) || /anatomyLegend/.test(comps));
+  /* The legend used to be its own component under the figure. The muscle list
+     now carries swatch, name and state in the same row, so the key and the
+     selector are one thing — and there is no unlabelled colour anywhere. */
+  chk('every colour on the muscle map is labelled in words beside it',
+      /class="sw"[^>]*>.*?class="nm".*?class="when"/s.test(screens),
+      'swatch, name and state in one row');
   chk('figure regions carry a <title> for assistive tech',
       /<title>' \+ esc\(t\('mg\.'/.test(comps));
   chk('charts expose aria-label', /role="img" aria-label=/.test(comps));
@@ -922,6 +941,12 @@ group('9. Reusable component vocabulary');
 
   chk('the sheet carries its own way out, in the title row',
       /\.sheet-hd\{/.test(css) && /\.sheet-x\{/.test(css));
+  /* An inline <svg viewBox="0 0 24 24"> with no width is a 547 px square in a
+     547 px column. The tap hint on Body took 560 px of page until a full-page
+     screenshot found it. */
+  chk('inline icons are given a size, not the width of the column',
+      /\.fig-hint svg\{[^}]*width:\s*\d+px[^}]*height:\s*\d+px/s.test(css));
+
   chk('the exercise figures sit side by side, not stacked',
       /\.ex-vis-figs\{display:grid;grid-template-columns:1fr 1fr/.test(css) &&
       /\.ex-vis-figs svg\{[^}]*max-height/s.test(css));

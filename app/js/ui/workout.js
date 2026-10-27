@@ -148,13 +148,13 @@ function renderWorkoutPlanner(){
 
   if(!s.plan || !s.plan.sessions || !s.plan.sessions.length){
     h += emptyState('session.noplan', 'session.noplanBody', 'plan',
-      '<button class="btn" onclick="rebuildPlan()">' + esc(t('profile.rebuild')) + '</button>');
+      '<button class="btn" onclick="rebuildPlan()">' + esc(t('profile.rebuild')) + '</button>', 2);
     return { html: h };
   }
 
   const next = nextSession(s, now);
   if(!next){
-    h += emptyState('session.noplan', 'session.noplanBody', 'plan');
+    h += emptyState('session.noplan', 'session.noplanBody', 'plan', '', 2);
     return { html: h };
   }
 
@@ -211,7 +211,7 @@ function renderWorkoutPlanner(){
   h += '<div class="panel heavy">';
   h += '<div class="panel-hd"><div class="shrink">' +
        '<p class="eyebrow">' + esc(isRec ? t('plan.nextUp') : t('session.planned')) + '</p>' +
-       '<h3 class="sub ex-title mt-1">' + esc(selected.name) + '</h3></div>' +
+       '<h2 class="sub ex-title mt-1">' + esc(selected.name) + '</h2></div>' +
        '<span class="hint">~' + estimatedMinutes(selected, s.plan.restSec) + ' min · ' +
        esc(t('session.rest')) + ' ' + (s.plan.restSec || 120) + 's</span></div>';
 
@@ -251,7 +251,7 @@ function renderWorkoutPlanner(){
     h += '<div class="mt-3">' +
          emptyState('plan.emptyDay', 'plan.emptyDayBody', 'plan',
            '<button class="btn" onclick="openAddExerciseSheet(\'plan\',\'' + selected.id + '\')">+ ' +
-           esc(t('plan.addEx')) + '</button>') + '</div>';
+           esc(t('plan.addEx')) + '</button>', 2) + '</div>';
     return { html: h, noRefresh: true };
   }
 
@@ -593,7 +593,7 @@ function renderLive(){
   /* Sticky Live Instrument HUD */
   h += '<div class="live-hud">';
   h += '<div class="live-hud-top">';
-  h += '<div><p class="eyebrow" style="color:var(--burnt)">' +
+  h += '<div><p class="eyebrow" style="color:var(--accent-on-ink)">' +
        esc(ACTIVE.paused ? t('session.restPaused') : t('plan.liveBadge')) + '</p>' +
        '<div class="row nowrap row-base mt-1">' +
        '<h1 class="sess-h">' +

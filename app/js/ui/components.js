@@ -203,14 +203,6 @@ function anatomyFigure(state, opts){
   return out;
 }
 
-function anatomyLegend(){
-  return '<div class="legend">' +
-    ['ready','caution','rest','fresh'].map(s =>
-      '<div><i style="background:' + STATE_HEX[s] + ';opacity:' + (s==='fresh'?'.35':'1') + '"></i>' +
-      esc(t('mst.' + s)) + '</div>').join('') +
-    '</div>';
-}
-
 /* ------------------------------------------------------- READINESS METER */
 /* Score definition (explicit and testable):
    readiness = 100 x min over the muscles involved in the next session of
@@ -574,9 +566,14 @@ function failureState(err){
 
 /* The third argument used to pick an icon. It is accepted and ignored, so no
    call site had to change and no call site can pick a different mark again. */
-function emptyState(titleKey, bodyKey, icon, actionHtml){
+function emptyState(titleKey, bodyKey, icon, actionHtml, level){
+  /* level: the heading level this state sits at. Defaults to h3, because most
+     empty states live inside a section that already has an h2. Where one stands
+     directly under the screen's h1 it passes 2 — the level is a place in the
+     document, not a size, and the type is the same either way. */
+  const lv = level === 2 ? 2 : 3;
   return '<div class="empty"><div class="mk">' + TALLY_BLANK + '</div>' +
-    '<h3>' + esc(t(titleKey)) + '</h3>' +
+    '<h' + lv + '>' + esc(t(titleKey)) + '</h' + lv + '>' +
     '<p>' + esc(t(bodyKey)) + '</p>' +
     (actionHtml ? '<div class="act">' + actionHtml + '</div>' : '') + '</div>';
 }

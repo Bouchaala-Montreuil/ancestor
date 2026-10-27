@@ -485,6 +485,115 @@ behavioural checks in `tests/ui.js` group 26, and three static assertions in
 turns two of the browser checks red, and one of them names the overlap:
 `log 377..413 of 420, hit=`.
 
+### 3.16 Structure: one h1, and no heading level missing
+
+The report's §7 has carried this as an open item since the first pass: *heading
+levels jump on Body, Progress and the session plan*, `h1` straight to `h3`. It
+was left alone because the panels share one `h3.sub` component and converting
+half of it would have been worse than leaving it.
+
+The component is `.sub`, not `h3`. Styling now stands on the class:
+
+```css
+h1.title, h2.title, h2.sub, h3.sub { … }   /* one type, four places */
+```
+
+and every heading that sits directly under a screen's `h1` is an `h2`:
+
+| screen | before | after |
+|---|---|---|
+| Body | `h1, h3` | `h1, h2` |
+| Body, a muscle open | `h1, h3, h3, h3, h3` | `h1, h2, h2, h3, h2` |
+| Progress | `h1, h3 × 6` | `h1, h2 × 6` |
+| Session plan | `h1, h3` | `h1, h2` |
+| A lesson | `h2, h3` (no `h1` at all) | `h1, h2, h3` |
+| Exercise library | `h1` | `h1` (unchanged) |
+
+Two things were not simple renames. `emptyState()` hard-coded its `h3`, which is
+right inside a section and wrong directly under a screen's `h1` — it now takes
+the level as an argument, defaulting to 3. And a lesson replaces the screen
+rather than sitting in it, so its title was the only screen title in the product
+without an `h1`.
+
+`tests/ui.js` group 27 walks twelve screen states — including the unselected
+Body, a live session, the plan tab, a sheet and a lesson — and fails on a second
+`h1` or a level that jumps by more than one. The level sequence is printed for
+each, so the next regression is readable rather than a count.
+
+### 3.17 Body: the list is the key, and an icon that ate the page
+
+The report asked for the duplicate muscle list to be dropped — "either the
+figure carries the names or the list does". Measured, the duplication was not
+where the wording suggested:
+
+| | before |
+|---|---|
+| visible names on the figure | **none** — the twelve regions carry `<title>` tooltips, not labels |
+| focus stops on Body | **34** |
+| of those, figure hit paths | **14**, announcing `Chest — no data`, `Abdominals — no data`… |
+| of those, list rows | **12**, announcing the same groups and the same states |
+| a separate four-swatch legend under the figure | `READY · CAUTION · REST · NO DATA` |
+
+So the words were not duplicated on screen — the *tab stops* were, fourteen plus
+twelve for the same twelve things — and the legend duplicated the state words
+already sitting in each list row. Deleting the list would have deleted the only
+keyboard path to the map; deleting nothing would have left the double control.
+
+What changed instead:
+
+- the figure is `pointerOnly` on this screen, exactly as on the dashboard: still
+  tappable, out of the tab order, with its `role="img"` text alternative intact.
+  Body is now **19** focus stops, and the twelve that remain are the list;
+- the legend is gone. Each list row already carries a swatch, the group name and
+  the state in words — the key and the selector became one thing;
+- each row states itself: `aria-label="Chest, No data"`, `aria-pressed` for the
+  current selection.
+
+**And the defect the full-page screenshot found.** Below the figure sat a hint
+row reading *tap a muscle group to open its record* with a tap icon. The icon was
+an inline `<svg viewBox="0 0 24 24">` with no width, so in a 547 px column it
+rendered as a **547 × 547 px** black glyph and the hint row was 564 px tall. The
+muscle list began 560 px further down the page than it needed to. At 1280 px:
+hint row 564 → 13 px, list top 1602 → 1051, document 2163 → 1612. Nothing else on
+the screen had moved, which is why every earlier screenshot — all of them
+viewport-clipped above that point — missed it.
+
+### 3.18 The two colours that were never text colours
+
+`--tech` (3.72:1) and `--burnt` (2.95:1) fail AA as text on paper. Both have
+text-safe siblings (`--tech-ink` 5.00, `--burnt-text` 4.96) and both were already
+being used correctly for most of their life — but five places set `color` to a
+failing token, and "we know" is not a mechanism.
+
+- The `+`/`–` disclosure glyph in three components was `--burnt` on paper →
+  `--burnt-text`.
+- On ink, the accent used as *text* (the rest strip's label, the live session's
+  status line, two dark-surface disclosure glyphs) is now `--accent-on-ink`
+  `#E08A5A` — 6.12:1 on charcoal, where the base orange was 4.6:1 at 9–12 px.
+- `--tech` and `--burnt` remain, for fills, strokes and borders, where a 3:1
+  non-text bar applies and they pass.
+
+`tests/design.js` now fails on any `color: var(--tech)` or `color: var(--burnt)`
+in the stylesheet or in the five UI modules that emit inline styles. Falsified by
+adding one line and watching it go red: `-> color:var(--burnt)`.
+
+### 3.19 A key that no language had
+
+The empty state on Body rendered the literal string **`body.selectBody`** in all
+seven languages. The key had never been written; `t()` returns its argument when
+it finds nothing, which is the correct behaviour and also a silent one.
+
+`tools/keyscan.js` renders six screens × seven languages and fails when any i18n
+key reaches the screen verbatim — but it called `selectMuscle('chest')` before
+scanning Body, and the empty state only exists when nothing is selected. The one
+screen state that could show the bug was the one state the scan never visited.
+
+Three changes: the key exists in all seven languages; Body is scanned **before**
+and after a muscle is chosen; and a static pass now reads every `t('literal')`
+in `js/ui/` and `js/app.js` and fails if no dictionary defines it. Falsified by
+deleting the English entry and watching the scan report
+`untranslatable keys: en:body.selectBody` and `rendered verbatim: en :: body.selectBody`.
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was
@@ -557,7 +666,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (210 checks), the 33 real-browser checks in `tests/browser.js`
+`tests/design.js` (213 checks), the 33 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 

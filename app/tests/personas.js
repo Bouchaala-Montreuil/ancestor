@@ -229,16 +229,25 @@ group('7. User navigating with a screen reader');
       (d.querySelector('#toast')||{}).getAttribute('aria-live') === 'polite');
   w.go('body');
   const hits = Array.from(d.querySelectorAll('.seg-hit'));
-  chk('anatomy regions are focusable', hits.length > 0 && hits.every(h => h.getAttribute('tabindex') === '0'),
-      hits.length + ' regions');
-  chk('anatomy regions expose a name and state',
-      hits.every(h => (h.getAttribute('aria-label')||'').length > 2));
-  chk('anatomy regions have a button role', hits.every(h => h.getAttribute('role') === 'button'));
+  chk('the figure stays tappable', hits.length > 0, hits.length + ' regions');
+  /* The figure used to carry a role and a tabindex on every region, and the
+     muscle list below it repeated the same twelve groups as twelve more buttons.
+     Fourteen tab stops announced "Chest — no data"; the list announced it again.
+     The list is now the keyboard path — the figure is a picture you can tap. */
+  chk('the figure is not a second copy of the keyboard path',
+      hits.every(h => !h.hasAttribute('tabindex') && !h.hasAttribute('role')));
+  const rows = Array.from(d.querySelectorAll('.muscle-list .mrow'));
+  chk('the muscle list is the keyboard path', rows.length === 12, rows.length + ' rows');
+  chk('each row names the group and its state',
+      rows.every(r => /,\s/.test(r.getAttribute('aria-label') || '')),
+      (rows[0] || {}).getAttribute ? rows[0].getAttribute('aria-label') : '');
+  chk('and says whether it is the selected one',
+      rows.every(r => r.getAttribute('aria-pressed') === 'true' || r.getAttribute('aria-pressed') === 'false'));
   chk('the figure has a text alternative',
       (d.querySelector('.fig-stage svg')||{}).getAttribute('aria-label') || '');
-  // keyboard activation
-  hits[0].dispatchEvent(new w.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
-  chk('Enter selects a muscle', !!w.ANC.bodySel, String(w.ANC.bodySel));
+  // activation, the way a keyboard user reaches it
+  rows[0].dispatchEvent(new w.MouseEvent('click', { bubbles:true }));
+  chk('choosing a row selects a muscle', !!w.ANC.bodySel, String(w.ANC.bodySel));
   // dialog semantics
   w.openSheet('sleep');
   const panel = d.querySelector('.sheet .panel');

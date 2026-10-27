@@ -1171,6 +1171,45 @@ group('15. The boot veil and the offline state');
   veil.parentNode.removeChild(veil);
 }
 
+group('27. Every screen has one h1 and no missing heading level');
+{
+  const dom18 = await boot();
+  const w18 = dom18.window, d18 = w18.document;
+  completeOnboarding(w18, d18);
+  const S2 = o => Object.assign({w:null,r:null,t:null,d:null,a:null,rir:null}, o);
+  w18.addSession({ date: Date.now()-5*864e5, startedAt: Date.now()-5*864e5, planId:'A', name:'S',
+    exercises:[{ id:'bb-bench', sets:[S2({w:60, r:8, rir:2})] }] });
+
+  /* Walk a screen state and return what a screen reader would encounter: the
+     heading levels in document order. A level may never jump by more than one —
+     an h1 followed by an h3 is a heading the reader cannot place. */
+  const walk = (label) => {
+    const hs = Array.from(d18.querySelectorAll('#screenBody h1,#screenBody h2,#screenBody h3,#screenBody h4'))
+      .filter(h => !h.closest('[hidden]'));
+    const levels = hs.map(h => Number(h.tagName[1]));
+    let prev = 0, jump = null;
+    levels.forEach((lv, i) => { if(prev && lv > prev + 1 && !jump) jump = prev + ' to ' + lv + ' at "' + hs[i].textContent.trim().slice(0, 26) + '"'; prev = lv; });
+    const h1 = levels.filter(l => l === 1).length;
+    chk(label + ': one h1, no skipped level', h1 === 1 && !jump,
+        'h1=' + h1 + ', levels ' + levels.join('') + (jump ? ', jump ' + jump : ''));
+  };
+
+  w18.go('home'); walk('home');
+  w18.go('session'); walk('session, before it starts');
+  w18.startSession('A'); walk('session, live');
+  w18.setSessionSub && w18.setSessionSub('plan'); walk('session, plan');
+  w18.go('body'); walk('body, nothing selected');
+  w18.selectMuscle('chest'); walk('body, a muscle selected');
+  w18.go('progress'); walk('progress');
+  w18.go('science'); walk('science hub');
+  w18.go('profile'); walk('profile');
+  w18.openExerciseLibrary(); walk('exercise library');
+  w18.openExerciseDetail('bb-bench'); walk('exercise sheet');
+  w18.closeSheet && w18.closeSheet();
+  w18.openModule('muscle-growth'); walk('a lesson');
+  w18.closeModule && w18.closeModule();
+}
+
 /* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');

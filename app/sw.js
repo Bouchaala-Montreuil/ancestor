@@ -1,5 +1,5 @@
 /* ANCESTOR — offline cache. Bump CACHE on every deploy. */
-const CACHE = 'ancestor-v23';  // v23: the bar gets out of the keyboard's way
+const CACHE = 'ancestor-v24';  // v24: one list, one key, one h1
 const FILES = [
   './', './index.html', './css/app.css',
   './js/i18n/core.js', './js/i18n/ui.js', './js/i18n/exercises.js', './js/i18n/screens.js', './js/i18n/acc.js', './js/i18n/ar.js', './js/i18n/v2.js', './js/i18n/science.js', './js/i18n/science2.js', './js/i18n/ex_modes.js', './js/i18n/modes.js', './js/i18n/lesson_bodies_en.js', './js/i18n/lesson_bodies_fr.js', './js/i18n/lesson_bodies_es_de.js', './js/i18n/lesson_bodies_it_nl_ar.js', './js/i18n/locale.js',

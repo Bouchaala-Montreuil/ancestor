@@ -82,8 +82,12 @@
   --ink-3:         #5B5D54;
   --tech-ink:      #636559;
 
-  /* signal family */
+  /* signal family. Two text-safe signals, one for each ground: #A8461F on
+     paper (4.96:1) and #E08A5A on ink (6.17:1). The raw accents below are for
+     fills, strokes and borders only — as text on paper --burnt is 2.95:1 and
+     --tech is 3.72:1, both under AA, which is what a test now prevents. */
   --burnt-text:    #A8461F;
+  --accent-on-ink: #E08A5A;
   --burnt-tint:    rgba(214,106,58,.12);
   --burnt-tint-2:  rgba(214,106,58,.22);
 
@@ -270,7 +274,10 @@ h1.display{
   max-width:13ch;
   text-wrap:balance;
 }
-h2.title,h3.sub{
+/* .sub is the panel and section title. It was styled on h3 only, which kept
+   Body and Progress skipping from h1 straight to h3; the level changed, the
+   type did not. */
+h1.title,h2.title,h2.sub,h3.sub{
   font-family:var(--f-display);
   text-transform:uppercase;
   letter-spacing:.02em;
@@ -780,13 +787,13 @@ button.flag:hover{border-color:var(--ink)}
   color:rgba(241,235,221,.9);border-bottom:1px dotted rgba(241,235,221,.4);
 }
 .next-ex-more > summary::-webkit-details-marker{display:none}
-.next-ex-more > summary::after{content:"+";color:var(--burnt);font-size:12px;line-height:1}
+.next-ex-more > summary::after{content:"+";color:var(--accent-on-ink);font-size:12px;line-height:1}
 .next-ex-more[open] > summary::after{content:"\2013"}
 .next-ex-more > summary:focus-visible{outline:2px solid var(--ivory);outline-offset:2px}
 .readiness-def{margin-top:var(--s2);border-top:0;padding-top:0}
 .readiness-def .dis-t{color:rgba(241,235,221,.75)}
 .readiness-def .body-sm{color:rgba(241,235,221,.85)}
-.readiness-def > summary::after{color:var(--burnt)}
+.readiness-def > summary::after{color:var(--accent-on-ink)}
 .dash-insight-why{margin-top:var(--s3)}
 .decision .dash-actions{margin-top:var(--s5)}
 .decision .btn{background:var(--ivory);border-color:var(--ivory);color:var(--ink)}
@@ -1138,7 +1145,7 @@ button.flag:hover{border-color:var(--ink)}
 .empty .mk svg{width:100%;height:100%;display:block}
 /* It was marked up as an h4 while the stylesheet styled h3, so every empty
    state in the product was rendering its headline in the default UI font. */
-.empty h3{
+.empty h2,.empty h3{
   font-family:var(--f-display);font-size:18px;text-transform:uppercase;
   letter-spacing:.04em;margin-bottom:6px;
 }
@@ -1326,7 +1333,17 @@ table.data tbody tr:last-child td{border-bottom:0}
   text-transform:uppercase;color:var(--tech-ink);line-height:1.6;
 }
 .fig-note{margin-top:var(--s3);border-top:var(--hair) solid var(--line-soft);padding-top:var(--s2)}
-.fig-hint{text-align:center;margin-top:var(--s2)}
+.fig-hint{
+  margin-top:var(--s2);
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+/* The hint's icon is an inline <svg viewBox="0 0 24 24"> with no width or
+   height, so it took the width of the column and squared it: 547 x 547 px on a
+   desktop column, 560 px of empty page between the figure and the muscle list.
+   Nothing else on the screen had grown, so only a full-page screenshot showed
+   it. */
+.fig-hint svg{width:11px;height:11px;flex:none;stroke:currentColor;fill:none;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .legend{
   display:flex;flex-wrap:wrap;gap:var(--s3);margin-top:var(--s3);
   font-family:var(--f-mono);font-size:8px;letter-spacing:.1em;
@@ -1656,7 +1673,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 /* The sign is drawn, not glyph-hunted: the display face has no arrows. */
 .ev-more summary::after{
   content:"+";margin-inline-start:auto;flex:none;
-  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt);
+  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt-text);
 }
 .ev-more[open] summary::after{content:"\2013"}
 
@@ -1677,7 +1694,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .dis summary::after{
   content:"+";margin-inline-start:auto;flex:none;
-  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt);
+  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt-text);
 }
 .dis[open] summary::after{content:"\2013"}
 .dis summary:focus-visible{outline:2px solid var(--burnt);outline-offset:3px}
@@ -1857,7 +1874,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .prof-group > summary::after{
   content:"+";flex:none;
-  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt);
+  font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--burnt-text);
 }
 .prof-group[open] > summary::after{content:"\2013"}
 .prof-group > summary:focus-visible{outline:2px solid var(--burnt);outline-offset:3px}
@@ -2265,7 +2282,7 @@ input[type=range]::-moz-range-thumb{
 input[type=range]:focus-visible{outline:2px solid var(--burnt);outline-offset:6px}
 
 /* Programme reveal: the plan arrives as a specification, not a list. */
-.onb-frame .panel .panel-hd h3.sub{font-size:16px;letter-spacing:.06em}
+.onb-frame .panel .panel-hd h2.sub,.onb-frame .panel .panel-hd h3.sub{font-size:16px;letter-spacing:.06em}
 .onb-frame .factor{
   display:flex;align-items:baseline;gap:var(--s3);
   padding:var(--s2) 0;border-bottom:var(--hair) solid var(--line-soft);

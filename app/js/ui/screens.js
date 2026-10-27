@@ -457,7 +457,7 @@ function trainingMilestones(state, now){
 function milestonesPanel(state, now){
   const list = trainingMilestones(state, now);
   const earned = list.filter(m => m.earned).length;
-  let h = '<div class="sect"><h3 class="sub">' + esc(t('mile.title')) + '</h3><span class="rule"></span>' +
+  let h = '<div class="sect"><h2 class="sub">' + esc(t('mile.title')) + '</h2><span class="rule"></span>' +
           '<span class="aside">' + earned + ' / ' + list.length + '</span></div>';
   h += '<div class="mile-grid" data-stagger>';
   list.forEach(m => {
@@ -773,7 +773,7 @@ function paintRestHost(){
   c.classList.add('on');
   c.innerHTML = '<div class="restbar" role="region" aria-label="' + esc(t('session.rest')) + '">' +
     '<div class="in">' +
-    '<span class="eyebrow" style="color:var(--burnt)">' + esc(label) + '</span>' +
+    '<span class="eyebrow" style="color:var(--accent-on-ink)">' + esc(label) + '</span>' +
     '<div class="track" id="restTrack" role="progressbar" aria-label="' + esc(t('session.rest')) + '" ' +
       'aria-valuemin="0" aria-valuemax="' + span + '" aria-valuenow="' +
       Math.max(0, Math.min(span, Math.round(span - left))) + '" aria-valuetext="' +
@@ -835,9 +835,14 @@ Screens.body = function(){
   /* the 3D viewer mounts here, and owns its own loading / error states */
   h += '<div class="fig-wrap lab-host" id="labHost"' + (BODY_MODE==='model' ? '' : ' hidden') + '></div>';
   /* the flat figure stays mounted so selection, zoom and reset keep working
-     in both modes and remain reachable without WebGL */
+     in both modes and remain reachable without WebGL.
+     pointerOnly: it is tappable but not a keyboard destination,
+     because the muscle list below is the same twelve groups with the same
+     states spelled out in words. Without this the figure contributed fourteen
+     tab stops announcing "Chest — no data" while the list announced the same
+     twelve a second time (measured: 34 focus stops on this screen). */
   h += '<div class="fig-wrap" id="figWrap"' + (BODY_MODE==='model' ? ' hidden' : '') + '>' +
-       anatomyFigure(s, { side:BODY_SIDE, selected:BODY_ZOOM ? BODY_SEL : null, now:now }) +
+       anatomyFigure(s, { side:BODY_SIDE, selected:BODY_ZOOM ? BODY_SEL : null, now:now, pointerOnly:true }) +
        '</div>';
   h += '<div class="fig-controls"' + (BODY_MODE==='model' ? ' hidden' : '') + '>';
   h += '<button class="fig-btn" title="' + esc(t('body.rotate')) + '" onclick="rotateFig()" aria-label="' +
@@ -872,18 +877,22 @@ Screens.body = function(){
   h += '<div class="fig-hint"><svg viewBox="0 0 24 24"><path d="M9 11V6a1.5 1.5 0 0 1 3 0"/>' +
        '<path d="M12 11v5M8 13l4-2 4 2"/></svg>' + esc(t(BODY_MODE==='model' ? 'lab3d.tapHint' : 'body.tapHint')) + '</div>';
   h += '<div class="lab-credits">' + esc(t('lab3d.credits')) + '</div>';
-  h += anatomyLegend();
 
-  /* muscle list */
+  /* The muscle list is also the legend: each row carries the colour, the group
+     and the state in words, so a separate four-swatch key under the figure was
+     the same thing printed twice. */
   h += '<div class="panel flush mt-3"><div class="muscle-list">';
   MUSCLES.forEach(m => {
     const r = rec[m];
     const st = r ? r.state : 'fresh';
-    const remLabel = r && r.since !== null
-      ? (st === 'ready' ? esc(t('mst.ready'))
+    const remPlain = r && r.since !== null
+      ? (st === 'ready' ? t('mst.ready')
          : (r.daysLeft > 0 ? r.daysLeft + ' d' : Math.max(1, Math.round(r.hoursLeft || 1)) + ' h'))
-      : esc(t('mst.fresh'));
-    h += '<button class="mrow ' + (BODY_SEL===m?'sel':'') + '" onclick="selectMuscle(\'' + m + '\')">' +
+      : t('mst.fresh');
+    const remLabel = esc(remPlain);
+    h += '<button class="mrow ' + (BODY_SEL===m?'sel':'') + '" onclick="selectMuscle(\'' + m + '\')"' +
+         ' aria-pressed="' + (BODY_SEL===m?'true':'false') + '"' +
+         ' aria-label="' + esc(t('mg.'+m) + ', ' + (r && r.since !== null ? t('mst.'+st) + ' — ' + remPlain : t('mst.fresh'))) + '">' +
          '<span class="sw" style="background:' + STATE_HEX[st] + ';opacity:' +
          (r && r.since!==null ? 1 : .3) + '"></span>' +
          '<span class="nm">' + esc(t('mg.'+m)) + '</span>' +
@@ -894,7 +903,7 @@ Screens.body = function(){
   /* detail */
   h += '<div id="bodyDetail">';
   if(!BODY_SEL && !LAB_STRUCT){
-    h += emptyState('body.select', 'body.selectBody', 'body');
+    h += emptyState('body.select', 'body.selectBody', 'body', '', 2);
   } else if(!BODY_SEL && LAB_STRUCT){
     h += labStructPanel(LAB_STRUCT);
   } else {
@@ -914,7 +923,7 @@ Screens.body = function(){
 
     if(LAB_STRUCT) h += labStructPanel(LAB_STRUCT);
     h += '<div class="panel"><div class="panel-hd">' +
-         '<h3 class="sub">' + esc(t('mg.'+m)) + '</h3>' +
+         '<h2 class="sub">' + esc(t('mg.'+m)) + '</h2>' +
          '<span class="row nowrap">' +
          '<span class="flag ' + (r.state==='ready'?'ok':r.state==='caution'?'warn':r.state==='rest'?'alert':'nodata') + '">' +
          esc(t('mst.'+r.state)) + '</span>' +
@@ -936,8 +945,8 @@ Screens.body = function(){
       { k:t('body.exercises'), v: related.length, d: esc(t('progress.exercise')) }
     ]);
 
-    h += '<div class="sect mb-2 mt-4"><h3 class="sub">' +
-         esc(t('body.exercises')) + '</h3><span class="rule"></span></div>';
+    h += '<div class="sect mb-2 mt-4"><h2 class="sub">' +
+         esc(t('body.exercises')) + '</h2><span class="rule"></span></div>';
     h += dataTable(
       [{label:t('progress.exercise')},{label:t('exd.role')},{label:t('body.contribution'),n:true}],
       related.slice(0,8).map(e => [
@@ -953,8 +962,8 @@ Screens.body = function(){
            '</b>' + esc(t('body.nodataNote')) + '</div>';
     }
     if(hist.length){
-      h += '<div class="sect mb-2 mt-4"><h3 class="sub">' +
-           esc(t('body.sets')) + '</h3><span class="rule"></span></div>';
+      h += '<div class="sect mb-2 mt-4"><h2 class="sub">' +
+           esc(t('body.sets')) + '</h2><span class="rule"></span></div>';
       h += dataTable(
         [{label:t('progress.date')},{label:t('progress.exercise')},
          {label:t('progress.best')},{label:t('progress.sets'),n:true}],
@@ -971,8 +980,8 @@ Screens.body = function(){
       h += '<div class="mt-4">' + emptyState('body.neverBody','body.neverHint','inbox') + '</div>';
     }
 
-    h += '<div class="sect mb-2 mt-4"><h3 class="sub">' +
-         esc(t('body.factors')) + '</h3><span class="rule"></span></div><div class="factors bare">';
+    h += '<div class="sect mb-2 mt-4"><h2 class="sub">' +
+         esc(t('body.factors')) + '</h2><span class="rule"></span></div><div class="factors bare">';
     r.parts.forEach(p => {
       h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(p.label) +
            (p.note ? ' <span class="meta">(' + esc(p.note) + ')</span>' : '') +
@@ -1018,7 +1027,7 @@ Screens.body = function(){
 function labStructPanel(info){
   const side = info.side ? esc(t('lab3d.side.' + info.side)) : '';
   let h = '<div class="panel inset lab-struct">';
-  h += '<div class="panel-hd"><h3 class="sub">' + esc(info.label) + '</h3>' +
+  h += '<div class="panel-hd"><h2 class="sub">' + esc(info.label) + '</h2>' +
        '<button class="btn quiet sm" onclick="clearMuscle()" aria-label="' +
        esc(t('body.close')) + '">' + esc(t('body.close')) + '</button></div>';
   h += '<div class="chips mb-2">' +
@@ -1328,7 +1337,7 @@ Screens.progress = function(){
   const vol = volumeByMuscle(s, from);
   const totalVol = Object.keys(vol).reduce((a,k)=>a+vol[k],0);
   const prCount = inPeriod.length ? countPRs(s, from) : 0;
-  h += '<div class="sect"><h3 class="sub">' + esc(t('progress.overview')) + '</h3><span class="rule"></span>' +
+  h += '<div class="sect"><h2 class="sub">' + esc(t('progress.overview')) + '</h2><span class="rule"></span>' +
        '<span class="aside">' + esc(periodLabel) + '</span></div>';
   h += metricsBlock([
     { k:t('progress.sessions'), v: inPeriod.length, d: esc(periodLabel), numKey:'prog.sessions' },
@@ -1343,7 +1352,7 @@ Screens.progress = function(){
        explicitly labelled and visually separated from anything personal. */
     h += '<div class="mt-3">' +
       emptyState('progress.nodata', 'progress.nodataBody', 'chart',
-        '<button class="btn" onclick="go(\'session\')">' + esc(t('progress.start')) + '</button>') +
+        '<button class="btn" onclick="go(\'session\')">' + esc(t('progress.start')) + '</button>', 2) +
       '</div>';
     h += '<div class="panel mt-3">' +
       '<div class="eyebrow mb-2">' + esc(t('progress.sample')) + '</div>' +
@@ -1381,7 +1390,7 @@ Screens.progress = function(){
      log is intact and still exported as it is, but there is nothing to plot.
      Say that, instead of drawing an empty chart or crashing the screen. */
   if(progEx){
-  h += '<div class="sect"><h3 class="sub">' + esc(t('progress.detail')) + '</h3><span class="rule"></span></div>';
+  h += '<div class="sect"><h2 class="sub">' + esc(t('progress.detail')) + '</h2><span class="rule"></span></div>';
   h += '<div class="panel">';
   h += '<div class="chips mb-3">';
   [30,90,0].forEach(pd => {
@@ -1435,13 +1444,13 @@ Screens.progress = function(){
   h += '</div>';
 
   } else {
-    h += '<div class="sect"><h3 class="sub">' + esc(t('progress.detail')) + '</h3><span class="rule"></span></div>';
+    h += '<div class="sect"><h2 class="sub">' + esc(t('progress.detail')) + '</h2><span class="rule"></span></div>';
     h += '<div class="panel"><div class="uncertain"><b>' + esc(t('state.none')) + '</b> ' +
          esc(t('progress.unknownEx')) + '</div></div>';
   }
 
   /* --- session table --- */
-  h += '<div class="sect"><h3 class="sub">' + esc(t('progress.table')) + '</h3><span class="rule"></span></div>';
+  h += '<div class="sect"><h2 class="sub">' + esc(t('progress.table')) + '</h2><span class="rule"></span></div>';
   h += '<div class="panel flush"><div class="table-wrap"><table class="data">' +
        '<caption>' + esc(periodLabel) + '</caption><thead><tr>' +
        '<th>' + esc(t('progress.date')) + '</th><th>' + esc(t('progress.exercise')) + '</th>' +
@@ -1472,7 +1481,7 @@ Screens.progress = function(){
   h += '<p class="hint">' + esc(t('hist.recalcNote')) + '</p>';
 
   /* --- personal records --- */
-  h += '<div class="sect"><h3 class="sub">' + esc(t('progress.pr')) + '</h3><span class="rule"></span></div>';
+  h += '<div class="sect"><h2 class="sub">' + esc(t('progress.pr')) + '</h2><span class="rule"></span></div>';
   h += '<div class="panel flush"><div class="table-wrap"><table class="data"><thead><tr>' +
        '<th>' + esc(t('progress.exercise')) + '</th>' +
        '<th>' + esc(t('progress.pr')) + '</th>' +
@@ -1510,7 +1519,7 @@ function bodyweightTrendPanel(s){
     const tail = list.slice(-7);
     avg7 = Math.round(tail.reduce((acc, x) => acc + x.w, 0) / tail.length * 10) / 10;
   }
-  let h = '<div class="sect"><h3 class="sub">' + esc(t('profile.bodyweight')) + '</h3><span class="rule"></span>' +
+  let h = '<div class="sect"><h2 class="sub">' + esc(t('profile.bodyweight')) + '</h2><span class="rule"></span>' +
           '<span class="aside"><button type="button" class="chip sm" onclick="openSheet(\'bw\')">+ ' +
           esc(t('bw.log')) + '</button></span></div>';
   h += '<div class="panel">';

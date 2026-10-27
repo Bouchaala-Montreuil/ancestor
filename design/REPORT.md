@@ -12,21 +12,23 @@ exactly what was seen and what a headless browser still cannot tell you.
 
 The visual pass happened last, and it is the most useful thing in this
 document: it found eleven rendered defects that every structural suite had
-passed.
+passed. Three further passes have since found five more — and the last two were
+found only because the capture covered the whole page instead of the first
+screen.
 
 **How to re-verify**
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
 node tests/browser.js          # 33 real Chromium: WebGL, layouts, keyboard, SW offline
-node tools/keyscan.js          # 1,656 keys × 7 languages, 0 leaks
+node tools/keyscan.js          # 1,657 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,280 checks over ten headless suites**, all green —
-design 210, premium 213, ui 230, run 142, inclusive 65, personas 66, science 124,
+Current: **1,297 checks over ten headless suites**, all green —
+design 213, premium 213, ui 242, run 142, inclusive 65, personas 68, science 124,
 logic 122, anatomy 64, print 44 — plus **33 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
@@ -300,6 +302,7 @@ run against this build — was executed.
 | the screens themselves | full-page and clipped screenshots at 320, 390, 768, 1024, 1280, 1440 px, English and Arabic | eleven visual defects, listed in §8 and in `app/DESIGN.md` §3.13 |
 | a second pass over the screens the first one skipped | exercise sheet, plan editor, lesson, settings fold, progress drill-down, print card, onboarding at 320 px, rest timer | the exercise sheet was rendering as an A4 poster on a phone, with no visible way out (`DESIGN.md` §3.14). The rest held. |
 | the on-screen keyboard | 390 × 420, a numeric field focused in a live session | the tab bar was painted over the set's **Log Set** button (`DESIGN.md` §3.15); fixed |
+| a full-page capture of Body, not just the first screen | 1280 and 390 px, whole document | a tap icon with no width rendering as a **547 × 547 px** glyph, 560 px of empty page between the figure and the muscle list (`DESIGN.md` §3.17); plus the raw key `body.selectBody` in all seven languages (§3.19) |
 
 **What the screenshots changed.** Nine of the eleven defects found visually were
 invisible to every check that existed: clipped layouts hidden by
@@ -347,6 +350,9 @@ counted as prose. The true figure at that commit is **153**.
 | controls exposed on the active session | 159 (99 of them buttons) | 23 |
 | nested interactive elements on Today | 30 segments inside a `<button>` | 0 |
 | focus stops contributed by the dashboard figure | 31 | 1 |
+| focus stops on Body (figure + muscle list) | 34 (14 of them the figure, announcing the same twelve groups as the list) | 19 |
+| heading levels on Body / Progress / session plan | `h1,h3` / `h1,h3×6` / `h1,h3` | `h1,h2` / `h1,h2×6` / `h1,h2` |
+| screens starting with an `h1` | 6 of 7 | 7 of 7 |
 | sub-navigation accessible name | "Exercise library88" | "Exercise library" |
 | set fields naming their set | 0 of 54 | 54 of 54 |
 | controls exposed on Profile | 160 | 42 |
@@ -373,14 +379,19 @@ needs 4.5:1):
 | `--ink-3` | 5.63 | ✓ |
 | `--tech` | **3.72** | ✗ as text — used for marks only; text uses `--tech-ink` 5.00 |
 | `--burnt` | **2.95** | ✗ as text — used for rules and marks; text uses `--burnt-text` 4.96 |
+| `--accent-on-ink` | 6.12 | ✓ on charcoal — the accent as text on ink |
 | `--ok` | 5.88 | ✓ |
 | `--warn` | 4.79 | ✓ |
 | `--alert` | 5.81 | ✓ |
 
-The two failures are honest open leads, not oversights: both colours are
-specified for marks, and both have a text-safe sibling in the token set. They
-remain on the list in §9 because a token that fails AA will eventually be used as
-text by someone.
+The two failures are now guarded rather than noted. Both colours are specified
+for marks and both have a text-safe sibling; five places had nonetheless set
+`color` to them, and on the dark surfaces the text-safe sibling was the wrong
+one — the accent as text on ink needed a lighter value, `--accent-on-ink`
+(#E08A5A, 6.12:1), because the base orange was only 4.6:1 at 9–12 px small caps.
+`tests/design.js` now fails on any `color: var(--tech)` or `color: var(--burnt)`
+in the stylesheet or in the five modules that emit inline styles (`DESIGN.md`
+§3.18), and the guard was falsified by adding the line back.
 
 **Two defects the browser found that no contrast table could.** The session HUD's
 quiet buttons were ink on charcoal (2.6:1 — the button text and the surface were
@@ -391,10 +402,13 @@ surfaces put it on the one surface it must never meet. The HUD's buttons are
 now ivory on charcoal with the full 44 px target, and a `.chip.on` inside a
 `.subnav` no longer takes the chip fill.
 
-**Still open:** heading levels jump (`h1 → h3`) on Body, Progress and the session
-plan — measured at the end of this pass as `h1,h3` (Body), `h1,h3×6` (Progress),
-`h1,h3` (session plan); Science is now `h1,h2`. The panels share one `h3`
-component and were left alone rather than half-converted.
+**Closed in this pass:** heading levels no longer jump. Body, Progress and the
+session plan were `h1 → h3`; the shared `.sub` type now sits on the class rather
+than the tag, so every panel directly under a screen's `h1` is an `h2`, a lesson
+finally has an `h1`, and the two empty states that stand at the top of a screen
+take a level argument instead of hard-coding `h3`. Twelve screen states are
+walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
+(`DESIGN.md` §3.16).
 
 ---
 
@@ -442,17 +456,27 @@ component and were left alone rather than half-converted.
    notification, or an honest "keep this tab open" note. This is the one place
    where the product currently under-delivers on a promise the session screen
    makes.
-2. **Body: drop the duplicate muscle list** — either the figure carries the
-   names or the list does. Both is 100 words of repetition on a screen whose job
-   is a glance.
+2. ~~**Body: drop the duplicate muscle list.**~~ **Done — but not by deleting
+   the list.** Measured, the figure carried no visible names at all: the
+   duplication was fourteen focus stops plus twelve for the same groups, and a
+   four-swatch legend repeating the state words the list already prints. The
+   figure is now `pointerOnly` (tappable, out of the tab order), the legend is
+   gone because each row is its own key, and Body is 34 → 19 focus stops
+   (`DESIGN.md` §3.17).
 3. **Audit the exercise sheet on its own** — it inherited every action the atlas
    rows used to duplicate, and it has never been measured or seen.
 4. **Audit the plan screen** — the only surface untouched by this phase.
-5. **Fix the heading levels** on Body, Progress and the session plan (`h3` panels
-   should be `h2`), and take the whole component rather than half of it.
-6. **Retire or guard the two failing colour tokens** — `--tech` and `--burnt` as
-   text. A lint or test that fails when either is used for `color` closes the
-   lead permanently.
+5. ~~**Fix the heading levels.**~~ **Done, whole component.** `.sub` moved from
+   the `h3` tag to the class, so Body, Progress and the session plan are `h1,h2`;
+   a lesson gained the `h1` it never had; `emptyState()` takes its level instead
+   of hard-coding `h3`. Twelve screen states are walked by a test that fails on a
+   second `h1` or a skipped level (`DESIGN.md` §3.16).
+6. ~~**Retire or guard the two failing colour tokens.**~~ **Guarded.** Five
+   places set `color` to `--burnt`; they now use `--burnt-text` on paper and a new
+   `--accent-on-ink` (6.12:1 on charcoal) on ink. `tests/design.js` fails on
+   `color: var(--tech)` or `color: var(--burnt)` anywhere in the stylesheet or the
+   five modules that emit inline styles, and the guard was falsified by putting
+   the line back (`DESIGN.md` §3.18).
 7. **Watch five people onboard.** Everything about the eight-step flow is an
    argument; ten minutes of observation would replace most of it.
 8. **Measure discoverability of the folded settings** — instrument or test
@@ -473,8 +497,12 @@ component and were left alone rather than half-converted.
    it (`DESIGN.md` §3.15). What replaces it: **a real device**, because a
    simulated keyboard height is still a simulation — iOS Safari's viewport
    behaviour on focus is not the same as a short window.
+11. **Capture the whole page, not the first screen.** The 547 px tap icon on
+   Body (§3.17) and the raw `body.selectBody` key (§3.19) both sat below the
+   fold of every screenshot ever taken of that screen. Both were found in the
+   same minute once the capture ran to the full document height. This is the
+   cheapest item on this list and it has already paid.
 
-Ranked by user impact, then by cost: 1 and 2 are small changes with daily
-consequences; 3, 4 and 5 are audits and mechanical fixes; 6 and 8 are cheap
-guards; 7 and 9 are the investments that would make every other claim in this
-document checkable.
+Ranked by user impact, then by cost: 1 is a small change with daily
+consequences; 3 and 4 are audits; 8 and 11 are cheap guards; 7 and 9 are the
+investments that would make every other claim in this document checkable.

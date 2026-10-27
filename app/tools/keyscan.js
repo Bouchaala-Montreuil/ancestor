@@ -50,7 +50,16 @@ const found={};
 langs.forEach(lang=>{
   w.setLang(lang);
   ['home','session','body','progress','profile','science'].forEach(v=>{
-    w.go(v); if(v==='session') w.startSession(); if(v==='body') w.selectMuscle('chest');
+    w.go(v); if(v==='session') w.startSession();
+    /* Body is scanned *before* a muscle is chosen as well as after: the
+       unselected screen is the one with the empty state in it, and that is
+       where a key passed as a data argument rather than to t() can reach the
+       screen — which is exactly how 'body.selectBody' rendered raw in all seven
+       languages without this scan noticing. */
+    if(v==='body'){
+      scanText(lang, d.querySelector('#screenBody').textContent);
+      w.selectMuscle('chest');
+    }
     if(v==='progress') w.openSessionEditor(w.getState().sessions[0].id,0);
     const txt=d.querySelector('#screenBody').textContent + ' ' +
               (d.querySelector('#sheetHost') ? d.querySelector('#sheetHost').textContent : '');
@@ -72,6 +81,31 @@ langs.forEach(lang=>{
     }
   });
 });
+/* Static pass. The rendered scan only sees the states this script visits; a key
+   handed to t() with a literal name but defined nowhere is invisible to it until
+   someone opens that one screen. It found 'body.selectBody' rendering raw in all
+   seven languages, because the Body screen was only ever scanned with a muscle
+   already selected. Keys built by concatenation end in '.', and prog.full has a
+   deliberate English fallback. */
+const usedKeys = {};
+fs.readdirSync('js/ui').map(x => 'js/ui/' + x).concat(['js/app.js']).forEach(f => {
+  const src = fs.readFileSync(f, 'utf8');
+  const re = /\bt\(\s*'([A-Za-z0-9_.]+)'\s*([+),])/g; let m;
+  while((m = re.exec(src))){
+    /* a literal followed by '+' is a prefix ('about.p' + i), not a key */
+    if(m[2] === '+') continue;
+    usedKeys[m[1]] = f;
+  }
+});
+const dictSrc = fs.readdirSync('js/i18n').map(f => fs.readFileSync('js/i18n/' + f, 'utf8')).join('\n');
+const OPTIONAL = { 'prog.full': 'falls back to English when a language has no term' };
+const undef = Object.keys(usedKeys).filter(k => {
+  if(OPTIONAL[k]) return false;
+  const esc = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return !new RegExp('["\']' + esc + '["\']\\s*:').test(dictSrc);
+});
+undef.forEach(k => { found['undefined :: ' + k] = 1; });
+
 const f=Object.keys(found);
 const ok = f.length === 0 && missing.length === 0;
 console.log('\n' + '='.repeat(64));

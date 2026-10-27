@@ -48,11 +48,13 @@ function setRecSim(k, v){
 
 Screens.module = function(){
   const m = moduleById(MOD_ID);
-  if(!m) return { html: emptyState('sci.title', 'sci.sub', 'science') };
+  if(!m) return { html: emptyState('sci.title', 'sci.sub', 'science', '', 2) };
   const step = m.steps[MOD_STEP] || m.steps[0];
 
-  let h = '<div class="sect"><h2 class="title">' + esc(t(m.titleKey)) +
-          '</h2><span class="rule"></span>' +
+  /* A lesson replaces the screen rather than sitting inside one, so its title
+     is the screen's h1 — the science hub's masthead is not on this page. */
+  let h = '<div class="sect"><h1 class="title">' + esc(t(m.titleKey)) +
+          '</h1><span class="rule"></span>' +
           '<span class="aside"><button class="chip sm" onclick="closeModule()">' +
           esc(t('sci.backToHub')) + '</button></span></div>';
 
@@ -91,7 +93,7 @@ Screens.module = function(){
   /* explanation */
   h += '<div class="panel">';
   h += '<p class="eyebrow">' + esc(t('mod.stage', { n: MOD_STEP + 1, of: m.steps.length })) + '</p>';
-  h += '<h3 class="sub mt-2 mb-3">' + esc(t(step.titleKey)) + '</h3>';
+  h += '<h2 class="sub mt-2 mb-3">' + esc(t(step.titleKey)) + '</h2>';
   h += '<p class="body-sm mb-0">' + esc(t(step.bodyKey)) + '</p>';
   h += '</div>';
 

@@ -123,7 +123,7 @@ function sciLessons(){
 
   if(!list.length){
     h += emptyState('sci.noResults', 'sci.noResults.body', 'inbox',
-      '<button class="btn quiet sm" onclick="setSciCat(\'all\');setSciQuery(\'\')">' + esc(t('sci.all')) + '</button>');
+      '<button class="btn quiet sm" onclick="setSciCat(\'all\');setSciQuery(\'\')">' + esc(t('sci.all')) + '</button>', 2);
     return h;
   }
 
