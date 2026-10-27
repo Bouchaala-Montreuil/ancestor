@@ -624,7 +624,7 @@ function openAnalysis(){
    from where it stopped rather than restarting. */
 function startRest(sec){
   stopRest();
-  REST = { endsAt: Date.now() + sec*1000, total: sec, leftMs: sec*1000, paused: false };
+  REST = { endsAt: Date.now() + sec*1000, total: sec, added: 0, leftMs: sec*1000, paused: false };
   runRestTimer();
   paintRestHost();
 }
@@ -651,6 +651,7 @@ function pauseRest(){
   REST.leftMs = Math.max(0, REST.endsAt - Date.now());
   if(REST.timer){ clearInterval(REST.timer); REST.timer = null; }
   paintRestHost();
+  restSay(t('session.restPaused'));
 }
 function resumeRest(){
   if(!REST || !REST.paused) return;
@@ -658,21 +659,29 @@ function resumeRest(){
   REST.endsAt = Date.now() + REST.leftMs;
   runRestTimer();
   paintRestHost();
+  restSay(t('session.rest'));
 }
 function toggleRest(){ if(REST) REST.paused ? resumeRest() : pauseRest(); }
 function resetRest(){
   if(!REST) return;
   REST.paused = false;
+  REST.added = 0;
   REST.leftMs = REST.total * 1000;
   REST.endsAt = Date.now() + REST.leftMs;
   runRestTimer();
   paintRestHost();
+  restSay(t('session.rest'));
 }
 function addRest(sec){
   if(!REST) return;
+  /* Extra time is tracked separately from the rest you programmed: the bar's
+     maximum has to grow with it (or the elapsed value runs past its own
+     maximum), but Reset must still return to the rest you actually set. */
+  REST.added = (REST.added || 0) + sec;
   REST.endsAt += sec*1000;
   REST.leftMs = Math.max(0, REST.endsAt - Date.now());
   paintRestHost();
+  restSay(t('session.rest') + ' +' + sec + 's');
 }
 function stopRest(){
   if(REST && REST.timer) clearInterval(REST.timer);
@@ -684,9 +693,18 @@ function paintRest(){
   const left = Math.max(0, (REST.paused ? REST.leftMs : REST.endsAt - Date.now()) / 1000);
   el.textContent = fmtClock(left);
   const bar = $('#restBar');
+  const spanSec = Math.max(1, REST.total + (REST.added || 0));
+  const done = 1 - left / spanSec;
   if(bar){
-    const done = REST.total > 0 ? (1 - left / REST.total) : 0;
     bar.style.width = (Math.max(0, Math.min(1, done)) * 100).toFixed(1) + '%';
+  }
+  const track = $('#restTrack');
+  if(track){
+    const span = Math.max(1, Math.round(REST.total + (REST.added || 0)));
+    const elapsed = Math.max(0, Math.min(span, Math.round(span - left)));
+    track.setAttribute('aria-valuenow', String(elapsed));
+    track.setAttribute('aria-valuemax', String(span));
+    track.setAttribute('aria-valuetext', fmtClock(left));
   }
 }
 function fmtClock(sec){
@@ -698,12 +716,28 @@ function paintRestHost(){
   const c = $('#restHost'); if(!c) return;
   if(!REST){ c.innerHTML = ''; c.classList.remove('on'); return; }
   const left = Math.max(0, (REST.paused ? REST.leftMs : REST.endsAt - Date.now()) / 1000);
-  const pct = REST.total > 0 ? Math.max(0, Math.min(100, (1 - left / REST.total) * 100)) : 0;
+  const spanSec0 = Math.max(1, REST.total + (REST.added || 0));
+  const pct = Math.max(0, Math.min(100, (1 - left / spanSec0) * 100));
+  const label = REST.paused ? t('session.restPaused') : t('session.rest');
+  const span = Math.max(1, Math.round(REST.total + (REST.added || 0)));
+  /* The clock repaints four times a second, so it is hidden from assistive
+     technology: announcing a countdown at 4 Hz is not information, it is an
+     interruption. The countdown is a labelled progressbar (which a screen reader
+     can query whenever the user wants the number) and one polite status line
+     that speaks only when the state changes. Rest ending was already announced,
+     through the toast; rest *starting* said nothing at all. */
   c.classList.add('on');
-  c.innerHTML = '<div class="restbar"><div class="in">' +
-    '<span class="eyebrow" style="color:var(--burnt)">' + esc(REST.paused ? t('session.restPaused') : t('session.rest')) + '</span>' +
-    '<div class="track"><i id="restBar" style="width:' + pct.toFixed(1) + '%"></i></div>' +
-    '<span class="t" id="restT">' + fmtClock(left) + '</span>' +
+  c.innerHTML = '<div class="restbar" role="region" aria-label="' + esc(t('session.rest')) + '">' +
+    '<div class="in">' +
+    '<span class="eyebrow" style="color:var(--burnt)">' + esc(label) + '</span>' +
+    '<div class="track" id="restTrack" role="progressbar" aria-label="' + esc(t('session.rest')) + '" ' +
+      'aria-valuemin="0" aria-valuemax="' + span + '" aria-valuenow="' +
+      Math.max(0, Math.min(span, Math.round(span - left))) + '" aria-valuetext="' +
+      esc(fmtClock(left)) + '">' +
+      '<i id="restBar" style="width:' + pct.toFixed(1) + '%"></i></div>' +
+    '<span class="t" id="restT" aria-hidden="true">' + fmtClock(left) + '</span>' +
+    '<span class="sr-only" id="restSay" role="status" aria-live="polite">' +
+      esc(label + ' · ' + fmtClock(left)) + '</span>' +
     '<button class="btn quiet sm" onclick="toggleRest()">' +
       esc(REST.paused ? t('session.restResume') : t('session.restPause')) + '</button>' +
     '<button class="btn quiet sm" onclick="resetRest()">' + esc(t('session.restReset')) + '</button>' +
@@ -711,6 +745,14 @@ function paintRestHost(){
     '<button class="btn quiet sm" onclick="stopRest();render()">' + esc(t('btn.close')) + '</button>' +
     '</div></div>';
   paintRest();
+}
+
+/* One line, spoken only when the rest state changes. */
+function restSay(prefix){
+  const el = typeof document !== 'undefined' && document.getElementById('restSay');
+  if(!el || !REST) return;
+  const left = Math.max(0, (REST.paused ? REST.leftMs : REST.endsAt - Date.now()) / 1000);
+  el.textContent = prefix + ' · ' + fmtClock(left);
 }
 
 function saveDraft(){ try{ if(ACTIVE) localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); }catch(e){} }

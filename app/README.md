@@ -172,9 +172,9 @@ python3 build.py                   # rebuild dist/ancestor.html
 npm test                           # the ten headless suites, in order
 npm run test:browser               # the one that needs a real Chrome
 
-node tests/design.js               # 190 design system, states, targets, disclosures
+node tests/design.js               # 193 design system, states, targets, disclosures
 node tests/premium.js              # 213 motion, dashboard, charts, states, boundaries
-node tests/ui.js                   # 177 end-to-end DOM tests
+node tests/ui.js                   # 197 end-to-end DOM tests
 node tests/run.js                  # 142 engine / i18n tests
 node tests/inclusive.js            #  65 migration / a11y / locale tests
 node tests/personas.js             #  66 persona journey checks
@@ -286,9 +286,9 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 ## Tests
 
 ```
-node tests/design.js   →  190 passed   palette, contrast on washes, states, 44px targets, disclosures
+node tests/design.js   →  193 passed   palette, contrast on washes, states, 44px targets, disclosures
 node tests/premium.js  →  213 passed   motion, dashboard, charts, the state matrix, boundaries
-node tests/ui.js       →  177 passed   onboarding, logging, anatomy, charts, restart, disclosure
+node tests/ui.js       →  197 passed   onboarding, logging, anatomy, charts, restart, disclosure
 node tests/run.js      →  142 passed   progression, recovery, shifts, persistence, honesty, i18n
 node tests/inclusive.js→   65 passed   v1→v3 migration, a11y model, filtering, units, locale
 node tests/personas.js →   66 passed   the ten inclusive user journeys

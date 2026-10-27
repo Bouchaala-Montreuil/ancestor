@@ -1540,6 +1540,31 @@ table.data tbody tr:last-child td{border-bottom:0}
 .dis[open] summary::after{content:"\2013"}
 .dis summary:focus-visible{outline:2px solid var(--burnt);outline-offset:3px}
 
+/* ------------------------------------------------------- SESSION BLOCKS
+   One exercise is the work; the others are the plan for later in the same
+   session. Each block is a native disclosure whose summary carries the number,
+   the name and how much of it is done — so a folded block still answers
+   "where am I?" without being opened. */
+.ex-block{padding:0;overflow:hidden}
+.ex-block.is-current{border-color:var(--burnt);box-shadow:var(--shadow-2)}
+.ex-block > .ex-block-sum{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  list-style:none;cursor:pointer;
+  min-height:var(--hit);padding:var(--s3);
+}
+.ex-block > .ex-block-sum::-webkit-details-marker{display:none}
+.ex-block > .ex-block-sum:focus-visible{outline:2px solid var(--burnt);outline-offset:-2px}
+.ex-block-hd{display:flex;align-items:center;gap:var(--s2);min-width:0}
+.ex-block-idx{font-size:11px;color:var(--burnt-text);font-weight:700}
+.ex-block-meta{
+  flex:none;margin-inline-start:auto;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tech-ink);white-space:nowrap;
+}
+.ex-block[open] > .ex-block-sum{border-bottom:var(--hair) solid var(--line)}
+.ex-block-body{padding:var(--s3)}
+.ex-block:not([open]) .sess-ex-h{color:var(--ink-2)}
+
 /* The session exercise name is a heading for the outline, not for the eye:
    the type scale on this screen is already set by .plan-ex-title. */
 .sess-ex-h{margin:0;font:inherit;line-height:1;display:inline-flex}

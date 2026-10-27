@@ -217,7 +217,65 @@ same one primary action. The page was re-pitched as three answers instead of a
 ledger — which is the only kind of change that can make a dashboard of the same
 content feel smaller.
 
-### 3.8 Small things that were wrong
+### 3.8 The session shows the work, not the whole programme
+
+The active session rendered every exercise in full: six headers, six set blocks
+and eighteen live rows of inputs at once — **826 words, 152 controls in the
+document, 99 buttons** on the screen you use one-handed, tired, between sets.
+
+One exercise is open now — the one you are actually on — and the rest fold to a
+single line each that answers "where am I?" without being opened:
+
+> **02 · Overhead Press**  ·  1 of 3 logged
+
+| | before | after |
+|---|---|---|
+| visible words | 826 | **205** |
+| controls reachable at once | 152 | **21** |
+| exercises rendered in full | 6 | **1** |
+| set cards in the document | 18 | 18 (nothing deleted) |
+
+Three rules make it safe rather than merely short:
+
+1. **Nothing leaves the document.** Every set, input and note is still rendered;
+   the folded blocks are native `<details>`, so print, tests and assistive
+   technology still see the whole session.
+2. **The current exercise always presents itself.** When the session moves on,
+   the new current block opens even if it had been closed earlier — a stale
+   "closed" on the lift you are now supposed to do would hide the work. A block
+   you opened to look ahead stays open across the re-render every keystroke
+   causes.
+3. **The state is recorded from the click, not from `toggle`.** A `toggle` event
+   also fires for the element the page has just created, which froze "current"
+   into "always open" on the first re-render. The static suite now fails if the
+   block is driven by `ontoggle`.
+
+The exercise name used to open the exercise-detail sheet; it now expands the
+block. Details are still one tap away — *Exercise details* is the first item in
+the block's options — and the trade is deliberate: the name is the biggest target
+on the row, and expanding what you are looking at is the more frequent intent.
+
+### 3.9 The rest timer can be read without watching it
+
+Rest was a visual countdown. A screen reader user got nothing when it started,
+nothing while it ran, and one toast when it ended — the timer was usable only if
+you could see it.
+
+- the bar is a **labelled region**;
+- the countdown is a **`progressbar`** with `aria-valuemin/max/now` and a
+  `aria-valuetext` of the clock, so the remaining time can be queried at any
+  moment;
+- the ticking `<span>` is `aria-hidden`: announcing a countdown four times a
+  second is an interruption, not information;
+- one polite `role="status"` line speaks **only when the state changes** —
+  started, paused, resumed, +15 s, and the existing toast when it ends.
+
+A real defect surfaced while testing this: **adding 15 s pushed the elapsed value
+past its own maximum** (`-15 of 120`). Extra time is now tracked separately from
+the rest you programmed, so the bar's maximum grows with it while *Reset* still
+returns to the rest you actually set.
+
+### 3.10 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -286,6 +344,8 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | controls exposed on Profile | 160 | 59 |
 | page titles that are `h1` | 1 of 7 | 7 of 7 |
 | top-level sections on Today | 9 | 3 |
+| visible words in an active session | 826 | 205 |
+| controls reachable at once in a session | 152 | 21 |
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
@@ -301,7 +361,7 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 | Onboarding | exercise step regrouped; eight steps, one question each | the middle steps are still one long column of chips; the step order has never been tested with a real first-run user |
 | Today | action hierarchy, figure, and three bands | 381 words is still a lot for a screen you open in a gym car park; the verdict's `factors` list has never been trimmed |
 | Plan | untouched | not re-audited this pass |
-| Active session | headings, disclosures, discard moved, field names | 774 words with every set expanded; no per-exercise collapse; rest timer not visually verified |
+| Active session | one exercise open, the rest folded; rest timer readable without sight | the block is the only focus surface; whether 205 words is still too many has not been tested with a tired user |
 | Exercise atlas | register rows, one control each, filters behind a disclosure | the sheet is now the only action surface — everything a row used to duplicate has to be there, and that is worth auditing next |
 | Progress | untouched | charts and records re-verified for scale in the previous pass; drill-down not re-audited |
 | Body / anatomy | figure semantics fixed | 59 controls on one screen; the muscle list duplicates what the figure already shows |
@@ -325,6 +385,10 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 - **Discoverability was not tested.** Collapsing a settings page is a bet that
   the summary line is enough to make someone open it. Nobody has watched a real
   user look for "units".
+- **The rest timer stops when the device sleeps.** It is computed from an
+  absolute end time, so it is correct the moment the tab resumes — but nothing
+  fires while the screen is off, and there is no OS notification. "Survives a
+  locked screen" means the arithmetic survives, not that it can interrupt you.
 - **The atlas and the profile were measured, not seen.** Row density, the 72 px
   row height, the sheet hand-off and four stacked records are structural claims;
   nobody has looked at them on a 390 px screen.
@@ -340,10 +404,10 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 1. **The exercise pool inside Programme** — 84 chips in six disclosures; it now
    has a good pattern to copy from the onboarding step it sits beside.
-2. **Session: 774 words.** One exercise expanded at a time, user-controlled, with
-   a visible "next" — plus a rest timer that survives a locked screen.
-3. **Today's 381 words.** The outline is fixed; the prose inside the verdict and
+2. **Today's 381 words.** The outline is fixed; the prose inside the verdict and
    the insight card is not.
+3. **A rest timer that can reach you when the screen is off** — a service-worker
+   notification, or an honest "keep this tab open" note.
 4. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
 5. **The exercise sheet** — now the atlas's only action surface; it has never been

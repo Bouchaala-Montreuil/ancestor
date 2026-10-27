@@ -701,6 +701,121 @@ group('19. Today answers three questions, not nine');
       body().querySelectorAll('.dash-actions .btn:not(.quiet):not(.secondary)').length === 1);
 }
 
+group('20. The session shows the work, not the whole programme');
+{
+  const dom11 = await boot();
+  const w11 = dom11.window, d11 = w11.document;
+  completeOnboarding(w11, d11);
+  w11.go('session'); w11.startSession();
+  const body = () => d11.getElementById('screenBody');
+  const blocks = () => Array.from(body().querySelectorAll('details.ex-block'));
+  const isOpen = el => el.hasAttribute('open');
+  const visibleText = node => {
+    let out = '';
+    Array.from(node.childNodes).forEach(c => {
+      if(c.nodeType === 3){ out += ' ' + c.nodeValue; return; }
+      if(c.nodeType !== 1) return;
+      if(c.tagName === 'DETAILS' && !c.hasAttribute('open')) return;
+      if(c.getAttribute('aria-hidden') === 'true') return;
+      out += ' ' + visibleText(c);
+    });
+    return out;
+  };
+
+  chk('there is one block per exercise', blocks().length === w11.ANC.active.exercises.length,
+      blocks().length + ' blocks');
+  chk('only the current exercise is open', blocks().filter(isOpen).length === 1,
+      blocks().filter(isOpen).length + ' open');
+  chk('a folded exercise states how much of it is done',
+      blocks().every(bl => {
+        const meta = bl.querySelector('.ex-block-meta');
+        return meta && /\d+\s*of\s*\d+|\d+\/\d+/.test(meta.textContent);
+      }), blocks()[1].querySelector('.ex-block-meta').textContent.trim());
+  chk('every set is still in the document: nothing was deleted',
+      body().querySelectorAll('.setcard').length ===
+      w11.ANC.active.exercises.reduce((a, e) => a + e.sets.length, 0),
+      body().querySelectorAll('.setcard').length + ' set cards');
+  chk('the outline still names every exercise',
+      body().querySelectorAll('h2.sess-ex-h').length === blocks().length,
+      body().querySelectorAll('h2.sess-ex-h').length + ' h2');
+
+  const words = visibleText(body()).trim().split(/\s+/).filter(Boolean).length;
+  chk('the visible session is a fraction of the rendered one', words < 300, words + ' visible words');
+
+  /* looking ahead must not close the block you opened */
+  const second = blocks()[1];
+  const ex1id = w11.ANC.active.exercises[1].id;
+  second.querySelector('summary').dispatchEvent(new w11.MouseEvent('click', {bubbles:true}));
+  second.setAttribute('open', '');
+  w11.render();
+  const secondAgain = Array.from(body().querySelectorAll('details.ex-block'))[1];
+  chk('an exercise you opened stays open across a re-render', isOpen(secondAgain));
+  const firstAfter = Array.from(body().querySelectorAll('details.ex-block'))[0];
+  chk('and the auto-opened current exercise stays open too', isOpen(firstAfter));
+  w11.exOpen(ex1id, false); w11.render();
+
+  /* logging every set of the current exercise moves the focus */
+  w11.ANC.active.exercises[0].sets.forEach((st, si) => {
+    ['w','a','r','t','d'].forEach(k => w11.setVal(0, si, k, 60));
+    w11.toggleSet(0, si);
+  });
+  w11.render();
+  const after = Array.from(body().querySelectorAll('details.ex-block'));
+  const openAfter = after.filter(isOpen);
+  chk('finishing an exercise hands the screen to the next one',
+      openAfter.length === 1 && openAfter[0] === after[1],
+      openAfter.length + ' open, index ' + after.indexOf(openAfter[0]));
+  chk('the finished exercise folds itself away', !after[0].hasAttribute('open'));
+  chk('and its summary now says it is done',
+      /3 of 3|3\/3/.test(after[0].querySelector('.ex-block-meta').textContent),
+      after[0].querySelector('.ex-block-meta').textContent.trim());
+}
+
+group('21. The rest timer is readable without watching it');
+{
+  const dom12 = await boot();
+  const w12 = dom12.window, d12 = w12.document;
+  completeOnboarding(w12, d12);
+  w12.go('session'); w12.startSession();
+  w12.startRest(120);
+  const host = d12.getElementById('restHost');
+
+  chk('rest is a labelled region', !!host.querySelector('[role=region][aria-label]'));
+  const track = host.querySelector('[role=progressbar]');
+  chk('the countdown is a progressbar with a value', !!track &&
+      track.getAttribute('aria-valuemin') === '0' &&
+      track.getAttribute('aria-valuemax') === '120' &&
+      track.getAttribute('aria-valuenow') !== null,
+      track ? 'now=' + track.getAttribute('aria-valuenow') + ' max=' + track.getAttribute('aria-valuemax') : 'none');
+  const clock = host.querySelector('#restT');
+  chk('the ticking clock is hidden from screen readers', clock && clock.getAttribute('aria-hidden') === 'true',
+      clock ? clock.textContent : 'no clock');
+  const say = host.querySelector('#restSay');
+  chk('one polite status line speaks when rest starts',
+      say && say.getAttribute('role') === 'status' && say.getAttribute('aria-live') === 'polite' &&
+      /2:00|120/.test(say.textContent), say ? say.textContent.trim() : 'none');
+
+  w12.pauseRest();
+  chk('pausing speaks, and says how long is left',
+      /paus/i.test(d12.getElementById('restSay').textContent),
+      d12.getElementById('restSay').textContent.trim());
+  const pausedAt = d12.getElementById('restSay').textContent;
+  w12.resumeRest();
+  chk('resuming speaks again and keeps the remaining time',
+      d12.getElementById('restSay').textContent !== pausedAt,
+      d12.getElementById('restSay').textContent.trim());
+  w12.addRest(15);
+  chk('adding time says so', /15/.test(d12.getElementById('restSay').textContent),
+      d12.getElementById('restSay').textContent.trim());
+  const nowVal = +d12.querySelector('#restTrack').getAttribute('aria-valuenow');
+  const maxVal = +d12.querySelector('#restTrack').getAttribute('aria-valuemax');
+  chk('adding time lengthens the rest instead of overshooting its own maximum',
+      maxVal === 135 && nowVal >= 0 && nowVal <= maxVal,
+      nowVal + ' of ' + maxVal);
+  w12.stopRest(); w12.render();
+  chk('closing rest leaves nothing behind', !d12.getElementById('restHost').querySelector('[role=region]'));
+}
+
 group("18. Onboarding's exercise step: remove, do not select");
 {
   const dom9 = await boot();

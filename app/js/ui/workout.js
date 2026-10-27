@@ -547,6 +547,16 @@ function setExNote(ei, val){
   saveDraft();
 }
 
+/* Which exercise blocks the user has opened or closed by hand. Keyed by exercise
+   id so it survives the re-render a keystroke in a weight field causes.
+
+   One exception, and it is the whole point: when the session moves on, the new
+   current exercise opens whether or not it had been closed earlier. A stale
+   "closed" on the lift you are now supposed to do would hide the work. */
+let EX_OPEN = {};
+let EX_WAS_CURRENT = null;
+function exOpen(id, open){ EX_OPEN[id] = open; }
+
 function skipExercise(ei){
   const e = ACTIVE && ACTIVE.exercises[ei];
   if(!e) return;
@@ -601,6 +611,10 @@ function renderLive(){
   h += '</div>';
 
   /* Exercise panels */
+  /* the exercise the session is now on always presents itself */
+  const curId = (curEi >= 0 && ACTIVE.exercises[curEi]) ? ACTIVE.exercises[curEi].id : null;
+  if(curId && curId !== EX_WAS_CURRENT){ delete EX_OPEN[curId]; EX_WAS_CURRENT = curId; }
+
   ACTIVE.exercises.forEach((e, ei) => {
     const ex = EX_BY_ID[e.id]; if(!ex) return;
     const spec = exLogSpec(ex);
@@ -609,26 +623,37 @@ function renderLive(){
     const prevNote = previousExerciseNote(s, e.id, ACTIVE.startedAt);
     const isCurrent = (ei === curEi);
 
-    h += '<div class="panel" style="' + (isCurrent ? 'border-color:var(--burnt);box-shadow:var(--shadow-2)' : '') + '">';
-    h += '<div class="panel-hd row nowrap"><div class="row nowrap" style="min-width:0">' +
+    /* Every exercise used to render in full: six headings, six set blocks and
+       eighteen live rows of inputs at once, 774 words in one scroll. The session
+       is now the current exercise, open, with the rest folded to one line that
+       says how much of it is done. Nothing is removed from the DOM, so a
+       collapsed exercise still counts, prints and reads. */
+    const doneHere = e.sets.filter(st => st.committed).length;
+    const skippedHere = e.sets.filter(st => st.skipped).length;
+    /* An exercise the user opened stays open across the re-render every keystroke
+       causes; otherwise looking ahead at the next lift would close itself. */
+    const openHere = (e.id in EX_OPEN) ? EX_OPEN[e.id] : isCurrent;
+    h += '<details class="panel ex-block' + (isCurrent ? ' is-current' : '') + '"' +
+         (openHere ? ' open' : '') + '>';
+    /* The state is recorded from the click, not from `toggle`: a `toggle` event
+       also fires for the element the page just created, which would freeze
+       "current" into "always open" after the first re-render. */
+    h += '<summary class="ex-block-sum" onclick="exOpen(\'' + e.id + '\', !this.parentElement.open)"><span class="ex-block-hd">' +
          (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(ex) : '') +
-         '<div class="shrink">' +
-           '<div class="row row-base">' +
-             '<span class="mono" style="font-size:11px;color:var(--burnt-text);font-weight:700">' + String(ei+1).padStart(2,'0') + '</span>' +
-             '<h2 class="sess-ex-h"><button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
-             esc(t('ex.'+e.id)) + '</button></h2>' +
-           '</div>' +
-           '<div class="hint mt-1">' +
-             (ex.m || []).map(([m,w], idx) => esc(t('mg.' + m)) + (idx===0 ? ' (' + Math.round(w*100) + '%)' : '')).join(' · ') +
-           '</div>' +
-         '</div></div>' +
-         '<span class="hint">' + (ei+1) + '/' + ACTIVE.exercises.length + '</span></div>';
-
+         '<span class="mono ex-block-idx">' + String(ei+1).padStart(2,'0') + '</span>' +
+         '<h2 class="sess-ex-h">' + esc(t('ex.'+e.id)) + '</h2>' +
+         '</span><span class="ex-block-meta">' +
+         esc(t('log.remaining', { n: doneHere, m: e.sets.length })) +
+         (skippedHere ? ' · ' + esc(t('log.skippedShort')) : '') +
+         '</span></summary>';
+    h += '<div class="ex-block-body">';
+    h += '<div class="hint mb-2">' +
+         (ex.m || []).map(([m,w], idx) => esc(t('mg.' + m)) + (idx===0 ? ' (' + Math.round(w*100) + '%)' : '')).join(' · ') +
+         '</div>';
     h += '<div class="chips mb-2">' +
          '<span class="flag accent">' + targetRangeText(ex) + '</span>' +
          '<span class="flag plain">' + esc(t('session.rir')) + ' ' + e.rir + '</span>' +
          '<span class="flag plain">' + esc(t('session.rest')) + ' ' + (ACTIVE.restSec || 120) + 's</span>' +
-         '<span class="flag plain">' + esc(t('exd.mode.' + spec.mode)) + '</span>' +
          (spec.unilateral ? '<span class="flag plain">' + esc(t('log.unilateral')) + '</span>' : '') + '</div>';
 
     if(prev && prev.text){
@@ -669,7 +694,7 @@ function renderLive(){
            : spec.loadRole === 'added' ? t('log.addedHint')
            : t('log.warmupNote')) + '</p>';
     h += '<p class="body-sm m-0">' + esc(t('cue.'+e.id)) + '</p>';
-    h += '</div>';
+    h += '</div></details>';   /* ex-block */
   });
 
   h += '<div class="panel mt-4 heavy">';

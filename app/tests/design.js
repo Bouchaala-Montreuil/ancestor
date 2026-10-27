@@ -693,6 +693,16 @@ group('8o. Disclosures are one component, not four improvisations');
       !/style="[^"]*prof-val/.test(src));
   chk('the group says open and closed without an icon font',
       /\.prof-group\[open\] > summary::after\{content:/.test(flat));
+  /* The session's exercise blocks are the same disclosure at work: the summary
+     is the whole target, the current lift is marked by more than colour, and a
+     folded block still states its progress. */
+  chk('a session block summary is a focus stop and a full-height target',
+      /\.ex-block > \.ex-block-sum:focus-visible\{[^}]*outline/.test(flat) &&
+      /\.ex-block > \.ex-block-sum\{[^}]*min-height:var\(--hit\)/.test(flat));
+  chk('the current lift is marked by a border, not only by colour',
+      /\.ex-block\.is-current\{[^}]*border-color/.test(flat));
+  chk('rest is styled as a bar with a track and a painted fill',
+      /\.restbar\b/.test(flat));
   chk('the session uses the screen heading it was missing',
       /<h1 class="sess-h">/.test(src) || /'<h1 class="sess-h">'/.test(src));
   function coarseHasDis(){
