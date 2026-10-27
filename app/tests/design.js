@@ -478,6 +478,70 @@ group('8j. The exercise drawings obey one rule');
       !/stroke="#[0-9a-fA-F]{3,6}"/.test(comp));
 }
 
+group('8k. Charts are drawn to one scale');
+{
+  const comp = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const i0 = comp.indexOf('function niceStep');
+  const i1 = comp.indexOf('let CHART_SEQ');
+  const charts = comp.slice(comp.indexOf('/* --------------------------------------------------------------- CHARTS */'),
+                            comp.indexOf('/* ------------------------------------------------------------- PRINT CARD */'));
+
+  /* Execute the scale rather than describe it: a chart axis is a claim about
+     numbers, and it is only true if the numbers come out round. */
+  let niceScale = null;
+  try { niceScale = new Function(comp.slice(i0, i1) + '; return niceScale;')(); }
+  catch(e){ niceScale = null; }
+  chk('the scale function runs on its own', typeof niceScale === 'function');
+
+  if(typeof niceScale === 'function'){
+    const sc = niceScale(41.16, 53.34, 4);                       // 42..52.5 kg + pad
+    chk('a bodyweight series lands on 40/45/50/55, not 36/52/68/84/100',
+        sc.labels.join(' ') === '40 45 50 55', sc.labels.join(' '));
+    const sets = niceScale(0, 15.4, 4);
+    chk('a set count never grows a fraction', sets.labels.every(v => v % 1 === 0) &&
+        sets.max === 20 && sets.min === 0, sets.labels.join(' '));
+    const ratio = niceScale(0.4, 0.9, 4);
+    chk('a ratio keeps one decimal and still rounds both ends',
+        ratio.labels.join(' ') === '0.4 0.6 0.8 1', ratio.labels.join(' '));
+    const labels = niceScale(3.2, 97.4, 4);
+    chk('every label is a multiple of the step and the domain holds the data',
+        labels.labels.every(v => Math.abs(v / labels.step - Math.round(v / labels.step)) < 1e-9) &&
+        labels.min <= 3.2 && labels.max >= 97.4 && labels.labels.length >= 3 && labels.labels.length <= 7,
+        labels.labels.join(' '));
+    chk('a flat series still gets a domain instead of dividing by zero',
+        niceScale(50, 50, 4).max > 50);
+  }
+
+  /* Comments are allowed to describe the old defect; code is not allowed to keep it. */
+  const code = charts.replace(/\/\*[\s\S]*?\*\//g, '');
+  chk('the old "round the top only" hack is gone', !/rawMin\s*\*\s*0?\.85/.test(code));
+
+  chk('no bar is painted at a meaningless opacity',
+      !/fill-opacity/.test(code));
+  chk('no chart carries a colour of its own', !/#[0-9a-fA-F]{3,6}/.test(code));
+  chk('no colour is smuggled through a presentation attribute',
+      !/fill="var\(/.test(comp));
+
+  const needed = ['dv-axis', 'dv-grid', 'dv-ytick', 'dv-xtick', 'dv-dot', 'dv-value'];
+  const missing = needed.filter(c => css.indexOf('.' + c) < 0);
+  chk('every data-viz class the charts use exists in the stylesheet',
+      missing.length === 0, missing.join(', '));
+  chk('the axis is ink and the grid is a hairline',
+      /\.dv-axis\{stroke:var\(--ink\)/.test(css) && /\.dv-grid\{stroke:var\(--line-soft\)/.test(css));
+  chk('the series and the ring are the accent, not the ink',
+      /\.chart-path\{[^}]*stroke:var\(--burnt\)/.test(css) &&
+      /\.ring-value\{[^}]*stroke:var\(--burnt\)/.test(css));
+  chk('a bar chart starts at zero', /niceScale\(0,/.test(charts));
+
+  /* An entrance must never be the only way to see the data. */
+  chk('the un-animated chart is the finished chart, not a hidden one',
+      !/\.chart-path\{[^}]*stroke-dashoffset/.test(css) &&
+      /@keyframes chart-draw\{from\{stroke-dashoffset:1000\}/.test(css));
+  chk('the ring ships its arc in the markup', !/stroke-dashoffset="' \+ c\.toFixed\(2\)/.test(comp));
+  chk('the scale is used, not reimplemented, by both charts',
+      (code.match(/niceScale\(/g) || []).length >= 2);
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',
