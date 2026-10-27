@@ -211,6 +211,29 @@ group('8. Anatomy component integrity');
 }
 
 /* ================================================================ */
+group('8b. Preference hooks are real, not aspirational');
+{
+  const cssText = css;
+  const profile = fs.readFileSync(path.join(ROOT, 'js/core/profile.js'), 'utf8');
+  // what applyDisplay() actually writes onto <html>
+  const set = [...profile.matchAll(/r\.dataset\.(\w+)\s*=/g)].map(m => m[1]);
+  chk('applyDisplay sets the display attributes', set.length >= 3, set.join(','));
+  const used = [...cssText.matchAll(/html\[data-(\w+)/g)].map(m => m[1]);
+  const unique = [...new Set(used)];
+  const orphan = unique.filter(a => ['text','contrast','simple','motion'].indexOf(a) < 0);
+  chk('every html[data-*] rule matches an attribute the app sets',
+      orphan.length === 0, orphan.join(',') || 'none orphaned');
+  chk('text scaling is keyed on data-text',
+      /html\[data-text="1\.15"\]/.test(cssText));
+  chk('simple UI is keyed on data-simple="on"',
+      /html\[data-simple="on"\]/.test(cssText));
+  chk('high contrast is keyed on data-contrast',
+      /html\[data-contrast="high"\]/.test(cssText));
+  chk('reduced motion is keyed on data-motion',
+      /html\[data-motion="on"\]/.test(cssText));
+}
+
+/* ================================================================ */
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

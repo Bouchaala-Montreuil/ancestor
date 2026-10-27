@@ -3,6 +3,7 @@
 Everything visual that is not the app itself.
 
 ```
+ROADMAP.md           what the design still needs, prioritised, with effort
 CLINIC.md            the design direction, the rules, and what changed
 identity.html        the identity sheet — mark, lockups, colour, type, verdict
 compare.html         before / after, both frames live, same data

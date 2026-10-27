@@ -1630,8 +1630,14 @@ html[data-motion="on"] *,html[data-motion="on"] *::before,html[data-motion="on"]
 }
 
 /* text scale preferences set by js/core/profile.js */
-html[data-textscale="1.15"]{font-size:18.4px}
-html[data-textscale="1.3"]{font-size:20.8px}
+html[data-text="1.15"]{font-size:18.4px}
+html[data-text="1.3"]{font-size:20.8px}
+/* Text scaling must reflow display type too, or the scale contrast collapses
+   into overflow: the clamp ceilings are lowered by hand, not by a multiplier. */
+html[data-text="1.15"] .masthead-title{font-size:clamp(46px,13vw,86px)}
+html[data-text="1.3"] .masthead-title{font-size:clamp(40px,11.5vw,74px)}
+html[data-text="1.3"] .dec-state{font-size:clamp(40px,11vw,60px)}
+html[data-text="1.3"] .dash-bignum .v{font-size:clamp(52px,15vw,84px)}
 
 /* high contrast preference */
 html[data-contrast="high"]{
@@ -1643,9 +1649,9 @@ html[data-contrast="high"] .cov-row{border-bottom-style:solid}
 html[data-contrast="high"] .decision{outline:2px solid var(--ink);outline-offset:-2px}
 
 /* simple UI preference: drop the secondary annotations */
-html[data-simple="true"] .hint,
-html[data-simple="true"] .fig-hint,
-html[data-simple="true"] .chart-tip-readout{display:none}
+html[data-simple="on"] .hint,
+html[data-simple="on"] .fig-hint,
+html[data-simple="on"] .chart-tip-readout{display:none}
 
 /* ------------------------------------------------------------ FULL BLEED
    Below the desktop rail the verdict runs to the edges of the screen. A
