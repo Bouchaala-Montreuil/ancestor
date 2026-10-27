@@ -1,0 +1,391 @@
+/* ============================================================================
+   ANCESTOR — Program generator
+
+   Builds a plan from the profile: equipment, limitations, exercises the user
+   can perform, days available, session length, goal and chosen style.
+
+   Deliberately agnostic. The low-volume high-intensity mode is offered, not
+   imposed, and the app says so.
+   ========================================================================== */
+
+const STYLE = {
+  hit:  { compound:{sets:1, rirAdj:-1}, isolation:{sets:1, rirAdj:-1}, restSec:180 },
+  std:  { compound:{sets:3, rirAdj:0}, isolation:{sets:3, rirAdj:-1}, restSec:120 },
+  min:  { compound:{sets:2, rirAdj:-1}, isolation:{sets:1, rirAdj:0}, restSec:90 },
+  freq: { compound:{sets:2, rirAdj:+1}, isolation:{sets:2, rirAdj:+1}, restSec:90 }
+};
+
+const EXERCISES_BY_MINUTES = { 20:3, 35:4, 50:6, 70:7 };
+
+/* Splits by days available. Names are translated at render time. */
+const SPLITS = {
+  2: [ {id:'A', key:'full', focus:['chest','back','quads','hamstrings','shoulders','biceps','triceps','abs'],
+        patterns:['squat','pushH','pullH','hinge','core']},
+       {id:'B', key:'full', focus:['quads','hamstrings','glutes','chest','back','shoulders','biceps','triceps','calves'],
+        patterns:['hinge','pushV','pullV','squat','calf']} ],
+  3: [ {id:'A', key:'push', focus:['chest','shoulders','triceps'],
+        patterns:['pushH','pushV','extend','pushH']},
+       {id:'B', key:'pull', focus:['back','biceps','forearms','lowerback'],
+        patterns:['pullV','pullH','curl','pullH']},
+       {id:'C', key:'legs', focus:['quads','hamstrings','glutes','calves','abs'],
+        patterns:['squat','hinge','calf','core','squat']} ],
+  4: [ {id:'A', key:'upper', focus:['chest','back','shoulders','biceps','triceps'],
+        patterns:['pushH','pullV','pushV','pullH','curl']},
+       {id:'B', key:'lower', focus:['quads','hamstrings','glutes','calves','abs'],
+        patterns:['squat','hinge','squat','calf','core']},
+       {id:'C', key:'upper', focus:['shoulders','chest','back','triceps','biceps'],
+        patterns:['pushV','pullH','pushH','extend','curl']},
+       {id:'D', key:'lower', focus:['hamstrings','glutes','quads','calves','lowerback'],
+        patterns:['hinge','squat','hinge','calf','core']} ],
+  5: [ {id:'A', key:'push', focus:['chest','shoulders','triceps'], patterns:['pushH','pushV','extend','pushH','extend']},
+       {id:'B', key:'pull', focus:['back','biceps','forearms'],   patterns:['pullV','pullH','curl','pullH','curl']},
+       {id:'C', key:'legs', focus:['quads','hamstrings','glutes','calves'], patterns:['squat','hinge','squat','calf','hinge']},
+       {id:'D', key:'upper',focus:['back','chest','shoulders','biceps'], patterns:['pullH','pushH','pushV','pullV','curl']},
+       {id:'E', key:'lower',focus:['quads','hamstrings','glutes','abs','calves'], patterns:['squat','hinge','squat','core','calf']} ],
+  6: [ {id:'A', key:'push', focus:['chest','shoulders','triceps'], patterns:['pushH','pushV','extend','pushH']},
+       {id:'B', key:'pull', focus:['back','biceps','forearms'],   patterns:['pullV','pullH','curl','pullH']},
+       {id:'C', key:'legs', focus:['quads','hamstrings','glutes','calves'], patterns:['squat','hinge','squat','calf']},
+       {id:'D', key:'push', focus:['shoulders','chest','triceps'], patterns:['pushV','pushH','extend','pushV']},
+       {id:'E', key:'pull', focus:['back','biceps','lowerback'],  patterns:['pullH','pullV','curl','pullH']},
+       {id:'F', key:'legs', focus:['hamstrings','glutes','quads','calves','abs'], patterns:['hinge','squat','hinge','calf','core']} ]
+};
+
+const SPLIT_NAMES = {
+  A:{2:'fullA',3:'push',4:'upperA',5:'push',6:'pushA'},
+  B:{2:'fullB',3:'pull',4:'lowerA',5:'pull',6:'pullA'},
+  C:{2:null,   3:'legs',4:'upperB',5:'legs',6:'legsA'},
+  D:{2:null,   3:null,  4:'lowerB',5:'upper',6:'pushB'},
+  E:{2:null,   3:null,  4:null,    5:'lower',6:'pullB'},
+  F:{2:null,   3:null,  4:null,    5:null,   6:'legsB'}
+};
+
+function sessionName(id, days){
+  const key = (SPLIT_NAMES[id]||{})[days];
+  const baseFull = t('prog.full') !== 'prog.full' ? t('prog.full') : 'Full body';
+  if(key === 'full')   return baseFull;
+  if(key === 'fullA')  return baseFull + ' A';
+  if(key === 'fullB')  return baseFull + ' B';
+  if(key === 'push')   return 'Push';
+  if(key === 'pushA')  return 'Push A';
+  if(key === 'pushB')  return 'Push B';
+  if(key === 'pull')   return 'Pull';
+  if(key === 'pullA')  return 'Pull A';
+  if(key === 'pullB')  return 'Pull B';
+  if(key === 'legs')   return 'Legs';
+  if(key === 'legsA')  return 'Legs A';
+  if(key === 'legsB')  return 'Legs B';
+  if(key === 'upper')  return 'Upper';
+  if(key === 'upperA') return 'Upper A';
+  if(key === 'upperB') return 'Upper B';
+  if(key === 'lower')  return 'Lower';
+  if(key === 'lowerA') return 'Lower A';
+  if(key === 'lowerB') return 'Lower B';
+  return 'Session ' + id;
+}
+
+/* ---------- candidate pool ---------- */
+function allowedExercises(profile){
+  // `equipment` (v1) still governs; `environment` (v2) narrows it further.
+  const eq = EQUIP_SETS[profile.equipment] || equipmentFor(profile);
+  const envEq = (profile.environment && profile.environment !== 'gym')
+    ? equipmentFor(profile) : null;
+  const limits = profile.limits || [];
+  const chosen = profile.exercises;
+  return EX.filter(ex => {
+    if(eq.indexOf(ex.equip) < 0) return false;
+    if(envEq && envEq.indexOf(ex.equip) < 0) return false;
+    for(let i=0;i<ex.avoid.length;i++) if(limits.indexOf(ex.avoid[i]) >= 0) return false;
+    if(chosen && chosen[ex.id] === false) return false;    // user said "not this one"
+    if(!exerciseAllowed(ex, profile)) return false;        // accessibility context
+    return true;
+  });
+}
+
+/* Scoring bonus so the pool favours exercises matching the user's stated
+   goals and adaptations. A preference, never an exclusion. */
+function goalBonus(ex, profile){
+  const p = profile || {};
+  const g = activeGoals(p);
+  const needs = p.needs || {};
+  const cat = ex.cat || [], acc = ex.acc || [];
+  let bonus = 0;
+  if(g.indexOf('m') >= 0 && cat.indexOf('mobility') >= 0)    bonus += 3;
+  if(g.indexOf('b') >= 0 && cat.indexOf('balance')  >= 0)    bonus += 3;
+  if(g.indexOf('f') >= 0 && cat.indexOf('functional') >= 0) bonus += 2;
+  if(g.indexOf('e') >= 0 && ex.type === 'isolation')        bonus += 1;
+  if(needs.lowImpactOnly && acc.indexOf('lowImpact') >= 0)  bonus += 3;
+  if(needs.seatedOnly     && acc.indexOf('seated')    >= 0) bonus += 3;
+  if(needs.wheelchair     && acc.indexOf('wheelchair')>= 0) bonus += 3;
+  return bonus;
+}
+
+function pickForPattern(pool, pattern, used, focus, profile){
+  const cands = pool.filter(e => e.pat === pattern && used.indexOf(e.id) < 0);
+  if(!cands.length) return null;
+  // prefer exercises whose prime mover is in this session's focus
+  const score = e => (focus.indexOf(e.m[0][0]) >= 0 ? 2 : 0)
+                   + (e.type === 'compound' ? 1 : 0)
+                   + goalBonus(e, profile);
+  cands.sort((a,b) => score(b) - score(a));
+  return cands[0];
+}
+
+function setsFor(ex, profile){
+  const st = STYLE[profile.style] || STYLE.std;
+  const base = ex.type === 'compound' ? st.compound : st.isolation;
+  let sets = base.sets, rir = Math.max(0, ex.rir + base.rirAdj);
+  const gp = activeGoals(profile);
+  if(gp.indexOf('s') >= 0){ rir = Math.max(rir, 2); }        // strength: keep reps crisp
+  if(gp.indexOf('h') >= 0 && ex.type === 'isolation'){ rir = Math.max(0, rir - 1); }
+  // Beginner guard runs LAST: a novice is never taken near failure, whatever
+  // the goal says. (It previously ran first and the goal line undid it.)
+  if(profile.experience === 'b'){ sets = Math.min(sets, 2); rir = Math.max(rir, 2); }
+  if(ex.cat && ex.cat.indexOf('mobility') >= 0 && ex.type !== 'compound'){ rir = Math.max(rir, 3); }
+  /* Goal-driven ranges only override the exercise's own range where the goal
+     clearly implies one. An exercise's rep range already encodes its purpose.
+     Priority: strength > endurance > mobility/balance. */
+  const g = activeGoals(profile);
+  let bias = null;
+  if(g.indexOf('s') >= 0)                              bias = {lo:4,  hi:7,  rir:2};
+  else if(g.indexOf('e') >= 0)                         bias = {lo:15, hi:25, rir:1};
+  else if(g.indexOf('m') >= 0 || g.indexOf('b') >= 0)  bias = {lo:10, hi:20, rir:3};
+  return { sets: sets, rir: rir, bias: bias };
+}
+
+function restFor(profile){
+  const st = STYLE[profile.style] || STYLE.std;
+  return st.restSec;
+}
+
+/* ---------- build ---------- */
+function buildPlan(profile){
+  const days = Math.max(2, Math.min(6, +profile.daysPerWeek || 3));
+  const split = SPLITS[days] || SPLITS[3];
+  const pool = allowedExercises(profile);
+  const count = EXERCISES_BY_MINUTES[profile.sessionMinutes] || 5;
+  const rest = restFor(profile);
+
+  const sessions = split.map(s => {
+    const used = [];
+    const list = [];
+    for(let i=0;i<count;i++){
+      const pat = s.patterns[i % s.patterns.length];
+      let ex = pickForPattern(pool, pat, used, s.focus, profile);
+      if(!ex){
+        // fall back to anything unused that touches the focus
+        ex = pool.filter(e => used.indexOf(e.id) < 0 && e.m.some(([m]) => s.focus.indexOf(m) >= 0))
+                 .sort((a,b)=> (b.type==='compound'?1:0) - (a.type==='compound'?1:0))[0] || null;
+      }
+      if(!ex) break;
+      used.push(ex.id);
+      const cfg = setsFor(ex, profile);
+      /* A goal bias of "4-7 reps" is meaningless for a 40-second hold or a
+         40-metre carry: the exercise's own range is already expressed in the
+         unit it is measured in. The EFFORT part of the bias applies to every
+         unit though — a mobility goal keeps effort low whether the work is
+         counted in reps, seconds or metres. */
+      const unit = exTargetRange(ex).unit;
+      const reps = (cfg.bias && unit === 'reps') ? [cfg.bias.lo, cfg.bias.hi] : ex.reps.slice();
+      const rir  = cfg.bias ? Math.max(cfg.rir, cfg.bias.rir) : cfg.rir;
+      list.push({ id: ex.id, sets: cfg.sets, reps: reps, rir: rir });
+    }
+    return { id: s.id, name: sessionName(s.id, days), focus: s.focus, exercises: list };
+  });
+
+  /* If accessibility filtering emptied the pool, report it rather than
+     silently returning a plan that ignores the user's needs. */
+  let unfiltered = pool.length;
+  try {
+    const saved = profile.needs; profile.needs = {};
+    unfiltered = allowedExercises(profile).length;
+    profile.needs = saved;
+  } catch(e){}
+
+  return {
+    mode: profile.style || 'std',
+    split: days,
+    restSec: rest,
+    builtAt: Date.now(),
+    sessions: sessions,
+    poolSize: pool.length,
+    adaptationNote: (pool.length === 0 && unfiltered > 0) ? 'a11y.poolEmpty' : null
+  };
+}
+
+function sessionInvolvedMuscles(sess){
+  const seen = {};
+  (sess && sess.focus || []).forEach(m => { seen[m] = 1; });
+  (sess && sess.exercises || []).forEach(e => {
+    const ex = EX_BY_ID[e.id];
+    if(ex && ex.m) ex.m.forEach(([m]) => { seen[m] = 1; });
+  });
+  return Object.keys(seen);
+}
+
+/* Which session comes next? Rotate, but prefer the one whose muscles are
+   most recovered, so a missed day does not force you into an unrecovered
+   session just because the calendar says so. */
+function nextSession(state, now){
+  const plan = state.plan;
+  if(!plan || !plan.sessions || !plan.sessions.length) return null;
+  const rec = allRecovery(state, now);
+  const lastBySession = {};
+  state.sessions.forEach(s => { if(s.planId) lastBySession[s.planId] = Math.max(lastBySession[s.planId]||0, s.date); });
+
+  let best = null;
+  plan.sessions.forEach(s => {
+    let worst = 1, limiting = null;
+    sessionInvolvedMuscles(s).forEach(m => { if(rec[m] && rec[m].ratio < worst){ worst = rec[m].ratio; limiting = m; } });
+    const lastDone = lastBySession[s.id] || 0;
+    // prefer recovered, and among those the one not done most recently
+    const score = worst*1000 - (lastDone ? 1/Math.max(1,(now-lastDone)/86400000) : 0);
+    if(!best || score > best.score) best = { session: s, score: score, ratio: worst, limiting: limiting };
+  });
+  return best;
+}
+
+/* Substitution preserving movement pattern and target muscles. */
+function substitutesFor(profile, exId){
+  const eq = EQUIP_SETS[profile.equipment] || EQUIP_SETS.gym;
+  const limits = profile.limits || [];
+  const ex = EX_BY_ID[exId]; if(!ex) return [];
+  const ids = [exId].concat(ex.subs || []);
+  // also anything sharing the same pattern
+  EX.forEach(e => { if(e.pat === ex.pat && ids.indexOf(e.id) < 0) ids.push(e.id); });
+  return ids.filter(id => {
+    if(id === exId) return false;
+    const e = EX_BY_ID[id]; if(!e) return false;
+    if(eq.indexOf(e.equip) < 0) return false;
+    for(let i=0;i<e.avoid.length;i++) if(limits.indexOf(e.avoid[i]) >= 0) return false;
+    return true;
+  }).map(id => EX_BY_ID[id]);
+}
+
+/* A set of 10 reps takes roughly 8 seconds a rep; a hold takes its own
+   duration; a carry is walked at about 1.2 m/s. Multiplying a hold range by
+   eight is what produced a "17 minute" plank session. */
+function setSecondsEstimate(e){
+  const ex = EX_BY_ID[e.id];
+  const range = exTargetRange(ex);
+  if(range.unit === 'time')     return range.hi;
+  if(range.unit === 'distance') return Math.round(range.hi / 1.2);
+  return range.hi * 8;
+}
+function estimatedMinutes(session, restSec){
+  if(!session) return 0;
+  let sec = 0;
+  session.exercises.forEach(e => {
+    const per = setSecondsEstimate(e);
+    if(exTargetRange(EX_BY_ID[e.id]).unit === 'time') sec += 30;   // brief setup
+    else sec += 2*45;                                              // two warm-up sets
+    for(let i=0;i<e.sets;i++) sec += per + restSec;
+  });
+  return Math.round(sec/60);
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { buildPlan, nextSession, substitutesFor, allowedExercises, setsFor, estimatedMinutes, STYLE, SPLITS,
+                     setSecondsEstimate, volumePartiallyUnknown };
+}
+
+
+/* ============================================================================
+   Weekly volume accounting, split into direct and indirect involvement.
+
+   Sets are counted per muscle using each exercise's contribution weights, so
+   a set contributes a fraction of a set to every muscle it involves. The
+   primary muscle receives the DIRECT share; every other muscle receives an
+   INDIRECT share.
+
+   Bands below are for REVIEW, not prescription. Evidence links set counts to
+   average hypertrophy at the group level with wide individual variation, so a
+   low or high count is a prompt to look, never a diagnosis.
+   ========================================================================== */
+const VOLUME_BANDS = [
+  { id:'none',     min:0,          max:0,          flag:null },
+  { id:'low',      min:0.0001,     max:4,          flag:'gap'    },
+  { id:'typical',  min:4,          max:10,         flag:null     },
+  { id:'high',     min:10,         max:20,         flag:null     },
+  { id:'veryHigh', min:20,         max:Infinity,   flag:'excess' }
+];
+
+function volumeBandFor(sets){
+  if(!sets || sets <= 0) return VOLUME_BANDS[0];      // 'none' — never fall through
+  for(let i = 0; i < VOLUME_BANDS.length; i++){
+    const b = VOLUME_BANDS[i];
+    if(sets >= b.min && sets < b.max) return b;
+  }
+  return VOLUME_BANDS[VOLUME_BANDS.length - 1];
+}
+
+/* Weighted per-muscle accounting over a window. `from` is a timestamp. */
+function muscleVolume(state, from){
+  const out = {};
+  MUSCLES.forEach(m => {
+    out[m] = { sets:0, directSets:0, indirectSets:0,
+               load:0, directLoad:0, indirectLoad:0,
+               counted:0, uncounted:0 };
+  });
+  (state.sessions || []).forEach(sess => {
+    if(from && sess.date < from) return;
+    (sess.exercises || []).forEach(e => {
+      const ex = EX_BY_ID[e.id];
+      if(!ex) return;
+      const sets = (e.sets || []).filter(x => x && !x.skipped);
+      if(!sets.length) return;
+      /* Load volume only exists when the exercise is actually loaded with a
+         known weight. A plank contributes sets and no load volume; pretending
+         it contributes zero kilograms makes a bodyweight block look empty. */
+      const vol = setsVolume(sets, ex, state.profile);
+      const n   = sets.length;
+      const primary = ex.m[0][0];
+      ex.m.forEach(([m,w]) => {
+        if(!out[m]) return;
+        const ds = n * w, dl = (vol === null ? 0 : vol * w);
+        out[m].sets += ds;
+        out[m].load += dl;
+        if(vol === null) out[m].uncounted += ds; else out[m].counted += ds;
+        if(m === primary){ out[m].directSets += ds; out[m].directLoad += dl; }
+        else            { out[m].indirectSets += ds; out[m].indirectLoad += dl; }
+      });
+    });
+  });
+  return out;
+}
+
+/* True when some of the recorded work has no meaningful load volume, so the
+   interface can say so instead of printing a smaller number as if it were
+   the whole picture. */
+function volumePartiallyUnknown(state, from){
+  const mv = muscleVolume(state, from);
+  return MUSCLES.some(m => mv[m].uncounted > 0);
+}
+
+/* Backwards-compatible flat totals (used by older callers and tests). */
+function volumeByMuscle(state, from){
+  const mv = muscleVolume(state, from);
+  const out = {};
+  Object.keys(mv).forEach(m => out[m] = mv[m].load);
+  return out;
+}
+
+/* Per-muscle review rows: counts, split, band and whether anything is worth
+   a second look. Never stated as a judgement about the user's body. */
+function volumeReview(state, from){
+  const mv = muscleVolume(state, from);
+  return MUSCLES.map(m => {
+    const v = mv[m];
+    const band = volumeBandFor(v.sets);
+    return {
+      muscle: m,
+      sets: v.sets,
+      directSets: v.directSets,
+      indirectSets: v.indirectSets,
+      load: v.load,
+      volumeKnown: v.counted > 0,
+      volumePartial: v.counted > 0 && v.uncounted > 0,
+      band: band.id,
+      flag: band.flag
+    };
+  });
+}

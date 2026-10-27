@@ -1,0 +1,100 @@
+[
+  {
+    "id": "schoenfeld-2016-volume",
+    "status": "MATCH",
+    "doi": "10.1080/02640414.2016.1210197",
+    "pmid": "27433992",
+    "pubdate": "2017 Jun"
+  },
+  {
+    "id": "schoenfeld-2017-load",
+    "status": "MATCH",
+    "doi": "10.1519/jsc.0000000000002200",
+    "pmid": "28834797",
+    "pubdate": "2017 Dec"
+  },
+  {
+    "id": "morton-2018-protein",
+    "status": "MATCH",
+    "doi": "10.1136/bjsports-2017-097608",
+    "pmid": "28698222",
+    "pubdate": "2018 Mar"
+  },
+  {
+    "id": "acsm-2009-progression",
+    "status": "MATCH",
+    "doi": "10.1249/mss.0b013e3181915670",
+    "pmid": "19204579",
+    "pubdate": "2009 Mar"
+  },
+  {
+    "id": "damas-2018-hypertrophy",
+    "status": "MATCH",
+    "doi": "10.1007/s00421-017-3792-9",
+    "pmid": "29282529",
+    "pubdate": "2018 Mar"
+  },
+  {
+    "id": "wackerhage-2019-stimuli",
+    "status": "MATCH",
+    "doi": "10.1152/japplphysiol.00685.2018",
+    "pmid": "30335577",
+    "pubdate": "2019 Jan 1"
+  },
+  {
+    "id": "garber-2011-quantity",
+    "status": "MATCH",
+    "doi": "10.1249/mss.0b013e318213fefb",
+    "pmid": "21694556",
+    "pubdate": "2011 Jul"
+  },
+  {
+    "id": "watson-2015-sleep",
+    "status": "MATCH",
+    "doi": "10.5665/sleep.4716",
+    "pmid": "26039963",
+    "pubdate": "2015 Jun 1"
+  },
+  {
+    "id": "aragon-2013-timing",
+    "status": "MATCH",
+    "doi": "10.1186/1550-2783-10-5",
+    "pmid": "23360586",
+    "pubdate": "2013 Jan 29"
+  },
+  {
+    "id": "phillips-2011-protein",
+    "status": "MATCH",
+    "doi": "10.1080/02640414.2011.619204",
+    "pmid": "22150425",
+    "pubdate": "2011"
+  },
+  {
+    "id": "ioannidis-2005",
+    "status": "MATCH",
+    "doi": "10.1371/journal.pmed.0020124",
+    "pmid": "16060722",
+    "pubdate": "2005 Aug"
+  },
+  {
+    "id": "suchomel-2016",
+    "status": "MATCH",
+    "doi": "10.1007/s40279-016-0486-0",
+    "pmid": "26838985",
+    "pubdate": "2016 Oct"
+  },
+  {
+    "id": "spot-reduction-statement",
+    "status": "INTERNAL",
+    "doi": null,
+    "pmid": null,
+    "pubdate": null
+  },
+  {
+    "id": "recovery-model-note",
+    "status": "INTERNAL",
+    "doi": null,
+    "pmid": null,
+    "pubdate": null
+  }
+]

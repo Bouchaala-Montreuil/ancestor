@@ -1,0 +1,23 @@
+{
+  "name": "ANCESTOR — Recovery Engine",
+  "short_name": "Ancestor",
+  "description": "A recovery-aware training system for natural trainees and shift workers.",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#F1EBDD",
+  "theme_color": "#20211F",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Log sleep", "url": "./index.html#sleep" },
+    { "name": "Start session", "url": "./index.html#train" }
+  ]
+}

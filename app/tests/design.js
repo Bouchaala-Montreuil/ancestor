@@ -1,0 +1,236 @@
+/* ============================================================================
+   ANCESTOR — design system tests
+   Run:  node tests/design.js
+
+   The brief sets a mandatory palette, WCAG-legible contrast, and a list of
+   things that must NOT appear (decorative gradients, glassmorphism, emoji
+   icons, decorative gauges, duplicated card styles). Those are checkable, so
+   they are checked — not asserted.
+   ========================================================================== */
+const fs = require('fs');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..');
+
+let pass = 0, fail = 0; const failures = [];
+const chk = (n,c,x) => {
+  if(c){ pass++; console.log('  \x1b[32mPASS\x1b[0m  ' + n + (x ? '  \x1b[2m' + x + '\x1b[0m' : '')); }
+  else { fail++; failures.push(n); console.log('  \x1b[31mFAIL\x1b[0m  ' + n + (x ? '  -> ' + x : '')); }
+};
+const group = t => console.log('\n\x1b[1m' + t + '\x1b[0m');
+
+const css = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+
+/* ------------------------------------------------------------------ tokens */
+function token(name){
+  const m = new RegExp('--' + name + '\\s*:\\s*([^;]+);').exec(css);
+  return m ? m[1].trim() : null;
+}
+function hex(v){
+  if(!v) return null;
+  const m = /#([0-9a-f]{6}|[0-9a-f]{3})/i.exec(v);
+  if(!m) return null;
+  let h = m[1];
+  if(h.length === 3) h = h.split('').map(c => c+c).join('');
+  return '#' + h.toLowerCase();
+}
+function rgb(hexStr){
+  const h = hexStr.replace('#','');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+/* WCAG relative luminance */
+function lum(hexStr){
+  const [r,g,b] = rgb(hexStr).map(v => {
+    const s = v/255;
+    return s <= 0.03928 ? s/12.92 : Math.pow((s+0.055)/1.055, 2.4);
+  });
+  return 0.2126*r + 0.7152*g + 0.0722*b;
+}
+function contrast(a,b){
+  const L1 = lum(a), L2 = lum(b);
+  return (Math.max(L1,L2) + 0.05) / (Math.min(L1,L2) + 0.05);
+}
+
+/* ================================================================ */
+group('1. Mandatory palette is present and exact');
+{
+  const required = {
+    'charcoal':'#20211f', 'ivory':'#f1ebdd', 'burnt':'#d66a3a',
+    'tech':'#77796f', 'line':'#c8c0b2'
+  };
+  Object.keys(required).forEach(k => {
+    const v = hex(token(k));
+    chk('--' + k + ' = ' + required[k], v === required[k], v);
+  });
+}
+
+/* ================================================================ */
+group('2. Ivory dominates (light mode)');
+{
+  const paper = hex(token('paper'));
+  chk('page background is ivory', paper === '#f1ebdd', paper);
+  chk('page background is light', lum(paper) > 0.6, 'luminance ' + lum(paper).toFixed(3));
+  const surface = hex(token('surface'));
+  chk('panels are lighter than the page', lum(surface) >= lum(paper), surface);
+  const ink = hex(token('ink'));
+  chk('body text is charcoal', ink === '#20211f', ink);
+  chk('text/background contrast is very high', contrast(ink, paper) > 7,
+      contrast(ink, paper).toFixed(1) + ':1');
+}
+
+/* ================================================================ */
+group('3. WCAG contrast on every text pair (AA = 4.5:1)');
+{
+  const paper = hex(token('paper'));
+  const tests = [
+    ['ink',        hex(token('ink')),        4.5],
+    ['ink-2',      hex(token('ink-2')),      4.5],
+    ['ink-3',      hex(token('ink-3')),      4.5],
+    ['tech-ink',   hex(token('tech-ink')),   4.5],
+    ['burnt-text', hex(token('burnt-text')), 4.5],
+    ['ok',         hex(token('ok')),         4.5],
+    ['warn',       hex(token('warn')),       4.5],
+    ['alert',      hex(token('alert')),      4.5]
+  ];
+  tests.forEach(([name, col, min]) => {
+    const r = contrast(col, paper);
+    chk(name + ' on ivory >= ' + min + ':1', r >= min, r.toFixed(2) + ':1');
+  });
+  // metadata colour is allowed a lower bar but must still be legible
+  const nd = contrast(hex(token('nodata')), paper);
+  chk('nodata on ivory >= 3:1 (large text / metadata)', nd >= 3, nd.toFixed(2) + ':1');
+
+  // primary button: charcoal on burnt orange
+  const btn = contrast(hex(token('charcoal')), hex(token('burnt')));
+  chk('primary button label on burnt >= 4.5:1', btn >= 4.5, btn.toFixed(2) + ':1');
+
+  // header: ivory on charcoal
+  const hdr = contrast(hex(token('ivory')), hex(token('charcoal')));
+  chk('ivory on charcoal >= 4.5:1', hdr >= 4.5, hdr.toFixed(2) + ':1');
+  const accent = contrast(hex(token('burnt')), hex(token('charcoal')));
+  chk('burnt accent on charcoal >= 4.5:1', accent >= 4.5, accent.toFixed(2) + ':1');
+}
+
+/* ================================================================ */
+group('4. Status is never communicated by colour alone');
+{
+  const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  const comps   = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  // every status flag renders a text label from i18n
+  chk('flags render a translated label',
+      /class="flag [^"]*"[^>]*>\s*'?\s*\+?\s*esc\(t\('/.test(screens) || /flag '\+/.test(screens) || /flag " /.test(screens),
+      'flag markup wraps t() labels');
+  chk('muscle rows carry a text state, not just a swatch',
+      /class="when"/.test(screens) && /mst\.|daysLeft/.test(screens));
+  chk('anatomy legend pairs swatches with labels',
+      /<div><i style="background:' \+ STATE_HEX\[s\].*?<\/div>/.test(comps) || /anatomyLegend/.test(comps));
+  chk('figure regions carry a <title> for assistive tech',
+      /<title>' \+ esc\(t\('mg\.'/.test(comps));
+  chk('charts expose aria-label', /role="img" aria-label=/.test(comps));
+}
+
+/* ================================================================ */
+group('5. Prohibited patterns are absent');
+{
+  const all = css + fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8')
+                  + fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8')
+                  + fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  chk('no glassmorphism (backdrop-filter)', !/backdrop-filter/.test(css));
+  chk('no radial gradients', !/radial-gradient/.test(css));
+  // Gradients are allowed only for the technical grid behind the figure and
+  // the loading shimmer. Never as decoration on a surface.
+  const forbidden = ['body', '.panel', '.btn', '.decision', '.tile', '.chip'];
+  const badGradient = forbidden.filter(sel => {
+    const re = new RegExp(sel.replace('.', '\\.') + '\\s*(,\\s*[^,{]+)?\\{[^}]*gradient', 's');
+    return re.test(css);
+  });
+  chk('no gradient on any surface component', badGradient.length === 0, badGradient.join(', '));
+  const allowed = /\.fig-stage::before\{[^}]*linear-gradient/s.test(css) &&
+                  /\.skeleton\{[^}]*linear-gradient/s.test(css);
+  chk('the only gradients are the technical grid and the shimmer', allowed);
+  chk('no emoji used as illustration',
+      !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(all));
+  chk('no decorative circular gauge component', !/\.gauge|score-ring|circular-progress/.test(all));
+  chk('radius tokens are small and systematic',
+      ['--r-xs:2px','--r-sm:3px','--r-md:4px','--r-lg:6px'].every(t => css.indexOf(t) >= 0));
+  chk('prefers-reduced-motion is honoured', /prefers-reduced-motion/.test(css));
+  chk('focus-visible is defined', /:focus-visible/.test(css));
+  chk('touch targets are at least 44 px', /min-height:4[4-9]px|min-height:5[0-9]px|min-height:56px/.test(css));
+  chk('no external font or CDN request', !/@import|fonts\.googleapis|cdn\./.test(css));
+}
+
+/* ================================================================ */
+group('6. Typography hierarchy is technical and consistent');
+{
+  chk('a condensed display family is declared', /--f-display/.test(css) && /Arial Narrow/.test(css));
+  chk('a monospace family is declared for metadata', /--f-mono/.test(css));
+  chk('numbers use tabular figures', /font-variant-numeric:\s*tabular-nums/.test(css));
+  chk('eyebrow style exists for technical labels', /\.eyebrow\{/.test(css.replace(/\s/g,'')) || /\.eyebrow\s*\{/.test(css));
+  chk('display headings are uppercased', /h1\.display\{[^}]*text-transform:uppercase/.test(css.replace(/\n/g,'')));
+}
+
+/* ================================================================ */
+group('7. Layout: mobile first, adapts upward');
+{
+  chk('tab bar is fixed at the bottom on mobile', /nav\.tabbar\{[^}]*position:fixed[^}]*bottom:0/s.test(css));
+  chk('content is capped (no stretched desktop layout)', /\.shell\{[^}]*max-width:/s.test(css));
+  chk('a two-column layout activates at 720 px', /@media\s*\(min-width:720px\)/.test(css));
+  chk('navigation becomes a side rail at 1024 px',
+      /@media\s*\(min-width:1024px\)/.test(css) && /nav\.tabbar\{[^}]*width:200px/s.test(css));
+  chk('at most six primary sections', (function(){
+    const m = /const NAV = \[([\s\S]*?)\];/.exec(fs.readFileSync(path.join(ROOT,'js/app.js'),'utf8'));
+    return m ? (m[1].match(/id:'/g) || []).length <= 6 : false;
+  })(), (function(){
+    const m = /const NAV = \[([\s\S]*?)\];/.exec(fs.readFileSync(path.join(ROOT,'js/app.js'),'utf8'));
+    return m ? String((m[1].match(/id:'/g) || []).length) : '?';
+  })());
+}
+
+/* ================================================================ */
+group('8. Anatomy component integrity');
+{
+  const comps = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const m = /const FIG = \{([\s\S]*?)\n\};/.exec(comps);
+  chk('anatomy geometry is embedded', !!m);
+  chk('front and back views are both defined', /front:\s*\{/.test(comps) && /back:\s*\{/.test(comps));
+  chk('selection, zoom and reset are wired',
+      /function selectMuscle/.test(fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8')) &&
+      /function toggleZoom/.test(fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8')) &&
+      /function resetFig/.test(fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8')));
+  chk('rotation is implemented', /function rotateFig/.test(fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8')));
+  const screensSrc = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
+  const i18nSrc = fs.readFileSync(path.join(ROOT,'js/i18n/screens.js'),'utf8');
+  const langsWithDisclosure = ['en','fr','es','de','it','nl'].filter(l =>
+    new RegExp("TS2?\\['" + l + "'\\]").test(i18nSrc) || true);
+  chk('the 2D substitution is rendered on the anatomy screen',
+      /t\('body\.note2d'\)/.test(screensSrc));
+  chk('every language states that it is not a 3D model',
+      (i18nSrc.match(/body\.note2d/g) || []).length >= 6,
+      (i18nSrc.match(/body\.note2d/g) || []).length + ' translations');
+  chk('the disclosure is explicit in English',
+      /'body\.note2d':'2D interactive anatomy[^']*Not a 3D model/.test(i18nSrc));
+}
+
+/* ================================================================ */
+group('9. Reusable component vocabulary');
+{
+  const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',
+                  'sheet','skeleton','setcard','factor','fig-stage','metrics'];
+  const missing = needed.filter(c => css.indexOf('.' + c) < 0);
+  chk('all named component classes exist in the stylesheet', missing.length === 0, missing.join(', '));
+
+  // every component should declare the states the brief asked for where relevant
+  chk('buttons declare hover, active and disabled',
+      /\.btn:hover/.test(css) && /\.btn:active/.test(css) && /\.btn:disabled/.test(css));
+  chk('buttons declare a loading state', /\.btn\.loading/.test(css));
+  chk('inputs declare focus', /input:focus/.test(css));
+  chk('tiles declare selected state', /\.tile\.on/.test(css));
+  chk('empty, error and success feedback exist',
+      /\.empty\{/.test(css) && /\.banner\.alert/.test(css) && /\.banner\.ok/.test(css));
+}
+
+/* ================================================================ */
+console.log('\n' + '='.repeat(64));
+if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' DESIGN TESTS PASSED\x1b[0m');
+else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed'); failures.forEach(f => console.log('   - ' + f)); }
+console.log('='.repeat(64) + '\n');
+process.exit(fail === 0 ? 0 : 1);
