@@ -78,8 +78,8 @@
   --f-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,
            "Liberation Mono","Roboto Mono",monospace;
 
-  --fs-mega:clamp(44px,11.5vw,88px);   /* the one word that matters      */
-  --fs-display:clamp(30px,6vw,46px);   /* screen titles                  */
+  --fs-mega:clamp(52px,15.5vw,104px);   /* the one word that matters      */
+  --fs-display:clamp(32px,7vw,52px);   /* screen titles                  */
   --fs-title:clamp(20px,3.4vw,26px);   /* block titles                   */
   --fs-sub:15px;
   --fs-body:16px;
@@ -196,9 +196,9 @@ button:focus:not(:focus-visible){outline:none}
 /* The dossier stamp. Every section, every screen, numbered like a file. */
 .sect h2.title::before{
   display:inline-flex;align-items:center;justify-content:center;
-  min-width:20px;height:15px;padding:0 4px;
+  min-width:22px;height:17px;padding:0 5px;
   background:var(--ink);color:var(--ivory);
-  font-family:var(--f-mono);font-size:8.5px;font-weight:600;
+  font-family:var(--f-mono);font-size:9px;font-weight:600;
   letter-spacing:.02em;
   content:counter(sect,decimal-leading-zero);
 }
@@ -224,11 +224,11 @@ h1.display{
   font-family:var(--f-display);
   font-size:var(--fs-mega);
   font-weight:700;
-  line-height:var(--lh-tight);
-  letter-spacing:-.005em;
+  line-height:.84;
+  letter-spacing:-.01em;
   text-transform:uppercase;
   margin:var(--s3) 0 var(--s4);
-  max-width:14ch;
+  max-width:13ch;
   text-wrap:balance;
 }
 h2.title,h3.sub{
@@ -257,7 +257,7 @@ h2.title,h3.sub{
   content:"";width:7px;height:7px;background:var(--burnt);flex:none;
 }
 .masthead-sub{
-  margin:0;max-width:46ch;color:var(--ink-2);font-size:var(--fs-sub);
+  margin:0;max-width:44ch;color:var(--ink-2);font-size:var(--fs-sub);
   line-height:1.55;
 }
 .mono{font-family:var(--f-mono);font-size:var(--fs-meta);letter-spacing:.12em;
@@ -296,7 +296,7 @@ h2.title,h3.sub{
 .sect{
   display:flex;align-items:center;gap:var(--s3);
   margin:var(--s7) 0 var(--s4);
-  border-top:var(--hair) solid var(--ink);
+  border-top:2px solid var(--ink);
   padding-top:var(--s2);
 }
 .sect h2.title{
@@ -313,7 +313,7 @@ h2.title,h3.sub{
 /* masthead — the screen's opening statement */
 .masthead{
   padding:var(--s6) 0 var(--s5);
-  border-bottom:var(--hair) solid var(--ink);
+  border-bottom:2px solid var(--ink);
 }
 .masthead > div{display:block}
 
@@ -362,7 +362,7 @@ h2.title,h3.sub{
 header{
   position:sticky;top:0;z-index:50;
   background:var(--paper);
-  border-bottom:var(--hair) solid var(--line);
+  border-bottom:2px solid var(--ink);
   padding-top:var(--safe-t);
 }
 .hd{
@@ -634,7 +634,7 @@ button.flag:hover{border-color:var(--ink)}
   margin-bottom:6px;
 }
 .metric .v{
-  font-family:var(--f-display);font-size:clamp(24px,6vw,32px);
+  font-family:var(--f-display);font-size:clamp(26px,7vw,36px);
   font-weight:700;line-height:.95;letter-spacing:.01em;
   text-transform:uppercase;color:var(--ink);
   font-variant-numeric:tabular-nums;
@@ -698,7 +698,7 @@ button.flag:hover{border-color:var(--ink)}
 }
 .cov-row.gap .cov-t i{background:var(--burnt)}
 .cov-v{
-  font-family:var(--f-mono);font-size:11px;font-weight:600;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;
   text-align:right;color:var(--ink);font-variant-numeric:tabular-nums;
 }
 
@@ -803,7 +803,7 @@ button.flag:hover{border-color:var(--ink)}
   text-transform:uppercase;color:var(--tech-ink);
 }
 .dash-bignum .v{
-  font-family:var(--f-display);font-size:clamp(54px,15vw,84px);
+  font-family:var(--f-display);font-size:clamp(62px,19vw,104px);
   font-weight:700;line-height:.84;letter-spacing:-.01em;
   margin:var(--s1) 0 2px;font-variant-numeric:tabular-nums;
 }
@@ -1494,6 +1494,26 @@ html[data-contrast="high"] .decision{outline:2px solid var(--ink);outline-offset
 html[data-simple="true"] .hint,
 html[data-simple="true"] .fig-hint,
 html[data-simple="true"] .chart-tip-readout{display:none}
+
+/* ------------------------------------------------------------ FULL BLEED
+   Below the desktop rail the verdict runs to the edges of the screen. A
+   judgement is not a card sitting politely inside a margin — it is the page
+   speaking, so it occupies the whole width of the page. Nothing else in the
+   product is allowed to do this, which is what makes it an event. */
+@media (max-width:1023px){
+  .decision{
+    margin-inline:calc(-1 * var(--s5));
+    border-radius:0;
+    padding-left:calc(var(--s5) + 4px);
+    padding-right:var(--s5);
+  }
+}
+@media (min-width:720px) and (max-width:1023px){
+  .decision{
+    margin-inline:calc(-1 * var(--s6));
+    padding-right:var(--s6);
+  }
+}
 
 /* ================================================================ RESPONSIVE
    Mobile is the design. Everything above 720 px is the same document with
