@@ -117,6 +117,7 @@ function paintStoreFlag(){
   const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
   if(!failing){
     if(!el.hidden){ el.hidden = true; }
+    cancelStoreRetry();
     return;
   }
   const tEl = el.querySelector('.sf-t');
@@ -126,6 +127,32 @@ function paintStoreFlag(){
   if(bEl) bEl.textContent = t('app.store.body');
   if(xEl) xEl.textContent = t('you.export');
   el.hidden = false;
+  scheduleStoreRetry();
+}
+
+/* A refused write is retried, not just reported. STATE is still the whole truth
+   in memory, so every retry is a complete save: the first one that lands makes
+   the log whole again and the strip goes away by itself. Three triggers, because
+   they fail differently — the timer covers a quota that frees up, the focus and
+   visibility events cover a browser that was suspended and came back, and a
+   successful write anywhere cancels the loop. */
+let storeRetryTimer = null;
+function retryStore(){
+  if(!(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED)) return false;
+  saveState();
+  return !STORAGE_FAILED;
+}
+function cancelStoreRetry(){
+  if(storeRetryTimer){ clearTimeout(storeRetryTimer); storeRetryTimer = null; }
+}
+function scheduleStoreRetry(){
+  if(storeRetryTimer) return;
+  storeRetryTimer = setTimeout(function tick(){
+    storeRetryTimer = null;
+    if(typeof STORAGE_FAILED === 'undefined' || !STORAGE_FAILED) return;  /* nothing to retry */
+    if(retryStore()) return;          /* written — the strip is already gone */
+    scheduleStoreRetry();
+  }, 15000);
 }
 
 function render(){
@@ -305,9 +332,13 @@ function boot(){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
   document.addEventListener('visibilitychange', () => {
-    if(!document.hidden && VIEW === 'home') render();
+    if(document.hidden) return;
+    retryStore();
+    if(VIEW === 'home') render();
   });
-  window.addEventListener('online',  () => render());
+  window.addEventListener('focus', () => { retryStore(); });
+  window.addEventListener('beforeunload', () => { retryStore(); });
+  window.addEventListener('online',  () => { retryStore(); render(); });
   window.addEventListener('offline', () => render());
   window.addEventListener('hashchange', () => handleHashShortcut());
   window.addEventListener('resize',  () => { try { renderNav(!!getState().onboarded); } catch(e){} });

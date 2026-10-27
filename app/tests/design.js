@@ -606,6 +606,14 @@ group('8l. Every state has a producer and a way out');
       (ui.match(/savedToast\(/g) || []).length === 8 &&
       !/toast\(t\('[a-z]+\.saved'\)/.test(ui));
 
+  /* A strip is a report; a retry is a recovery. Both, or the user is told about a
+     failure the app has given up on. */
+  chk('a refused write is retried, not just reported',
+      /function retryStore/.test(app) && /function scheduleStoreRetry/.test(app) &&
+      /function cancelStoreRetry/.test(app) &&
+      /visibilitychange[\s\S]{0,120}retryStore\(\)/.test(app) &&
+      /addEventListener\('focus'[\s\S]{0,60}retryStore\(\)/.test(app));
+
   /* The five states are the five the roadmap audits: nothing else shipped. */
   /* Comments are allowed to say "spinner"; code is not allowed to be one. */
   const codeOnly = (css + comp).replace(/\/\*[\s\S]*?\*\//g, '');

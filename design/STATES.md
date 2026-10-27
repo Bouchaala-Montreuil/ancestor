@@ -82,7 +82,9 @@ the reason a column would have been a lie.
    id yields no history, a note on Progress, and an unchanged export.
 7. **A state is a promise until something can end it.** The storage strip appears
    when a write fails and disappears when one succeeds — it is derived from the
-   last write, not set once. Same for offline, same for the failure state's retry.
+   last write, not set once. And it retries by itself: a timer, a focus, a tab
+   coming back from suspension. Reporting a failure is not the same as accepting
+   one. Same for offline, same for the failure state's retry.
 8. **A confirmation is a claim about a write, so it checks the write.** No screen
    says *saved* on the strength of having called the function that saves.
 9. **A wash is light, so the word on it is ink.** The state colour lives in the
@@ -92,22 +94,24 @@ the reason a column would have been a lie.
 
 ## What is verified
 
-`tests/premium.js` group **10** (24 checks) drives the matrix in jsdom: all six
+`tests/premium.js` group **10** (28 checks) drives the matrix in jsdom: all six
 tabs on an empty record, Body with no selection, Progress with no sessions and
 with one, a log made only of unknown exercise ids (no crash, a note, and the set
 still in the export), a screen forced to throw, the offline flag, the busy
 control's mark-and-clear, and — with `localStorage.setItem` redefined to throw —
 the strip rising, naming the failure in words rather than a raw key, offering the
 export, still carrying the unsaved session, staying silent about success while the
-write is failing, and clearing on the next good write — with the confirmation
-returning only then.
+write is failing, clearing on the next good write with the confirmation returning
+only then, and coming back to life on its own: the retry armed while the write is
+refused, fired by the app regaining focus, landing the session that failed, and
+stopping itself once it has.
 
-`tests/design.js` group **8l** (13 checks) holds the structural side: the busy
+`tests/design.js` group **8l** (14 checks) holds the structural side: the busy
 style has a producer, there is one failure state, the stack is disclosed not
 printed, every empty state is titled and bodied, unknown ids cannot have a
 history, the storage strip is styled *and* produced by the save path in seven
-languages, the eight confirmations all pass through one guard, and no fourth
-spinner has crept in.
+languages, the eight confirmations all pass through one guard, the retry has a
+producer and a cancel, and no fourth spinner has crept in.
 
 `tests/design.js` group **8m** (3 checks) measures the other half: every tint
 composited over the page before the contrast is computed, no state flag allowed
@@ -115,7 +119,7 @@ to paint its own label, and no token declared without a reader — which is how
 `--ease-spring`, `--line-hair`, `--nodata-tint` and `--burnt-deep` were found
 dead in a file that had been through five audits.
 
-The whole suite is 1,108 checks over ten files; `python3 build.py` plus
+The whole suite is 1,116 checks over ten files; `python3 build.py` plus
 `tools/smoke_dist.js` boots the built single file and repeats the walk there.
 
 ## What is not verified, and what this matrix cannot say
@@ -127,9 +131,12 @@ The whole suite is 1,108 checks over ten files; `python3 build.py` plus
   jsdom; a genuinely full quota on a real device, Safari's private mode, and an
   embedded browser with storage disabled have not been reproduced. Neither has the
   case where the write fails while the strip is already on screen at boot.
-- **A failed write does not retry itself.** The strip is a report and an escape
-  hatch, not a queue: a user who ignores it and keeps logging loses everything at
-  the reload, because nothing is buffered anywhere but memory.
+- **The retry is not a queue.** It re-saves the whole state from memory every
+  fifteen seconds, on focus, and on a visibility change — so a quota that frees up
+  is recovered without the user doing anything. What it cannot survive is the app
+  being closed while the write is still refused: the memory goes with the tab, and
+  the strip's export is the only way out. There is no replay log, and a phone that
+  is asleep for the whole window retries once on wake, not continuously.
 - **The strip is one line of English-shaped layout.** It wraps, it is logical-
   property correct, and it has not been looked at in German (long compound) or in
   Arabic (RTL) at 320 px.

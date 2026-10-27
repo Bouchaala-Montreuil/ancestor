@@ -452,8 +452,10 @@ itself twice: it found a corrupted record that took Progress down with a stack
 trace, and it found that `saveState()` had been returning `false` into silence —
 the app could lose everything at the next reload while looking healthy. Both are
 states now, and the second exposed eight confirmations that claimed a save without
-reading the write — they go through one guard, `savedToast()`. What the audit
-cannot say is how any of them feel on a device, which is the same sentence as B6.
+reading the write — they go through one guard, `savedToast()`. The strip also
+retries on its own, so a quota that frees up is recovered without the user doing
+anything. What the audit cannot say is how any of them feel on a device, which is
+the same sentence as B6.
 
 **7–8. Illustrations, data-viz, motion spec, landing, case study.** All done
 (§0.7, §0.8, §0.9).

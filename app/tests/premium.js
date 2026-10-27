@@ -751,11 +751,12 @@ console.log('\n\x1b[1m10. The state matrix\x1b[0m');
 
     /* make every write throw the way a full or locked-down quota does */
     const real = w.localStorage;
-    Object.defineProperty(w, 'localStorage', { configurable:true, value:{
+    const throwing = {
       getItem: k => real.getItem(k), removeItem: k => real.removeItem(k),
       clear: () => real.clear(), key: i => real.key(i), get length(){ return real.length; },
       setItem(){ throw new Error('QuotaExceededError'); }
-    }});
+    };
+    Object.defineProperty(w, 'localStorage', { configurable:true, value: throwing });
 
     w.addSession({ date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A', name:'Push',
       exercises:[{ id:'bb-bench', sets:[S({w:60,r:8,rir:2})] }] });
@@ -778,12 +779,27 @@ console.log('\n\x1b[1m10. The state matrix\x1b[0m');
     chk('…and nothing claims the write succeeded',
         lied === false && !toastEl.classList.contains('ok'));
 
-    /* the flag is a state, not a one-shot: a good write clears it */
+    /* The flag is a state, not a one-shot: a good write clears it. */
     Object.defineProperty(w, 'localStorage', { configurable:true, value: real });
     w.saveState();
     chk('a later successful write clears the strip', strip.hidden);
     chk('…and the confirmation comes back with it',
         w.eval("savedToast('you.saved')") === true && toastEl.classList.contains('ok'));
+
+    /* Reporting is not recovering. Storage comes back on its own — a freed quota,
+       a tab woken from suspension — and the app has to notice without being told. */
+    Object.defineProperty(w, 'localStorage', { configurable:true, value: throwing });
+    w.addSession({ date:Date.now()-2*864e5, startedAt:Date.now()-2*864e5, planId:'A', name:'Pull',
+      exercises:[{ id:'bb-row', sets:[S({w:50,r:10,rir:3})] }] });
+    chk('the strip comes back when the write fails again', !strip.hidden);
+    chk('…and a retry is armed rather than a message left standing',
+        w.eval('storeRetryTimer !== null'));
+
+    Object.defineProperty(w, 'localStorage', { configurable:true, value: real });
+    d.dispatchEvent(new w.Event('visibilitychange'));
+    chk('coming back into view retries the write and clears the strip',
+        strip.hidden && /bb-row/.test(real.getItem('ancestor.state.v1') || ''));
+    chk('…and the retry loop stops once it has landed', w.eval('storeRetryTimer === null'));
   }
 }
 
