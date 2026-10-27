@@ -453,8 +453,8 @@ screen*. That is a checklist job over 6 tabs × 5 states, and it needs the
 screenshots to be worth doing.
 
 **7–8. Illustrations, data-viz, motion spec, landing, case study.** The icons
-are done; the exercise drawings are the next real design object (four styles
-today, one rule needed).
+and the exercise drawings are done; the charts and the motion spec are next
+(§0.8).
 
 ---
 
@@ -498,8 +498,40 @@ the tokens.
 |---|---|
 | **3 B6 his screenshots** | **still blocked on you** |
 | 6 state matrix, per screen | ~1 d, better after the screenshots |
-| 7 data-viz + motion spec | ~2 d |
 | 8 landing page + case study | ~4 d |
 
-The icons, the loading/failure/empty states and the exercise drawings are now
-done — the three things that were listed under 7 as "4 days".
+The icons, the loading/failure/empty states, the exercise drawings, the charts
+and the motion spec are now done.
+
+---
+
+## §0.8 The charts, and the motion
+
+The charts were the last place where the app drew *numbers* without a rule.
+Two of the defects were not taste but bugs, and both are worth remembering:
+
+- `var()` **does not resolve in an SVG presentation attribute.** `barChart`
+  received `col:'var(--burnt)'` per row and wrote it into `fill="…"`. Browsers
+  ignore that, so the only colour the bars ever had came from a stylesheet rule
+  overriding it — in charcoal. The colour channel was broken and decorative;
+  it is gone, and one series is one colour.
+- **A hollow dot was an inheritance accident.** The focusable `<g>` around each
+  point carried `fill:paper; stroke:ink`; every circle inside it inherited that,
+  so a "solid" dot rendered as a ring. Paint belongs to the mark now.
+
+The rest was design: `min = rawMin * 0.85` labelled a 42–52.5 kg series
+`36 52 68 84 100` — an axis rounded at one end is not a scale. `niceScale`
+rounds both ends to a step, both charts use it, and the series is burnt so the
+PR point has something to stand out from.
+
+The motion spec is written down at last, because it was already half true and
+untested: one entrance per screen (the pen draws the line, points print as it
+passes, bars rise in reading order), nothing loops, nothing bounces, and
+`prefers-reduced-motion` or the app's own `data-motion` switch collapses it all
+to 1 ms. The rule that matters: **the un-animated state is the finished chart.**
+The dash offset lives in the keyframe and the ring ships its arc in the markup,
+so a print pass or a browser that drops the animation still shows the data.
+
+`design/DATAVIZ.md` has the grammar; `dataviz-before.png` and
+`dataviz-after.png` are rasterised out of the live DOM through the real
+stylesheet. Tests: design **8k**, sixteen checks.
