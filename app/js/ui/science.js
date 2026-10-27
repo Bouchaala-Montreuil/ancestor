@@ -162,8 +162,9 @@ Screens.lesson = function(){
        '<span class="flag plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>' +
        '<span class="flag accent">' + esc(t('cat.' + l.cat.replace(/-(\w)/g,(m,c)=>c.toUpperCase()))) + '</span></div>';
 
-  h += '<h1 class="display mb-2" style="font-size:26px">' + esc(t(l.titleKey)) + '</h1>';
-  h += '<p class="onb-prose">' + esc(t(l.summaryKey)) + '</p>';
+  h += '<article class="read">';
+  h += '<h1 class="read-title">' + esc(t(l.titleKey)) + '</h1>';
+  h += '<p class="read-lede">' + esc(t(l.summaryKey)) + '</p>';
   if(l.langs && l.langs.indexOf(CURRENT_LANG) < 0){
     h += '<div class="uncertain mb-4"><b>' + esc(t('sci.notLocalised')) + '</b></div>';
   }
@@ -171,31 +172,34 @@ Screens.lesson = function(){
   /* sections */
   l.sections.forEach(sec => {
     // Section text is localised by key; English is the source of last resort.
-    h += '<div class="panel"><h3 class="sub mb-2">' + esc(t(sec.h)) + '</h3>' +
-         '<p class="body-sm" style="font-size:14.5px;color:var(--ink-2)">' + esc(t(sec.b)) + '</p></div>';
+    h += '<div class="sect"><h2 class="title">' + esc(t(sec.h)) + '</h2><span class="rule"></span></div>' +
+         '<p class="read-p">' + esc(t(sec.b)) + '</p>';
   });
 
   /* personal data, when the lesson supports it and data exists */
   h += personalBlock(l, s);
 
   /* takeaways */
-  h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.takeaways')) + '</h3></div>' +
+  h += '<div class="sect"><h2 class="title">' + esc(t('sci.takeaways')) + '</h2><span class="rule"></span></div>' +
+       '<div class="factors bare">' +
        (l.takeaways||[]).map(k => '<div class="factor up"><span class="dot"></span><span class="txt">' + esc(t(k)) + '</span></div>').join('') +
        '</div>';
 
   /* myths */
   if((l.myths||[]).length){
-    h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.myths')) + '</h3></div>';
+    h += '<div class="sect"><h2 class="title">' + esc(t('sci.myths')) + '</h2><span class="rule"></span></div>';
+    h += '<div class="factors bare">';
     l.myths.forEach(m => {
       h += '<div class="factor warn"><span class="dot"></span><span class="txt"><b>' + esc(t(m.claim)) + '</b> — ' +
-           esc(t(m.verdict)) + '<br><span style="color:var(--ink-3)">' + esc(t(m.why)) + '</span></span></div>';
+           esc(t(m.verdict)) + '<br><span class="read-aside">' + esc(t(m.why)) + '</span></span></div>';
     });
     h += '</div>';
   }
 
   /* quiz */
   if((l.quiz||[]).length){
-    h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.quiz')) + '</h3></div>';
+    h += '<div class="panel quiz"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.quiz')) + '</h3>' +
+         '<span class="hint">' + ((l.quiz||[]).length) + '</span></div>';
     l.quiz.forEach((qq, i) => {
       const picked = q.answers[i];
       h += '<div class="mb-4"><p class="mb-2" style="font-size:14px;font-weight:600">' +
@@ -226,19 +230,18 @@ Screens.lesson = function(){
   }
 
   /* evidence */
-  h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.evidence')) + '</h3></div>';
+  h += '<div class="sect"><h2 class="title">' + esc(t('sci.evidence')) + '</h2><span class="rule"></span></div>';
   if(!evs.length){
-    h += '<p class="body-sm">' + esc(t('ev.none')) + '</p>';
+    h += '<p class="read-p">' + esc(t('ev.none')) + '</p>';
   } else {
     evs.forEach(e => { h += evidenceCard(e, true); });
   }
-  h += '</div>';
 
   /* links into the app */
-  h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.features')) + '</h3></div>' +
+  h += '<div class="sect"><h2 class="title">' + esc(t('sci.features')) + '</h2><span class="rule"></span></div>' +
        '<div class="chips">' + (l.features||[]).map(f =>
          '<button class="chip" onclick="go(\'' + f.view + '\')">' + esc(t(f.label)) + '</button>').join('') +
-       '</div></div>';
+       '</div></article>';
 
   if(!isRead(l.id)){
     h += '<button class="btn block" onclick="markRead(\'' + l.id + '\')">' + esc(t('sci.markRead')) + '</button>';
@@ -275,13 +278,15 @@ function retryQuiz(lessonId){ QUIZ_STATE[lessonId] = { answers:[], done:false, c
 /* ------------------------------------------------- personal-data blocks */
 function personalBlock(l, state){
   if(!l.personal) return '';
+  /* No data is not a figure. An empty box with a heading is a promise the page
+     cannot keep, so the lesson says the same thing in one quiet line. */
+  if(!state.sessions.length){
+    return '<p class="meta read-note">' + esc(t('sci.personal')) + ' — ' +
+           esc(t('sci.personal.none')) + '</p>';
+  }
+
   let h = '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sci.personal')) + '</h3>' +
           '<span class="hint">' + esc(t('sci.legendObs')) + '</span></div>';
-
-  if(!state.sessions.length){
-    h += '<p class="body-sm">' + esc(t('sci.personal.none')) + '</p></div>';
-    return h;
-  }
 
   if(l.personal === 'overload'){
     const exId = (state.sessions[state.sessions.length-1].exercises[0]||{}).id;

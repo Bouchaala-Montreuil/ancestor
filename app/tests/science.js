@@ -91,8 +91,18 @@ group('2. Lesson rendering');
   w.openLesson('training-principles');
   chk('the lesson opens', w.ANC.view === 'lesson', w.ANC.view);
   chk('the title is shown', txt(d).indexOf(w.t('les.trainingPrinciples')) >= 0);
-  chk('sections are rendered', d.querySelectorAll('.panel').length >= 4,
-      d.querySelectorAll('.panel').length + ' panels');
+  /* A lesson is a document: numbered dossier entries and prose, not a stack of
+     identical cards. Only things you operate keep a box. */
+  chk('sections are rendered as numbered dossier entries',
+      d.querySelectorAll('.sect h2.title').length >= 5,
+      d.querySelectorAll('.sect h2.title').length + ' entries');
+  chk('the prose is set as prose', d.querySelectorAll('.read-p').length >= 3,
+      d.querySelectorAll('.read-p').length + ' paragraphs');
+  chk('the lesson opens at document scale', !!d.querySelector('h1.read-title') && !!d.querySelector('p.read-lede'));
+  const boxes = d.querySelectorAll('article.read .panel').length;
+  chk('the document is sections, not stacked boxes',
+      d.querySelectorAll('article.read .sect').length >= boxes * 2,
+      d.querySelectorAll('article.read .sect').length + ' sections vs ' + boxes + ' boxes');
   chk('takeaways are shown', txt(d).indexOf(w.t('sci.takeaways')) >= 0);
   chk('myth vs evidence is shown', txt(d).indexOf(w.t('sci.myths')) >= 0);
   chk('evidence is linked', txt(d).indexOf(w.t('sci.evidence')) >= 0);
