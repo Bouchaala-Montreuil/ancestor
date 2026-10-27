@@ -161,16 +161,14 @@ function mountAnatomyLab(host, opts){
       '<div class="lab-canvas-wrap" id="labCanvasWrap"></div>' +
       '<div class="lab-hover" id="labHover" hidden aria-hidden="true"></div>' +
       '<div class="lab-loading" id="labLoading">' +
-        '<div class="lab-spinner" aria-hidden="true"></div>' +
+        (typeof waitMark === 'function' ? waitMark() : '') +
         '<p class="lab-loading-t">' + esc(t('lab3d.loading')) + '</p>' +
         '<p class="lab-loading-d">' + esc(t('lab3d.loadingBody')) + '</p>' +
-        /* genuine wait: the record panel skeleton mirrors the rows that are
-           about to arrive, so the layout does not jump when they do */
-        '<div class="skel-block mt-4" style="width:min(260px,80%)" aria-busy="true">' +
-          '<span class="sr-only">' + esc(t('lab.loading')) + '</span>' +
-          '<div class="skel-row" style="animation-delay:0ms"></div>' +
-          '<div class="skel-row" style="animation-delay:70ms;width:70%"></div>' +
-          '<div class="skel-row" style="animation-delay:140ms;width:85%"></div>' +
+        /* A genuine wait, and a real progress signal: the 700 KB model is
+           fetched in one go, so the only honest thing to show is the shape of
+           what is coming, then the mark completing. */
+        '<div class="lab-wait-skel">' +
+          (typeof skel === 'function' ? skel('label row short row', {labelKey:'lab.loading'}) : '') +
         '</div>' +
       '</div>' +
       '<div class="lab-error" id="labError" hidden role="alert"></div>' +

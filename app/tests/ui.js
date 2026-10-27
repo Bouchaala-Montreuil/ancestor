@@ -473,6 +473,50 @@ group('14. The failure state');
 }
 
 /* ================================================================ */
+group('15. The boot veil and the offline state');
+{
+  const dom6 = await boot();
+  const w6 = dom6.window, d6 = dom6.window.document;
+
+  /* Rebuild the veil the way index.html ships it, then let bootCopy fill it. */
+  const veil = d6.createElement('div');
+  veil.id = 'appBoot';
+  veil.innerHTML = '<p class="app-boot-k" id="bootKicker">RECOVERY ENGINE</p>' +
+    '<svg class="app-boot-mark">' +
+    ['bs1','bs2','bs3','bs4','bs5'].map((c, i) =>
+      '<rect class="bs ' + c + '" x="' + (3.2 + i * 5) + '" y="4.2" width="2.4" height="15.6"/>').join('') +
+    '</svg><p class="app-boot-note" id="bootNote"></p>';
+  d6.body.appendChild(veil);
+
+  w6.bootCopy();
+  chk('the boot veil speaks the app language', d6.getElementById('bootKicker').textContent === w6.t('app.tag'),
+      d6.getElementById('bootKicker').textContent);
+  chk('it no longer names the source project',
+      !/PERFORMANCE LAB/i.test(d6.getElementById('bootKicker').textContent));
+  chk('it says where the data lives', d6.getElementById('bootNote').textContent === w6.t('app.bootNote'));
+  chk('the load is the mark being drawn, five strokes',
+      d6.querySelectorAll('.app-boot-mark rect').length === 5);
+
+  w6.switchLang('fr'); w6.bootCopy();
+  chk('and it is French in French', /MOTEUR/i.test(d6.getElementById('bootKicker').textContent),
+      d6.getElementById('bootKicker').textContent);
+
+  w6.switchLang('ar'); w6.bootCopy();
+  chk('Arabic names the recovery engine, not the old lab',
+      !/مختبر/.test(d6.getElementById('bootKicker').textContent) &&
+      d6.getElementById('bootKicker').textContent === w6.t('app.tag'),
+      d6.getElementById('bootKicker').textContent);
+  w6.switchLang('en');
+
+  /* Offline is the design, not a fault. */
+  const off = w6.t('app.offlineOk');
+  chk('the offline state says the app still works, not that it is broken',
+      /works|fonctionne|funciona|funktioniert|funziona|werkt|يعمل/.test(off), off);
+
+  veil.parentNode.removeChild(veil);
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

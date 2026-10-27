@@ -11,7 +11,7 @@
 
 const TAR = {
 'state.stop':'لا تتدرّب اليوم',
-'app.name':'ANCESTOR','app.tag':'مختبر الأداء',
+'app.bootNote':'سجلّك لا يغادر هذا الجهاز أبدًا','app.name':'ANCESTOR','app.tag':'محرّك التعافي',
 
 'nav.home':'الرئيسية','nav.today':'اليوم','nav.session':'الحصة','nav.body':'الجسم','nav.progress':'التقدّم','nav.profile':'الملف',
 

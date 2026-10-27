@@ -317,20 +317,6 @@ function pressFeedback(el){
   try{ navigator.vibrate(8); }catch(e){}
 }
 
-/* ------------------------------------------------------- skeleton loading
-   Real loading states only. Call with a container and the number of rows the
-   eventual content is expected to have. */
-function skeleton(container, rows, opts){
-  if(!container) return;
-  opts = opts || {};
-  let h = '<div class="skel-block" aria-busy="true" aria-live="polite">' +
-          '<span class="sr-only">' + esc(t(opts.labelKey || 'lab.loading')) + '</span>';
-  for(let i=0;i<(rows||3);i++)
-    h += '<div class="skel-row" style="animation-delay:' + (i*70) + 'ms"></div>';
-  container.innerHTML = h + '</div>';
-}
-function clearSkeleton(container){ if(container) container.innerHTML = ''; }
-
 /* ------------------------------------------------------- shared indicators
    Moves a persistent indicator element to sit under the active tab. The
    element must survive re-renders, which is why the nav updates classes
@@ -357,5 +343,5 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = { MOTION, EASE, reducedMotion, dur, dismissAppBoot, transitionView, staggerIn,
                      animateNumber, animateRing, hydrateMotion, animateSubnavs,
                      bindAccordions, observeReveals, pressFeedback,
-                     skeleton, clearSkeleton, moveIndicator };
+                     moveIndicator };
 }

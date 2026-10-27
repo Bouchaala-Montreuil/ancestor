@@ -22,9 +22,21 @@
 
 <div class="app-boot" id="appBoot" role="status" aria-live="polite" aria-label="Loading ANCESTOR">
   <div class="app-boot-in">
-    <p class="app-boot-k">PERFORMANCE LAB // OFFLINE ENGINE</p>
+    <p class="app-boot-k" id="bootKicker">RECOVERY ENGINE</p>
     <strong class="app-boot-w">ANCESTOR</strong>
-    <div class="app-boot-track" aria-hidden="true"><i></i></div>
+    <!-- The mark draws itself: four strokes, then the fifth that closes the
+         set. That is the load. No spinner, no percentage. -->
+    <svg class="app-boot-mark" viewBox="0 0 24 24" aria-hidden="true">
+      <g fill="currentColor">
+        <rect class="bs bs1" x="3.2" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs2" x="8.267" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs3" x="13.333" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs4" x="18.4" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs5" x="2.30" y="10.8" width="19.4" height="2.4"
+              transform="rotate(-16 12 12)"/>
+      </g>
+    </svg>
+    <p class="app-boot-note" id="bootNote">Your log never leaves this device</p>
   </div>
 </div>
 

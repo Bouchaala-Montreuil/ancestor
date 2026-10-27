@@ -10,7 +10,7 @@ const LANG_LABEL = { en:'EN', fr:'FR', es:'ES', de:'DE', it:'IT', nl:'NL', ar:'�
 const T = {};
 
 T.en = {
-'app.name':'ANCESTOR',
+'app.bootNote':'Your log never leaves this device',
 'app.tag':'RECOVERY ENGINE',
 
 'nav.home':'Home',
@@ -180,6 +180,7 @@ T.en = {
 };
 
 T.fr = {
+'app.bootNote':'Votre journal ne quitte jamais cet appareil',
 'app.name':'ANCESTOR','app.tag':'MOTEUR DE RÉCUPÉRATION',
 'nav.home':'Accueil',
 'btn.next':'Continuer','btn.back':'Retour','btn.save':'Enregistrer','btn.cancel':'Annuler',
@@ -330,6 +331,7 @@ T.fr = {
 };
 
 T.es = {
+'app.bootNote':'Tu registro nunca sale de este dispositivo',
 'app.name':'ANCESTOR','app.tag':'MOTOR DE RECUPERACIÓN',
 'nav.home':'Inicio',
 'btn.next':'Continuar','btn.back':'Atrás','btn.save':'Guardar','btn.cancel':'Cancelar',
@@ -463,6 +465,7 @@ T.es = {
 };
 
 T.de = {
+'app.bootNote':'Dein Logbuch verlässt dieses Gerät nie',
 'app.name':'ANCESTOR','app.tag':'REGENERATIONS-ENGINE',
 'nav.home':'Start',
 'btn.next':'Weiter','btn.back':'Zurück','btn.save':'Speichern','btn.cancel':'Abbrechen',
@@ -596,6 +599,7 @@ T.de = {
 };
 
 T.it = {
+'app.bootNote':'Il tuo registro non lascia mai questo dispositivo',
 'app.name':'ANCESTOR','app.tag':'MOTORE DI RECUPERO',
 'nav.home':'Home',
 'btn.next':'Continua','btn.back':'Indietro','btn.save':'Salva','btn.cancel':'Annulla',
@@ -729,6 +733,7 @@ T.it = {
 };
 
 T.nl = {
+'app.bootNote':'Je logboek verlaat dit apparaat nooit',
 'app.name':'ANCESTOR','app.tag':'HERSTELMOTOR',
 'nav.home':'Start',
 'btn.next':'Doorgaan','btn.back':'Terug','btn.save':'Opslaan','btn.cancel':'Annuleren',

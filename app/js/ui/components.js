@@ -459,6 +459,44 @@ const TALLY_BLANK =
   '<rect x="18.4" y="4.2" width="2.4" height="15.6"/>' +
   '</g></svg>';
 
+/* The one loading primitive. `skel('title row row figure')` emits bars shaped
+   like the thing that is coming, so the layout does not jump when it lands.
+   There were three loaders before this: a shimmering block, a static grey row,
+   and a rotating circle — plus two helper functions nobody called. */
+const SKEL_SHAPES = {
+  title:  {h: 22, w: 64},
+  lede:   {h: 12, w: 84},
+  row:    {h: 14, w: 100},
+  short:  {h: 14, w: 52},
+  figure: {h: 64, w: 100},
+  label:  {h: 9,  w: 34}
+};
+function skel(parts, opts){
+  opts = opts || {};
+  const list = String(parts || 'row row row').trim().split(/\s+/);
+  let h = '<div class="skel' + (opts.cls ? ' ' + opts.cls : '') + '" aria-busy="true" aria-live="polite">' +
+          '<span class="sr-only">' + esc(t(opts.labelKey || 'lab.loading')) + '</span>';
+  list.forEach((key, i) => {
+    const sh = SKEL_SHAPES[key] || SKEL_SHAPES.row;
+    h += '<div class="skel-bar skel-' + (SKEL_SHAPES[key] ? key : 'row') + '"' +
+         ' style="height:' + sh.h + 'px;width:' + sh.w + '%;animation-delay:' + (i * 90) + 'ms"></div>';
+  });
+  return h + '</div>';
+}
+
+/* A wait inside a fixed frame — the 3D lab — is marked with the tally's four
+   strokes and the fifth not yet drawn. Not a spinner: a circle says "wait",
+   a tally says "counting", and counting is what this product does. */
+function waitMark(){
+  return '<span class="wait" aria-hidden="true"><svg viewBox="0 0 24 24">' +
+    '<g fill="currentColor">' +
+    '<rect class="ws ws1" x="3.2" y="4.2" width="2.4" height="15.6"/>' +
+    '<rect class="ws ws2" x="8.267" y="4.2" width="2.4" height="15.6"/>' +
+    '<rect class="ws ws3" x="13.333" y="4.2" width="2.4" height="15.6"/>' +
+    '<rect class="ws ws4" x="18.4" y="4.2" width="2.4" height="15.6"/>' +
+    '</g></svg></span>';
+}
+
 /* The failure state. Four strokes drawn, and the fifth — the one that closes
    the set — in the alert colour, because that is exactly what happened: the
    screen could not be completed. */
@@ -503,15 +541,6 @@ function banner(kind, title, body){
     (title ? '<b>' + esc(title) + '</b> ' : '') + esc(body || '') + '</span></div>';
 }
 
-function skeletonBlock(rows){
-  let h = '';
-  for(let i=0;i<(rows||3);i++){
-    h += '<div class="row nowrap mb-3" style="gap:12px">' +
-      '<div class="skeleton" style="width:34%;height:16px"></div>' +
-      '<div class="skeleton grow" style="height:16px"></div></div>';
-  }
-  return h;
-}
 
 /* ------------------------------------------------------------- PRINT CARD */
 /* ============================================================================

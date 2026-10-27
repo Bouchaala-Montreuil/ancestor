@@ -108,7 +108,9 @@ function render(){
   if(nf){
     const off = (typeof navigator !== 'undefined' && navigator.onLine === false);
     nf.hidden = !off;
-    if(off) nf.textContent = t('app.offline');
+    /* Offline is not a fault in this product — it is the design. The header
+       says so, instead of raising an alarm about it. */
+    if(off) nf.textContent = t('app.offlineOk');
   }
 
   paintRestHost();
@@ -190,7 +192,21 @@ function handleHashShortcut(){
   return false;
 }
 
+/* The boot veil speaks the app's language, not the source project's. It used to
+   say "PERFORMANCE LAB // OFFLINE ENGINE" in every language. */
+function bootCopy(){
+  try{
+    const k = document.getElementById('bootKicker');
+    const n = document.getElementById('bootNote');
+    const b = document.getElementById('appBoot');
+    if(k) k.textContent = t('app.tag');
+    if(n) n.textContent = t('app.bootNote');
+    if(b) b.setAttribute('aria-label', t('app.name'));
+  }catch(e){}
+}
+
 function boot(){
+  bootCopy();
   loadState();
   const s = getState();
   const restored = loadDraft();

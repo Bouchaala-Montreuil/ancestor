@@ -393,6 +393,36 @@ group('8g. Science has a hierarchy now');
       /\.factor\.locked \.dot\{[^}]*background:transparent/.test(css));
 }
 
+/* ================================================================ */
+group('8h. One loading language');
+{
+  const comp = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const mot  = fs.readFileSync(path.join(ROOT, 'js/ui/motion.js'), 'utf8');
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+
+  chk('there is exactly one skeleton primitive',
+      /function skel\(/.test(comp) && !/function skeletonBlock/.test(comp) && !/function skeleton\(/.test(mot));
+  chk('it is shaped like the content, not a generic bar',
+      /SKEL_SHAPES/.test(comp) && /figure:\s*\{h:/.test(comp) && /title:\s*\{h:/.test(comp));
+  chk('no spinner survives anywhere',
+      !/@keyframes spin/.test(css) && !/lab-spinner/.test(css) &&
+      !/lab-spinner/.test(fs.readFileSync(path.join(ROOT, 'js/ui/anatomy3d.js'), 'utf8')));
+  chk('a wait is marked with the tally that has not closed yet',
+      /function waitMark/.test(comp) && /\.wait \.ws1\{[^}]*animation/.test(css));
+  chk('a busy button is the same mark, masked so it takes the button colour',
+      /\.btn\.loading::after\{[^}]*mask:url\("data:image\/svg\+xml/.test(css));
+  chk('the boot veil draws the full mark',
+      (html.match(/class="bs bs\d"/g) || []).length === 5);
+  chk('the closing stroke is the burnt one',
+      /\.app-boot-mark \.bs5\{[^}]*fill:var\(--burnt\)/.test(css));
+  chk('every loading animation stops under reduced motion',
+      /html\[data-motion="on"\] \.skel-bar/.test(css) &&
+      /html\[data-motion="on"\] \.wait \.ws/.test(css) &&
+      /html\[data-motion="on"\] \.app-boot-mark \.bs/.test(css));
+  chk('the veil is localised at boot, not hardcoded',
+      /function bootCopy\(\)/.test(fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8')));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

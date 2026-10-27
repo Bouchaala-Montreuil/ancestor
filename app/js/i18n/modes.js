@@ -1824,6 +1824,7 @@ Object.keys(TPLAN2).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], TPL
 const TV41 = {
   "en": {
     "app.offline": "Offline",
+    "app.offlineOk": "Offline · everything works",
     "app.fail.title": "This screen could not be drawn.",
     "app.fail.body": "Something in this view failed while it was being drawn. Your log is untouched.",
     "app.fail.retry": "Try again",
@@ -1872,6 +1873,7 @@ const TV41 = {
   },
   "fr": {
     "app.offline": "Hors ligne",
+    "app.offlineOk": "Hors ligne · tout fonctionne",
     "app.fail.title": "Cet écran n'a pas pu être affiché.",
     "app.fail.body": "Quelque chose a échoué pendant le rendu de cette vue. Votre journal est intact.",
     "app.fail.retry": "Réessayer",
@@ -1920,6 +1922,7 @@ const TV41 = {
   },
   "es": {
     "app.offline": "Sin conexión",
+    "app.offlineOk": "Sin conexión · todo funciona",
     "app.fail.title": "Esta pantalla no se pudo dibujar.",
     "app.fail.body": "Algo falló mientras se dibujaba esta vista. Tu registro está intacto.",
     "app.fail.retry": "Reintentar",
@@ -1968,6 +1971,7 @@ const TV41 = {
   },
   "de": {
     "app.offline": "Offline",
+    "app.offlineOk": "Offline · alles funktioniert",
     "app.fail.title": "Dieser Bildschirm konnte nicht gezeichnet werden.",
     "app.fail.body": "Beim Zeichnen dieser Ansicht ist etwas fehlgeschlagen. Dein Logbuch ist unberührt.",
     "app.fail.retry": "Erneut versuchen",
@@ -2016,6 +2020,7 @@ const TV41 = {
   },
   "it": {
     "app.offline": "Offline",
+    "app.offlineOk": "Offline · tutto funziona",
     "app.fail.title": "Impossibile disegnare questa schermata.",
     "app.fail.body": "Qualcosa è fallito durante il disegno di questa vista. Il tuo registro è intatto.",
     "app.fail.retry": "Riprova",
@@ -2064,6 +2069,7 @@ const TV41 = {
   },
   "nl": {
     "app.offline": "Offline",
+    "app.offlineOk": "Offline · alles werkt",
     "app.fail.title": "Dit scherm kon niet worden getekend.",
     "app.fail.body": "Er ging iets mis bij het tekenen van deze weergave. Je logboek is ongewijzigd.",
     "app.fail.retry": "Opnieuw proberen",
@@ -2112,6 +2118,7 @@ const TV41 = {
   },
   "ar": {
     "app.offline": "دون اتصال",
+    "app.offlineOk": "دون اتصال · كل شيء يعمل",
     "app.fail.title": "تعذّر رسم هذه الشاشة.",
     "app.fail.body": "حدث خطأ أثناء رسم هذا العرض. سجلّك لم يتغيّر.",
     "app.fail.retry": "إعادة المحاولة",

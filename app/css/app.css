@@ -379,15 +379,31 @@ h2.title,h3.sub{
   font-weight:700;line-height:.9;text-transform:uppercase;letter-spacing:.02em;
   color:var(--ink);
 }
-.app-boot-track{
-  height:2px;background:var(--line);margin-top:var(--s5);overflow:hidden;
+/* The load is the mark being drawn: four strokes, then the fifth that closes
+   the set. A travelling bar said nothing about this product; a tally closing
+   says "counting", which is what the app does. */
+.app-boot-mark{
+  display:block;width:56px;height:56px;margin:var(--s5) auto 0;color:var(--ink);
 }
-.app-boot-track i{
-  display:block;height:100%;width:38%;background:var(--ink);
-  animation:boot-slide 1.1s var(--ease-in-out) infinite;
+.app-boot-mark .bs{opacity:0;animation:tally-draw 160ms var(--ease) forwards}
+.app-boot-mark .bs1{animation-delay:0ms}
+.app-boot-mark .bs2{animation-delay:90ms}
+.app-boot-mark .bs3{animation-delay:180ms}
+.app-boot-mark .bs4{animation-delay:270ms}
+.app-boot-mark .bs5{animation-delay:400ms;fill:var(--burnt)}
+@keyframes tally-draw{from{opacity:0}to{opacity:1}}
+.app-boot-note{
+  margin:var(--s4) 0 0;font-family:var(--f-mono);font-size:8px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink);
 }
-@keyframes boot-slide{0%{transform:translateX(-100%)}100%{transform:translateX(360%)}}
 .app-boot.out{opacity:0;pointer-events:none;transition:opacity var(--t-slow) var(--ease)}
+/* Reduced motion: the mark is simply there. */
+html[data-motion="on"] .app-boot-mark .bs{opacity:1;animation:none}
+@media (prefers-reduced-motion: reduce){
+  .app-boot-mark .bs{opacity:1;animation:none}
+}
+/* The old mark was a background image with the wordmark baked in; this one is
+   drawn from the same numbers, so it can animate and recolour. */
 
 /* --------------------------------------------------------------- HEADER */
 header{
@@ -477,13 +493,19 @@ nav.tabbar{
 .btn.danger{background:var(--alert);border-color:var(--alert);color:var(--ivory)}
 .btn.secondary{background:var(--surface);color:var(--ink);border-color:var(--ink)}
 .btn.loading{color:transparent;pointer-events:none}
+/* The busy button is marked with the same four strokes the veil draws, masked
+   so it takes the button's own colour. It was a rotating circle — the fourth
+   and last spinner in the app. */
 .btn.loading::after{
-  content:"";position:absolute;width:14px;height:14px;border-radius:50%;
-  border:1.5px solid currentColor;border-top-color:transparent;
-  color:var(--ivory);animation:spin 700ms linear infinite;
+  content:"";position:absolute;width:13px;height:13px;
+  background-color:currentColor;color:var(--ivory);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20fill%3D%22%23fff%22%3E%3Crect%20x%3D%223.2%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3Crect%20x%3D%228.267%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3Crect%20x%3D%2213.333%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3Crect%20x%3D%2218.4%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20fill%3D%22%23fff%22%3E%3Crect%20x%3D%223.2%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3Crect%20x%3D%228.267%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3Crect%20x%3D%2213.333%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3Crect%20x%3D%2218.4%22%20y%3D%224.2%22%20width%3D%222.4%22%20height%3D%2215.6%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat;
+  animation:wait-stroke 1.6s var(--ease-in-out) infinite;
 }
 .btn.quiet.loading::after{color:var(--ink)}
-@keyframes spin{to{transform:rotate(360deg)}}
+html[data-motion="on"] .btn.loading::after{animation:none;opacity:.7}
+@media (prefers-reduced-motion: reduce){.btn.loading::after{animation:none;opacity:.7}}
 .btn .ic{display:inline-flex;width:14px;height:14px}
 .btn .ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6}
 .dash-actions{gap:var(--s2);margin-top:var(--s4)}
@@ -971,7 +993,7 @@ button.flag:hover{border-color:var(--ink)}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 .sheet h2,.sheet h3{margin-bottom:var(--s3)}
 
-/* skeleton */
+/* loading — one primitive, shaped like what is coming */
 .skeleton{
   position:relative;overflow:hidden;
   background-color:var(--recess);
@@ -979,13 +1001,40 @@ button.flag:hover{border-color:var(--ink)}
   background-size:220% 100%;background-repeat:no-repeat;
   animation:shimmer 1.25s linear infinite;
 }
-.skel-row,.skel-block{
-  height:12px;margin-bottom:var(--s2);
-  background-color:var(--recess);
-}
-.skel-row:nth-child(3n){width:72%}
 .skeleton.is-done{animation:none;background-image:none}
+
+.skel{display:block}
+.skel-bar{
+  height:14px;margin-bottom:var(--s2);
+  background-color:var(--recess);
+  background-image:linear-gradient(90deg,transparent,rgba(252,249,242,.9),transparent);
+  background-size:220% 100%;background-repeat:no-repeat;
+  animation:shimmer 1.25s linear infinite;
+}
+/* A skeleton bar is never a full-width box: noise, not a wireframe. */
+.skel-title{background-color:var(--recess-2)}
+.skel-label{background-color:var(--line-soft)}
+.skel-short{margin-bottom:0}
 @keyframes shimmer{from{background-position:120% 0}to{background-position:-120% 0}}
+/* Reduced motion: a still bar is honest; a frozen shimmer looks broken. */
+html[data-motion="on"] .skel-bar,
+html[data-motion="on"] .skeleton{animation:none;background-image:none}
+@media (prefers-reduced-motion: reduce){
+  .skel-bar,.skeleton{animation:none;background-image:none}
+}
+
+/* The waiting tally: four strokes present, and a sweep that keeps arriving at
+   the fifth place. */
+.wait{display:inline-block;width:26px;height:26px;color:var(--ink)}
+.wait svg{width:100%;height:100%;display:block}
+.wait .ws{opacity:.22}
+.wait .ws1{animation:wait-stroke 1.6s var(--ease-in-out) infinite}
+.wait .ws2{animation:wait-stroke 1.6s var(--ease-in-out) .2s infinite}
+.wait .ws3{animation:wait-stroke 1.6s var(--ease-in-out) .4s infinite}
+.wait .ws4{animation:wait-stroke 1.6s var(--ease-in-out) .6s infinite}
+@keyframes wait-stroke{0%,60%,100%{opacity:.22}20%{opacity:1}}
+html[data-motion="on"] .wait .ws{opacity:.6;animation:none}
+@media (prefers-reduced-motion: reduce){.wait .ws{opacity:.6;animation:none}}
 
 /* tables */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 var(--s4)}
@@ -1092,10 +1141,8 @@ table.data tbody tr:last-child td{border-bottom:0}
   text-transform:uppercase;color:var(--ink);
 }
 .lab-loading-d{font-family:var(--f-mono);font-size:8px;letter-spacing:.1em;color:var(--tech-ink)}
-.lab-spinner{
-  width:18px;height:18px;border:1.5px solid var(--line);border-top-color:var(--ink);
-  border-radius:50%;animation:spin 800ms linear infinite;
-}
+/* The spinner became the waiting tally; see .wait. */
+.lab-wait-skel{width:min(260px,80%);margin-top:var(--s4);text-align:start}
 .lab-credits{
   font-family:var(--f-mono);font-size:8px;letter-spacing:.06em;
   color:var(--tech-ink);line-height:1.6;margin-top:var(--s3);
