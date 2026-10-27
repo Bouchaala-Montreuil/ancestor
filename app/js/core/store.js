@@ -179,14 +179,26 @@ function migrate(s){
   return out;
 }
 
+/* A refused write is the worst thing that can happen to this product: the set
+   the user just logged is in memory and nowhere else. It used to be swallowed —
+   `saveState()` returned false and every caller ignored it — so the app looked
+   completely healthy while the last session existed only until the next reload.
+   Now the failure is a state, and the header says so until a write succeeds. */
+let STORAGE_FAILED = false;
 function saveState(){
+  let ok = false;
   try{
     const raw = JSON.stringify(STATE);
     localStorage.setItem(STORE_KEY, raw);
     idbMirrorPut(raw);
-    return true;
+    ok = true;
   }
-  catch(e){ return false; }
+  catch(e){ ok = false; }
+  STORAGE_FAILED = !ok;
+  if(typeof paintStoreFlag === 'function'){
+    try{ paintStoreFlag(); } catch(e){ /* the flag must never break a save */ }
+  }
+  return ok;
 }
 
 function getState(){ return STATE || loadState(); }
@@ -344,9 +356,15 @@ function deleteBodyweight(id){
    Completeness is decided by the exercise's mode, not by "+r > 0". That test
    made timed and distance work invisible: a plank logged as 40 seconds was
    dropped from history, so the exercise never registered as trained. */
+/* An id the build does not know cannot have a history we can score. Records
+   arrive from imports, older versions and renamed exercises, and a missing
+   exercise used to crash every screen that reads the log: `isSetComplete` was
+   called with `undefined` and took the whole render with it. The record is kept
+   as it is; it simply has nothing to plot. */
 function exerciseHistory(exId){
   const s = getState();
   const ex = EX_BY_ID[exId];
+  if(!ex) return [];
   const rows = [];
   s.sessions.forEach(sess => {
     (sess.exercises||[]).forEach(e => {

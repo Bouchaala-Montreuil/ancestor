@@ -138,7 +138,7 @@ value; line charts start at the nice floor because a line's value is its height.
 
 ## 5. The part that is usually skipped
 
-Four defects in this project were not taste, and each one is more useful than a
+Five defects in this project were not taste, and each one is more useful than a
 screenshot.
 
 ### 5.1 Three rules that never met their element
@@ -172,7 +172,27 @@ keyed on `html[data-textscale]` and `html[data-simple="true"]`, while the app se
 `data-text` and `data-simple="on"`. The features existed, the CSS existed, and
 neither did anything. A suite check now fails if a preference hook is orphaned.
 
-The pattern in all four: **a claim that no one had rendered.** Which is why the
+### 5.5 The write nobody read
+
+The worst one was not visual. `saveState()` wrapped `localStorage` in a try/catch,
+set `ok = false` when the write failed — and returned it to callers that ignored
+the return value. Logging a set into a browser that refuses storage (a full quota,
+private mode, an in-app webview with storage disabled) drew the set, charted it,
+updated the volume, and then lost all of it at the next reload, with the interface
+looking perfectly healthy for the entire session.
+
+Auditing the state matrix is what surfaced it, because "storage denied" is a row
+in that matrix and there was nothing to point at. It is now a header strip that
+says the write was refused, offers the export while the data is still in memory,
+and clears itself on the next successful write.
+
+The strip then exposed a second lie on the same screen: eight call sites wrote
+`saveState(); toast(t('…saved'), 'ok')` — the write and the claim, side by side,
+with the claim never checking the write. Those eight now go through one guard,
+`savedToast()`, so the app cannot congratulate a user for a save that did not
+happen.
+
+The pattern in all five: **a claim that no one had rendered.** Which is why the
 process changed.
 
 ---
@@ -224,9 +244,10 @@ build, the onboarding, the landing page.
 ## 8. What I would do next
 
 1. **Photograph it.** The next pass is a device: 320 px, 390 px, a cracked screen,
-   a gym basement, one hand. Everything else is arithmetic until then.
-2. **Audit states per screen** — six tabs × five states (empty, waiting, failed,
-   offline, busy) as a matrix, not as a pattern.
+   a gym basement, one hand. Everything else is arithmetic until then — including
+   the states, which are audited (`design/STATES.md`) but never seen.
+2. **Buffer a failed write.** The storage strip reports and offers an export; it
+   does not queue. A user who ignores it and keeps logging loses the lot.
 3. **Dark.** The tokens are one block; the palette is five values with contrast
    ratios recorded. A dark frame is a token swap plus a re-check, not a redesign —
    and it should be tried, because the current answer ("ivory only") is a position,
@@ -242,5 +263,6 @@ build, the onboarding, the landing page.
 | `design/ROADMAP.md` | what is still missing, with effort and blockers |
 | `design/icons/PATTERNS.md` | the drawing grammar, 140 × 94 |
 | `design/DATAVIZ.md` | the chart grammar, the scale, the motion spec |
+| `design/STATES.md` | the six states, the 6 × 5 matrix, what is still unproven |
 | `site/index.html` | the landing page (one file, figures from the app) |
 | `app/README.md` | the product, the honest scope notes |

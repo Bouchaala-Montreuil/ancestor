@@ -60,7 +60,7 @@ const TAR = {
 'body.nodataNote':'لا توجد مجموعة مسجّلة بعد. سجّل حصة تستهدف هذه العضلة لملء السجل.',
 'body.neverBody':'لا توجد مجموعة مسجّلة','body.neverHint':'ستظهر هذه المجموعة بعد تسجيل تمرين يستهدفها.',
 
-'progress.title':'التقدّم','progress.overview':'ملخّص','progress.detail':'تحليل',
+'progress.title':'التقدّم','progress.overview':'ملخّص','progress.detail':'تحليل','progress.unknownEx':'بعض السجلات تشير إلى تمارين غير موجودة في هذا الإصدار. تبقى محفوظة وتُصدَّر كما هي.',
 'progress.exercise':'التمرين','progress.period':'الفترة','progress.p30':'30 يوماً','progress.p90':'90 يوماً','progress.pall':'كل الفترة',
 'progress.volume':'الحجم لكل مجموعة عضلية','progress.volumeDef':'الحمل × التكرارات × مساهمة كل تمرين',
 'progress.sessions':'الحصص','progress.pr':'الأرقام الشخصية','progress.sets':'مجموعات','progress.reps':'تكرارات',

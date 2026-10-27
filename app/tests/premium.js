@@ -627,6 +627,166 @@ group('11. Onboarding step guard, split workout planner, live exercise addition 
       Array.from(d.querySelectorAll('.day-card')).some(c => c.textContent.indexOf(w.t('plan.doneToday')) >= 0));
 }
 
+/* ==================================================================== */
+/*  10. The state matrix                                                 */
+/*  Six tabs x five states. Most of the cells are "nothing happens here"  */
+/*  — the app is synchronous — and that is a finding, not a gap: the      */
+/*  matrix is a list of what each screen actually does when there is no   */
+/*  data, when something breaks, when the radio is off and when work is   */
+/*  genuinely in flight.                                                  */
+/* ==================================================================== */
+console.log('\n\x1b[1m10. The state matrix\x1b[0m');
+{
+  const TABS = ['home','session','body','progress','science','profile'];
+
+  /* fresh: an onboarded record with nothing in it */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    const broken = [];
+    TABS.forEach(v => {
+      let ok = true;
+      try { w.go(v); } catch(e){ ok = false; }
+      const body = d.getElementById('screenBody');
+      const txt = body.textContent.replace(/\s+/g,' ');
+      const hasHeading = !!body.querySelector('h1,h2,.masthead .title');
+      if(!ok || !hasHeading || body.innerHTML.length < 200 || /undefined|NaN|\[object Object\]/.test(txt)){
+        broken.push(v);
+      }
+    });
+    chk('all six tabs render an empty record without a blank screen or a raw value',
+        broken.length === 0, broken.join(', '));
+
+    w.go('body');
+    chk('Body with nothing selected offers a selection instead of an empty record',
+        !!d.querySelector('#screenBody .empty') && /Select/i.test(d.querySelector('#screenBody .empty').textContent));
+    w.go('progress');
+    chk('Progress with no sessions says so and offers the way in',
+        !!d.querySelector('#screenBody .empty') &&
+        !!d.querySelector('#screenBody .empty .act button, #screenBody .empty .act a'));
+    w.go('session');
+    chk('Session with no plan offers to build one',
+        /plan|program/i.test(d.querySelector('#screenBody').textContent) &&
+        !!d.querySelector('#screenBody .empty, #screenBody .banner'));
+  }
+
+  /* one session: a baseline is not a trend */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    w.addSession({ date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A', name:'Push',
+      exercises:[{ id:'bb-bench', sets:[S({w:60,r:8,rir:2})] }] });
+    w.go('progress');
+    const txt = d.querySelector('#screenBody').textContent;
+    chk('one session is labelled as a baseline, not drawn as a trend',
+        /cannot show a trend|baseline/i.test(txt) && !/chart-path/.test(d.getElementById('screenBody').innerHTML));
+  }
+
+  /* a log whose exercise ids this build no longer knows */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    w.addSession({ date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A', name:'Legacy',
+      exercises:[{ id:'exercise-from-v0', sets:[S({w:50,r:5,rir:2})] }] });
+    let threw = false;
+    try { w.go('progress'); } catch(e){ threw = true; }
+    const txt = d.querySelector('#screenBody').textContent;
+    chk('a record naming an unknown exercise cannot crash Progress', !threw &&
+        /Progress/.test(txt) && !/TypeError/.test(txt));
+    chk('…and the screen says the records are kept, not lost',
+        /this version does not have/i.test(txt));
+    chk('…and the record survives: export still carries the set',
+        /exercise-from-v0/.test(w.exportJSON()));
+
+    w.go('home');
+    chk('the other tabs keep working with that record in the log',
+        !/TypeError/.test(d.querySelector('#screenBody').textContent));
+  }
+
+  /* failed: the screen throws */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    w.eval("Screens.__home = Screens.home; Screens.home = function(){ throw new Error('probe'); };");
+    w.go('progress'); w.go('home');
+    const txt = d.querySelector('#screenBody').textContent;
+    chk('a screen that throws degrades to one designed failure state',
+        /went wrong|Something/i.test(txt) && d.querySelectorAll('#screenBody .fail, #screenBody .empty').length >= 1);
+    const acts = Array.from(d.querySelectorAll('#screenBody button'));
+    chk('the failure state offers a retry and a way back',
+        acts.length >= 2 && acts.some(b => /try again|retry|reload/i.test(b.textContent)) &&
+        acts.some(b => /today|home/i.test(b.textContent)));
+    w.eval("Screens.home = Screens.__home;");
+  }
+
+  /* offline */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    w.eval("Object.defineProperty(navigator,'onLine',{value:false,configurable:true})");
+    w.go('home');
+    const flag = d.getElementById('netFlag');
+    chk('offline is announced once, in the header, as a capability not a fault',
+        !!flag && !flag.hidden && /offline/i.test(flag.textContent) &&
+        !/error|failed/i.test(flag.textContent));
+    chk('…and no screen raises an offline error banner of its own',
+        d.querySelectorAll('#screenBody .banner.alert').length === 0);
+  }
+
+  /* busy: the one genuinely asynchronous action */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    chk('the busy style is attached to a real control',
+        typeof w.eval('typeof setBtnBusy') === 'string' && w.eval('typeof setBtnBusy') === 'function');
+    const btn = d.createElement('button');
+    btn.className = 'btn quiet';
+    w.eval('setBtnBusy')(btn, true);
+    chk('busy marks the button and announces it',
+        btn.classList.contains('loading') && btn.getAttribute('aria-busy') === 'true');
+    w.eval('setBtnBusy')(btn, false);
+    chk('busy clears cleanly', !btn.classList.contains('loading') && !btn.hasAttribute('aria-busy'));
+  }
+
+  /* storage refused: the write is lost but the data is not silent */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    const strip = d.getElementById('storeFlag');
+    chk('the storage-failure strip exists and starts hidden',
+        !!strip && strip.hidden && strip.getAttribute('role') === 'status');
+
+    /* make every write throw the way a full or locked-down quota does */
+    const real = w.localStorage;
+    Object.defineProperty(w, 'localStorage', { configurable:true, value:{
+      getItem: k => real.getItem(k), removeItem: k => real.removeItem(k),
+      clear: () => real.clear(), key: i => real.key(i), get length(){ return real.length; },
+      setItem(){ throw new Error('QuotaExceededError'); }
+    }});
+
+    w.addSession({ date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A', name:'Push',
+      exercises:[{ id:'bb-bench', sets:[S({w:60,r:8,rir:2})] }] });
+
+    const txt = strip.textContent.replace(/\s+/g,' ').trim();
+    chk('a refused write raises the strip instead of failing silently', !strip.hidden);
+    chk('…and it says what happened in words, not a raw key',
+        /not saved|non enregistr|sin guardar|nicht gespeichert|non salvato|niet opgeslagen/i.test(txt) &&
+        !/^[a-z]+\.[a-z]/i.test(txt) && !/undefined|\[object Object\]/.test(txt));
+    chk('…and offers the one action that still works: export',
+        !!strip.querySelector('button') && /export/i.test(strip.querySelector('button').textContent));
+    chk('…and the session that could not be saved is still in the export',
+        /bb-bench/.test(w.exportJSON()));
+
+    /* A green "Saved" beside a red "Not saved" would be the lie the strip exists
+       to prevent, so confirmations check the write instead of assuming it. */
+    const toastEl = d.getElementById('toast');
+    toastEl.className = 'toast';
+    const lied = w.eval("savedToast('you.saved')");
+    chk('…and nothing claims the write succeeded',
+        lied === false && !toastEl.classList.contains('ok'));
+
+    /* the flag is a state, not a one-shot: a good write clears it */
+    Object.defineProperty(w, 'localStorage', { configurable:true, value: real });
+    w.saveState();
+    chk('a later successful write clears the strip', strip.hidden);
+    chk('…and the confirmation comes back with it',
+        w.eval("savedToast('you.saved')") === true && toastEl.classList.contains('ok'));
+  }
+}
+
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' PREMIUM TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

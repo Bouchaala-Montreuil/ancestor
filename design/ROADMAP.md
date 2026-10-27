@@ -447,14 +447,16 @@ at the size it is used is not a mark.
 
 ### The remaining item on the order
 
-**6. The state matrix** — what is left of it: the states are now designed
-(empty, failed, waiting, offline, busy), but they have not been *audited per
-screen*. That is a checklist job over 6 tabs × 5 states, and it needs the
-screenshots to be worth doing.
+**6. The state matrix** — done as an audit (`design/STATES.md`), and it paid for
+itself twice: it found a corrupted record that took Progress down with a stack
+trace, and it found that `saveState()` had been returning `false` into silence —
+the app could lose everything at the next reload while looking healthy. Both are
+states now, and the second exposed eight confirmations that claimed a save without
+reading the write — they go through one guard, `savedToast()`. What the audit
+cannot say is how any of them feel on a device, which is the same sentence as B6.
 
-**7–8. Illustrations, data-viz, motion spec, landing, case study.** The icons
-and the exercise drawings are done; the charts and the motion spec are next
-(§0.8).
+**7–8. Illustrations, data-viz, motion spec, landing, case study.** All done
+(§0.7, §0.8, §0.9).
 
 ---
 
@@ -563,8 +565,9 @@ dot born of inheritance, preference hooks keyed on the wrong attribute). Then ho
 the work was verified without a browser, what is still unproven, and what comes
 next.
 
-What is left on the whole order: **the device screenshots** (yours) and the
-**state matrix** that wants them.
+What is left on the whole order: **the device screenshots** (yours). The state
+matrix wanted them; it has been audited without them, and says in `STATES.md`
+exactly which of its claims that leaves open.
 
 Two honest notes about this pair. The figures were rasterised and looked at; **the
 page itself was not** — there is no browser here, so `site/index.html` is verified

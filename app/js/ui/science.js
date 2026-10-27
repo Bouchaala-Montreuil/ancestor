@@ -257,7 +257,7 @@ function markRead(id){
   const p = sciProgress();
   p.read = p.read || [];
   if(p.read.indexOf(id) < 0) p.read.push(id);
-  sciSave(); toast(t('sci.read'),'ok'); render();
+  sciSave(); savedToast('sci.read'); render();
 }
 function answerQuiz(lessonId, qi, oi){
   const q = QUIZ_STATE[lessonId] || { answers:[], done:false, correct:0, total:(lesson(lessonId).quiz||[]).length };

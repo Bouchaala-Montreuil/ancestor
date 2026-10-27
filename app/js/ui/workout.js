@@ -1119,7 +1119,7 @@ function showCompletion(sum){
 function closeCompletion(to){
   const host = document.getElementById('sheetHost');
   if(host) host.innerHTML = '';
-  toast(t('session.saved'), 'ok');
+  savedToast('session.saved');
   go(to || 'progress');
 }
 

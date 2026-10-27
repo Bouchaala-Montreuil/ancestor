@@ -8,6 +8,7 @@ CLINIC.md            the design direction, the rules, and what changed
 CASE_STUDY.md        the case study: brief, idea, system, the four real defects,
                      verification without a browser, and what is left
 DATAVIZ.md           the chart grammar, the scale, the motion spec
+STATES.md            the six states, the 6 x 5 matrix, and what is still unproven
 dataviz-before.png   the charts as they were (broken axis, hollow dots)
 dataviz-after.png    the charts now, rasterised out of the live DOM
 icons/PATTERNS.md    the exercise-drawing grammar, 140 x 94

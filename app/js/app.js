@@ -107,6 +107,27 @@ function renderNav(show){
   }
 }
 
+/* The storage strip. It lives in the header, outside the screen that is
+   re-rendered, so a refused write is visible on every tab until one succeeds —
+   including the tab the user is about to leave. Export is offered inline
+   because the data is still in memory and this is the last moment to keep it. */
+function paintStoreFlag(){
+  const el = document.getElementById('storeFlag');
+  if(!el) return;
+  const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
+  if(!failing){
+    if(!el.hidden){ el.hidden = true; }
+    return;
+  }
+  const tEl = el.querySelector('.sf-t');
+  const bEl = el.querySelector('.sf-b');
+  const xEl = el.querySelector('.sf-x');
+  if(tEl) tEl.textContent = t('app.store.title');
+  if(bEl) bEl.textContent = t('app.store.body');
+  if(xEl) xEl.textContent = t('you.export');
+  el.hidden = false;
+}
+
 function render(){
   const s = getState();
   const onboarding = !s.onboarded;
@@ -151,6 +172,8 @@ function render(){
     if(off) nf.textContent = t('app.offlineOk');
   }
 
+  paintStoreFlag();
+
   paintRestHost();
   bindFigure();
   try { bindAnatomyLab(); } catch(e) { /* the flat figure still works */ }
@@ -194,6 +217,16 @@ function toast(msg, kind){
   toastTimer = setTimeout(() => { el.className = 'toast'; }, 2600);
 }
 let toastTimer = null;
+
+/* A green confirmation is a claim about a write. On the one path where the write
+   was refused, the header strip has already told the truth; a "Saved" toast on
+   top of it would be the lie the strip exists to prevent. So confirmations go
+   through here, and it checks the last write rather than assuming it. */
+function savedToast(key){
+  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) return false;
+  toast(t(key), 'ok');
+  return true;
+}
 
 /* ------------------------------------------------------------------ DEBUG */
 window.ANC = {

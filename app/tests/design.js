@@ -542,6 +542,78 @@ group('8k. Charts are drawn to one scale');
       (code.match(/niceScale\(/g) || []).length >= 2);
 }
 
+group('8l. Every state has a producer and a way out');
+{
+  const comp = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  const workout = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
+  const science = fs.readFileSync(path.join(ROOT, 'js/ui/science.js'), 'utf8');
+  const store = fs.readFileSync(path.join(ROOT, 'js/core/store.js'), 'utf8');
+  const all = screens + workout + science;
+
+  /* A style with no producer is the mirror of a rule with no element: it looks
+     designed and never appears. `.btn.loading` sat in the stylesheet for three
+     passes before anything set it. */
+  chk('the busy button is produced, not just styled',
+      /\.btn\.loading/.test(css) && /setBtnBusy/.test(screens) &&
+      /classList\.toggle\('loading'/.test(screens));
+
+  /* One failure state, one empty state, one loader — not one per screen. */
+  chk('there is a single failure state and it is the only one',
+      (comp.match(/function failureState/g) || []).length === 1 &&
+      (all.match(/class="fail"/g) || []).length === 0);
+
+  chk('the failure state keeps the stack trace behind a disclosure',
+      /fail-more/.test(comp) && /<details/.test(comp));
+
+  chk('the failure state always offers retry and a route back',
+      /app\.fail\.retry/.test(comp) && /go\(\\'home\\'\)/.test(comp));
+
+  /* Every empty state names its situation and its consequence. */
+  const calls = all.match(/emptyState\([^)]*\)/g) || [];
+  const thin = calls.filter(c => (c.match(/'[^']*'/g) || []).length < 2);
+  chk('every empty state carries a title and a body, not a shrug',
+      thin.length === 0, calls.length + ' calls' + (thin.length ? ', thin: ' + thin[0] : ''));
+
+  /* Unknown records are a data-integrity boundary, not an exception. */
+  chk('an exercise id this build does not know cannot have a history',
+      /if\(!ex\) return \[\]/.test(store));
+  chk('…and Progress has something to say when every record is unknown',
+      /progress\.unknownEx/.test(screens));
+
+  /* Offline is a capability, not an error. */
+  chk('offline is one header flag, worded as a capability',
+      /netFlag/.test(fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8')) &&
+      /offlineOk/.test(fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8')));
+
+  /* A swallowed write is a state too: styled, produced, ended. */
+  chk('a refused write has a strip of its own and it is styled',
+      /\.store-flag/.test(css) && /id="storeFlag"/.test(fs.readFileSync(path.join(ROOT,'index.html'),'utf8')));
+  chk('…produced by the save path itself, not by a screen',
+      /STORAGE_FAILED\s*=\s*!ok/.test(store) && /paintStoreFlag/.test(fs.readFileSync(path.join(ROOT,'js/app.js'), 'utf8')));
+  const i18n = fs.readdirSync(path.join(ROOT, 'js/i18n'))
+    .map(f => fs.readFileSync(path.join(ROOT, 'js/i18n', f), 'utf8')).join('\n');
+  chk('…with copy in every language the app ships',
+      (i18n.match(/"app\.store\.title"/g) || []).length === 7 &&
+      (i18n.match(/"app\.store\.body"/g) || []).length === 7);
+
+  /* A confirmation is a claim about a write, so it goes through one guard. */
+  const app = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  const ui = ['screens.js','workout.js','science.js']
+    .map(f => fs.readFileSync(path.join(ROOT, 'js/ui', f), 'utf8')).join('\n');
+  chk('success is confirmed by a guard that reads the write, not by eight toasts',
+      /function savedToast/.test(app) && /STORAGE_FAILED/.test(app) &&
+      (ui.match(/savedToast\(/g) || []).length === 8 &&
+      !/toast\(t\('[a-z]+\.saved'\)/.test(ui));
+
+  /* The five states are the five the roadmap audits: nothing else shipped. */
+  /* Comments are allowed to say "spinner"; code is not allowed to be one. */
+  const codeOnly = (css + comp).replace(/\/\*[\s\S]*?\*\//g, '');
+  chk('no fourth spinner crept in',
+      !/spinner|loader-circle|is-loading/.test(codeOnly) &&
+      !/@keyframes\s+spin\b/.test(codeOnly));
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

@@ -1269,7 +1269,12 @@ Screens.progress = function(){
   s.sessions.forEach(x => (x.exercises||[]).forEach(e => {
     if(exIds.indexOf(e.id) < 0 && EX_BY_ID[e.id]) exIds.push(e.id); }));
   if(!PROG_EX || exIds.indexOf(PROG_EX) < 0) PROG_EX = exIds[0];
+  const progEx = EX_BY_ID[PROG_EX];
 
+  /* Every record in this log names an exercise this build does not have: the
+     log is intact and still exported as it is, but there is nothing to plot.
+     Say that, instead of drawing an empty chart or crashing the screen. */
+  if(progEx){
   h += '<div class="sect"><h3 class="sub">' + esc(t('progress.detail')) + '</h3><span class="rule"></span></div>';
   h += '<div class="panel">';
   h += '<div class="chips mb-3">';
@@ -1281,7 +1286,6 @@ Screens.progress = function(){
   h += '<div class="chips mb-3">' +
        exIds.map(id => '<button class="chip sm ' + (PROG_EX===id?'on':'') + '" onclick="setProgEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div>';
 
-  const progEx = EX_BY_ID[PROG_EX];
   const eps = exerciseHistory(PROG_EX).filter(h2 => h2.date >= from).map(h2 => {
     const b = bestSetScore(workingSets(h2.sets), progEx, s.profile);
     return b && b.metrics.score !== null && b.metrics.basis === 'e1rm'
@@ -1323,6 +1327,12 @@ Screens.progress = function(){
   h += '<p class="hint mt-2">' +
        esc(t('chart.basis')) + ': ' + esc(t(chartBasisKey(progEx, s.profile))) + ' · ' + esc(t('hist.note')) + '</p>';
   h += '</div>';
+
+  } else {
+    h += '<div class="sect"><h3 class="sub">' + esc(t('progress.detail')) + '</h3><span class="rule"></span></div>';
+    h += '<div class="panel"><div class="uncertain"><b>' + esc(t('state.none')) + '</b> ' +
+         esc(t('progress.unknownEx')) + '</div></div>';
+  }
 
   /* --- session table --- */
   h += '<div class="sect"><h3 class="sub">' + esc(t('progress.table')) + '</h3><span class="rule"></span></div>';
@@ -1747,7 +1757,7 @@ Screens.profile = function(){
   h += '<div class="stack">' +
        '<button class="btn quiet" onclick="openSheet(\'bw\')">+ ' + esc(t('bw.log')) + '</button>' +
        '<button class="btn quiet" onclick="doExport()">' + esc(t('you.export')) + '</button>' +
-       '<button class="btn quiet" onclick="doImport()">' + esc(t('you.import')) + '</button>' +
+       '<button class="btn quiet" onclick="doImport(this)">' + esc(t('you.import')) + '</button>' +
        '<button class="btn danger" onclick="doErase()">' + esc(t('you.erase')) + '</button></div></div>';
 
   /* About */
@@ -1787,7 +1797,7 @@ function setDisplay(key, value){
 
 function rebuildPlan(){
   const s = getState();
-  s.plan = buildPlan(s.profile); saveState(); toast(t('you.saved'),'ok'); go('session');
+  s.plan = buildPlan(s.profile); saveState(); savedToast('you.saved'); go('session');
 }
 function replayOnboarding(){ const s = getState(); s.onboarded = false; saveState(); onbIdx = 0; go('onb'); }
 
@@ -1804,16 +1814,30 @@ function doExport(){
   toast(t('you.export'),'ok');
   if(VIEW === 'profile') render();
 }
-function doImport(){
+/* The busy state, finally attached to something. `.btn.loading` — the masked
+   tally that replaced the app's fourth spinner — has existed in the stylesheet
+   with no producer: nothing ever set it. Import is the one genuinely async
+   action (a file has to be read), so a large record no longer leaves the button
+   looking untouched, and a failed read now says so instead of doing nothing. */
+function setBtnBusy(btn, on){
+  if(!btn || !btn.classList) return;
+  btn.classList.toggle('loading', !!on);
+  if(on) btn.setAttribute('aria-busy', 'true');
+  else btn.removeAttribute('aria-busy');
+}
+function doImport(btn){
   const i = document.createElement('input');
   i.type = 'file'; i.accept = 'application/json,.json';
   i.onchange = () => {
     const f = i.files[0]; if(!f) return;
+    setBtnBusy(btn, true);
     const r = new FileReader();
     r.onload = () => {
-      try{ importJSON(r.result); toast(t('you.saved'),'ok'); go('home'); }
+      setBtnBusy(btn, false);
+      try{ importJSON(r.result); savedToast('you.saved'); go('home'); }
       catch(e){ toast(t('err.generic'),'err'); }
     };
+    r.onerror = () => { setBtnBusy(btn, false); toast(t('err.generic'),'err'); };
     r.readAsText(f);
   };
   i.click();
@@ -1924,7 +1948,7 @@ function saveBodyweightSheet(){
   if(!isFinite(v) || v <= 0){ toast(t('err.generic'), 'err'); return; }
   const ts = dStr ? new Date(dStr + 'T12:00:00').getTime() : Date.now();
   addBodyweight(v, isFinite(ts) ? ts : Date.now());
-  closeSheet(); toast(t('you.saved'), 'ok'); render();
+  closeSheet(); savedToast('you.saved'); render();
 }
 function removeBodyweightRow(id){
   deleteBodyweight(id);
@@ -1940,13 +1964,13 @@ function saveSleep(){
   const a = ($('#sl_s')||{}).value, b = ($('#sl_e')||{}).value;
   if(!a || !b){ toast(t('err.generic'),'err'); return; }
   addSleep({ start:a, end:b, quality:QUALITY });
-  closeSheet(); toast(t('sleep.saved'),'ok'); render();
+  closeSheet(); savedToast('sleep.saved'); render();
 }
 function saveShift(){
   const a = ($('#sf_s')||{}).value, b = ($('#sf_e')||{}).value;
   if(!a || !b){ toast(t('err.generic'),'err'); return; }
   addShift({ start:a, end:b });
-  closeSheet(); toast(t('shift.saved'),'ok'); render();
+  closeSheet(); savedToast('shift.saved'); render();
 }
 let FEEL = { soreness:0, joint:0, fatigue:0, illness:0 };
 function pickFeel(k,v){
@@ -1955,7 +1979,7 @@ function pickFeel(k,v){
 }
 function saveFeel(){
   addFeeling(Object.assign({}, FEEL));
-  closeSheet(); toast(t('feel.saved'),'ok');
+  closeSheet(); savedToast('feel.saved');
   FEEL = { soreness:0, joint:0, fatigue:0, illness:0 };
   render();
 }

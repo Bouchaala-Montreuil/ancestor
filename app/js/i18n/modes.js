@@ -1825,6 +1825,8 @@ const TV41 = {
   "en": {
     "app.offline": "Offline",
     "app.offlineOk": "Offline · everything works",
+    "app.store.title": "Not saved",
+    "app.store.body": "This device refused the write. What you just logged exists only in memory — export it now, or it will be gone when you reload.",
     "app.fail.title": "This screen could not be drawn.",
     "app.fail.body": "Something in this view failed while it was being drawn. Your log is untouched.",
     "app.fail.retry": "Try again",
@@ -1874,6 +1876,8 @@ const TV41 = {
   "fr": {
     "app.offline": "Hors ligne",
     "app.offlineOk": "Hors ligne · tout fonctionne",
+    "app.store.title": "Non enregistré",
+    "app.store.body": "Cet appareil a refusé l'écriture. Ce que vous venez de saisir n'existe qu'en mémoire — exportez-le maintenant, sinon il aura disparu au rechargement.",
     "app.fail.title": "Cet écran n'a pas pu être affiché.",
     "app.fail.body": "Quelque chose a échoué pendant le rendu de cette vue. Votre journal est intact.",
     "app.fail.retry": "Réessayer",
@@ -1923,6 +1927,8 @@ const TV41 = {
   "es": {
     "app.offline": "Sin conexión",
     "app.offlineOk": "Sin conexión · todo funciona",
+    "app.store.title": "Sin guardar",
+    "app.store.body": "Este dispositivo rechazó la escritura. Lo que acabas de registrar solo existe en memoria: expórtalo ahora o se perderá al recargar.",
     "app.fail.title": "Esta pantalla no se pudo dibujar.",
     "app.fail.body": "Algo falló mientras se dibujaba esta vista. Tu registro está intacto.",
     "app.fail.retry": "Reintentar",
@@ -1972,6 +1978,8 @@ const TV41 = {
   "de": {
     "app.offline": "Offline",
     "app.offlineOk": "Offline · alles funktioniert",
+    "app.store.title": "Nicht gespeichert",
+    "app.store.body": "Dieses Gerät hat das Schreiben abgelehnt. Was du gerade eingetragen hast, steht nur im Speicher — exportiere es jetzt, sonst ist es beim Neuladen weg.",
     "app.fail.title": "Dieser Bildschirm konnte nicht gezeichnet werden.",
     "app.fail.body": "Beim Zeichnen dieser Ansicht ist etwas fehlgeschlagen. Dein Logbuch ist unberührt.",
     "app.fail.retry": "Erneut versuchen",
@@ -2021,6 +2029,8 @@ const TV41 = {
   "it": {
     "app.offline": "Offline",
     "app.offlineOk": "Offline · tutto funziona",
+    "app.store.title": "Non salvato",
+    "app.store.body": "Questo dispositivo ha rifiutato la scrittura. Ciò che hai appena registrato esiste solo in memoria: esportalo ora, altrimenti sparirà al ricaricamento.",
     "app.fail.title": "Impossibile disegnare questa schermata.",
     "app.fail.body": "Qualcosa è fallito durante il disegno di questa vista. Il tuo registro è intatto.",
     "app.fail.retry": "Riprova",
@@ -2070,6 +2080,8 @@ const TV41 = {
   "nl": {
     "app.offline": "Offline",
     "app.offlineOk": "Offline · alles werkt",
+    "app.store.title": "Niet opgeslagen",
+    "app.store.body": "Dit apparaat weigerde de schrijfactie. Wat je net hebt vastgelegd staat alleen in het geheugen — exporteer het nu, anders is het weg na het herladen.",
     "app.fail.title": "Dit scherm kon niet worden getekend.",
     "app.fail.body": "Er ging iets mis bij het tekenen van deze weergave. Je logboek is ongewijzigd.",
     "app.fail.retry": "Opnieuw proberen",
@@ -2119,6 +2131,8 @@ const TV41 = {
   "ar": {
     "app.offline": "دون اتصال",
     "app.offlineOk": "دون اتصال · كل شيء يعمل",
+    "app.store.title": "لم يُحفظ",
+    "app.store.body": "رفض هذا الجهاز الكتابة. ما سجّلته للتو موجود في الذاكرة فقط — صدّره الآن، وإلا فسيضيع عند إعادة التحميل.",
     "app.fail.title": "تعذّر رسم هذه الشاشة.",
     "app.fail.body": "حدث خطأ أثناء رسم هذا العرض. سجلّك لم يتغيّر.",
     "app.fail.retry": "إعادة المحاولة",

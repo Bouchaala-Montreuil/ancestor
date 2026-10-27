@@ -19,6 +19,7 @@ site/      the landing page (one file; figures copied from the app)
 | the direction | `design/CLINIC.md` |
 | the case study | `design/CASE_STUDY.md` |
 | what is still missing | `design/ROADMAP.md` |
+| the states, audited | `design/STATES.md` |
 
 ```bash
 cd app && python3 -m http.server 8000      # the app
@@ -30,7 +31,7 @@ python3 -m http.server 8080                # the repo (app, site and design/ doc
 ```bash
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do
   node tests/$t.js
-done                                        # 1,068 checks over 10 suites
+done                                        # 1,105 checks over 10 suites
 python3 build.py && node tools/smoke_dist.js   # the single file, booted and used
 python3 ../site/build.py && python3 ../site/check.py
 ```
