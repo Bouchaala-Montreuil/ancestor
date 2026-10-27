@@ -540,6 +540,14 @@ group('8k. Charts are drawn to one scale');
   chk('the ring ships its arc in the markup', !/stroke-dashoffset="' \+ c\.toFixed\(2\)/.test(comp));
   chk('the scale is used, not reimplemented, by both charts',
       (code.match(/niceScale\(/g) || []).length >= 2);
+
+  /* A bar with a width and no paint is not a chart. The atlas contribution bars
+     carried three <i> elements with percentage widths and no height or colour,
+     so every card showed an empty 0px row where a distribution should be. */
+  chk('every bar this app draws is given a height and a colour',
+      /\.ex-mbar i\{[^}]*height:100%[^}]*background:/.test(css.replace(/\n/g,'')) &&
+      /\.ex-mbar\{[^}]*height:3px/.test(css.replace(/\n/g,'')),
+      'ex-mbar: a 3px track, a painted fill');
 }
 
 group('8l. Every state has a producer and a way out');

@@ -1199,7 +1199,18 @@ function renderExerciseLibrary(){
          esc(t('mg.' + m)) + '</button>'
        ).join('') + '</div></div>';
 
-  /* Equipment filter */
+  /* Equipment and mode: two axes, four controls each, and almost nobody
+     touches them twice. One disclosure, with the active filter named on the
+     closed row so a filtered list never lies about why it is short. */
+  const activeExtra = (LIB_EQUIP !== 'all' ? t('equip.' + LIB_EQUIP) : '') +
+                      (LIB_EQUIP !== 'all' && LIB_MODE !== 'all' ? ' · ' : '') +
+                      (LIB_MODE !== 'all' ? t('exd.mode.' + LIB_MODE) : '');
+  h += '<details class="dis atlas-more"' + (activeExtra ? ' open' : '') + '>' +
+       '<summary><span class="dis-t">' + esc(t('plan.equipLabel')) + ' · ' +
+       esc(t('chart.basis')) + '</span>' +
+       (activeExtra ? '<span class="flag sm accent">' + esc(activeExtra) + '</span>' : '') +
+       '</summary><div class="atlas-more-body">';
+
   h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('plan.equipLabel')) + '</span><div class="chips">' +
        '<button type="button" class="chip sm ' + (LIB_EQUIP==='all'?'on':'') + '" onclick="setLibEquip(\'all\')">' + esc(t('sci.all')) + '</button>' +
@@ -1208,7 +1219,6 @@ function renderExerciseLibrary(){
          esc(t('equip.' + eq)) + '</button>'
        ).join('') + '</div></div>';
 
-  /* Mode filter */
   h += '<div class="anat-filter-row">' +
        '<span class="anat-filter-lbl">' + esc(t('chart.basis')) + '</span><div class="chips">' +
        '<button type="button" class="chip sm ' + (LIB_MODE==='all'?'on':'') + '" onclick="setLibMode(\'all\')">' + esc(t('sci.all')) + '</button>' +
@@ -1216,6 +1226,7 @@ function renderExerciseLibrary(){
          '<button type="button" class="chip sm ' + (LIB_MODE===md?'on':'') + '" onclick="setLibMode(\'' + md + '\')">' +
          esc(t('exd.mode.' + md)) + '</button>'
        ).join('') + '</div></div>';
+  h += '</div></details>';
   h += '</div>';
 
   if(!filtered.length){
@@ -1225,55 +1236,42 @@ function renderExerciseLibrary(){
   }
 
   h += '<div class="ex-grid" data-stagger>';
-  const targetDay = PLAN_DAY || (s.plan && s.plan.sessions && s.plan.sessions[0] ? s.plan.sessions[0].id : '');
+  /* A register, not a grid of cards. Eighty-eight exercises each carried a
+     heading, four flags, a contribution bar, a three-muscle sentence and four
+     controls: 382 buttons and 1 304 words in one scroll, which is a wall you
+     scroll past rather than a library you search. One row per exercise, one
+     tap to the sheet that already holds every action, and the two filter
+     axes that nobody changes (equipment, mode) behind a disclosure. */
+  h += '<div class="ex-grid" data-stagger>';
   filtered.forEach(e => {
     const spec = exLogSpec(e);
     const inPool = p.exercises ? p.exercises[e.id] !== false : true;
     const pb = personalBest(e.id);
     const histCount = exerciseHistory(e.id).length;
     const excl = exclusionReason(e, p);
+    const top = (e.m || [])[0];
+    const meta = [
+      top ? t('mg.' + top[0]) : '',
+      t('equip.' + e.equip),
+      targetRangeText(e)
+    ].filter(Boolean).join(' · ');
 
-    h += '<div class="ex-card ' + (inPool ? '' : 'excluded') + '">';
-    h += '<div>';
-    h += '<div class="ex-card-hd">' +
-         '<div class="row nowrap row-top grow">' +
-           (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(e) : '') +
-           '<div class="shrink"><button type="button" class="ex-card-t" onclick="openExerciseDetail(\'' + e.id + '\')">' +
-             esc(t('ex.' + e.id)) + '</button>' +
-           '<div class="mt-1"><span class="flag sm plain">' + esc(t('equip.' + e.equip)) + '</span></div></div>' +
-         '</div></div>';
-
-    h += '<div class="chips mb-0 mt-2">' +
-         '<span class="flag sm accent">' + esc(targetRangeText(e)) + '</span>' +
-         '<span class="flag sm plain">' + esc(t('pat.' + e.pat)) + '</span>' +
-         '<span class="flag sm plain">' + esc(t('exd.mode.' + spec.mode)) + '</span>' +
-         (pb && histCount >= 2 ? '<span class="flag sm ok">PR: ' + esc(formatSet(pb.set, e, p)) + '</span>' : '') +
-         '</div>';
-
-    /* Muscle contribution bar */
-    h += '<div class="ex-mbar" aria-hidden="true">' +
-         e.m.map((x, idx) => '<i class="' + (idx===0?'':'sec') + '" style="width:' + Math.round(x[1]*100) + '%"></i>').join('') +
-         '</div>';
-    h += '<p class="hint">' +
-         e.m.map(x => esc(t('mg.' + x[0])) + ' ' + Math.round(x[1]*100) + '%').join(' · ') + '</p>';
-    if(excl){
-      h += '<p class="hint mt-1" style="color:var(--warn)">' + esc(t(excl)) + '</p>';
-    }
-    h += '</div>';
-
-    h += '<div class="row row-1" style="padding-top:var(--s2);border-top:var(--hair) solid var(--recess)">' +
-         '<button type="button" class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' +
-           esc(t('exd.open')) + '</button>' +
-         (ACTIVE
-           ? '<button type="button" class="btn sm" onclick="addExerciseToActive(\'' + e.id + '\')">+ ' + esc(t('plan.tabActive')) + '</button>'
-           : (targetDay
-               ? '<button type="button" class="btn quiet sm" onclick="addExerciseToPlan(\'' + targetDay + '\',\'' + e.id + '\')">+ ' + esc(t('plan.tabPlan')) + '</button>'
-               : '')) +
-         '<button type="button" class="chip sm push ' + (inPool?'on':'') + '" ' +
-           'onclick="toggleEx(\'' + e.id + '\')" aria-pressed="' + (inPool?'true':'false') + '">' +
-           esc(inPool ? t('plan.inPool') : t('plan.excluded')) + '</button>' +
-         '</div>';
-    h += '</div>';
+    h += '<button type="button" class="ex-card' + (inPool ? '' : ' excluded') +
+         '" onclick="openExerciseDetail(\'' + e.id + '\')">';
+    h += '<span class="ex-thumb">' +
+         (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(e) : '') + '</span>';
+    h += '<span class="ex-main">' +
+         '<span class="ex-card-t">' + esc(t('ex.' + e.id)) + '</span>' +
+         '<span class="ex-meta">' + esc(meta) +
+         (pb && histCount >= 2 ? '<b class="ex-pr">PR ' + esc(formatSet(pb.set, e, p)) + '</b>' : '') +
+         (excl ? '<span class="ex-excl">' + esc(t(excl)) + '</span>' : '') +
+         '</span>' +
+         '<span class="ex-mbar" aria-hidden="true">' +
+         (e.m || []).map((x, idx) => '<i class="' + (idx === 0 ? '' : 'sec') +
+           '" style="width:' + Math.round(x[1]*100) + '%"></i>').join('') +
+         '</span></span>';
+    h += '<span class="ex-go" aria-hidden="true">\u203a</span>';
+    h += '</button>';
   });
   h += '</div>';
   return h;

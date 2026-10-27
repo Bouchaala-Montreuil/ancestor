@@ -1275,14 +1275,39 @@ table.data tbody tr:last-child td{border-bottom:0}
 .atlas-toolbar{display:flex;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s3)}
 
 /* ------------------------------------------------------------- EXERCISES */
-.ex-grid{display:grid;grid-template-columns:1fr;gap:var(--s3)}
-.ex-card-hd{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--s2);
-  padding:var(--s3) 0;border-bottom:var(--hair) solid var(--line);
+/* The atlas is a register: one ruled row per exercise, one tap to the sheet
+   that already holds every action. It was a grid of unboxed stacks — 88
+   headings, four flags and four controls each, 382 buttons and 1 304 words in
+   one scroll, which is a wall you scroll past rather than a library. */
+.ex-grid{display:block;border-top:2px solid var(--ink)}
+.ex-card{
+  display:grid;grid-template-columns:56px minmax(0,1fr) 14px;
+  gap:var(--s3);align-items:center;
+  width:100%;min-height:72px;padding:var(--s3) 0;
+  background:none;border:0;border-bottom:var(--hair) solid var(--line-soft);
+  text-align:start;cursor:pointer;color:var(--ink);
 }
+.ex-card:hover{background:rgba(32,33,31,.03)}
+.ex-card:active{background:var(--recess)}
+.ex-card:focus-visible{outline:2px solid var(--burnt);outline-offset:-2px}
+/* A muscle group taken out of the pool stays visible: it is excluded from
+   recommendations, not from the user's knowledge of their own programme. */
+.ex-card.excluded{opacity:.55}
+.ex-main{display:flex;flex-direction:column;gap:3px;min-width:0}
 .ex-card-t{
-  font-family:var(--f-display);font-size:18px;text-transform:uppercase;
-  letter-spacing:.02em;line-height:1.1;
+  font-family:var(--f-display);font-size:17px;text-transform:uppercase;
+  letter-spacing:.02em;line-height:1.12;
+}
+.ex-meta{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s2);
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tech-ink);
+}
+.ex-pr{color:var(--ok)}
+.ex-excl{color:var(--alert)}
+.ex-go{
+  font-family:var(--f-mono);font-size:15px;line-height:1;
+  color:var(--burnt-text);text-align:end;
 }
 .ex-thumb{
   width:56px;height:56px;flex:none;border:var(--hair) solid var(--line);
@@ -1293,9 +1318,19 @@ table.data tbody tr:last-child td{border-bottom:0}
 .ex-vis-figs,.ex-vis-kin{background:var(--surface);border:var(--hair) solid var(--line);padding:var(--s2)}
 .ex-vis-figs svg,.ex-vis-kin svg{display:block;width:100%;height:auto}
 .ex-note-wrap{margin-top:var(--s3)}
-.ex-mbar{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3)}
-.ex-mbar .ic{display:inline-flex;color:var(--tech-ink)}
-.ex-mbar .ic svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5}
+/* Muscle contribution, one 3px bar. The three <i> carried width percentages
+   and nothing else: no height, no paint, so the data visual rendered as three
+   invisible boxes in every card. */
+.ex-mbar{
+  display:flex;align-items:center;gap:2px;
+  height:3px;max-width:132px;margin-top:2px;
+  background:var(--recess);border-radius:1px;overflow:hidden;
+}
+.ex-mbar i{display:block;height:100%;background:var(--ink)}
+.ex-mbar i.sec{background:var(--line)}
+.atlas-more{margin-top:var(--s3)}
+.atlas-more summary{gap:var(--s2)}
+.atlas-more-body{margin-top:var(--s2);padding-bottom:var(--s2)}
 
 /* --------------------------------------------------------------- SESSION */
 .session-progress{

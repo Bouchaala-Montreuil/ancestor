@@ -576,6 +576,33 @@ group('16. Progressive disclosure: one action per moment');
   chk('the active-session dot is not part of its name',
       tabs.filter(b => b.textContent.indexOf('●') >= 0)
           .every(b => accName(b).indexOf('●') < 0));
+
+  /* --- the exercise atlas is a register, not a grid of cards ---------- */
+  w7.setSessionSub('library'); w7.render();
+  const rows = Array.from(body().querySelectorAll('.ex-card'));
+  chk('every exercise is exactly one row and one control', rows.length > 80 &&
+      rows.every(r => r.tagName === 'BUTTON' &&
+        r.querySelectorAll('button,[role=button],a').length === 0),
+      rows.length + ' rows, one control each');
+  const libControls = body().querySelectorAll('button,[role=button],input').length;
+  chk('the atlas stays under 130 controls', libControls < 130, libControls + ' controls');
+  const libWords = (body().textContent || '').trim().split(/\s+/).filter(Boolean).length;
+  chk('the atlas stays under 700 words', libWords < 700, libWords + ' words');
+  const chips = Array.from(body().querySelectorAll('.chip'));
+  const hiddenChips = chips.filter(c => c.closest('details.atlas-more'));
+  chk('the two filters nobody changes are behind a disclosure',
+      !!body().querySelector('details.atlas-more') && hiddenChips.length >= 12 &&
+      chips.length - hiddenChips.length < 20,
+      hiddenChips.length + ' of ' + chips.length + ' filter chips wait behind it');
+  /* a row opens the sheet that holds every action the row used to duplicate */
+  rows.filter(r => /Bench Press/.test(r.textContent))[0]
+    .dispatchEvent(new w7.MouseEvent('click', {bubbles:true}));
+  const sheetEl = d7.getElementById('sheetHost');
+  chk('a row opens the exercise sheet, which holds add-to-plan',
+      !!sheetEl && /Bench Press/.test(sheetEl.textContent) &&
+      !!sheetEl.querySelector('[onclick*="addExerciseTo"]'),
+      sheetEl ? 'sheet open' : 'no sheet');
+  w7.closeSheet();
 }
 
 group('15. The boot veil and the offline state');

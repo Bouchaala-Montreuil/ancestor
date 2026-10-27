@@ -113,7 +113,35 @@ anatomy lab*. The map is still an `img` with a name, not thirty tab stops
 between the action card and everything printed after it. On the Body screen the segments
 remain real `role="button"` targets, because there the map *is* the interface.
 
-### 3.4 Small things that were wrong
+### 3.4 The atlas is a register, not a wall (Journey E — Understand)
+
+Eighty-eight exercises each rendered as an unboxed stack: a heading, four flags,
+a contribution bar, a sentence listing three muscle percentages, and four
+controls. **382 buttons and 1 304 words** in one scroll — a library you scroll
+past rather than one you search.
+
+It is now a ruled register: one row per exercise, each row a single control that
+opens the sheet already holding every action (add to plan, add to session, open
+the body map, "why"). Equipment and mode — the two axes almost nobody changes —
+wait behind one disclosure, and the closed row *names* an active filter so a
+short list never lies about why it is short.
+
+| | before | after |
+|---|---|---|
+| words | 1 304 | **591** |
+| controls | 382 | **119** |
+| controls per exercise | 4 | **1** |
+| filter chips visible | 27 | 13 |
+
+Two defects were behind the word count. The contribution bar was three `<i>`
+elements with percentage widths and **no height and no paint**, so a data visual
+rendered as an empty 0 px row in all 88 cards; it is now a 3 px track with a
+painted fill, and a design check fails if a bar ever ships without both. And the
+subtle one: the row's four buttons were the only way to reach add-to-plan, which
+the sheet also offered — the duplication was invisible until the controls were
+counted.
+
+### 3.5 Small things that were wrong
 
 - The sub-navigation's count badge ("Exercise library" + "88") is now
   `aria-hidden`, so the control is announced as *Exercise library*. The same for
@@ -177,6 +205,8 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 | focus stops contributed by the dashboard map | 31 | 1 |
 | sub-navigation accessible name | "Exercise library88" | "Exercise library" |
 | set fields naming their set | 0 of 54 | 54 of 54 |
+| controls on the exercise atlas | 382 | 119 |
+| words on the exercise atlas | 1 304 | 591 |
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
@@ -193,7 +223,7 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 | Today | action hierarchy fixed, figure fixed | **nine `h2` sections**, 381 words; the section system is deliberate but flat — a "today / this week / understand" grouping is designed, not built |
 | Plan | untouched | not re-audited this pass |
 | Active session | headings, disclosures, discard moved, field names | 774 words with every set expanded; no per-exercise collapse; rest timer not visually verified |
-| Exercise atlas | untouched | **382 buttons, 1 304 words** in one scroll: the worst surface in the app |
+| Exercise atlas | register rows, one control each, filters behind a disclosure | the sheet is now the only action surface — everything a row used to duplicate has to be there, and that is worth auditing next |
 | Progress | untouched | charts and records re-verified for scale in the previous pass; drill-down not re-audited |
 | Body / anatomy | figure semantics fixed | 59 controls on one screen; the muscle list duplicates what the figure already shows |
 | Science | untouched | 26 controls, evidence disclosures already sound |
@@ -210,8 +240,11 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
   flat figure was the only anatomy surface exercised.
 - **The census counts are structural.** "Words" is text content, not reading
   effort; "controls exposed" ignores visual weight.
-- **Two screens were left with walls** (atlas, profile). They are the next
-  highest-impact work and were deliberately not half-fixed.
+- **One screen was left with a wall** (Profile, 160 controls). It is the next
+  highest-impact work and was deliberately not half-fixed.
+- **The atlas was measured, not seen.** Row density, the 72 px row height and the
+  sheet hand-off are structural claims; nobody has looked at 88 rows on a 390 px
+  screen.
 - **No rest-timer, no print-layout and no offline-persistence re-verification**
   in this pass; those suites are green, which is not the same as inspected.
 
@@ -219,15 +252,16 @@ Contrast, target sizes, focus visibility, reduced-motion parity and the
 
 ## 9. Next, ranked by user impact
 
-1. **Exercise atlas** — 382 buttons and 1 304 words. One searchable list with a
-   single filter surface, and detail on demand. This is the screen most likely to
-   be abandoned.
-2. **Profile** — 160 controls. Split into *Programme · Body · Accessibility ·
-   Data*, each a page, with the same disclosure discipline.
+1. **Profile** — 160 controls, 621 words, eleven sections. Split into
+   *Programme · Body · Accessibility · Data*, each a page, with the disclosure
+   discipline the atlas just gained.
+2. **Onboarding's exercise step** — 90 controls on the last screen before the
+   programme is built. The one place a first-run user can be lost for good.
 3. **Session: 774 words.** One exercise expanded at a time, user-controlled, with
    a visible "next" — plus a rest timer that survives a locked screen.
 4. **Today's nine sections.** Group into *today / this week / understand*; the
    content already exists, only the outline changes.
 5. **Body screen.** Drop the duplicate muscle list once the figure carries the
    names, or drop the figure's list — not both.
-6. **Onboarding and Plan** — the only two surfaces never audited in this phase.
+6. **The exercise sheet** — now the atlas's only action surface; it has never been
+   audited on its own.
