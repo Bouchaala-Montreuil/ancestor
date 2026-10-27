@@ -1,12 +1,18 @@
 # ANCESTOR — design pass, final report
 
-Branch `arena/c263a64a-ancestor`, 43 commits over `62aa6218`, 152 files touched.
+Branch `arena/c263a64a-ancestor`, 45 commits over `62aa6218`, 152 files touched.
 The work is in the application, not in a slide deck: `app/` holds the code,
 `app/DESIGN.md` holds the design system record this report summarises, and the
 site in `site/` is the public write-up.
 
-Everything claimed below was measured in this repository. Nothing was claimed
-that could not be re-run, and §6 states exactly what could not be inspected.
+Everything claimed below was measured in this repository — by ten jsdom suites,
+and, for the visual claims, by a headless Chromium driven through
+`tests/browser.js`. Nothing is claimed that could not be re-run, and §6 states
+exactly what was seen and what a headless browser still cannot tell you.
+
+The visual pass happened last, and it is the most useful thing in this
+document: it found eleven rendered defects that every structural suite had
+passed.
 
 **How to re-verify**
 
