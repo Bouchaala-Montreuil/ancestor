@@ -423,6 +423,28 @@ group('8h. One loading language');
       /function bootCopy\(\)/.test(fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8')));
 }
 
+/* ================================================================ */
+group('8i. The navigation marks are drawn, not borrowed');
+{
+  const app = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  const nav = /const NAV = \[([\s\S]*?)\n\];/.exec(app);
+  const body = nav ? nav[1] : '';
+
+  chk('six marks, one per section', (body.match(/id:'/g) || []).length === 6);
+  chk('every mark is built from the wordmark numbers',
+      /T_ICON = 2\.4/.test(app) && /M_ICON = 3\.2/.test(app) && /Y_ICON = 4\.2/.test(app));
+  /* A 1.4 px hairline disappears on a 3x phone screen; 2.4 px of mass does not. */
+  chk('the marks are solid, so they survive at 19 px', /\.tabbar svg\{[^}]*fill:currentColor/.test(css) &&
+      /\.tabbar svg\{[^}]*stroke:none/.test(css));
+  chk('no stock 24-px stroke icon survives in the nav',
+      !/stroke-width:1\.4/.test(/\.tabbar svg\{[^}]*\}/.exec(css)[0]));
+  chk('the tally is in the nav — the product counted something',
+      /rotate\(-16 12 12\)/.test(body));
+  chk('no two marks share a silhouette',
+      (body.match(/_frame\(/g) || []).length === 1,
+      (body.match(/_frame\(/g) || []).length + ' framed marks');
+}
+
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

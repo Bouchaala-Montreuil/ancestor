@@ -3,13 +3,51 @@
    Five sections: today · session · body · progress · profile
    ========================================================================== */
 
+/* The six section marks. Drawn, not picked from a set: every one is built from
+   the mark's own numbers — 24 grid, 2.4 mass, 3.2 margin, 4.2..19.8 span — so
+   the navigation is in the same hand as the logo. Solid, not stroked: a 1.4 px
+   hairline disappears on a 3x phone screen, 2.4 px of mass does not. */
+const T_ICON = 2.4, M_ICON = 3.2, Y_ICON = 4.2, Y2_ICON = 19.8, R_ICON = 20.8;
+const _bar = (x, y, w, h) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '"/>';
+const _frame = (x, y, w, h) =>
+  _bar(x, y, w, T_ICON) + _bar(x, y + h - T_ICON, w, T_ICON) +
+  _bar(x, y, T_ICON, h) + _bar(x + w - T_ICON, y, T_ICON, h);
+
 const NAV = [
-  { id:'home',     icon:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>' },
-  { id:'session',  icon:'<path d="M4 6h16M4 18h16"/><path d="M7 3v18M17 3v18"/>' },
-  { id:'body',     icon:'<circle cx="12" cy="5" r="2.5"/><path d="M6 21l6-7 6 7"/><path d="M4 10h16"/>' },
-  { id:'progress', icon:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
-  { id:'profile',  icon:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>' },
-  { id:'science',  icon:'<path d="M9 3h6"/><path d="M10 3v6l-4 8a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-4-8V3"/><path d="M7 14h10"/>' }
+  /* a calendar with one day inked — today, not a week */
+  { id:'home', icon:
+      _frame(M_ICON, Y_ICON, R_ICON - M_ICON, Y2_ICON - Y_ICON) +
+      _bar(M_ICON, Y_ICON + 4.6, R_ICON - M_ICON, T_ICON) +
+      _bar(M_ICON + T_ICON + 2.4, Y_ICON + 9.4, 7.2, 5.0) },
+  /* a tally of two */
+  { id:'session', icon:
+      _bar(7.0, Y_ICON, T_ICON, Y2_ICON - Y_ICON) +
+      _bar(13.4, Y_ICON, T_ICON, Y2_ICON - Y_ICON) +
+      '<rect x="2.30" y="10.8" width="19.4" height="2.4" transform="rotate(-16 12 12)"/>' },
+  /* the figure, as mass */
+  { id:'body', icon:
+      _bar(9.6, 3.2, 4.8, 4.8) +
+      _bar(4.4, 9.6, 15.2, 3.2) +
+      _bar(6.4, 13.6, 11.2, 2.6) +
+      _bar(7.6, 17.0, 8.8, 2.2) },
+  /* ascending bars on a baseline */
+  { id:'progress', icon:
+      _bar(M_ICON, Y2_ICON + 0.4, R_ICON - M_ICON, T_ICON) +
+      _bar(4.6, 14.2, 2.8, 5.2) +
+      _bar(9.0, 10.6, 2.8, 8.8) +
+      _bar(13.4, 7.4, 2.8, 12.0) +
+      _bar(17.8, 4.2, 2.8, 15.2) },
+  /* the dossier stamp itself: an inked block with the record knocked out of it,
+     the same device that numbers every section in the app */
+  { id:'profile', icon:
+      '<path fill-rule="evenodd" d="M3.2 4.2h17.6v15.6H3.2z M7.6 8.6h8.8v2.4H7.6z M7.6 13h5.6v2.4H7.6z"/>' },
+  /* a library: five stacked spines, an index of what is known */
+  { id:'science', icon:
+      _bar(M_ICON + 3.0, Y_ICON, R_ICON - M_ICON - 3.0, T_ICON) +
+      _bar(M_ICON + 1.4, Y_ICON + 3.6, R_ICON - M_ICON - 1.4, T_ICON) +
+      _bar(M_ICON, Y_ICON + 7.2, R_ICON - M_ICON, T_ICON) +
+      _bar(M_ICON + 1.4, Y_ICON + 10.8, R_ICON - M_ICON - 1.4, T_ICON) +
+      _bar(M_ICON + 3.0, Y_ICON + 14.4, R_ICON - M_ICON - 3.0, T_ICON) }
 ];
 
 let VIEW = 'home';

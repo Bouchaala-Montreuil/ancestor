@@ -455,15 +455,19 @@ nav.tabbar{
   letter-spacing:.1em;text-transform:uppercase;padding:8px 2px 9px;
   transition:color var(--t-fast) var(--ease);
 }
+/* Solid, not stroked: the marks are built from the wordmark's 2.4 px mass, so
+   at 19 px they still read on a 3x screen. Strokes at this size vanish. */
 .tabbar svg{
-  width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.4;
-  stroke-linecap:square;stroke-linejoin:miter;
-  transition:transform var(--t-fast) var(--ease),stroke-width var(--t-fast) var(--ease);
+  width:19px;height:19px;fill:currentColor;stroke:none;
+  transition:transform var(--t-fast) var(--ease);
 }
 .tabbar button:hover{color:var(--ink)}
 .tabbar button:active svg{transform:scale(.9)}
 .tabbar button.on{color:var(--ink);font-weight:700}
-.tabbar button.on svg{stroke-width:2}
+/* Selected: the mark fills in and the indicator above it is burnt. Two signals
+   for one state, at two different scales. */
+.tabbar button.on svg{opacity:1}
+.tabbar button svg{opacity:.86}
 .tabbar .nav-ind{
   position:absolute;top:0;inset-inline-start:0;width:0;height:2px;background:var(--burnt);
   will-change:transform,width;pointer-events:none;
