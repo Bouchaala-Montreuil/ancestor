@@ -125,8 +125,9 @@ function paintStoreFlag(){
   const bEl = el.querySelector('.sf-b');
   const xEl = el.querySelector('.sf-x');
   if(damaged){
+    const newer = (typeof LOAD_NEWER !== 'undefined') && LOAD_NEWER;
     if(tEl) tEl.textContent = t('app.load.title');
-    if(bEl) bEl.textContent = t('app.load.body');
+    if(bEl) bEl.textContent = newer ? t('app.load.newer') : t('app.load.body');
     if(xEl){ xEl.textContent = t('app.load.get'); xEl.onclick = keepDamagedRecord; }
   } else {
     if(tEl) tEl.textContent = t('app.store.title');
@@ -182,6 +183,23 @@ function scheduleStoreRetry(){
     if(retryStore()) return;          /* written — the strip is already gone */
     scheduleStoreRetry();
   }, 15000);
+}
+
+/* A screen that throws inside an event handler never goes through render(), so
+   the designed failure state above never sees it: the button simply stops
+   answering, on a page that still looks fine. One global net catches the rest of
+   the app, and it shows the same block a screen failure shows. */
+let LAST_UNCAUGHT = null;
+function reportUncaught(err){
+  LAST_UNCAUGHT = err || new Error('unknown');
+  try{
+    if(typeof console !== 'undefined' && console.error) console.error(err);
+    const body = document.getElementById('screenBody');
+    if(!body || body.querySelector('.fail')) return;   /* one failure, not two */
+    if(typeof failureState !== 'function') return;
+    body.innerHTML = failureState(LAST_UNCAUGHT);
+    if(typeof paintStoreFlag === 'function') paintStoreFlag();
+  }catch(e){ /* a handler that throws must not throw */ }
 }
 
 function render(){
@@ -370,6 +388,14 @@ function boot(){
     if(VIEW === 'home') render();
   });
   window.addEventListener('focus', () => { retryStore(); });
+  /* Another tab wrote: adopt it rather than overwrite it later. */
+  window.addEventListener('storage', ev => {
+    if(ev && ev.key !== null && typeof STORE_KEY !== 'undefined' && ev.key !== STORE_KEY) return;
+    try{ reloadState(); }catch(e){ return; }
+    try{ render(); }catch(e){}
+  });
+  window.addEventListener('error', ev => { if(ev && ev.error) reportUncaught(ev.error); });
+  window.addEventListener('unhandledrejection', ev => { if(ev && ev.reason) reportUncaught(ev.reason); });
   window.addEventListener('beforeunload', () => { retryStore(); });
   window.addEventListener('online',  () => { retryStore(); render(); });
   window.addEventListener('offline', () => render());

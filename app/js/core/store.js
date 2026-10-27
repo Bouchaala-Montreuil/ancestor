@@ -149,6 +149,7 @@ function requestPersistentStorage(onDone){
    with an empty one. The second case is a state now — the bytes are held, writes
    are refused, and the header offers to keep a copy before anything is replaced. */
 let LOAD_FAILED = false;
+let LOAD_NEWER = false;   /* …written by a version that knows more than this one */
 let RAW_RECORD = null;
 
 function loadState(){
@@ -166,11 +167,20 @@ function loadState(){
     return STATE;
   }
   try{
-    STATE = migrate(JSON.parse(raw));
-    LOAD_FAILED = false;
+    const parsed = JSON.parse(raw);
+    /* A record from a newer build is not a corrupt record, but it is the same
+       danger: migrate() would stamp it with this build's version and drop the
+       fields it does not know on the next save. Refuse it too, and say why. */
+    if(parsed && typeof parsed.version === 'number' && parsed.version > SCHEMA_VERSION){
+      LOAD_NEWER = true;
+    }
+    STATE = migrate(parsed);
+    LOAD_FAILED = LOAD_NEWER;
+    if(LOAD_NEWER){ RAW_RECORD = raw; return STATE; }
     RAW_RECORD = null;
     return STATE;
   }catch(e){
+    LOAD_NEWER = false;
     /* There is a record and this build cannot open it. Keep the bytes, refuse to
        overwrite them, and say so. */
     LOAD_FAILED = true;
@@ -178,6 +188,17 @@ function loadState(){
     STATE = defaultState();
     return STATE;
   }
+}
+
+/* Another tab just wrote. The state in memory is now older than the state on
+   disk, and the next save from this tab would erase what the other one did —
+   the classic last-write-wins loss. Adopt the disk instead. */
+function reloadState(){
+  STATE = null;
+  LOAD_FAILED = false;
+  LOAD_NEWER = false;
+  RAW_RECORD = null;
+  return loadState();
 }
 
 /* Take the damaged record out of the way without destroying it: it is copied to
@@ -191,6 +212,7 @@ function archiveDamagedRecord(){
     localStorage.removeItem(STORE_KEY);
   }catch(e){ /* a full disk cannot hold the copy; the download still can */ }
   LOAD_FAILED = false;
+  LOAD_NEWER = false;
   RAW_RECORD = null;
   return raw;
 }
@@ -252,6 +274,7 @@ function eraseAll(){
   try{ localStorage.removeItem(STORE_KEY); }catch(e){}
   idbMirrorClear();
   LOAD_FAILED = false;
+  LOAD_NEWER = false;
   RAW_RECORD = null;
   STATE = defaultState();
   return STATE;

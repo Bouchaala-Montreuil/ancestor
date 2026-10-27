@@ -2375,13 +2375,14 @@ html[data-simple="on"] .chart-tip-readout{display:none}
    invisible target on a word that does nothing is not a kindness. */
 @media (pointer: coarse){
   .link-btn,.langsel button,.fail-more summary,.prev-copy-btn,
-  .lab-btn,button.flag{position:relative}
+  .lab-btn,button.flag,.btn.sm{position:relative}
   .link-btn::after,
   .langsel button::after,
   .fail-more summary::after,
   .prev-copy-btn::after,
   .lab-btn::after,
   button.flag::after,
+  .btn.sm::after,
   .ev-more summary::before{
     content:"";position:absolute;inset-inline:0;
     inset-block:calc((var(--hit) - 100%) * -0.5);

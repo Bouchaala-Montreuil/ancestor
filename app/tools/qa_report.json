@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "severity": "Medium",
+    "screen": "All",
+    "title": "Horizontal overflow is hidden rather than fixed",
+    "detail": "body{overflow-x:hidden} clips content instead of making it fit; real overflow would be invisible in testing",
+    "id": "QA-001"
+  }
+]

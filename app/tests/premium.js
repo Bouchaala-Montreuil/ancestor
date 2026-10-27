@@ -841,6 +841,81 @@ console.log('\n\x1b[1m10. The state matrix\x1b[0m');
   }
 }
 
+/* ==================================================================== */
+/*  11. Boundaries: another tab, a newer build, an uncaught throw, and  */
+/*      a record built to break out of its own markup.                  */
+/* ==================================================================== */
+console.log('\n\x1b[1m11. Boundaries\x1b[0m');
+{
+  /* another tab wrote while this one was open */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    w.addSession({ date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A', name:'Mine',
+      exercises:[{ id:'bb-bench', sets:[S({w:60,r:8,rir:2})] }] });
+
+    /* A second tab on the same origin: it reads the same record, adds a session
+       of its own, and writes it back. (Separate jsdom instances do not share
+       storage, so the write is made here.) */
+    const disk = JSON.parse(w.localStorage.getItem('ancestor.state.v1'));
+    disk.sessions.push({ id:'other-tab', date:Date.now()-2*864e5, startedAt:Date.now()-2*864e5,
+      planId:'A', name:'Theirs', exercises:[{ id:'bb-row', sets:[S({w:50,r:10,rir:3})] }] });
+    w.localStorage.setItem('ancestor.state.v1', JSON.stringify(disk));
+
+    w.dispatchEvent(new w.StorageEvent('storage', { key:'ancestor.state.v1' }));
+    const names = w.eval('JSON.stringify(getState().sessions.map(s=>s.name))');
+    chk('a write from another tab is adopted, not overwritten later',
+        /Theirs/.test(names) && /Mine/.test(names), names);
+    chk('…and the screen redraws from the adopted state',
+        d.querySelector('#screenBody') && d.getElementById('screenBody').innerHTML.length > 200);
+  }
+
+  /* a record written by a newer build */
+  {
+    const newer = JSON.stringify({ version: 99, created: Date.now(), onboarded: true,
+      sessions: [{ id:'future', name:'From v4', futureField: { nested: true } }],
+      profile: {}, somethingNew: [1,2,3] });
+    const { w, d } = boot({ 'ancestor.state.v1': newer });
+    const strip = d.getElementById('storeFlag');
+    chk('a record from a newer build is refused, not downgraded',
+        !strip.hidden && w.saveState() === false &&
+        w.localStorage.getItem('ancestor.state.v1') === newer);
+    chk('…and it says which of the two things happened',
+        /newer version|version plus récente|neuere Version/i.test(strip.textContent));
+  }
+
+  /* a throw inside a handler — the path render() never sees */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    w.dispatchEvent(new w.ErrorEvent('error', { error: new Error('handler blew up'), message:'handler blew up' }));
+    const fail = d.querySelector('#screenBody .fail');
+    chk('a throw outside render() still lands on the designed failure state', !!fail);
+    chk('…with a retry, not a dead screen',
+        !!fail && Array.from(fail.querySelectorAll('button')).some(b => /try again|retry|reload/i.test(b.textContent)));
+  }
+
+  /* a record built to break out of its own markup */
+  {
+    const { w, d } = boot(); onboard(w, d);
+    const PAY = '<img src=x onerror="window.__pwn=1"><script>window.__pwn2=1</script>';
+    const rec = JSON.parse(w.exportJSON());
+    rec.profile.name = PAY;
+    rec.sessions = [{ id:'s1', date:Date.now()-864e5, startedAt:Date.now()-864e5, planId:'A',
+      name: PAY, exercises:[{ id:'bb-bench', note: PAY, sets:[S({w:60,r:8,rir:2})] }] }];
+    rec.sleep = [{ start:'23:00', end:'07:00', quality:3, note: PAY }];
+    w.importJSON(JSON.stringify(rec));
+
+    let injected = [];
+    ['home','session','body','progress','science','profile'].forEach(v => {
+      w.go(v);
+      const body = d.getElementById('screenBody');
+      if(body.querySelector('img') || body.querySelector('script')) injected.push(v);
+    });
+    chk('a hostile record cannot put markup into any screen', injected.length === 0, injected.join(', '));
+    chk('…and nothing in it executed', w.eval('typeof window.__pwn') === 'undefined' &&
+        w.eval('typeof window.__pwn2') === 'undefined');
+  }
+}
+
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' PREMIUM TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

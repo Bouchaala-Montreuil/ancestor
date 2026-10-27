@@ -2,16 +2,17 @@
   "name": "ancestor",
   "version": "3.0.0",
   "private": true,
-  "description": "ANCESTOR \u2014 offline-first, self-contained fitness PWA. No runtime dependencies.",
+  "description": "ANCESTOR — offline-first, self-contained fitness PWA. No runtime dependencies.",
   "scripts": {
     "build": "python3 build.py",
-    "test": "node tests/run.js && node tests/design.js && node tests/ui.js && node tests/inclusive.js && node tests/personas.js && node tests/science.js && node tests/logic.js && node tests/premium.js && node tests/anatomy.js && node tests/print.js && node tests/browser.js",
+    "test": "node tests/design.js && node tests/premium.js && node tests/ui.js && node tests/run.js && node tests/inclusive.js && node tests/personas.js && node tests/science.js && node tests/logic.js && node tests/anatomy.js && node tests/print.js",
     "test:logic": "node tests/logic.js",
     "test:browser": "node tests/browser.js",
     "keys": "node tools/keyscan.js",
     "qa": "node tools/qa_audit.js",
     "smoke": "node tools/smoke_dist.js",
-    "test:print": "node tests/print.js"
+    "test:print": "node tests/print.js",
+    "test:all": "npm test && node tests/browser.js"
   },
   "devDependencies": {
     "@gltf-transform/core": "^4.5.1",

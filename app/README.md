@@ -148,6 +148,10 @@ is verified, and what is not.
 # open the single-file build directly
 xdg-open dist/ancestor.html
 
+How the software is put together, and what it was missing — two tabs overwriting
+each other, an unreadable record erased by the next save, a throw that killed a
+button instead of a screen — is in **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+
 An audit of the whole application's logic — what was illogical, why, and what
 changed — is in **[LOGIC_AUDIT.md](LOGIC_AUDIT.md)**.
 
@@ -165,17 +169,19 @@ python3 -m http.server 8000        # → http://localhost:8000
 
 python3 build.py                   # rebuild dist/ancestor.html
 
-npm test                           # every suite, in order
+npm test                           # the ten headless suites, in order
+npm run test:browser               # the one that needs a real Chrome
 
+node tests/design.js               # 179 design system, states, targets, contrast
+node tests/premium.js              # 213 motion, dashboard, charts, states, boundaries
+node tests/ui.js                   # 124 end-to-end DOM tests
 node tests/run.js                  # 142 engine / i18n tests
-node tests/design.js               #  61 design-system tests
-node tests/ui.js                   # 110 end-to-end DOM tests
 node tests/inclusive.js            #  65 migration / a11y / locale tests
 node tests/personas.js             #  66 persona journey checks
-node tests/science.js              # 121 Science Hub / evidence / transparency tests
+node tests/science.js              # 124 Science Hub / evidence / transparency tests
 node tests/logic.js                # 117 exercise-aware logging regression tests
-node tests/premium.js              # 130 motion engine, dashboard, chart & module tests
 node tests/anatomy.js              #  64 real 3D asset and selection tests
+node tests/print.js                #  44 the A4 sheet
 node tests/browser.js              #  25 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tools/qa_audit.js             # scripted user-journey audit
 node tools/smoke_dist.js           # shipped-bundle smoke test
@@ -280,15 +286,16 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 ## Tests
 
 ```
+node tests/design.js   →  179 passed   palette, contrast on washes, states, 44px targets, tokens
+node tests/premium.js  →  213 passed   motion, dashboard, charts, the state matrix, boundaries
+node tests/ui.js       →  124 passed   onboarding, logging, anatomy, charts, restart, export
 node tests/run.js      →  142 passed   progression, recovery, shifts, persistence, honesty, i18n
-node tests/design.js   →   61 passed   palette, WCAG contrast, prohibited patterns, layout
-node tests/ui.js       →  110 passed   onboarding, logging, anatomy, charts, restart, export
 node tests/inclusive.js→   65 passed   v1→v3 migration, a11y model, filtering, units, locale
 node tests/personas.js →   66 passed   the ten inclusive user journeys
-node tests/science.js  →  121 passed   Science Hub, evidence gate, why-panel
+node tests/science.js  →  124 passed   Science Hub, evidence gate, why-panel
 node tests/logic.js    →  117 passed   exercise-aware logging, planned vs actual, records
-node tests/premium.js  →  148 passed   studio overhaul, split planner, 84-exercise atlas, 7-lang parity
 node tests/anatomy.js  →   64 passed   real glTF asset, mapping, raycast picking
+node tests/print.js    →   44 passed   the A4 sheet, measured
 node tests/browser.js  →   25 passed   real Chromium WebGL 2.0 pixels, 64 LTR/RTL viewports, SW offline
 ```
 

@@ -26,10 +26,17 @@ w.getState().profile.bodyweight=80; w.getState().profile.limits=['lowerback'];
 const langs=['en','fr','es','de','it','nl','ar'];
 const all={};
 langs.forEach(l=>{ const T=w.eval('T')[l]||{}; Object.keys(T).forEach(k=>all[k]=1); });
+/* Keys that are identical in every language on purpose. A brand name is the
+   canonical case: translating it would be a bug, so the scan must not ask for a
+   translation it would then complain about. */
+const ALLOWED = { 'app.name': 'the wordmark — the same in all seven languages' };
 const missing=[];
 langs.forEach(l=>{
   const T=w.eval('T')[l]||{}, en=w.eval('T').en||{};
-  Object.keys(all).forEach(k=>{ if((T[k]===undefined||T[k]==='') && (en[k]===undefined||en[k]==='')) missing.push(l+':'+k); });
+  Object.keys(all).forEach(k=>{
+    if(ALLOWED[k]) return;
+    if((T[k]===undefined||T[k]==='') && (en[k]===undefined||en[k]==='')) missing.push(l+':'+k);
+  });
 });
 console.log('keys with no translation in ANY language:', missing.length);
 if(missing.length) console.log(' ', missing.slice(0,20).join(', '));

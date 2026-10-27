@@ -610,6 +610,20 @@ group('8l. Every state has a producer and a way out');
   const ui = ['screens.js','workout.js','science.js']
     .map(f => fs.readFileSync(path.join(ROOT, 'js/ui', f), 'utf8')).join('\n');
 
+  /* Three boundaries that are not about a screen: another tab, a newer build,
+     and a throw from outside render(). */
+  chk('a write from another tab is adopted instead of overwritten',
+      /function reloadState/.test(store) && /addEventListener\('storage'/.test(app));
+  chk('a record from a newer build is refused, not downgraded',
+      /SCHEMA_VERSION/.test(store) && /LOAD_NEWER/.test(store) &&
+      /parsed\.version > SCHEMA_VERSION/.test(store));
+  chk('…and it is explained in every language the app ships',
+      (i18n.match(/"app\.load\.newer"/g) || []).length === 7);
+  chk('a throw outside render() still reaches the designed failure state',
+      /function reportUncaught/.test(app) && /addEventListener\('unhandledrejection'/.test(app) &&
+      /body\.innerHTML = failureState/.test(app));
+
+
   /* A toast kind with no rule is a message that looks like no message. */
   const toastSrc = (ui + fs.readFileSync(path.join(ROOT,'js/app.js'), 'utf8'))
     .replace(/\/\*[\s\S]*?\*\//g, '');
