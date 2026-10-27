@@ -463,8 +463,11 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
    figure is now `pointerOnly` (tappable, out of the tab order), the legend is
    gone because each row is its own key, and Body is 34 → 19 focus stops
    (`DESIGN.md` §3.17).
-3. **Audit the exercise sheet on its own** — it inherited every action the atlas
-   rows used to duplicate, and it has never been measured or seen.
+3. ~~**Audit the exercise sheet on its own.**~~ **Done** in the second visual
+   pass — it was the worst surface in the product: an A4 document on a phone
+   (794 px wide, 4 937 px tall, 200 px of it clipped) with its only Close button
+   1 845 px down the page. Now 390 px wide, 1 845 px tall, bottom-anchored, with
+   a sticky title row and a 61 × 44 px Close at the top (`DESIGN.md` §3.14).
 4. **Audit the plan screen** — the only surface untouched by this phase.
 5. ~~**Fix the heading levels.**~~ **Done, whole component.** `.sub` moved from
    the `h3` tag to the class, so Body, Progress and the session plan are `h1,h2`;
