@@ -260,6 +260,32 @@ group('8c. Type and colour are not re-declared in JavaScript');
 }
 
 /* ================================================================ */
+group('8d. Onboarding is designed, not inherited');
+{
+  const scr = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  chk('the step index is a number, not a sentence',
+      /class="onb-idx"/.test(scr) && /pad2\(onbIdx \+ 1\)/.test(scr));
+  chk('all eight step footers share one action bar',
+      (scr.match(/class="onb-actions"/g) || []).length === 8,
+      (scr.match(/class="onb-actions"/g) || []).length + ' of 8');
+  chk('the action bar is pinned so Continue is always reachable',
+      /\.onb-actions\{[^}]*position:fixed/s.test(css));
+  chk('answers are full-width rows, not a tile grid',
+      /\.onb-frame \.tiles\{[^}]*flex-direction:column/s.test(css));
+  chk('answer rows clear a thumb, not a fingertip',
+      /\.onb-frame \.tile\{[^}]*min-height:6\dpx/s.test(css));
+  chk('the question is the largest thing on the screen',
+      /\.onb-frame h1[^{]*\{[^}]*font-size:clamp\(38px/s.test(css));
+  chk('the completed part of the bar is inked, the present one burnt',
+      /\.onb-bar i\.on\{background:var\(--ink\)\}/.test(css) &&
+      /\.onb-bar i\.on:last-of-type\{background:var\(--burnt\)\}/.test(css));
+  chk('range inputs are styled at last',
+      /input\[type=range\]::-webkit-slider-thumb/.test(css));
+  chk('the progress bar stops animating under reduced motion',
+      /html\[data-motion="on"\] \.onb-bar i\{transition:none\}/.test(css));
+}
+
+/* ================================================================ */
 group('9. Reusable component vocabulary');
 {
   const needed = ['panel','btn','tile','chip','flag','metric','empty','banner','toast',

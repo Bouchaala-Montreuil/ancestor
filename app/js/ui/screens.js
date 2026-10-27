@@ -1989,8 +1989,13 @@ Screens.onb = function(){
   const step = ONB_STEPS[onbIdx];
   const bar = '<div class="onb-bar">' +
     ONB_STEPS.map((_,i) => '<i class="' + (i<=onbIdx?'on':'') + '"></i>').join('') + '</div>';
-  const head = '<p class="eyebrow" style="margin-bottom:8px">' + esc(t('onb.step')) + ' ' +
-    (onbIdx+1) + ' ' + esc(t('onb.of')) + ' ' + ONB_STEPS.length + '</p>';
+  /* The step index is the one navigational fact on the screen, so it is set as
+     a dossier number rather than a sentence: 02 over / 09 STEP. */
+  const pad2 = function(n){ return (n < 10 ? '0' : '') + n; };
+  const head = '<div class="onb-idx">' +
+    '<span class="n num">' + pad2(onbIdx + 1) + '</span>' +
+    '<span class="d"><b>/ ' + pad2(ONB_STEPS.length) + '</b>' +
+    '<i>' + esc(t('onb.step')) + '</i></span></div>';
   let b = '';
 
   if(step === 'welcome'){
@@ -2017,7 +2022,7 @@ Screens.onb = function(){
         '" onclick="setP(\'goal\',\'' + g + '\')">' + esc(t('onb.goal.'+g)) + '</button>').join('') +
       '</div>' +
       '<div class="onb-why">' + esc(t('onb.whyBody')) + '</div>' +
-      '<div style="display:flex;gap:var(--s2)">' +
+      '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" ' + (p.experience && p.goal ? '' : 'disabled') +
       ' onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
@@ -2037,7 +2042,7 @@ Screens.onb = function(){
       '<button class="chip ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" onclick="setLimit(\'' + x[0] + '\')">' +
       esc(t('onb.limits.'+x[1])) + '</button>').join('') + '</div>' +
       '<p class="hint" style="margin-top:var(--s2)">' + esc(t('onb.limits.note')) + '</p>' +
-      '<div style="height:var(--s4)"></div><div style="display:flex;gap:var(--s2)">' +
+      '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2050,7 +2055,7 @@ Screens.onb = function(){
       '<p class="eyebrow" style="margin-bottom:var(--s2)">' + esc(t('onb.avail.len')) + '</p>' +
       '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') +
       '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
-      '</div><div style="height:var(--s4)"></div><div style="display:flex;gap:var(--s2)">' +
+      '</div><div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2076,7 +2081,7 @@ Screens.onb = function(){
         esc(sh.end.slice(5)) + '</span><span class="w">' + shiftHours(sh).toFixed(1) + ' h</span></div>').join('') + '</div></div>';
     }
     b += '<p class="hint" style="margin-top:var(--s3)">' + esc(t('onb.shift.note')) + '</p>' +
-      '<div style="height:var(--s4)"></div><div style="display:flex;gap:var(--s2)">' +
+      '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2096,7 +2101,7 @@ Screens.onb = function(){
       '<div class="panel"><div class="field" style="margin:0"><label for="onb_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
       '<input id="onb_wake" type="time" value="' + String(p.usualWake).padStart(2,'0') +
       ':00" oninput="setP(\'usualWake\',+this.value.slice(0,2))"></div></div>' +
-      '<div style="height:var(--s4)"></div><div style="display:flex;gap:var(--s2)">' +
+      '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2116,7 +2121,7 @@ Screens.onb = function(){
       esc(t('onb.units.kg')) + '</button>' +
       '<button class="chip ' + (p.unit==='lb'?'on':'') + '" onclick="setP(\'unit\',\'lb\')">' +
       esc(t('onb.units.lb')) + '</button></div></div>' +
-      '<div style="height:var(--s4)"></div><div style="display:flex;gap:var(--s2)">' +
+      '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2136,7 +2141,7 @@ Screens.onb = function(){
             esc(t('ex.'+e.id)) + '</button>';
         }).join('') + '</div></div>';
     });
-    b += '<div style="display:flex;gap:var(--s2)">' +
+    b += '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2154,7 +2159,7 @@ Screens.onb = function(){
       });
       b += '</div>';
     });
-    b += '<div style="display:flex;gap:var(--s2);margin-top:var(--s4)">' +
+    b += '<div class="onb-actions">' +
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn" style="flex:1" onclick="finishOnboarding()">' +
       esc(t('onb.ready.cta')) + '</button></div>';
