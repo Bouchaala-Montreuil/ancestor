@@ -105,8 +105,10 @@ The disclaimer is present in all seven languages and shown on the settings scree
   restored on close.
 - Figure has a text alternative; charts are always accompanied by data tables.
 - Touch targets raised: chips 38→44 px, chips.sm 30→40, btn.sm 34→44, fig-btn 34→44.
-- `overflow-x:hidden` removed (it masked overflow) and replaced with
-  `overflow-wrap` + `min-width:0` guards.
+- `overflow-wrap` + `min-width:0` guards added for the long-word cases. The
+  `overflow-x:hidden` on `body` was *not* removed at the time, whatever this
+  line said: the declaration survived until 2026-10-28, when it was deleted
+  with the browser suite as the evidence.
 - Full settings UI for every display preference.
 
 ---

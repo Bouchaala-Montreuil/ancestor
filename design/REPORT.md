@@ -31,7 +31,7 @@ python3 site/build.py && python3 site/check.py   # 62 site checks
 
 Current: **1,390 checks over ten headless suites**, all green —
 design 227, premium 213, ui 285, run 142, inclusive 65, personas 73, science 125,
-logic 138, anatomy 64, print 58 — plus **68 real-browser checks** in
+logic 138, anatomy 64, print 58 — plus **70 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---
@@ -483,8 +483,10 @@ walked by `tests/ui.js` group 27, which fails on a second `h1` or a jump
   app has six destinations.
 - **Print layout and offline persistence were not re-verified** in this pass.
   Those suites are green, which is not the same as inspected.
-- One Medium is accepted and documented in `tools/qa_audit.js`:
-  `body{overflow-x:hidden}` hides horizontal overflow instead of preventing it.
+- ~~One Medium is accepted: `body{overflow-x:hidden}` hides horizontal overflow
+  instead of preventing it.~~ **Closed 2026-10-28** — the rule was deleted, 176
+  layouts and four overlay surfaces verified clean without it, and the QA suite
+  now records zero issues.
 
 ---
 

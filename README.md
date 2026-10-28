@@ -31,12 +31,23 @@ python3 -m http.server 8080                # the repo (app, site and design/ doc
 ## Verify something
 
 ```bash
+cd app && npm run verify     # everything below, in one command, exits non-zero on any failure
+```
+
+Which is the same as, one at a time:
+
+```bash
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do
   node tests/$t.js
 done                                        # 1,390 checks over 10 suites
+node tools/keyscan.js                       # no untranslated key reaches a screen
+node tools/qa_audit.js                      # structural audit, gated on its own findings
 python3 build.py && node tools/smoke_dist.js   # the single file, booted and used
 python3 ../site/build.py && python3 ../site/check.py
 ```
+
+The browser suite is separate because it needs a Chrome binary:
+`npm run test:browser` (70 checks, and the only one that measures layout).
 
 ## The rules it is held to
 

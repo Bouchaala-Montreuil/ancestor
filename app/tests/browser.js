@@ -640,6 +640,71 @@ function startServer(){
         overflows.length === 0,
         overflows.slice(0, 5).join('; ') || (combos.length * views.length) + ' layouts clean');
 
+    /* `body{overflow-x:hidden}` was on the page for months and the QA audit
+       recorded it as Medium for just as long: it clips content rather than
+       making it fit, so real overflow is invisible in exactly the testing that
+       is supposed to find it. It hid the printed sheet being 900 px wide on a
+       390 px phone. Removed on 2026-10-28 — nothing needed it: the 176 layouts
+       above are clean without it. These are the surfaces that were never in
+       that loop (sheets, the print card, toasts, the planner mid-edit), and
+       they are measured with the rule gone. */
+    {
+      const grew = [];
+      const surfaces = {
+        'exercise sheet': () => openExerciseDetail('bb-bench'),
+        'planner mid-edit': () => { go('session'); setSessionSub('plan'); togglePlanEdit(); },
+        'lesson': () => openModule('muscle-growth'),
+        'toast': () => toast('Saved', 'ok')
+      };
+      for(const lang of ['en', 'ar']){
+        for(const vw of [320, 390]){
+          await page.setViewport({ width: vw, height: 780, deviceScaleFactor: 1 });
+          for(const name of Object.keys(surfaces)){
+            await page.evaluate((l, nm) => {
+              try { closeSheet(); } catch (e) {}
+              try { if(typeof closeModule === 'function') closeModule(); } catch (e) {}
+              const root = document.getElementById('printRoot');
+              root.innerHTML = ''; root.style.display = ''; root.classList.remove('printing');
+              switchLang(l); go('home');
+            }, lang, name);
+            await page.evaluate(`(${surfaces[name].toString()})()`);
+            await new Promise(r => setTimeout(r, 90));
+            const res = await page.evaluate(() => ({
+              sw: document.documentElement.scrollWidth,
+              iw: window.innerWidth,
+              bodyOverflow: getComputedStyle(document.body).overflowX
+            }));
+            if(res.sw > res.iw + 1) grew.push(lang + '@' + vw + '/' + name + ': ' + res.sw + ' > ' + res.iw);
+          }
+        }
+      }
+      /* The print document is deliberately not on screen: `#printRoot` is
+         display:none and only the @media print block reveals it, where the
+         viewport *is* the paper (measured in group 4 above). A 210 mm element
+         measured against a 390 px phone is not overflow, it is a different
+         medium — so it is asserted as hidden rather than measured as wide. */
+      const printHidden = await page.evaluate(() => {
+        const root = document.getElementById('printRoot');
+        return { display: getComputedStyle(root).display, inline: root.getAttribute('style') || '' };
+      });
+      chk('the print document is not on screen, so it cannot widen the page',
+          printHidden.display === 'none' && !/display:\s*block/.test(printHidden.inline),
+          'display:' + printHidden.display);
+
+      /* Leave the page as the rest of the suite expects it. */
+      await page.evaluate(() => {
+        try { closeSheet(); } catch (e) {}
+        try { if(typeof closeModule === 'function') closeModule(); } catch (e) {}
+        const root = document.getElementById('printRoot');
+        root.innerHTML = ''; root.style.display = ''; root.classList.remove('printing');
+        switchLang('en');
+      });
+      await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
+      chk('no sheet, planner, lesson or toast needs body{overflow-x:hidden} to stay inside the phone',
+          grew.length === 0,
+          grew.slice(0, 4).join('; ') || '4 surfaces × 2 languages × 2 widths, all clean');
+    }
+
     /* The verdict card's figure and its caption, at the narrowest phone, in every
        language: the caption used to break mid-word ("VERFÜGBAR / KEIT"). */
     {

@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `037789e`, with 1,390 headless checks and 68 real-browser checks.
+Read on 2026-10-28 against `037789e`, with 1,390 headless checks and 70 real-browser checks.
 
 ---
 
@@ -28,7 +28,7 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,390 checks — plus `tests/browser.js` (68 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,390 checks — plus `tests/browser.js` (70 real-Chromium checks),
 which needs a real Chrome and covers the three things jsdom cannot: WebGL, layout
 overflow at 320/360/768/1280, and a service-worker reload with the network severed.
 
@@ -45,12 +45,12 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,390 checks that only execute when a person remembers. | no `.github/` | **pipeline written** — `app/ci/checks.yml`, one copy from running |
+| S5 | Medium | Nothing ran the suites. 1,390 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
 | S9 | Medium | `tools/keyscan.js` exited 1 on a false positive (the wordmark is not translated) and so was never run. | `untranslatable keys: en:app.name` | **fixed** |
-| S10 | Medium | `body{overflow-x:hidden}` hides layout bugs instead of fixing them. | `css/app.css:168` | **open, accepted** |
+| S10 | Medium | `body{overflow-x:hidden}` hides layout bugs instead of fixing them. | `css/app.css:168` | **fixed, removed 2026-10-28.** The rule is gone. Nothing needed it: 176 layouts (8 views × 7 languages × 320–1440 px) are clean without it, and so are the four surfaces that were never in that loop — a sheet, the planner mid-edit, a lesson and a toast, at 320 and 390 px, LTR and RTL. `tests/browser.js` now fails if any of them starts needing it. QA suite: 0 issues. |
 | S11 | Medium | 50 MB of split `.rar` delivery archives are tracked in git, for a product that is 2.2 MB. `*.rar` is in `.gitignore` but the files predate it. | `git ls-files \| grep rar` → 6 files | **open — owner's call** |
 | S12 | Low | No CSP. Generated markup uses inline `onclick` in ~hundreds of places, so a CSP would need `unsafe-inline` — which is to say, there is no injection backstop if escaping ever slips. | `index.html` has no policy | **open** |
 | S13 | Low | No module boundaries. 589 globals, implicit load order. Not a correctness bug today; it is the ceiling on how big this can get. | — | **open, by choice** |
@@ -108,16 +108,18 @@ now in CI.
   screens, every sheet, the exercise library and three learning modules.
 - **41 scripts, 2.2 MB, zero runtime dependencies.** The largest single file is
   the vendored three.js (4,220 lines) — lazily loaded, never on the critical path.
-- **One accepted risk, now half-retired:** `overflow-x:hidden` on `body`. It is
-  masking, and the only thing that can catch a masked overflow is
-  `tests/browser.js`. That suite has now run (28/28 green) and it found exactly
-  the kind of defect the note predicted: at 1024 px the `.shell` was an
-  over-constrained block — `width:100%` plus the rail's 200 px inline-start
-  margin — so Chrome kept the margin, computed a *negative* inline-end margin,
-  and the document measured 1224 px wide. Every screen at the rail breakpoint
-  was clipped by 200 px and `overflow-x:hidden` hid the evidence. The fix is one
-  declaration (`width:auto`); the risk that remains is the same risk, one
-  breakpoint narrower.
+- **The masking rule is gone.** `overflow-x:hidden` on `body` was carried as an
+  accepted risk for a long time, and it earned the label twice. At 1024 px the
+  `.shell` was an over-constrained block — `width:100%` plus the rail's 200 px
+  inline-start margin — so Chrome kept the margin, computed a *negative*
+  inline-end margin, and the document measured 1224 px wide; every screen at the
+  rail breakpoint was clipped by 200 px and the rule hid the evidence. Then the
+  printed sheet printed 900 px wide on a 390 px phone, same rule, same silence.
+  It was removed on 2026-10-28 with the browser suite as the evidence: 176
+  layouts and four overlay surfaces, all clean, nothing to hide. This is the
+  one place in the codebase where *deleting a declaration* was the fix — a
+  rule that hides a class of bug hides the bug from the person who would have
+  fixed it.
 
 ---
 

@@ -1,8 +1,19 @@
 # Copy this file to .github/workflows/checks.yml to switch it on.
 #
-# It lives here because the token that pushed this branch is not allowed to create
-# workflow files — GitHub rejects any push that adds one. That is a permissions
-# fact, not a design decision: the file is complete, and enabling it is one copy.
+# It lives here because the token that pushes this branch is not allowed to create
+# workflow files. That is a permissions fact, not a design decision: the file is
+# complete, and enabling it is one copy. Verified 2026-10-28, with the exact
+# rejection, so nobody spends another hour rediscovering it:
+#
+#   ! [remote rejected] arena/... -> arena/... (refusing to allow a GitHub App
+#     to create or update workflow `.github/workflows/checks.yml` without
+#     `workflows` permission)
+#
+# Two ways to switch it on, either as a person rather than as a token:
+#   1. add or edit `.github/workflows/checks.yml` in the GitHub web editor and
+#      commit from there — the web editor uses your permissions, not the App's;
+#   2. `gh auth refresh -s workflow` where `gh` is authenticated as you, then
+#      `git push` this file normally.
 #
 name: checks
 

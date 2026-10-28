@@ -171,7 +171,6 @@ body{
   /* The bar is 64 px of button plus its 1 px rule: without the rule in the sum,
      the last line of a long screen sits exactly one pixel under the bar. */
   padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--hair));
-  overflow-x:hidden;
 }
 img,svg{max-width:100%}
 /* The hidden attribute has to win. Component rules like
