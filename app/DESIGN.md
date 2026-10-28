@@ -798,7 +798,9 @@ millimetres from the space between blocks rather than from the hand.
 
 Measured in the browser afterwards: worst case 290.8 mm of 297 for a
 six-exercise day, 288.8 for eight, in English, French, German and Arabic, with
-zero sideways spill in either direction. `tests/print.js` group 7 fails if the
+zero sideways spill in either direction. The two captures are in `design/`:
+`print-sheet-a4.png` (six exercises, roomy rhythm) and
+`print-sheet-tight.png` (eight, the tight one). `tests/print.js` group 7 fails if the
 print rule stops resetting the modal, group 8 fails if the tight class stops
 being applied at seven exercises, and `tests/browser.js` group 4 measures the
 sheet as A4 in a real engine — the check that would have caught all of this.
