@@ -774,6 +774,35 @@ advertisements for a button — the fold still reads as a record.
 naming the unit, the shift pattern or the backup. Falsified by removing `unit()`
 from the summary: one check fails, naming the summary text it read.
 
+### 3.25 The printed sheet, looked at as paper
+
+The sheet had been checked as markup — every block present, every figure from
+real state, every language translated — and never as paper. Rendering it in
+Chromium's print emulation and photographing the `.sheet` element found three
+things no assertion had.
+
+| what the page showed | the cause |
+|---|---|
+| the sheet floated one whole viewport down the page, and printed onto two sheets of A4 | `#printRoot .sheet` overrode width, padding and type but not the modal `.sheet` rule it shares a class name with: `position:fixed; bottom:0; max-height:88vh; overflow:auto`. The paper was a fixed box, clipped at 88 % of the viewport, pinned to the bottom of a paginated document. |
+| nothing on the sheet hung from its top edge: a 2 px rule across the paper | the same rule's `border-top:2px solid var(--ink)` — the bottom sheet's handle edge, printed as if it were part of the document |
+| the four block numbers (`01`–`04`) were solid black blocks | `#printRoot .sheet *{color:inherit}` — an id-plus-class selector that out-specified every rule inside the sheet, so the ivory stamp on black printed black on black. Every grey the sheet asks for (captions, fine print, empty tally marks) came out ink too. |
+| at seven and eight exercises the sheet ran 16 mm past the bottom of the page | the planner's maximum is eight (seven patterns for a 70-minute day plus the emphasis top-up) and the paper was laid out for six |
+
+Four fixes: the print rule now resets the modal's position, clamp, scroll box,
+border, radius, shadow and animation; the colour reset applies only to the
+app's colour utilities (`.ok`, `.danger`, `.u` …), not to the sheet's own
+palette; the vertical rhythm lost 33 mm without touching a single writing cell
+(the load, reps and RIR boxes are still 5.4 mm high); and a session of seven or
+more exercises prints with a `sheet-tight` rhythm, which buys the last
+millimetres from the space between blocks rather than from the hand.
+
+Measured in the browser afterwards: worst case 290.8 mm of 297 for a
+six-exercise day, 288.8 for eight, in English, French, German and Arabic, with
+zero sideways spill in either direction. `tests/print.js` group 7 fails if the
+print rule stops resetting the modal, group 8 fails if the tight class stops
+being applied at seven exercises, and `tests/browser.js` group 4 measures the
+sheet as A4 in a real engine — the check that would have caught all of this.
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was

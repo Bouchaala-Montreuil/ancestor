@@ -24,7 +24,7 @@ Everything below was verified against the code today, not remembered.
 | **B3** | **The drawings use a hardcoded old palette.** Mostly fixed: state colours and the anatomy figure now read from the stylesheet through `token()`, and the off-system `#8C8A80` is gone. Remaining: 47 literal strokes inside the exercise diagram strings, which are being redrawn in the illustration pass. | The drawings were visibly off-system. | 1 d |
 | ~~**B4**~~ | ~~**RTL is incomplete.**~~ **Resolved.** Zero physical `margin/padding/border-left|right` and zero `text-align:left|right` remain: all layout is logical (`inline-start/end`) and the two remaining `left:` values are `left:50%` centrings that are direction-neutral by construction. The language screen — now the first thing anyone sees — sets `dir` per row, so an Arabic name reads right-to-left inside an LTR page. | 0 ✅ |
 | **B5** | **1,853 lines of UI nobody has designed.** Science hub, lesson reader, module view, 3D anatomy lab (626 + 459 + 768 lines). They inherit tokens by luck, not by design. | These are four of the app's six destinations. Right now they are "whatever the old CSS made them". | 3–5 d |
-| **B6** | **Nothing has been seen.** No browser in this environment, so every screen was designed from markup. Type may overflow; the 104 px headline may break on a 320 px phone. | Unverifiable design is not finished design. | 0.5 d *once you send screenshots* |
+| ~~**B6**~~ | ~~**Nothing has been seen.**~~ **Resolved.** A Chromium binary was reachable the whole time; every screen has now been rendered and inspected at 320–1440 px in all seven languages, plus print emulation for the sheet. It found what markup cannot: the readiness caption breaking mid-word in German at 320 px, the Arabic percentage reading `%44` (a bidi artefact — the number is now isolated), the printed block numbers black on black, and the sheet itself pinned to the bottom of a paginated page as a fixed 88 vh box. | 0 ✅ |
 
 *Fixed this pass:* two of my own accessibility rules were **dead code** — they were
 keyed on `html[data-textscale]` and `html[data-simple="true"]` when the app actually
@@ -128,7 +128,8 @@ stylesheet".
 
 **Sprint 1 — make it real (1 week)** · *done*
 B1 font delivery · B3 token bridge · B2 layout sweep · onboarding · B6 screenshots
-and fixes · the state matrix for the three designed screens.
+and fixes · the state matrix for the three designed screens. *(Done, including B6:
+the screenshots are taken here, not sent in.)*
 
 **Sprint 2 — the missing screens (1.5 weeks)**
 Science hub + lesson reader (3.5 d) · session live + complete (2.5 d).
@@ -147,8 +148,9 @@ days of it.
 
 ## What I need from you
 
-1. **Screenshots** — one phone, three screens (Today, Session, Progress). Without
-   them I am designing blind, and B6 stays open.
+1. ~~**Screenshots** — one phone, three screens (Today, Session, Progress).~~
+   **No longer needed.** Chromium runs in this environment; the screens have been
+   photographed at 320–1440 px in all seven languages, and B6 is closed.
 2. **Font decision (B1).** Three options:
    - *Ship a subsetted condensed face* (~20–30 KB woff2, Latin + Latin-ext). Costs
      weight, makes the identity real on every device. **My recommendation.**
@@ -252,7 +254,7 @@ Decisions I would take, with the reasoning, so you can overrule any of them.
 ### The order I would actually work in
 
 1. ~~**B2 — move styling out of `screens.js`.**~~ *Done — see §0.3.*
-2. **B6 — your screenshots.** Half a day of fixes after that.
+2. ~~**B6 — your screenshots.**~~ *Done — taken here, and it found bugs the markup could not show.*
 3. ~~**Onboarding, all nine steps.**~~ *Done — see §0.3.*
 4. **B4 + Arabic.** 2 days.
 5. **The Science screens (B5).** 3 days.
@@ -401,7 +403,7 @@ stylesheet.
 | ~~2 onboarding~~ | shipped |
 | ~~4 RTL + Arabic~~ | shipped |
 | ~~5 Science (hub, lesson, evidence)~~ | shipped |
-| **3 his screenshots (B6)** | **blocked on you** |
+| ~~3 his screenshots (B6)~~ | taken here — closed |
 | 6 state matrix — loading + offline per screen | ~1 d |
 | 7 icons, illustrations, data-viz, motion spec | ~4 d |
 | 8 landing page + case study | ~4 d |
@@ -454,8 +456,8 @@ the app could lose everything at the next reload while looking healthy. Both are
 states now, and the second exposed eight confirmations that claimed a save without
 reading the write — they go through one guard, `savedToast()`. The strip also
 retries on its own, so a quota that frees up is recovered without the user doing
-anything. What the audit cannot say is how any of them feel on a device, which is
-the same sentence as B6.
+anything. What no audit can say is how any of them feel in the hand; the sheets
+and screens are photographed, the device is still the one thing missing.
 
 **7–8. Illustrations, data-viz, motion spec, landing, case study.** All done
 (§0.7, §0.8, §0.9).
@@ -500,7 +502,7 @@ the tokens.
 
 | | |
 |---|---|
-| **3 B6 his screenshots** | **still blocked on you** |
+| ~~3 B6 his screenshots~~ | taken here — closed |
 | 6 state matrix, per screen | ~1 d, better after the screenshots |
 
 The icons, the loading/failure/empty states, the exercise drawings, the charts,

@@ -130,8 +130,15 @@ function printSheet(state, now, opts){
   const wakeAnchor = (p.usualWake != null) ? p.usualWake : 4;
   const todayStart = bioDayStart(now, wakeAnchor);
 
+  /* A session can hold eight exercises: seven patterns for a 70-minute day
+     plus the emphasis top-up. At the roomy rhythm that runs 16 mm past the
+     bottom of the A4 page — a second sheet with only the footer on it. The
+     longest days print at a tighter rhythm instead of spilling. */
+  const tight = (day.exercises || []).length >= 7;
+
   let h = '';
-  h += '<div class="sheet" dir="' + (rtl ? 'rtl' : 'ltr') + '">';
+  h += '<div class="sheet' + (tight ? ' sheet-tight' : '') +
+       '" dir="' + (rtl ? 'rtl' : 'ltr') + '">';
 
   /* ------------------------------------------------------------- header */
   h += '<div class="sheet-rule"></div>';

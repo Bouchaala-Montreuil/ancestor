@@ -175,7 +175,68 @@ const SEED = `
     chk('the browser print dialog is invoked', printed === true);
   }
 
-  group('7. The button is reachable from the planner');
+  /* The sheet shares its class name with the modal bottom sheet, and for a
+     long time that was the whole bug: the modal's position:fixed, its 88 vh
+     clamp, its scroll box and its 2 px border applied to the paper too. The
+     page printed pinned to the bottom of a paginated document, cut off at 88 %
+     of the viewport. A string check is crude, but it is the only one that runs
+     without a browser, and it names the four properties that must be undone. */
+  group('7. Paper is not a bottom sheet');
+  {
+    const css = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+    const block = (css.match(/#printRoot \.sheet\{[\s\S]*?\n\}/) || [''])[0];
+    chk('the print rule overrides the modal rather than inheriting it', block.length > 200, block.length + ' chars');
+    ['position:static', 'max-height:none', 'overflow:visible', 'border-top:0', 'inset:auto', 'animation:none']
+      .forEach(prop => {
+        chk('  #printRoot .sheet sets ' + prop, block.indexOf(prop) >= 0);
+      });
+    const modalStart = css.indexOf('\n.sheet{');
+    const modal = css.slice(modalStart, css.indexOf('}', modalStart));
+    chk('the modal still owns its own geometry', /position:fixed/.test(modal) && /max-height:88vh/.test(modal));
+    chk('the sheet still names a page size', /#printRoot \.sheet\{[^}]*width:210mm/.test(block) && /min-height:297mm/.test(block));
+  }
+
+  /* Eight exercises is the longest day the planner writes (seven patterns for
+     a 70-minute session plus the emphasis top-up). Measured in Chromium that
+     sheet runs 16 mm past the bottom of the paper at the roomy rhythm, so the
+     long days get a tighter one. The class is what decides it; the browser
+     suite measures the result. */
+  group('8. The longest day still prints on one sheet');
+  {
+    const css = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+    const tight = /#printRoot \.sheet\.sheet-tight \.sheet-table td\{[^}]*padding:1mm/.test(css) &&
+                  /#printRoot \.sheet\.sheet-tight \.sheet-block\{/.test(css) &&
+                  /#printRoot \.sheet\.sheet-tight \.sheet-notes i\{/.test(css);
+    chk('a tight rhythm exists for the long sessions', tight);
+    const wide = window.eval(`(() => {
+      const s = getState(); const sn = s.plan.sessions[0];
+      const n = sn.exercises.length;
+      const out = {};
+      [6, 7, 8].forEach(count => {
+        sn.exercises = sn.exercises.slice();
+        const pool = ['leg-press','cable-row','db-ohp','bb-curl','lat-pulldown','plank'];
+        while(sn.exercises.length < count) sn.exercises.push({ id: pool[sn.exercises.length % pool.length], sets: 3, reps: [8,12], rir: 2 });
+        while(sn.exercises.length > count) sn.exercises.pop();
+        const h = printSheet(s, Date.now(), { planId: sn.id });
+        out[count] = {
+          tight: /class="sheet sheet-tight"/.test(h),
+          rows: (h.match(/<tr>/g) || []).length
+        };
+      });
+      return { out, original: n };
+    })()`);
+    chk('six exercises keep the roomy rhythm',
+        wide.out[6].tight === false && wide.out[6].rows === 7,
+        'rows=' + wide.out[6].rows + ' (6 + header)');
+    chk('seven exercises switch to the tight rhythm',
+        wide.out[7].tight === true && wide.out[7].rows === 8);
+    chk('eight exercises — the planner maximum — are still one sheet',
+        wide.out[8].tight === true && wide.out[8].rows === 9);
+    chk('the tight class is on the sheet, not on the app',
+        !/class="sheet-tight"/.test(window.eval('printSheet(getState(), Date.now(), {})')));
+  }
+
+  group('9. The button is reachable from the planner');
   {
     const ui = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
     chk('the planner offers a print action', /openPrintCard\(/.test(ui));

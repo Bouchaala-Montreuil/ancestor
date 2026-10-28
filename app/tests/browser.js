@@ -664,6 +664,95 @@ function startServer(){
       await page.evaluate(() => switchLang('en'));
     }
 
+    /* The paper, measured as paper. This is the only place the sheet is ever
+       laid out by a real engine under @media print, and it is where a genuine
+       bug lived for a long time: `#printRoot .sheet` only overrode width,
+       padding and type, so the modal bottom sheet's `position:fixed;
+       max-height:88vh; overflow:auto; border-top:2px` still applied. The
+       printed page was a fixed box pinned to the bottom of the *page*,
+       clipped at 88 % of the viewport, wearing the modal's 2 px border — and
+       it spilled onto a second sheet of A4. Nothing on screen said so. */
+    {
+      const PX_PER_MM = 96 / 25.4;
+      const A4 = { w: 210 * PX_PER_MM, h: 297 * PX_PER_MM };
+      /* The viewport becomes the page box first. A real print lays the document
+         out in a viewport 210 mm wide, so the print rule's `width:100%` means
+         "the paper"; emulating print media at 1280 px would make it mean 1280,
+         and every measurement after that would describe a monitor. */
+      await page.setViewport({ width: Math.round(A4.w), height: Math.round(A4.h), deviceScaleFactor: 1 });
+      await page.emulateMediaType('print');
+      /* A six-exercise session is the longest the planner writes for one day;
+         it is the worst case for fitting on one sheet. */
+      await page.evaluate(() => {
+        const s = getState();
+        Object.assign(s.profile, {
+          name: 'Yanis', experience: 'i', goal: 'h', goals: ['h'], equipment: 'gym',
+          shiftType: 'none', sleepHours: 6, sleepVariability: 1, usualWake: 7,
+          style: 'std', daysPerWeek: 3, sessionMinutes: 50, unit: 'kg', bodyweight: 112
+        });
+        s.plan = buildPlan(s.profile);
+        saveState();
+      });
+      const sheets = [];
+      for(const lang of ['en', 'fr', 'de', 'ar']){
+        const res = await page.evaluate(({ lang, A4 }) => {
+          const root = document.getElementById('printRoot');
+          const prev = CURRENT_LANG;
+          CURRENT_LANG = lang;
+          const st = getState();
+          const out = [];
+          st.plan.sessions.forEach(sn => {
+            root.innerHTML = printSheet(st, Date.now(), { planId: sn.id });
+            const el = root.querySelector('.sheet');
+            const cs = getComputedStyle(el);
+            const r = el.getBoundingClientRect();
+            /* Anything sticking out sideways is clipped by the printer, and in
+               RTL that is the side the eye starts from. */
+            let spill = 0;
+            el.querySelectorAll('*').forEach(n => {
+              const b = n.getBoundingClientRect();
+              if(b.width || b.height) spill = Math.max(spill, Math.round(b.right - r.right), Math.round(r.left - b.left));
+            });
+            out.push({
+              session: sn.name,
+              dir: el.getAttribute('dir'),
+              exercises: sn.exercises.length,
+              top: Math.round(r.top),
+              h: Math.round(r.height),
+              w: Math.round(r.width),
+              position: cs.position,
+              maxHeight: cs.maxHeight,
+              overflow: cs.overflow,
+              spill
+            });
+          });
+          CURRENT_LANG = prev;
+          root.innerHTML = '';
+          return out;
+        }, { lang, A4 });
+        sheets.push(...res.map(r => Object.assign({ lang }, r)));
+      }
+      await page.emulateMediaType(null);
+      const tall = sheets.filter(s => s.h > Math.floor(A4.h));
+      const displaced = sheets.filter(s => s.top !== 0);
+      const modal = sheets.filter(s => s.position !== 'static' || s.maxHeight !== 'none' || s.overflow !== 'visible');
+      const spilled = sheets.filter(s => s.spill > 1);
+      chk('the printed sheet is a real A4 page: 210 × 297 mm, starting at the top of the paper, in four languages (' + sheets.length + ' sheets)',
+          tall.length === 0 && displaced.length === 0 && sheets.every(s => Math.abs(s.w - Math.round(A4.w)) <= 2),
+          tall.map(s => s.lang + '/' + s.session + ' ' + s.h + 'px').concat(
+            displaced.map(s => s.lang + '/' + s.session + ' top=' + s.top)).join('; ') ||
+          'max ' + Math.max(...sheets.map(s => s.h)) + 'px of ' + Math.floor(A4.h));
+      chk('the sheet no longer inherits the bottom sheet: static, no 88 vh clamp, no scroll box',
+          modal.length === 0,
+          modal.slice(0, 3).map(s => s.lang + ':' + s.position + '/' + s.maxHeight + '/' + s.overflow).join('; ') || 'none of ' + sheets.length);
+      chk('nothing on the sheet crosses the paper edge, left or right, in LTR or RTL',
+          spilled.length === 0,
+          spilled.slice(0, 3).map(s => s.lang + ' spill ' + s.spill + 'px').join('; ') || '0 px');
+      chk('Arabic still prints right to left on one sheet',
+          sheets.some(s => s.lang === 'ar' && s.dir === 'rtl' && s.h <= Math.floor(A4.h)),
+          sheets.filter(s => s.lang === 'ar').map(s => s.dir + ' ' + s.h + 'px').join(', '));
+    }
+
     /* The bottom bar is fixed, so anything that ends inside its 65 px is
        unreachable however far the page scrolls. Measured at 390 px on the six
        destinations, with the page scrolled to its true end: the lowest visible
