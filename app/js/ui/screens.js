@@ -962,6 +962,7 @@ Screens.body = function(){
          ' aria-label="' + esc(t('mg.'+m) + ', ' + (r && r.since !== null ? t('mst.'+st) + ' — ' + remPlain : t('mst.fresh'))) + '">' +
          '<span class="sw" style="background:' + STATE_HEX[st] + ';opacity:' +
          (r && r.since!==null ? 1 : .3) + '"></span>' +
+         '<span class="idx" aria-hidden="true">' + (MUSCLES.indexOf(m) + 1) + '</span>' +
          '<span class="nm">' + esc(t('mg.'+m)) + '</span>' +
          '<span class="when">' + remLabel + '</span></button>';
   });

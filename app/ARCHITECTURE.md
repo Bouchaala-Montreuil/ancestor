@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,466 headless checks and
+Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,476 headless checks and
 93 real-browser checks.
 
 ---
@@ -29,7 +29,7 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,466 checks — plus `tests/browser.js` (93 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,476 checks — plus `tests/browser.js` (93 real-Chromium checks),
 which needs a real Chrome and covers what jsdom cannot: WebGL, layout overflow at
 320/360/768/1280, a service-worker reload with the network severed, and the two
 failure strips — a refused write and a damaged record — on a 320 px phone in
@@ -48,7 +48,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,466 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
+| S5 | Medium | Nothing ran the suites. 1,476 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
@@ -194,6 +194,7 @@ now in CI.
 | a hostile record cannot put markup into any screen | premium 11 |
 | an injected script or handler attribute cannot run | browser 6b |
 | every action in the markup is one the app registered | ui 31 |
+| the flat figure is the shipped model, projected, not paths typed by hand | design 8s |
 | the masthead carries no language control, on any destination | design 8r, ui 1, browser 0 |
 | a first launch asks the language before any onboarding step | design 8r, ui 1, browser 0 |
 | a throw outside `render()` still lands on the failure state | premium 11, design 8l |

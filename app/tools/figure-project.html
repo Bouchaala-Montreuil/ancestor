@@ -1,0 +1,227 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>figure projection</title>
+<!-- Scratch page, not shipped: it loads the 3D anatomy the app already carries
+     and projects it to the two silhouettes the 2D figure is drawn from. -->
+<script src="../js/vendor/three-bundle.js"></script>
+<script>
+'use strict';
+/* Which model groups feed each of the twelve training groups. */
+const MAP = {
+  chest:      ['Chest','Serratus'],
+  back:       ['Lats','Teres major','Trapezius','Upper back'],
+  shoulders:  ['Deltoids','Rotator cuff'],
+  biceps:     ['Biceps'],
+  triceps:    ['Triceps'],
+  forearms:   ['Forearms'],
+  quads:      ['Quadriceps','Sartorius'],
+  hamstrings: ['Hamstrings'],
+  glutes:     ['Glutes'],
+  calves:     ['Calves'],
+  abs:        ['Abdominals','Obliques'],
+  lowerback:  ['Lower back','Spinal extensors']
+};
+const KEYS = Object.keys(MAP);
+window.__err = null;
+window.ready = false;
+
+function pxFactory(bmin, bmax, SS){
+  const H = 470, W = 200, footpad = 13;
+  const k = (430 / (bmax[1] - bmin[1])) * SS;
+  const cx = (bmin[0] + bmax[0]) / 2;
+  return function(v){
+    return [ (W / 2) * SS + (v[0] - cx) * k, footpad * SS + (bmax[1] - v[1]) * k ];
+  };
+}
+
+/* Depth at every pixel for a set of triangles. Bigger is nearer the camera. */
+function depthOf(tris, px, RW, RH, back){
+  const zb = new Float32Array(RW * RH).fill(-1e9);
+  const S = back ? -1 : 1;
+  for(let t = 0; t < tris.length; t++){
+    const tri = tris[t];
+    const a = px(tri[0]), b = px(tri[1]), c = px(tri[2]);
+    const za = S * tri[0][2], zb2 = S * tri[1][2], zc = S * tri[2][2];
+    const minX = Math.max(0, Math.floor(Math.min(a[0], b[0], c[0])));
+    const maxX = Math.min(RW - 1, Math.ceil(Math.max(a[0], b[0], c[0])));
+    const minY = Math.max(0, Math.floor(Math.min(a[1], b[1], c[1])));
+    const maxY = Math.min(RH - 1, Math.ceil(Math.max(a[1], b[1], c[1])));
+    if(maxX < minX || maxY < minY) continue;
+    const d = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
+    if(Math.abs(d) < 1e-9) continue;
+    const inv = 1 / d;
+    for(let y = minY; y <= maxY; y++){
+      const sy = y + 0.5;
+      for(let x = minX; x <= maxX; x++){
+        const sx = x + 0.5;
+        const w0 = ((b[1] - c[1]) * (sx - c[0]) + (c[0] - b[0]) * (sy - c[1])) * inv;
+        const w1 = ((c[1] - a[1]) * (sx - c[0]) + (a[0] - c[0]) * (sy - c[1])) * inv;
+        const w2 = 1 - w0 - w1;
+        if(w0 < 0 || w1 < 0 || w2 < 0) continue;
+        const i = y * RW + x;
+        const z = w0 * za + w1 * zb2 + w2 * zc;
+        if(z > zb[i]) zb[i] = z;
+      }
+    }
+  }
+  return zb;
+}
+
+/* Marching squares: binary field → closed rings. */
+function contours(field, RW, RH){
+  const at = (x, y) => (x < 0 || y < 0 || x >= RW || y >= RH) ? 0 : (field[y * RW + x] ? 1 : 0);
+  const segs = [];
+  for(let y = -1; y < RH; y++){
+    for(let x = -1; x < RW; x++){
+      const a = at(x, y), b = at(x + 1, y), c = at(x + 1, y + 1), d = at(x, y + 1);
+      const s = a * 8 + b * 4 + c * 2 + d;
+      if(s === 0 || s === 15) continue;
+      const X = x + 0.5, Y = y + 0.5;
+      const T = [X + 0.5, Y], R = [X + 1, Y + 0.5], B = [X + 0.5, Y + 1], L = [X, Y + 0.5];
+      const add = (p, q) => segs.push([p, q]);
+      if(s === 1) add(L, B); else if(s === 2) add(B, R); else if(s === 3) add(L, R);
+      else if(s === 4) add(T, R); else if(s === 5){ add(T, L); add(R, B); }
+      else if(s === 6) add(T, B); else if(s === 7) add(T, L);
+      else if(s === 8) add(T, L); else if(s === 9) add(T, B);
+      else if(s === 10){ add(T, R); add(B, L); } else if(s === 11) add(T, R);
+      else if(s === 12) add(L, R); else if(s === 13) add(B, R); else if(s === 14) add(L, B);
+    }
+  }
+  const key = p => Math.round(p[0] * 2) + ',' + Math.round(p[1] * 2);
+  const ends = new Map();
+  segs.forEach((s, i) => { [s[0], s[1]].forEach(p => {
+    const k = key(p); if(!ends.has(k)) ends.set(k, []); ends.get(k).push(i); }); });
+  const used = new Array(segs.length).fill(false);
+  const rings = [];
+  for(let i = 0; i < segs.length; i++){
+    if(used[i]) continue;
+    used[i] = true;
+    const ring = [segs[i][0], segs[i][1]];
+    let guard = 0;
+    while(guard++ < segs.length){
+      const tail = ring[ring.length - 1];
+      const cand = (ends.get(key(tail)) || []).filter(j => !used[j]);
+      if(!cand.length) break;
+      const j = cand[0]; used[j] = true;
+      const s2 = segs[j];
+      ring.push(key(s2[0]) === key(tail) ? s2[1] : s2[0]);
+      if(key(ring[ring.length - 1]) === key(ring[0])) break;
+    }
+    if(ring.length > 8) rings.push(ring);
+  }
+  return rings;
+}
+
+/* Ramer–Douglas–Peucker, so a projected ring is a path of tens of points
+   rather than thousands. */
+function rdp(pts, eps){
+  if(pts.length < 3) return pts.slice();
+  const keep = new Array(pts.length).fill(false);
+  keep[0] = keep[pts.length - 1] = true;
+  const stack = [[0, pts.length - 1]];
+  while(stack.length){
+    const [a, b] = stack.pop();
+    const A = pts[a], B = pts[b];
+    const dx = B[0] - A[0], dy = B[1] - A[1];
+    const len = Math.hypot(dx, dy) || 1e-9;
+    let dmax = -1, idx = -1;
+    for(let i = a + 1; i < b; i++){
+      const P = pts[i];
+      const d = Math.abs(dy * P[0] - dx * P[1] + B[0] * A[1] - B[1] * A[0]) / len;
+      if(d > dmax){ dmax = d; idx = i; }
+    }
+    if(dmax > eps && idx > 0){ keep[idx] = true; stack.push([a, idx], [idx, b]); }
+  }
+  return pts.filter((_, i) => keep[i]);
+}
+
+function ringPath(ring, SS){
+  let pts = ring.slice();
+  const same = (a, b) => Math.abs(a[0] - b[0]) < 1e-6 && Math.abs(a[1] - b[1]) < 1e-6;
+  if(pts.length > 2 && same(pts[0], pts[pts.length - 1])) pts.pop();
+  let s0 = 0;
+  for(let i = 1; i < pts.length; i++)
+    if(pts[i][1] < pts[s0][1] || (pts[i][1] === pts[s0][1] && pts[i][0] < pts[s0][0])) s0 = i;
+  pts = pts.slice(s0).concat(pts.slice(0, s0));
+  /* Area in figure units; anything under a few px is a speck of a boundary
+     between two muscles, not a region. */
+  let area = 0;
+  for(let i = 0; i < pts.length; i++){
+    const p = pts[i], q = pts[(i + 1) % pts.length];
+    area += p[0] * q[1] - q[0] * p[1];
+  }
+  area = Math.abs(area / 2) / (SS * SS);
+  if(area < 6) return null;
+  const simp = rdp(pts, 1.6);
+  if(simp.length < 4) return null;
+  const p = simp.map(q => [Math.round(q[0] / SS * 10) / 10, Math.round(q[1] / SS * 10) / 10]);
+  return 'M' + p.map(q => q[0] + ',' + q[1]).join(' L') + ' Z';
+}
+
+(async function(){
+  try{
+    const dec = window.MeshoptDecoder || (window.THREE && window.THREE.MeshoptDecoder);
+    if(dec && dec.ready) await dec.ready;
+    const loader = new THREE.GLTFLoader();
+    if(dec && loader.setMeshoptDecoder) loader.setMeshoptDecoder(dec);
+    const gltf = await loader.loadAsync("../assets/anatomy-male-mobile.glb");
+    gltf.scene.updateMatrixWorld(true);
+
+    const all = [], byKey = {}; KEYS.forEach(k => { byKey[k] = []; });
+    const bmin = [1e9, 1e9, 1e9], bmax = [-1e9, -1e9, -1e9];
+    gltf.scene.traverse(o => {
+      if(!o.isMesh) return;
+      const g = o.geometry, pos = g.attributes.position, idx = g.index;
+      const m = o.matrixWorld, v = new THREE.Vector3();
+      const P = [];
+      for(let i = 0; i < pos.count; i++){
+        v.fromBufferAttribute(pos, i).applyMatrix4(m);
+        P.push([v.x, v.y, v.z]);
+        for(let a = 0; a < 3; a++){
+          if(P[P.length - 1][a] < bmin[a]) bmin[a] = P[P.length - 1][a];
+          if(P[P.length - 1][a] > bmax[a]) bmax[a] = P[P.length - 1][a];
+        }
+      }
+      const ix = idx ? idx.array : null;
+      const n = ix ? ix.length / 3 : P.length / 3;
+      const gname = o.userData && o.userData.group;
+      const buckets = KEYS.filter(k => (MAP[k] || []).indexOf(gname) >= 0);
+      for(let t = 0; t < n; t++){
+        const a = ix ? ix[t*3] : t*3, b = ix ? ix[t*3+1] : t*3+1, c = ix ? ix[t*3+2] : t*3+2;
+        const tri = [P[a], P[b], P[c]];
+        all.push(tri);
+        buckets.forEach(k => byKey[k].push(tri));
+      }
+    });
+
+    window.__project = function(opts){
+      const SS = (opts && opts.ss) || 4;
+      const RW = 200 * SS, RH = 470 * SS;
+      const px = pxFactory(bmin, bmax, SS);
+      const res = { silhouette: {}, groups: {} };
+      ['front', 'back'].forEach(view => {
+        const back = view === 'back';
+        const frontDepth = depthOf(all, px, RW, RH, back);
+        const sil = new Uint8Array(RW * RH);
+        for(let i = 0; i < sil.length; i++) sil[i] = frontDepth[i] > -1e8 ? 1 : 0;
+        res.silhouette[view] = contours(sil, RW, RH).map(r => ringPath(r, SS)).filter(Boolean);
+        res.groups[view] = {};
+        KEYS.forEach(k => {
+          if(!byKey[k].length) return;
+          const gz = depthOf(byKey[k], px, RW, RH, back);
+          const f = new Uint8Array(RW * RH);
+          for(let i = 0; i < f.length; i++) f[i] = (gz[i] > -1e8 && gz[i] >= frontDepth[i] - 0.006) ? 1 : 0;
+          res.groups[view][k] = contours(f, RW, RH).map(r => ringPath(r, SS)).filter(Boolean);
+        });
+      });
+      res.tris = {}; KEYS.forEach(k => res.tris[k] = byKey[k].length);
+      res.box = { min: bmin, max: bmax, total: all.length };
+      return res;
+    };
+    window.ready = true;
+  }catch(e){
+    window.__err = String((e && e.stack) || e);
+    window.ready = true;
+  }
+})();
+</script>

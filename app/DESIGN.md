@@ -425,11 +425,27 @@ poster on a phone.
 | the exercise sheet twice the width of the screen, its content 4 900 px down, only its heading visible | the print document's own rule was a bare `.sheet{width:210mm;min-height:297mm;…}`, and the modal overlay is also called `.sheet`. Every bottom sheet in the app was wearing A4 paper. |
 | the sheet hung from the top with a gap at the bottom, the atlas visible through it | the overlay is its own backdrop (`class="sheet sheet-backdrop"`), and `.sheet-backdrop{inset:0}` pins `top:0`; `max-height:88vh` then left 12% of the screen showing the list behind |
 | the sheet opened on two full-body anatomy figures, ~760 px tall each, and put the exercise's record 1 600 px below them | `.ex-vis-figs` had no rule of its own: two stacked full-width figures |
+| the body map was a mannequin with a breastplate: rectangle pecs, a rectangle abdomen, thighs cut off by a horizontal line across the pelvis | the figure was hand-drawn — twelve groups as trapezoids on a stacked torso-and-legs silhouette. Every shared edge between the stacked parts drew that straight line, and a straight line across the pelvis is shorts |
 | there was no way out except by scrolling 1 845 px to a Close button at the bottom | the only Close was the last child of the panel; tap-outside and Escape worked and nothing said so |
 
 Four fixes, all in the stylesheet except the last, which is markup: the print
 geometry is scoped to `#printRoot .sheet`; the overlay sets `top:auto`; the two
 figures are a capped pair side by side; and the sheet's title row is sticky and
+**And the figure itself** (2026-10-28). Hand-drawing anatomy was a
+dead end: five rounds of tuning the outline got a body-shaped silhouette and a
+set of panel-shaped muscles, because that is what was being typed. The app
+already ships a real model for the 3D screen — `assets/anatomy-male-mobile.glb`,
+Z-Anatomy / BodyParts3D, CC BY-SA 4.0 — so the flat figure is now that model,
+projected: every triangle rasterised with a depth buffer per view, the
+front-most surface kept, traced into closed polygons, simplified, and committed
+as `tools/figure-projected.json`. `tools/build-figure.js` emits it into
+`js/ui/components.js` between markers and `--check` fails when the two disagree,
+so the geometry can be regenerated but not quietly edited. Three things fell out
+of doing it properly: the body is one closed line rather than a stack (there is
+no seam across the pelvis to read as shorts), a selected group is traced with a
+halo instead of boxed with a rectangle that lied about its shape, and the twelve
+groups are numbered on the figure with the numbers of the list below — one key,
+not two lists that agree. Group 8s holds all of it.
 carries the Close control — one Close, not two, so a screen reader is not given
 the same name twice.
 
@@ -925,7 +941,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (235 checks), the 93 real-browser checks in `tests/browser.js`
+`tests/design.js` (245 checks), the 93 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 

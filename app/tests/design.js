@@ -230,6 +230,79 @@ group('8. Anatomy component integrity');
 }
 
 /* ================================================================ */
+group('8s. The flat figure is the real model, projected');
+{
+  /* The figure used to be hand-drawn: a stack of rectangles and trapezoids that
+     read as a mannequin with a breastplate, because that is what it was. It is
+     now the same anatomical model the 3D screen uses, projected to two views
+     offline and committed as data. These checks are what stops it drifting back
+     into something drawn by hand. */
+  const comps = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  const gen   = fs.readFileSync(path.join(ROOT, 'tools/build-figure.js'), 'utf8');
+  const data  = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/figure-projected.json'), 'utf8'));
+  const block = (/\/\* <figure-geometry> \*\/([\s\S]*?)\/\* <\/figure-geometry> \*\//.exec(comps) || [,''])[1];
+
+  chk('the geometry is a generated block, not paths typed by hand',
+      block.length > 5000 && /^const FIG = \{/m.test(block),
+      (block.length / 1024).toFixed(1) + ' KB');
+  chk('it comes from the projected model, and the two agree',
+      (function(){
+        try{
+          require('child_process').execFileSync(process.execPath,
+            [path.join(ROOT, 'tools/build-figure.js'), '--check'], { stdio:'pipe' });
+          return true;
+        }catch(e){ return false; }
+      })(), 'node tools/build-figure.js --check');
+
+  /* One body, one line. A torso stacked on two legs drew a straight cut across
+     the pelvis for every leg it added, and a horizontal line there is shorts. */
+  const sil = block.slice(block.indexOf('outline: ['), block.indexOf('regions: {'));
+  chk('each view is one closed silhouette, not a stack of parts',
+      (sil.match(/Z'/g) || []).length === 2 && data.silhouette.front.length === 1 &&
+      data.silhouette.back.length === 1,
+      (sil.match(/Z'/g) || []).length + ' closed paths');
+
+  /* Every one of the twelve groups is drawn somewhere, and none is invented. */
+  const MUS = ['chest','back','shoulders','biceps','triceps','forearms',
+               'quads','hamstrings','glutes','calves','abs','lowerback'];
+  const drawn = MUS.filter(m => data.groups.front[m].length || data.groups.back[m].length);
+  chk('all twelve training groups are drawn from the model',
+      drawn.length === 12, drawn.length + ' of 12');
+  chk('and the model contributes nothing the app does not have',
+      Object.keys(data.groups.front).concat(Object.keys(data.groups.back))
+        .every(m => MUS.indexOf(m) >= 0));
+  chk('the projection is from the shipped asset, not a second copy',
+      /anatom-male-mobile\.glb|anatomy-male-mobile\.glb/.test(
+        fs.readFileSync(path.join(ROOT, 'tools/figure-project.html'), 'utf8')) &&
+      /depth-of-each-pixel|depthOf/.test(fs.readFileSync(path.join(ROOT, 'tools/figure-project.html'), 'utf8')),
+      'tools/figure-project.html');
+  chk('every group is drawn with a real surface, not a speck',
+      data.tris && MUS.every(m => data.tris[m] > 500),
+      MUS.map(m => m + ':' + (data.tris[m] || 0)).join(' '));
+  chk('the generator refuses geometry it cannot draw',
+      /problems\.length/.test(gen) && /process\.exit\(1\)/.test(gen));
+
+  /* The number on the figure and the number beside the list row are one key. */
+  const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  chk('the list rows are numbered from the same list the figure numbers',
+      /MUSCLES\.indexOf\(m\) \+ 1/.test(screens) && /MUSCLES\.indexOf\(m\)/.test(comps),
+      'MUSCLES.indexOf(m) + 1');
+  chk('a number sits on a lobe, never on the midline',
+      (function(){
+        const label = (/label: \{([\s\S]*?)\n  \}/.exec(block) || [,''])[1];
+        const nums = (label.match(/\[\d+,\d+\]/g) || []);
+        const centred = nums.filter(t => {
+          const x = +t.slice(1, -1).split(',')[0];
+          return x >= 95 && x <= 105;
+        });
+        return nums.length >= 12 && centred.length <= 2;
+      })(), (function(){
+        const label = (/label: \{([\s\S]*?)\n  \}/.exec(block) || [,''])[1];
+        return ((label.match(/\[\d+,\d+\]/g) || []).length) + ' numbers';
+      })());
+}
+
+/* ================================================================ */
 group('8b. Preference hooks are real, not aspirational');
 {
   const cssText = css;

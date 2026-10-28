@@ -11,6 +11,7 @@
     "test:browser": "node tests/browser.js",
     "keys": "node tools/keyscan.js",
     "qa": "node tools/qa_audit.js",
+    "figure": "node tools/build-figure.js",
     "smoke": "node tools/smoke_dist.js",
     "test:print": "node tests/print.js",
     "test:all": "npm test && node tests/browser.js",

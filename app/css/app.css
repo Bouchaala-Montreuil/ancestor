@@ -1366,6 +1366,18 @@ table.data tbody tr:last-child td{border-bottom:0}
 .fig-outline{fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round;stroke-opacity:.55}
 .seg{pointer-events:none;transition:fill-opacity var(--t) var(--ease),stroke-width var(--t) var(--ease)}
 .seg.sel{stroke-dasharray:none}
+/* A selected region is traced, not boxed: a rectangle round a deltoid says
+   less than the deltoid's own outline thickened. */
+.fig-fill{fill:var(--ink);fill-opacity:.07;stroke:none}
+.halo{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-opacity:.28;
+  stroke-linejoin:round;pointer-events:none}
+/* The number in the figure and the number beside the list row are one key. */
+.fig-num{font-family:var(--f-mono);font-size:7.5px;font-weight:700;fill:var(--ink);
+  stroke:var(--paper);stroke-width:2.2;paint-order:stroke;text-anchor:middle;
+  dominant-baseline:middle;pointer-events:none}
+/* No-data is a legible grey, not a ghost: the figure has to be readable as a
+   body before it can be read as a training record. */
+.seg{stroke-opacity:.5}
 .seg-hit{fill:transparent;stroke:transparent;cursor:pointer}
 .seg-hit:focus-visible{outline:none;stroke:var(--burnt);stroke-opacity:.5}
 .anat-toolbar{justify-content:space-between;margin-bottom:var(--s3);gap:var(--s2)}
@@ -2771,6 +2783,10 @@ html[data-motion="on"] .onb-bar i{transition:none}
 .mrow:hover{background:rgba(32,33,31,.03)}
 .mrow.sel{background:var(--surface);box-shadow:inset 2px 0 0 var(--burnt);padding-inline-start:var(--s2)}
 .mrow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The row's number is the number on the figure. It is a column, not a gap,
+   so the twelve rows stay aligned whatever the label length. */
+.mrow .idx{font-family:var(--f-mono);font-size:9px;color:var(--tech-ink);
+  min-width:14px;text-align:end;flex:0 0 auto}
 .mrow .when{
   font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--tech-ink);white-space:nowrap;
