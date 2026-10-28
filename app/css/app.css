@@ -2311,7 +2311,11 @@ table.data tbody tr:last-child td{border-bottom:0}
 .focus-grid .tile{min-height:56px;border-bottom:var(--hair) solid var(--line);
   background:transparent;box-shadow:none;border-radius:0;padding:var(--s3) 0}
 .focus-grid .tile.on{box-shadow:inset 3px 0 0 var(--burnt);padding-inline-start:var(--s3)}
-@media (max-width:400px){.focus-grid{grid-template-columns:minmax(0,1fr)}}
+/* One column for the long answer rows, two for the short priority chips: eight
+   full-width chips were 400 px of stack for eight words. */
+@media (max-width:400px){
+  .focus-grid:has(.tile){grid-template-columns:minmax(0,1fr)}
+}
 
 /* One question, set as large as the screen allows. */
 .onb-frame h1.display,
