@@ -261,7 +261,7 @@ invented:
   in this project was looked at this way, at rendered size, repeatedly — the first
   eleven pattern drawings were *stick figures* with heads and joints the same size,
   which no assertion would ever have caught.
-- **The bundle is smoked, not assumed.** `build.py` produces a single 2.1 MB file
+- **The bundle is smoked, not assumed.** `build.py` produces a single 2.3 MB file
   from 41 scripts; `tools/smoke_dist.js` boots it, runs a session, saves it and
   reads the charts back, and fails on any external reference.
 - **The rules are checked, not remembered.** No gradients, no hex outside the
@@ -278,7 +278,7 @@ arithmetically, not seen.
 
 | | |
 |---|---|
-| Bundle | 2.1 MB, one file, 41 scripts, zero requests |
+| Bundle | 2.3 MB, one file, 41 scripts, zero requests |
 | Checks | 1,068 across 10 suites, all green |
 | Content | 68 exercises, 11 movement patterns, 11 lessons, 14 evidence records |
 | Languages | 7, including Arabic RTL and the printed sheet |

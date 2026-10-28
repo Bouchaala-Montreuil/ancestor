@@ -33,6 +33,23 @@ function formatNumber(v, lang, opts){
   } catch(e){ return String(v); }
 }
 
+/* ------------------------------------------------------- numbers in RTL text
+   Unicode's bidi rules call the dash or the multiplication sign between two
+   numbers "neutral", so in a right-to-left paragraph it takes the paragraph's
+   direction and the run is then laid out right to left: Arabic read "6–10
+   reps" as "10–6" and "3×6–10" as "10–6×3". Digits are read left to right in
+   Arabic too — a range that runs backwards is a wrong number, not a styling
+   quibble — so the whole expression (set count, dash, rep range, its unit
+   word) is wrapped in a left-to-right isolate: U+2066 … U+2069.
+   It is the identity everywhere else, and it strips any isolate it finds so
+   that wrapping an already-wrapped expression cannot nest them. */
+function numExpr(s){
+  s = (s === null || s === undefined) ? '' : String(s).replace(/[\u2066-\u2069]/g, '');
+  if (!isRTL(typeof CURRENT_LANG === 'string' ? CURRENT_LANG : 'en')) return s;
+  if (!/[0-9]/.test(s)) return s;
+  return '\u2066' + s + '\u2069';
+}
+
 function formatDate(ms, lang){
   try {
     return new Date(ms).toLocaleDateString(localeTag(lang), {day:'2-digit', month:'short'});

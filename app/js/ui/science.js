@@ -53,7 +53,7 @@ Screens.science = function(){
        progressRing(LESSONS.length ? read.length / LESSONS.length : 0,
                     { r: 16, stroke: 3.5, ringKey: 'sci.read', label: t('sci.progress') }) +
        '<span class="meta">' +
-       read.length + ' / ' + LESSONS.length + ' ' + esc(t('sci.lessonsDone')) + '</span></div></div>';
+       numExpr(read.length + ' / ' + LESSONS.length) + ' ' + esc(t('sci.lessonsDone')) + '</span></div></div>';
 
   /* architectural sub-tabs (keep .chip in classList so automated tab queries match) */
   const TABS = ['lessons','modules','explorers','evidence'];
@@ -224,7 +224,7 @@ Screens.lesson = function(){
            esc(t('sci.check')) + '</button>';
     } else {
       h += '<div class="banner ok"><span class="ic">OK</span><span>' + esc(t('sci.finished')) + ' — ' +
-           q.correct + ' / ' + q.total + '</span></div>';
+           numExpr(q.correct + ' / ' + q.total) + '</span></div>';
       if(q.correct < q.total) h += '<button class="btn quiet sm mt-2"  onclick="retryQuiz(\'' + l.id + '\')">' +
            esc(t('sci.tryAgain')) + '</button>';
     }
@@ -439,7 +439,7 @@ function explorerTimeline(){
   ];
   stages.forEach(st => {
     h += '<div class="factor"><span class="dot"></span><span class="txt">' +
-      '<b>' + esc(t('lab.tl.week')) + ' ' + st.w + '</b> — ' + esc(t(st.k)) + '</span></div>';
+      '<b>' + esc(t('lab.tl.week') + ' ' + numExpr(st.w)) + '</b> — ' + esc(t(st.k)) + '</span></div>';
   });
   h += '<div class="uncertain mt-3"><b>' + esc(t('sim.limits')) + '</b>' +
        esc(t('lab.tl.note')) + '</div>';

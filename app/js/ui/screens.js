@@ -203,13 +203,13 @@ Screens.home = function(){
          '<span class="hint">' + esc(sessionCostLine(lifts.length, sets, mins)) + '</span></div>' +
          '<div class="next-ex-pills">' +
          lifts.slice(0, 2).map(e =>
-           '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + e.sets + '×' + esc(targetRangeText(EX_BY_ID[e.id])) + '</span>'
+           '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + esc(numExpr(e.sets + '×' + targetRangeText(EX_BY_ID[e.id]))) + '</span>'
          ).join('') +
          (lifts.length > 2
            ? '<details class="next-ex-more"><summary>' + esc(t('home.moreLifts', { n: lifts.length - 2 })) +
              '</summary><div class="next-ex-pills">' +
              lifts.slice(2).map(e =>
-               '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + e.sets + '×' + esc(targetRangeText(EX_BY_ID[e.id])) + '</span>'
+               '<span class="next-ex-pill">' + esc(t('ex.' + e.id)) + ' · ' + esc(numExpr(e.sets + '×' + targetRangeText(EX_BY_ID[e.id]))) + '</span>'
              ).join('') + '</div></details>'
            : '') +
          '</div></div>';
@@ -305,7 +305,7 @@ Screens.home = function(){
     h += '<div class="chips mb-3">' +
          (weekGoalMet ? '<span class="flag ok">' + esc(t('mile.weeklyGoal')) + '</span>' : '') +
          '<button type="button" class="flag plain tap" onclick="go(\'progress\')">' +
-           esc(t('mile.title')) + ': ' + milesEarned + '/' + miles.length + '</button>' +
+           esc(t('mile.title')) + ': ' + numExpr(milesEarned + '/' + miles.length) + '</button>' +
          '</div>';
   }
   const nextPct = next
@@ -369,7 +369,7 @@ Screens.home = function(){
        '<div class="row between mt-2">' +
          '<button type="button" class="link-btn" onclick="go(\'body\')">' +
          esc(t('home.mapCta')) + '</button>' +
-         '<span class="flag sm ok">' + readyCount + ' / ' + MUSCLES.length + ' ' + esc(t('mst.ready')) + '</span>' +
+         '<span class="flag sm ok">' + numExpr(readyCount + ' / ' + MUSCLES.length) + ' ' + esc(t('mst.ready')) + '</span>' +
        '</div></div></div>';
 
   /* Learn carries the card for the next lesson, and the hub itself as a link:
@@ -463,14 +463,14 @@ function milestonesPanel(state, now){
   const list = trainingMilestones(state, now);
   const earned = list.filter(m => m.earned).length;
   let h = '<div class="sect"><h2 class="sub">' + esc(t('mile.title')) + '</h2><span class="rule"></span>' +
-          '<span class="aside">' + earned + ' / ' + list.length + '</span></div>';
+          '<span class="aside">' + numExpr(earned + ' / ' + list.length) + '</span></div>';
   h += '<div class="mile-grid" data-stagger>';
   list.forEach(m => {
     const pct = m.max > 0 ? Math.round(m.cur / m.max * 100) : 0;
     h += '<div class="mile-card ' + (m.earned ? 'earned' : 'locked') + '">' +
          '<div><div class="row nowrap between row-1 mb-1">' +
            '<span class="mile-card-t">' + esc(t(m.titleKey)) + '</span>' +
-           '<span class="flag sm ' + (m.earned ? 'ok' : 'plain') + '">' + m.cur + '/' + m.max + '</span></div>' +
+           '<span class="flag sm ' + (m.earned ? 'ok' : 'plain') + '">' + numExpr(m.cur + '/' + m.max) + '</span></div>' +
          '<p class="hint">' + esc(t(m.descKey)) + '</p></div>' +
          '<div class="mile-bar"><i style="width:' + pct + '%"></i></div></div>';
   });
@@ -882,7 +882,7 @@ Screens.body = function(){
 
   const trackedCount = MUSCLES.filter(m => rec[m] && rec[m].since !== null).length;
   let h = '<div class="masthead"><div>' +
-          '<p class="masthead-idx">' + trackedCount + ' / ' + MUSCLES.length + ' ' + esc(t('body.tracked')) + '</p>' +
+          '<p class="masthead-idx">' + numExpr(trackedCount + ' / ' + MUSCLES.length) + ' ' + esc(t('body.tracked')) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('body.title')) + '</h1>' +
           '<p class="masthead-sub">' + esc(BODY_MODE === 'model' ? t('lab3d.atlasTag') : t('body.note2d')) + '</p>' +
           '</div></div>';
@@ -1052,7 +1052,7 @@ Screens.body = function(){
     r.parts.forEach(p => {
       h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(p.label) +
            (p.note ? ' <span class="meta">(' + esc(p.note) + ')</span>' : '') +
-           '</span><span class="w">×' + p.f.toFixed(2) + '</span></div>';
+           '</span><span class="w">' + esc(numExpr('×' + p.f.toFixed(2))) + '</span></div>';
     });
     h += '</div>';
     h += '<div class="uncertain mt-3"><b>' + esc(t('body.missing')) + '</b>' +
@@ -1316,7 +1316,7 @@ function openExerciseDetail(exId){
     h += '<p class="eyebrow mb-2">' + esc(t('plan.tabPlan')) + '</p>' +
          '<div class="chips mb-3">' +
          inPlanRows.map(pr =>
-           '<span class="flag ok">' + esc(pr.dayName) + ' · ' + pr.sets + ' × ' + esc(targetRangeText(ex)) +
+           '<span class="flag ok">' + esc(pr.dayName) + ' · ' + esc(numExpr(pr.sets + ' × ' + targetRangeText(ex))) +
            ' · RIR ' + pr.rir + ' · ' + esc(t('session.rest')) + ' ' + pr.rest + 's</span>'
          ).join('') + '</div>';
   }
@@ -1926,7 +1926,7 @@ Screens.profile = function(){
 
   /* Exercise Pool Summary + Full Atlas Launchpad */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.exercises')) + '</h3>' +
-       '<span class="hint">' + enabledCount + ' / ' + avail.length + '</span></div>';
+       '<span class="hint">' + numExpr(enabledCount + ' / ' + avail.length) + '</span></div>';
   h += '<p class="body-sm mb-3">' + esc(t('onb.ex.d')) + '</p>';
   h += '<p class="hint mb-3">' + esc(t('onb.ex.hint')) + '</p>';
   h += '<button type="button" class="btn quiet block mb-3"  onclick="openExerciseLibrary()">' +
@@ -1944,7 +1944,7 @@ Screens.profile = function(){
     h += '<details class="dis onb-ex-group"' + (changed ? ' open' : '') + '>' +
          '<summary><span class="dis-t">' + esc(t('pat.'+pat)) + '</span>' +
          '<span class="flag sm ' + (changed ? 'warn' : 'plain') + '">' +
-         patOn + ' / ' + list.length + '</span></summary>' +
+         numExpr(patOn + ' / ' + list.length) + '</span></summary>' +
          '<div class="chips mt-2">' + list.map(e => {
            const on = p.exercises ? p.exercises[e.id] !== false : true;
            return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
@@ -2656,7 +2656,7 @@ Screens.onb = function(){
         ' ontoggle="onbExOpen(\'' + pat + '\', this.open)">' +
         '<summary><span class="dis-t">' + esc(t('pat.' + pat)) + '</span>' +
         '<span class="flag sm ' + (kept === list.length ? 'plain' : 'warn') + '">' +
-        kept + ' / ' + list.length + '</span></summary>' +
+        numExpr(kept + ' / ' + list.length) + '</span></summary>' +
         '<div class="chips mt-2">' + list.map(e => {
           const on = p.exercises ? p.exercises[e.id] !== false : true;
           return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
@@ -2679,7 +2679,7 @@ Screens.onb = function(){
         '</h3><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';
       s2.exercises.forEach(e => {
         b += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(t('ex.'+e.id)) +
-          '</span><span class="w">' + e.sets + '×' + targetRangeText(EX_BY_ID[e.id]) + ' RIR' + e.rir + '</span></div>';
+          '</span><span class="w">' + esc(numExpr(e.sets + '×' + targetRangeText(EX_BY_ID[e.id]))) + ' RIR' + e.rir + '</span></div>';
       });
       b += '</div>';
     });

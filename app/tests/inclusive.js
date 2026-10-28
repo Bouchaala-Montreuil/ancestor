@@ -227,6 +227,29 @@ group('5. Units and locale');
   const arPlural = R('plural')('ar', 3, {few:'few', other:'other'});
   chk('Arabic plural rules are delegated to Intl, not guessed',
       arPlural === 'few' || arPlural === 'other', arPlural);
+
+  /* A range is a number, and numbers run left to right in Arabic too. The bidi
+     algorithm disagrees: the dash between two digits is neutral, so it takes
+     the paragraph direction and the range is laid out backwards. This shipped
+     once — Arabic read "6–10 reps" as "10–6" and "1 / 3" as "3 / 1". */
+  const withLang = (l, expr) => {
+    vm.runInContext("CURRENT_LANG='" + l + "'", sandbox);
+    const v = vm.runInContext(expr, sandbox);
+    vm.runInContext("CURRENT_LANG='en'", sandbox);
+    return v;
+  };
+  chk('the isolate is idempotent, so nested wrapping cannot pile up',
+      withLang('ar', 'numExpr(numExpr("3×6–10"))') === '\u20663×6–10\u2069',
+      JSON.stringify(withLang('ar', 'numExpr(numExpr("3×6–10"))')));
+  chk('a set counter reads "1 / 3", not "3 / 1", in Arabic',
+      withLang('ar', 'numExpr(1 + " / " + 3)') === '\u20661 / 3\u2069');
+  chk('a two-digit range keeps its own order inside the isolate',
+      /^\u2066(\d+)–(\d+)\u2069$/.test(withLang('ar', 'numExpr("6–10")')),
+      JSON.stringify(withLang('ar', 'numExpr("6–10")')));
+  chk('…while English, which has no bidi problem, gets no invisible characters',
+      withLang('en', 'numExpr("6–10")') === '6–10');
+  chk('a numeric expression is left alone when there is no number in it',
+      withLang('ar', 'numExpr("—")') === '—');
 }
 
 /* ==================================================================== */

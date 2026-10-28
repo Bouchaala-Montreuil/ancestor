@@ -471,7 +471,7 @@ function timelineStrip(state, now){
     });
     const isNow = now >= d0 && now < d1;
     if(isNow) blocks += '<div class="now" style="top:' + (((now-d0)/86400000)*100).toFixed(1) + '%"></div>';
-    h += '<div class="tlcol"><div class="lab">' + esc(dayLabel(d0)) + '</div>' +
+    h += '<div class="tlcol"><div class="lab">' + esc(dayLabel(d0, 'narrow')) + '</div>' +
          '<div class="track">' + blocks + '</div>' +
          '<div class="mk">' + new Date(d0).getDate() + '</div></div>';
   }

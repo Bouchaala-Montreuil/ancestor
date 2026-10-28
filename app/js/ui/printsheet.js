@@ -297,7 +297,7 @@ function printSheet(state, now, opts){
     (day.exercises || []).forEach((e, i) => {
       const ex = EX_BY_ID[e.id];
       const last = printLastDone(state, e.id);
-      const range = ex ? targetRangeText(ex) : (e.reps ? e.reps[0] + '–' + e.reps[1] : '');
+      const range = ex ? targetRangeText(ex) : numExpr(e.reps ? e.reps[0] + '–' + e.reps[1] : '');
       const unit = ex ? exTargetRange(ex).unit : 'reps';
       /* A hold or a carry is not prescribed a lifting cadence: printing
          "4 · 0 · 4" next to a 40-second plank would be inventing instruction. */
@@ -308,7 +308,7 @@ function printSheet(state, now, opts){
              '<small>' + (last
                 ? esc(t('pa.last')) + ' ' + esc(dateLabel(last.date)) + ' · ' + esc(last.text)
                 : esc(t('pa.rest')) + ' ' + (plan.restSec || 120) + 's') + '</small></td>' +
-           '<td class="c-mono">' + esc(e.sets + ' × ' + range) + '</td>' +
+           '<td class="c-mono">' + esc(numExpr(e.sets + ' × ' + range)) + '</td>' +
            '<td class="c-mono">' + esc(tempo) + '</td>' +
            '<td><span class="box"></span></td>' +
            '<td><span class="box"></span></td>' +
@@ -453,14 +453,14 @@ function printTargetFor(entry, day, ex){
   const p = entry && entry.plan;
   if (p && p.sets) {
     const range = (p.reps && p.reps.length)
-      ? (p.reps[0] === p.reps[1] ? String(p.reps[0]) : p.reps[0] + '–' + p.reps[1])
+      ? numExpr(p.reps[0] === p.reps[1] ? String(p.reps[0]) : p.reps[0] + '–' + p.reps[1])
       : (ex ? targetRangeText(ex) : '');
-    return p.sets + ' × ' + range + (ex && exTargetRange(ex).unit === 'reps' ? ' ' + t('log.repsShort') : '');
+    return numExpr(p.sets + ' × ' + range + (ex && exTargetRange(ex).unit === 'reps' ? ' ' + t('log.repsShort') : ''));
   }
   const dayEx = day && (day.exercises || []).filter(x => x.id === entry.id)[0];
   if (dayEx) {
-    const range = ex ? targetRangeText(ex) : (dayEx.reps ? dayEx.reps[0] + '–' + dayEx.reps[1] : '');
-    return dayEx.sets + ' × ' + range;
+    const range = ex ? targetRangeText(ex) : numExpr(dayEx.reps ? dayEx.reps[0] + '–' + dayEx.reps[1] : '');
+    return numExpr(dayEx.sets + ' × ' + range);
   }
   return '—';
 }

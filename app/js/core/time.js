@@ -32,13 +32,28 @@ function addDays(ms,n){ const d=new Date(ms); d.setDate(d.getDate()+n); return d
 function hourOf(ms){ return new Date(ms).getHours(); }
 function hhmm(ms){ const d=new Date(ms); return pad(d.getHours())+':'+pad(d.getMinutes()); }
 
-function dayLabel(ms){
-  const loc = {en:'en-GB',fr:'fr-FR',es:'es-ES',de:'de-DE',it:'it-IT',nl:'nl-NL'}[CURRENT_LANG]||'en-GB';
-  return new Date(ms).toLocaleDateString(loc,{weekday:'short'}).replace('.','').slice(0,3);
+/* The locale table lives in js/i18n/locale.js. This used to be a second copy
+   of it, and the copy never learned about Arabic: every Arabic date fell
+   through to en-GB and read "28 Oct" in the middle of an Arabic sentence.
+   Latin digits are deliberate — the interface counts in 6–10 and 120 s
+   everywhere else, so a lone ٢٨ would be the one number in another alphabet. */
+function dateLocale(){
+  const tag = (typeof localeTag === 'function') ? localeTag(CURRENT_LANG) : 'en-GB';
+  return tag === 'ar' ? 'ar-u-nu-latn' : tag;
+}
+function dayLabel(ms, form){
+  /* Three letters is how a Latin weekday fits a chart axis. Arabic has no
+     three-letter weekday — cutting "الأربعاء" leaves a non-word — so it uses
+     the single-letter form, which stays unambiguous (ح ن ث ر خ ج س). That is
+     only right where the column is fifty pixels wide: a printed sheet has room
+     for the whole word, and "ر" alone is a puzzle. */
+  if (CURRENT_LANG === 'ar')
+    return new Date(ms).toLocaleDateString(dateLocale(),
+      {weekday: form === 'narrow' ? 'narrow' : 'short'});
+  return new Date(ms).toLocaleDateString(dateLocale(),{weekday:'short'}).replace('.','').slice(0,3);
 }
 function dateLabel(ms){
-  const loc = {en:'en-GB',fr:'fr-FR',es:'es-ES',de:'de-DE',it:'it-IT',nl:'nl-NL'}[CURRENT_LANG]||'en-GB';
-  return new Date(ms).toLocaleDateString(loc,{day:'2-digit',month:'short'});
+  return new Date(ms).toLocaleDateString(dateLocale(),{day:'2-digit',month:'short'});
 }
 
 /* ---------- the biological day ----------

@@ -1428,17 +1428,55 @@ group('29. Translation honesty: the interface is measured, and so is what is not
   const body = () => d.getElementById('screenBody');
 
   /* Both numbers come from the language bags, not from a constant. */
-  const en = w.langStatus('en'), de = w.langStatus('de'), ar = w.langStatus('ar');
+  const en = w.langStatus('en'), fr = w.langStatus('fr');
+  const de = w.langStatus('de'), ar = w.langStatus('ar');
   chk('every language translates the interface in full',
       ['en','fr','es','de','it','nl','ar'].every(l => w.langStatus(l).percent === 100),
       ['en','fr','es','de','it','nl','ar'].map(l => l + ':' + w.langStatus(l).percent).join(' '));
+  /* No language is singled out: the number has to be that language's own
+     count, so it is re-derived here from the raw translated/total pair rather
+     than trusted because it looks plausible. French is the control — it is
+     complete, and must not inherit the assisted languages' number. */
+  const ownPct = l => w.contentCoverage(l).percent;
   chk('and the lesson text is measured separately, not assumed',
-      en.contentPercent === 100 && de.contentPercent < 100 && ar.contentPercent < de.contentPercent,
-      'en ' + en.contentPercent + '% / de ' + de.contentPercent + '% / ar ' + ar.contentPercent + '%');
+      en.contentPercent === 100 && fr.contentPercent === 100 &&
+      ['es','de','it','nl','ar'].every(l => w.langStatus(l).contentPercent < 100) &&
+      ['es','de','it','nl','ar'].every(l => w.langStatus(l).contentPercent === ownPct(l)),
+      'en ' + en.contentPercent + '% / fr ' + fr.contentPercent + '% / de ' + de.contentPercent +
+      '% / ar ' + ar.contentPercent + '%');
   chk('the content count is a real count, not a percentage of nothing',
       w.contentCoverage('en').total > 400 &&
       w.contentCoverage('en').translated + 1 > w.contentCoverage('de').translated,
       w.contentCoverage('de').translated + '/' + w.contentCoverage('de').total + ' content keys in German');
+
+  /* The range a person is told to lift is a number, and numbers run left to
+     right in Arabic too. Under the bidi algorithm the dash between the two
+     digits is neutral, takes the paragraph direction, and Arabic read
+     "6–10 reps" as "10–6" — a wrong prescription, in the one language whose
+     readers could not tell it was a rendering bug. The fix is an isolate
+     around the expression; this checks it is really applied to what is shown,
+     not only to the helper. */
+  const rangeIn = lang => {
+    const prev = w.eval('CURRENT_LANG');
+    w.eval("CURRENT_LANG='" + lang + "'");
+    const v = w.eval("targetRangeText(EX_BY_ID['bb-bench'])");
+    w.eval("CURRENT_LANG='" + prev + "'");
+    return v;
+  };
+  const arRange = rangeIn('ar'), enRange = rangeIn('en');
+  chk('an Arabic rep range is isolated so its digits keep their order',
+      arRange.charCodeAt(0) === 0x2066 && arRange.charCodeAt(arRange.length-1) === 0x2069 &&
+      arRange.indexOf('6') < arRange.indexOf('10'), JSON.stringify(arRange));
+  chk('and the English one is left exactly as it was',
+      enRange.indexOf('\u2066') === -1 && /^6[–-]10 /.test(enRange), JSON.stringify(enRange));
+  chk('the set counter the sheet prints is isolated the same way',
+      (function(){
+        const prev = w.eval('CURRENT_LANG');
+        w.eval("CURRENT_LANG='ar'");
+        const v = w.eval("numExpr(1 + ' / ' + 3)");
+        w.eval("CURRENT_LANG='" + prev + "'");
+        return v === '\u20661 / 3\u2069';
+      })());
 
   /* The first-launch screen tells the truth before the choice is made. */
   d.querySelector('.lang-row[lang="de"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));

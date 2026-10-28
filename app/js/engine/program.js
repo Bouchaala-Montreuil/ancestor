@@ -60,27 +60,20 @@ const SPLIT_NAMES = {
 };
 
 function sessionName(id, days){
+  /* A session name is a heading on every workout screen and on the printed
+     sheet, so it is assembled in the reader's language like every other word
+     around it. These used to be English literals — only "Full body" went
+     through t(), and even that key did not exist yet, so the plan header read
+     "Push" over an Arabic session and "Full body A" over a French one.
+     The A/B suffixes stay Latin: they label two sessions, they are not words. */
   const key = (SPLIT_NAMES[id]||{})[days];
-  const baseFull = t('prog.full') !== 'prog.full' ? t('prog.full') : 'Full body';
-  if(key === 'full')   return baseFull;
-  if(key === 'fullA')  return baseFull + ' A';
-  if(key === 'fullB')  return baseFull + ' B';
-  if(key === 'push')   return 'Push';
-  if(key === 'pushA')  return 'Push A';
-  if(key === 'pushB')  return 'Push B';
-  if(key === 'pull')   return 'Pull';
-  if(key === 'pullA')  return 'Pull A';
-  if(key === 'pullB')  return 'Pull B';
-  if(key === 'legs')   return 'Legs';
-  if(key === 'legsA')  return 'Legs A';
-  if(key === 'legsB')  return 'Legs B';
-  if(key === 'upper')  return 'Upper';
-  if(key === 'upperA') return 'Upper A';
-  if(key === 'upperB') return 'Upper B';
-  if(key === 'lower')  return 'Lower';
-  if(key === 'lowerA') return 'Lower A';
-  if(key === 'lowerB') return 'Lower B';
-  return 'Session ' + id;
+  if (key) {
+    const k = 'prog.' + key, v = t(k);
+    if (v !== k && v !== '') return v;
+    return key.charAt(0).toUpperCase() + key.slice(1);   /* never a raw key */
+  }
+  const k = 'prog.session', v = t(k);
+  return (v !== k && v !== '' ? v : 'Session') + ' ' + id;
 }
 
 /* ---------- training focus -------------------------------------------

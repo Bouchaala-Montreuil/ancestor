@@ -291,7 +291,7 @@ function renderWorkoutPlanner(){
     h += '<button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
          esc(t('ex.' + e.id)) + '</button>';
     h += '<div class="chips mt-1">' +
-         '<span class="flag accent">' + e.sets + ' × ' + targetRangeText(ex) + '</span>' +
+         '<span class="flag accent">' + numExpr(e.sets + ' × ' + targetRangeText(ex)) + '</span>' +
          '<span class="flag plain">' + esc(t('session.rir')) + ' ' + e.rir + '</span>' +
          '<span class="flag plain">' + esc(t('equip.' + ex.equip)) + '</span>' +
          '<span class="flag plain">' + esc(t('exd.mode.' + spec.mode)) + '</span>' +
@@ -487,9 +487,9 @@ function startCustomSession(){
    ========================================================================== */
 function targetRangeText(ex){
   const r = exTargetRange(ex);
-  if(r.unit === 'time')     return t('log.holdTarget', { lo:r.lo, hi:r.hi });
-  if(r.unit === 'distance') return t('log.distTarget', { lo:r.lo, hi:r.hi }) + ' ' + distanceUnit(unit());
-  return t('log.repTarget', { lo:r.lo, hi:r.hi });
+  if(r.unit === 'time')     return numExpr(t('log.holdTarget', { lo:r.lo, hi:r.hi }));
+  if(r.unit === 'distance') return numExpr(t('log.distTarget', { lo:r.lo, hi:r.hi }) + ' ' + distanceUnit(unit()));
+  return numExpr(t('log.repTarget', { lo:r.lo, hi:r.hi }));
 }
 
 function recommendationText(r, ex){
@@ -726,7 +726,7 @@ function renderLive(){
 
   h += '<div class="panel mt-4 heavy">';
   h += '<button class="btn ' + (logged ? '' : 'secondary') + ' block" onclick="finishSession()">' +
-       esc(t('session.finish')) + ' (' + logged + '/' + total + ')</button>';
+       esc(t('session.finish')) + ' (' + numExpr(logged + '/' + total) + ')</button>';
   /* Discard is destructive and reversible by nobody: it sits below the primary
      action, in text weight, and still asks before it throws the session away. */
   h += '<p class="hint mt-2 mb-0 tac">' +
@@ -747,7 +747,7 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
   if(justDone) LAST_LOGGED_SET = null;
 
   let h = '<div class="setcard setcard-grid ' + (set.committed ? 'done' : (isCurrentSet ? 'current-set' : '')) + (justDone ? ' just-done' : '') + '" style="' + (locked?'opacity:.45':'') + '">';
-  h += '<div class="set-head"><span class="eyebrow">' + esc(t('session.setOf')) + ' ' + (si+1) + ' / ' + e.sets.length + '</span>' +
+  h += '<div class="set-head"><span class="eyebrow">' + esc(t('session.setOf')) + ' ' + numExpr((si+1) + ' / ' + e.sets.length) + '</span>' +
        (isCurrentSet && !set.committed ? '<span class="flag sm accent">' + esc(t('log.currentSet')) + '</span>'
          : '<span class="flag sm ' + STATE_FLAG[state] + '">' + esc(t(STATE_LABEL[state])) + '</span>') +
        (set.warmup ? '<span class="flag sm plain">' + esc(t('log.warmupShort')) + '</span>' : '') +
@@ -806,7 +806,7 @@ function fieldHtml(f, ei, si, set, ex, range, u, nSets){
   } else if(f.key === 'time'){
     suffix = t('log.unit.s');
   } else if(f.key === 'reps'){
-    suffix = range.lo + '–' + range.hi;
+    suffix = numExpr(range.lo + '–' + range.hi);
   } else if(f.key === 'rir'){
     suffix = '';                 // the label already says RIR; the suffix repeated it
   }
@@ -815,7 +815,7 @@ function fieldHtml(f, ei, si, set, ex, range, u, nSets){
   const fid = 'sf_' + ei + '_' + si + '_' + f.key;
   return '<div class="fld"><label for="' + fid + '">' + esc(t(labelKey)) +
          (optional ? ' <span class="opt">' + esc(t('c.optional')) + '</span>' : '') +
-         '<span class="sr-only">, ' + esc(t('session.setOf')) + ' ' + (si+1) + ' / ' + nSets + '</span></label>' +
+         '<span class="sr-only">, ' + esc(t('session.setOf')) + ' ' + numExpr((si+1) + ' / ' + nSets) + '</span></label>' +
          '<input id="' + fid + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' + esc(val) + '" ' +
          'oninput="setVal(' + ei + ',' + si + ',\'' + f.attr + '\',this.value)">' +
          '<span class="u">' + esc(suffix) + '</span></div>';
@@ -826,7 +826,7 @@ function sideFieldsHtml(f, ei, si, set, range){
   const lKey = baseAttr + 'L', rKey = baseAttr + 'R';
   const vL = set[lKey] !== undefined ? set[lKey] : set[baseAttr];
   const vR = set[rKey] !== undefined ? set[rKey] : set[baseAttr];
-  const suffix = f.key === 'time' ? t('log.unit.s') : (range.lo + '–' + range.hi);
+  const suffix = f.key === 'time' ? t('log.unit.s') : numExpr(range.lo + '–' + range.hi);
   const idL = 'sf_' + ei + '_' + si + '_' + lKey, idR = 'sf_' + ei + '_' + si + '_' + rKey;
   return '<div class="fld"><label for="' + idL + '">' + esc(t('lab3d.side.left')) + '</label>' +
          '<input id="' + idL + '" type="number" inputmode="decimal" step="1" placeholder="—" value="' + esc(vL) + '" ' +
@@ -1244,7 +1244,7 @@ function renderExerciseLibrary(){
 
   let h = '<div class="atlas-toolbar">';
   h += '<div class="field mb-3"><label for="libSearchInput">' +
-       esc(t('plan.searchLabel')) + ' (' + filtered.length + ' / ' + EX.length + ')</label>' +
+       esc(t('plan.searchLabel')) + ' (' + numExpr(filtered.length + ' / ' + EX.length) + ')</label>' +
        '<input id="libSearchInput" type="text" value="' + esc(LIB_QUERY) +
        '" placeholder="' + esc(t('plan.searchEx')) + '" oninput="setLibQuery(this.value)"></div>';
 

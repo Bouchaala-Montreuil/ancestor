@@ -51,7 +51,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
 | S9 | Medium | `tools/keyscan.js` exited 1 on a false positive (the wordmark is not translated) and so was never run. | `untranslatable keys: en:app.name` | **fixed** |
 | S10 | Medium | `body{overflow-x:hidden}` hides layout bugs instead of fixing them. | `css/app.css:168` | **fixed, removed 2026-10-28.** The rule is gone. Nothing needed it: 176 layouts (8 views × 7 languages × 320–1440 px) are clean without it, and so are the four surfaces that were never in that loop — a sheet, the planner mid-edit, a lesson and a toast, at 320 and 390 px, LTR and RTL. `tests/browser.js` now fails if any of them starts needing it. QA suite: 0 issues. |
-| S11 | Medium | 50 MB of split `.rar` delivery archives are tracked in git, for a product that is 2.2 MB. `*.rar` is in `.gitignore` but the files predate it. | `git ls-files \| grep rar` → 6 files | **open — owner's call** |
+| S11 | Medium | 50 MB of split `.rar` delivery archives are tracked in git, for a product that is 2.3 MB. `*.rar` is in `.gitignore` but the files predate it. | `git ls-files \| grep rar` → 6 files | **open — owner's call** |
 | S12 | Low | No CSP. Generated markup uses inline `onclick` in ~hundreds of places, so a CSP would need `unsafe-inline` — which is to say, there is no injection backstop if escaping ever slips. | `index.html` has no policy | **open** |
 | S13 | Low | No module boundaries. 589 globals, implicit load order. Not a correctness bug today; it is the ceiling on how big this can get. | — | **open, by choice** |
 | S14 | Low | After a deploy, a tab can run yesterday's JS against this morning's cache: the service worker calls `skipWaiting()` and `clients.claim()`, and nothing tells the user to reload. | `sw.js` | **open** |
@@ -106,7 +106,7 @@ now in CI.
   at 1,600 sessions), which is fine on a tap and would not be inside a loop.
 - **1,631 translation keys × 7 languages**, scanned green by `keyscan` across six
   screens, every sheet, the exercise library and three learning modules.
-- **41 scripts, 2.2 MB, zero runtime dependencies.** The largest single file is
+- **41 scripts, 2.3 MB, zero runtime dependencies.** The largest single file is
   the vendored three.js (4,220 lines) — lazily loaded, never on the critical path.
 - **The masking rule is gone.** `overflow-x:hidden` on `body` was carried as an
   accepted risk for a long time, and it earned the label twice. At 1024 px the
