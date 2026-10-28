@@ -477,6 +477,33 @@ html[data-motion="on"] .app-boot-mark .bs{opacity:1;animation:none}
   .store-flag .sf-x{margin-inline-start:0}
 }
 
+/* The same strip, in the accent ink rather than the alert: a new version is
+   information, not a fault, and the two must not look alike in the header. */
+.update-flag{
+  display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
+  padding:var(--s3) var(--s5);
+  background:var(--burnt-tint);
+  border-top:2px solid var(--burnt);
+  color:var(--burnt-text);
+}
+.update-flag[hidden]{display:none}
+.update-flag .uf-k{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;flex:none;
+  background:var(--burnt);color:var(--ivory);
+  font-family:var(--f-mono);font-size:11px;font-weight:700;line-height:1;
+}
+.update-flag .uf-t{
+  font-family:var(--f-mono);font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.update-flag .uf-b{font-size:var(--fs-sm);color:var(--ink-2);flex:1 1 22ch;min-width:0}
+.update-flag .uf-x{margin-inline-start:auto;flex:none;min-height:var(--hit)}
+@media (max-width:560px){
+  .update-flag{padding:var(--s3) var(--s4)}
+  .update-flag .uf-x{margin-inline-start:0}
+}
+
 header{
   position:sticky;top:0;z-index:50;
   background:var(--paper);

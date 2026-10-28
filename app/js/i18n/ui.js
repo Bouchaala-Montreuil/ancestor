@@ -12,6 +12,7 @@ const T = {};
 T.en = {
 'app.bootNote':'Your log never leaves this device',
 'app.name':'ANCESTOR','app.tag':'RECOVERY ENGINE',
+'app.update.title':'A new version is ready','app.update.body':'You are still running the version you opened. Reload to move to the new one; nothing in your log is lost.','app.update.reload':'Reload','app.build':'Version','app.crash.title':'Last error','app.crash.note':'Kept on this device so it can be reported. It is not sent anywhere.','app.crash.clear':'Clear',
 
 'nav.home':'Home',
 
@@ -189,6 +190,7 @@ T.en = {
 T.fr = {
 'app.bootNote':'Votre journal ne quitte jamais cet appareil',
 'app.name':'ANCESTOR','app.tag':'MOTEUR DE RÉCUPÉRATION',
+'app.update.title':'Une nouvelle version est prête','app.update.body':'Vous utilisez encore la version ouverte au départ. Rechargez pour passer à la nouvelle ; rien dans votre journal n\'est perdu.','app.update.reload':'Recharger','app.build':'Version','app.crash.title':'Dernière erreur','app.crash.note':'Conservée sur cet appareil pour pouvoir être signalée. Elle n\'est envoyée nulle part.','app.crash.clear':'Effacer',
 'nav.home':'Accueil',
 'btn.next':'Continuer','btn.back':'Retour','btn.save':'Enregistrer','btn.cancel':'Annuler',
 'btn.done':'Terminé','btn.close':'Fermer','btn.confirm':'Confirmer','btn.delete':'Supprimer',
@@ -348,6 +350,7 @@ T.fr = {
 T.es = {
 'app.bootNote':'Tu registro nunca sale de este dispositivo',
 'app.name':'ANCESTOR','app.tag':'MOTOR DE RECUPERACIÓN',
+'app.update.title':'Hay una versión nueva','app.update.body':'Sigues usando la versión con la que abriste. Recarga para pasar a la nueva; no se pierde nada de tu registro.','app.update.reload':'Recargar','app.build':'Versión','app.crash.title':'Último error','app.crash.note':'Se guarda en este dispositivo para poder reportarlo. No se envía a ninguna parte.','app.crash.clear':'Borrar',
 'nav.home':'Inicio',
 'btn.next':'Continuar','btn.back':'Atrás','btn.save':'Guardar','btn.cancel':'Cancelar',
 'btn.done':'Hecho','btn.close':'Cerrar','btn.confirm':'Confirmar','btn.delete':'Eliminar',
@@ -490,6 +493,7 @@ T.es = {
 T.de = {
 'app.bootNote':'Dein Logbuch verlässt dieses Gerät nie',
 'app.name':'ANCESTOR','app.tag':'REGENERATIONS-ENGINE',
+'app.update.title':'Eine neue Version ist bereit','app.update.body':'Du nutzt noch die Version, mit der du die Seite geöffnet hast. Neu laden wechselt zur neuen; in deinem Logbuch geht nichts verloren.','app.update.reload':'Neu laden','app.build':'Version','app.crash.title':'Letzter Fehler','app.crash.note':'Bleibt auf diesem Gerät, damit er gemeldet werden kann. Er wird nirgendwohin gesendet.','app.crash.clear':'Löschen',
 'nav.home':'Start',
 'btn.next':'Weiter','btn.back':'Zurück','btn.save':'Speichern','btn.cancel':'Abbrechen',
 'btn.done':'Fertig','btn.close':'Schließen','btn.confirm':'Bestätigen','btn.delete':'Löschen',
@@ -632,6 +636,7 @@ T.de = {
 T.it = {
 'app.bootNote':'Il tuo registro non lascia mai questo dispositivo',
 'app.name':'ANCESTOR','app.tag':'MOTORE DI RECUPERO',
+'app.update.title':'È pronta una nuova versione','app.update.body':'Stai ancora usando la versione con cui hai aperto l\'app. Ricarica per passare alla nuova; nulla del tuo registro va perso.','app.update.reload':'Ricarica','app.build':'Versione','app.crash.title':'Ultimo errore','app.crash.note':'Conservato su questo dispositivo per poterlo segnalare. Non viene inviato da nessuna parte.','app.crash.clear':'Cancella',
 'nav.home':'Home',
 'btn.next':'Continua','btn.back':'Indietro','btn.save':'Salva','btn.cancel':'Annulla',
 'btn.done':'Fatto','btn.close':'Chiudi','btn.confirm':'Conferma','btn.delete':'Elimina',
@@ -774,6 +779,7 @@ T.it = {
 T.nl = {
 'app.bootNote':'Je logboek verlaat dit apparaat nooit',
 'app.name':'ANCESTOR','app.tag':'HERSTELMOTOR',
+'app.update.title':'Er staat een nieuwe versie klaar','app.update.body':'Je gebruikt nog de versie waarmee je de app opende. Herlaad om naar de nieuwe te gaan; er gaat niets in je logboek verloren.','app.update.reload':'Herladen','app.build':'Versie','app.crash.title':'Laatste fout','app.crash.note':'Blijft op dit apparaat staan zodat hij gemeld kan worden. Hij wordt nergens naartoe gestuurd.','app.crash.clear':'Wissen',
 'nav.home':'Start',
 'btn.next':'Doorgaan','btn.back':'Terug','btn.save':'Opslaan','btn.cancel':'Annuleren',
 'btn.done':'Klaar','btn.close':'Sluiten','btn.confirm':'Bevestigen','btn.delete':'Verwijderen',

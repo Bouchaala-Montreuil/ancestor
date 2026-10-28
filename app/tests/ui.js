@@ -1548,6 +1548,122 @@ group('29. Translation honesty: the interface is measured, and so is what is not
 }
 
 /* ================================================================ */
+group('30. A tab knows which build it is running, and says when a new one lands');
+{
+  const dom = await boot();
+  const w = dom.window, d = w.document;
+  const body = () => d.getElementById('screenBody');
+  completeOnboarding(w, d);
+
+  /* One number, two files. sw.js cannot import the constant, so the pairing is
+     held by this check rather than by memory — the whole point of a deploy
+     identity is that it cannot drift silently. */
+  const swSrc = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  const swVer = (swSrc.match(/const CACHE = 'ancestor-(v\d+)'/) || [])[1];
+  chk('the service-worker cache and the app agree on one build number',
+      !!swVer && swVer === w.eval('APP_BUILD'),
+      'sw.js ' + (swVer || '?') + ' / app ' + w.eval('APP_BUILD'));
+
+  /* The banner is information, not an alarm: it must start hidden, and it must
+     not appear on a first install, which also fires controllerchange. */
+  const el = d.getElementById('updateFlag');
+  chk('the update strip exists and starts hidden', !!el && el.hidden);
+  chk('the strip offers exactly one action, and it is a reload',
+      el.querySelectorAll('button').length === 1 &&
+      /reloadApp\(\)/.test(el.querySelector('button').getAttribute('onclick')),
+      el.querySelector('button').getAttribute('onclick'));
+
+  /* Drive the real listener. jsdom has no service worker, so a stub stands in
+     for it and every branch of watchForDeploy is exercised. */
+  const listeners = {};
+  const stubSw = {
+    controller: null,
+    addEventListener: (n, fn) => { listeners[n] = fn; }
+  };
+  Object.defineProperty(w.navigator, 'serviceWorker', { value: stubSw, configurable: true });
+  w.eval('UPDATE_SHOWN = false;');
+  w.eval('watchForDeploy(null)');
+  listeners.controllerchange();                 /* first install */
+  chk('a first install does not claim an update arrived', el.hidden);
+
+  stubSw.controller = {};                       /* the tab was already controlled */
+  w.eval('UPDATE_SHOWN = false;');
+  w.eval('watchForDeploy(null)');
+  listeners.controllerchange();                 /* a deploy */
+  chk('a deploy after the tab was already controlled raises the strip', !el.hidden);
+  chk('and it is written in the reader\'s language',
+      el.querySelector('.uf-t').textContent === w.t('app.update.title') &&
+      el.querySelector('.uf-b').textContent === w.t('app.update.body'),
+      el.querySelector('.uf-t').textContent);
+
+  /* jsdom cannot navigate, so the call itself cannot be observed — the body of
+     the function is checked instead, and the button's wiring to it is checked
+     above. Together: one action, and that action is a reload, not a clear. */
+  const reloadBody = (fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8')
+    .match(/function reloadApp\(\)\{([\s\S]*?)\n\}/) || [,''])[1];
+  chk('the action reloads rather than clearing anything',
+      /location\.reload\(\)/.test(reloadBody) &&
+      !/localStorage|clear\(|removeItem/.test(reloadBody),
+      reloadBody.replace(/\s+/g,' ').trim().slice(0, 70));
+
+  /* Nothing reloads on its own: a tab can be mid-session, and throwing away
+     someone's place to save a click is the wrong trade. */
+  const appSrc = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  chk('the page never reloads itself',
+      !/location\.reload\(\)/.test(appSrc.replace(/function reloadApp\(\)\{[\s\S]*?\n\}/, '')),
+      'only inside reloadApp()');
+
+  /* The last error outlives the tab, in its own key — never inside the log. */
+  w.eval('forgetCrash()');
+  chk('nothing is remembered before anything has gone wrong', w.eval('lastCrash()') === null);
+  w.eval('reportUncaught(new Error("the button went quiet"))');
+  const kept = w.eval('lastCrash()');
+  chk('an uncaught error is written with the build that produced it',
+      kept && kept.message === 'the button went quiet' && kept.build === w.eval('APP_BUILD'),
+      kept ? kept.build + ' · ' + kept.message : 'nothing kept');
+  chk('and it is not stored inside the training log',
+      (JSON.parse(w.localStorage.getItem('ancestor.state.v1') || '{}').lastCrash === undefined));
+
+  /* It is shown, with a way to be rid of it. A note that can never be cleared
+     is clutter; one that is never shown is the same as not keeping it. */
+  w.eval("go('profile')");
+  w.eval('render()');
+  const det = Array.from(body().querySelectorAll('details.fail-more'))
+    .filter(x => x.textContent.indexOf(w.t('app.crash.title')) >= 0)[0];
+  chk('the profile shows the last error, dated, behind a disclosure', !!det);
+  chk('the disclosure carries the build and the message',
+      !!det && det.textContent.indexOf(w.eval('APP_BUILD')) >= 0 &&
+      det.textContent.indexOf('the button went quiet') >= 0);
+  const clearBtn = det && Array.from(det.querySelectorAll('button'))
+    .filter(b => b.textContent === w.t('app.crash.clear'))[0];
+  chk('and it can be cleared', !!clearBtn);
+  if(clearBtn){ clearBtn.dispatchEvent(new w.MouseEvent('click', { bubbles:true })); }
+  chk('clearing it removes the record and the panel', w.eval('lastCrash()') === null &&
+      !Array.from(body().querySelectorAll('details.fail-more'))
+        .some(x => x.textContent.indexOf(w.t('app.crash.title')) >= 0));
+
+  /* The strip's one button sits in a two-line header bar, so it is visually
+     small — 36 px. On a touch device that is too small to hit, and the app's
+     answer is the ::after expansion in the coarse-pointer block, which only
+     covers classes listed there. A new class that is not in that list is a
+     36 px target on a phone, so the membership is asserted rather than
+     remembered. */
+  const css = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+  const coarse = (css.match(/@media \(pointer: coarse\)\{([\s\S]*?)\n\}/) || [,''])[1];
+  const cls = el.querySelector('button').className;
+  chk('the strip\'s button is a small button, which the touch block already widens',
+      /\bbtn\b/.test(cls) && /\bsm\b/.test(cls) &&
+      /\.btn\.sm::after/.test(coarse),
+      cls + ' → ' + (/\.btn\.sm::after/.test(coarse) ? 'in the 44 px list' : 'NOT in the list'));
+
+  /* The build number is visible, not inferred from the tagline in the header. */
+  chk('the profile names the build it is running',
+      body().textContent.indexOf(w.t('app.build') + ' ' + w.eval('APP_BUILD')) >= 0,
+      w.eval('APP_BUILD'));
+  w.eval("go('home')");
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

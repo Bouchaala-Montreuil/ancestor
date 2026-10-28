@@ -57,6 +57,15 @@
     <span class="sf-b"></span>
     <button class="btn quiet sm sf-x" onclick="doExport()"></button>
   </div>
+  <!-- A deploy replaced the files under a tab that is still running the old
+       ones. Not an alarm: nothing is lost, but the two versions should not be
+       left mixed, so the offer to reload is made once and stays until taken. -->
+  <div class="update-flag" id="updateFlag" role="status" aria-live="polite" hidden>
+    <span class="uf-k" aria-hidden="true">↑</span>
+    <span class="uf-t"></span>
+    <span class="uf-b"></span>
+    <button class="btn quiet sm uf-x" onclick="reloadApp()"></button>
+  </div>
 </header>
 
 <main class="shell" id="main" role="main" aria-label="Main content">

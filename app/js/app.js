@@ -167,6 +167,48 @@ function paintStoreFlag(){
   if(failing) scheduleStoreRetry();
 }
 
+/* ---------------------------------------------------------- a deploy landed
+   sw.js calls skipWaiting() and clients.claim(), so a new build takes control
+   of the open tab the moment it installs. The tab keeps running the JS it
+   loaded — that is how the browser works — and everything it fetches after that
+   comes from the new cache. Two builds in one tab is exactly the state that
+   makes a bug report unreproducible, and the person cannot see it happening.
+
+   The signal is `controllerchange` after we already had a controller: a first
+   install also fires it, and prompting then would be a lie about an update
+   that did not happen. Nothing reloads by itself — a tab can be mid-session,
+   and discarding someone's place to save a click is the wrong trade. */
+let UPDATE_SHOWN = false;
+function showUpdateReady(){
+  const el = document.getElementById('updateFlag');
+  if(!el || UPDATE_SHOWN) return;
+  UPDATE_SHOWN = true;
+  const tEl = el.querySelector('.uf-t');
+  const bEl = el.querySelector('.uf-b');
+  const xEl = el.querySelector('.uf-x');
+  if(tEl) tEl.textContent = t('app.update.title');
+  if(bEl) bEl.textContent = t('app.update.body');
+  if(xEl) xEl.textContent = t('app.update.reload');
+  el.hidden = false;
+}
+function reloadApp(){
+  try{ location.reload(); }catch(e){ /* nothing better to offer */ }
+}
+function watchForDeploy(reg){
+  try{
+    if(!('serviceWorker' in navigator) || !navigator.serviceWorker) return;
+    const sw = navigator.serviceWorker;
+    /* A tab opened before this app ever registered a worker has no controller;
+       the first one it receives is an install, not an update. */
+    let had = !!sw.controller;
+    sw.addEventListener('controllerchange', () => {
+      if(!had){ had = true; return; }
+      showUpdateReady();
+    });
+    if(reg && reg.waiting && had) showUpdateReady();
+  }catch(e){ /* no worker, no banner */ }
+}
+
 /* The one action that is safe when the record will not open: hand the bytes back,
    put them somewhere they can be found again, and only then let the log start. */
 function keepDamagedRecord(){
@@ -217,8 +259,13 @@ function scheduleStoreRetry(){
    answering, on a page that still looks fine. One global net catches the rest of
    the app, and it shows the same block a screen failure shows. */
 let LAST_UNCAUGHT = null;
+let UPDATE_REG = null;
 function reportUncaught(err){
   LAST_UNCAUGHT = err || new Error('unknown');
+  /* Survives the tab. The failure state can only describe the crash to the
+     person who is already looking at it; this is what lets Profile answer
+     "what went wrong, and in which build" afterwards. */
+  try{ if(typeof rememberCrash === 'function') rememberCrash(LAST_UNCAUGHT); }catch(e){}
   try{
     if(typeof console !== 'undefined' && console.error) console.error(err);
     const body = document.getElementById('screenBody');
@@ -412,11 +459,18 @@ function boot(){
                           document.getElementById('three-runtime').textContent);
   if('serviceWorker' in navigator && !isSingleFile &&
      location && (location.protocol === 'https:' || location.protocol === 'http:')){
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      UPDATE_REG = reg;
+      watchForDeploy(reg);
+    }).catch(()=>{});
   }
   document.addEventListener('visibilitychange', () => {
     if(document.hidden) return;
     retryStore();
+    /* A tab left open overnight is the case this exists for: the browser only
+       looks for a new worker on navigation and on its own slow schedule, so
+       coming back to the tab asks once. Offline, it throws and is ignored. */
+    try{ if(UPDATE_REG && UPDATE_REG.update) UPDATE_REG.update().catch(()=>{}); }catch(e){}
     if(VIEW === 'home') render();
   });
   window.addEventListener('focus', () => { retryStore(); });

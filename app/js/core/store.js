@@ -7,6 +7,44 @@
 const STORE_KEY = 'ancestor.state.v1';
 const SCHEMA_VERSION = 3;
 
+/* What is actually running in this tab, as a deploy identity rather than a
+   schema number. `sw.js` carries the same value inside its cache name and
+   `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
+   one of them is caught by the gate instead of being discovered by a person
+   whose browser is holding two builds at once. */
+const APP_BUILD = 'v29';
+const BUILD_KEY = 'ancestor.build.v1';
+
+/* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
+   lived in memory, so the one moment it was needed — after the tab had gone —
+   it no longer existed. Stored beside the log, never inside it: a crash record
+   that could damage the record it is meant to describe would be worse than
+   none. Every write is guarded, because the storage layer is often what is
+   already failing when this runs. */
+const CRASH_KEY = 'ancestor.lastcrash.v1';
+
+function rememberCrash(err){
+  try{
+    const e = err || {};
+    localStorage.setItem(CRASH_KEY, JSON.stringify({
+      build: APP_BUILD,
+      at: Date.now(),
+      message: String(e.message || e).slice(0, 240),
+      stack: String(e.stack || '').slice(0, 1200)
+    }));
+  }catch(_e){ /* the storage strip is the honest report of that failure */ }
+}
+function lastCrash(){
+  try{
+    const raw = localStorage.getItem(CRASH_KEY);
+    const rec = raw ? JSON.parse(raw) : null;
+    return (rec && typeof rec === 'object') ? rec : null;
+  }catch(e){ return null; }
+}
+function forgetCrash(){
+  try{ localStorage.removeItem(CRASH_KEY); }catch(e){}
+}
+
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
 function defaultState(){

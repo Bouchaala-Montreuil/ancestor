@@ -12,6 +12,13 @@
 const TAR = {
 'state.stop':'لا تتدرّب اليوم',
 'app.bootNote':'سجلّك لا يغادر هذا الجهاز أبدًا','app.name':'ANCESTOR','app.tag':'محرّك التعافي',
+'app.update.title':'إصدار جديد جاهز',
+'app.update.body':'ما زلت تستخدم الإصدار الذي فتحت به التطبيق. أعد التحميل للانتقال إلى الجديد؛ ولا يضيع شيء من سجلك.',
+'app.update.reload':'إعادة التحميل',
+'app.build':'الإصدار',
+'app.crash.title':'آخر خطأ',
+'app.crash.note':'محفوظ على هذا الجهاز كي يمكن الإبلاغ عنه. ولا يُرسَل إلى أي جهة.',
+'app.crash.clear':'مسح',
 
 'nav.home':'الرئيسية','nav.today':'اليوم','nav.session':'الحصة','nav.body':'الجسم','nav.progress':'التقدّم','nav.profile':'الملف',
 

@@ -2091,7 +2091,30 @@ Screens.profile = function(){
   [1,2,3,4,5].forEach(i => { h += '<p class="body-sm mb-2">' +
     esc(t('about.p'+i)) + '</p>'; });
   h += '<div class="uncertain mt-3"><b>' + esc(t('lab3d.credits')) +
-       '</b> ' + esc(t('body.note2d')) + '</div></div>';
+       '</b> ' + esc(t('body.note2d')) + '</div>';
+
+  /* Which build is this? A tab can be running yesterday's code against
+     today's cache, and until now there was no way to tell from inside the
+     page — the header shows the tagline, not a version. */
+  const build = (typeof APP_BUILD !== 'undefined') ? APP_BUILD : '—';
+  h += '<p class="mono mt-3">' + esc(t('app.build')) + ' ' + esc(build) + '</p>';
+
+  /* The last uncaught error, kept outside the log so it survives the tab. It
+     is shown, dated, with the build it came from, and it can be cleared —
+     a note that can never be dismissed is clutter, and one that is never
+     shown is the same as not keeping it. */
+  const crash = (typeof lastCrash === 'function') ? lastCrash() : null;
+  if(crash && crash.message){
+    const when = crash.at ? dateLabel(crash.at) + ' · ' + hhmm(crash.at) : '';
+    h += '<details class="fail-more mt-3"><summary>' +
+         esc(t('app.crash.title')) + ' — ' + esc(when) + '</summary>' +
+         '<p class="mono mt-2">' + esc((crash.build || '—') + ' · ' + crash.message) + '</p>' +
+         (crash.stack ? '<pre>' + esc(String(crash.stack).slice(0, 600)) + '</pre>' : '') +
+         '<p class="body-sm mt-2">' + esc(t('app.crash.note')) + '</p>' +
+         '<button class="btn quiet sm mt-2" onclick="forgetCrash(); render();">' +
+         esc(t('app.crash.clear')) + '</button></details>';
+  }
+  h += '</div>';
 
   h += groupClose;
   /* Explore. Body and Science left the bottom bar because a thumb's map has

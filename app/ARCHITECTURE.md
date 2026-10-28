@@ -4,13 +4,14 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `037789e`, with 1,420 headless checks and 76 real-browser checks.
+Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,450 headless checks and
+76 real-browser checks.
 
 ---
 
 ## 1. The shape of the thing
 
-**Runtime.** One HTML file, one stylesheet, 41 scripts concatenated in document
+**Runtime.** One HTML file, one stylesheet, 42 scripts concatenated in document
 order. No bundler, no modules, no framework, zero runtime dependencies. `build.py`
 derives the script list from `index.html` itself, so the two manifests cannot
 drift — that used to be a hand-kept list and is now a single source.
@@ -28,11 +29,11 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,420 checks — plus `tests/browser.js` (76 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,450 checks — plus `tests/browser.js` (76 real-Chromium checks),
 which needs a real Chrome and covers the three things jsdom cannot: WebGL, layout
 overflow at 320/360/768/1280, and a service-worker reload with the network severed.
 
-**Delivery.** `release/ancestor.html`, 2.2 MB, everything inlined including the
+**Delivery.** `release/ancestor.html`, 2.4 MB, everything inlined including the
 woff2 and the three.js runtime. A service worker caches the file list, cache-first.
 
 ---
@@ -45,17 +46,17 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,420 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
+| S5 | Medium | Nothing ran the suites. 1,450 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
 | S9 | Medium | `tools/keyscan.js` exited 1 on a false positive (the wordmark is not translated) and so was never run. | `untranslatable keys: en:app.name` | **fixed** |
 | S10 | Medium | `body{overflow-x:hidden}` hides layout bugs instead of fixing them. | `css/app.css:168` | **fixed, removed 2026-10-28.** The rule is gone. Nothing needed it: 176 layouts (8 views × 7 languages × 320–1440 px) are clean without it, and so are the four surfaces that were never in that loop — a sheet, the planner mid-edit, a lesson and a toast, at 320 and 390 px, LTR and RTL. `tests/browser.js` now fails if any of them starts needing it. QA suite: 0 issues. |
-| S11 | Medium | 50 MB of split `.rar` delivery archives are tracked in git, for a product that is 2.3 MB. `*.rar` is in `.gitignore` but the files predate it. | `git ls-files \| grep rar` → 6 files | **open — owner's call** |
+| S11 | Medium | 50 MB of split `.rar` delivery archives are tracked in git, for a product that is 2.4 MB. `*.rar` is in `.gitignore` but the files predate it. | `git ls-files \| grep rar` → 6 files | **open — owner's call** |
 | S12 | Low | No CSP. Generated markup uses inline `onclick` in ~hundreds of places, so a CSP would need `unsafe-inline` — which is to say, there is no injection backstop if escaping ever slips. | `index.html` has no policy | **open** |
 | S13 | Low | No module boundaries. 589 globals, implicit load order. Not a correctness bug today; it is the ceiling on how big this can get. | — | **open, by choice** |
-| S14 | Low | After a deploy, a tab can run yesterday's JS against this morning's cache: the service worker calls `skipWaiting()` and `clients.claim()`, and nothing tells the user to reload. | `sw.js` | **open** |
-| S15 | Low | No crash reporting and no build identity on screen. `LAST_UNCAUGHT` is kept in memory and dies with the tab. | `app.js` | **open** |
+| S14 | Low | After a deploy, a tab can run yesterday's JS against this morning's cache: the service worker calls `skipWaiting()` and `clients.claim()`, and nothing tells the user to reload. | `sw.js` | **fixed 2026-10-28.** A `controllerchange` listener raises a strip in the header offering one action, Reload. A first install is not an update and is not announced; nothing reloads by itself, because a tab can be mid-session. The tab also asks `registration.update()` when it becomes visible again, which is the case that matters — a phone left open overnight. |
+| S15 | Low | No crash reporting and no build identity on screen. `LAST_UNCAUGHT` is kept in memory and dies with the tab. | `app.js` | **fixed 2026-10-28.** `APP_BUILD` is a visible constant, shown in Profile, and `sw.js` carries the same number inside its cache name — a test fails if the two disagree, so a deploy cannot half-happen. The last uncaught error is written to `ancestor.lastcrash.v1` with its build and time, shown in Profile behind a disclosure, and clearable. Still not sent anywhere: there is no server, and a crash report that phones home would be the one feature this product refuses. |
 
 ---
 
@@ -104,14 +105,14 @@ now in CI.
   sessions — a century at three a week. Quota exhaustion is not the risk it looks
   like; the real cost is that every action re-serialises the whole blob (≈0.5 MB
   at 1,600 sessions), which is fine on a tap and would not be inside a loop.
-- **1,749 translation keys × 7 languages**, scanned green by `keyscan` across six
+- **1,756 translation keys × 7 languages**, scanned green by `keyscan` across six
   screens, every sheet, the exercise library and three learning modules.
 - **542 content keys, complete in all seven.** Measured, not claimed: the
   interface and the lessons are counted separately, and every language now
   reports 542/542 on both. The last block — 306 keys of science prose that only
   English and French had — is translated in `js/i18n/science.js`, in the
   `TSP` layer at the end of the file.
-- **41 scripts, 2.3 MB, zero runtime dependencies.** The largest single file is
+- **42 scripts, 2.4 MB, zero runtime dependencies.** The largest single file is
   the vendored three.js (4,220 lines) — lazily loaded, never on the critical path.
 - **The masking rule is gone.** `overflow-x:hidden` on `body` was carried as an
   accepted risk for a long time, and it earned the label twice. At 1024 px the
@@ -135,15 +136,13 @@ now in CI.
    96 layouts (8 views × 6 widths × LTR/RTL), the app reloads with the network
    cut, and the shipped bundle boots offline. It found seven things jsdom
    structurally could not — see `DESIGN.md` §3.13. Keep it green.
-2. **An update prompt** (S14, small): on `registration.update()` finding a new
-   worker, one strip — "A new version is ready" — with a reload action. This is
-   the same component as the storage strip, which already has a vocabulary for
-   "the thing you are looking at is not the thing on disk".
-3. **Remove the inline handlers and add a CSP** (S12, medium). The handlers are
+2. ~~**An update prompt** (S14).~~ **Done** — `controllerchange` raises a strip
+   with one action, a first install stays quiet, and nothing reloads itself.
+3. ~~**A build id on screen** (S15).~~ **Done** — `APP_BUILD`, shown in Profile,
+   tied to the cache name by a test, with the last uncaught error beside it.
+4. **Remove the inline handlers and add a CSP** (S12, medium). The handlers are
    string-built in a dozen templates; a CSP without `unsafe-inline` is the only
    backstop that survives a mistake in `esc()`.
-4. **A build id on screen** (S15, small): the footer's tag line is static; the
-   failure state's stack is useless without knowing which build produced it.
 5. **Module boundaries** (S13, large): `js/` is already correctly partitioned —
    `core`, `engine`, `data`, `ui`, `i18n` — and the scripts are ES5-ish globals
    because they are inlined. If the app is ever to be worked on by more than one
