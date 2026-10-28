@@ -182,6 +182,16 @@ function applyLocale(lang){
   r.dir = isRTL(lang) ? 'rtl' : 'ltr';
   if(RTL_LANGS.indexOf(lang) >= 0) r.dataset.rtl = 'on';
   else delete r.dataset.rtl;
+
+  /* The skip link is the first thing a keyboard or screen-reader user meets,
+     and it was the one string still hard-coded in index.html — so an Arabic
+     reader was told "Skip to main content" before anything else. a11y.skip is
+     translated in all seven languages and was simply never applied. */
+  const skip = document.querySelector('a.skip-link');
+  if(skip && typeof t === 'function'){
+    const v = t('a11y.skip');
+    if(v && v !== 'a11y.skip') skip.textContent = v;
+  }
 }
 
 /* A missing translation should be traceable in development but never show a

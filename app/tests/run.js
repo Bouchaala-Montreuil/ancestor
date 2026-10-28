@@ -101,13 +101,13 @@ const at = (d, h, m) => new Date(2026, 9, d, h || 12, m || 0, 0).getTime();
 group('1. i18n completeness');
 {
   const LANGS = R('LANGS'), T = R('T');
-  chk('7 languages registered (Arabic partial by design)', LANGS.length === 7, LANGS.join(','));
+  chk('7 languages registered', LANGS.length === 7, LANGS.join(','));
   const en = Object.keys(T.en);
   const CORE = R('coreKeys()');
   chk('English key count > 300', en.length > 300, en.length + ' keys');
-  // Established languages must be complete. Arabic is intentionally partial
-  // and is checked by measured coverage, not by an all-or-nothing assertion.
-  const ESTABLISHED = ['en','fr','es','de','it','nl'];
+  // All seven are complete, Arabic included: it arrived last, and until the
+  // science prose landed it fell back to English in the middle of a lesson.
+  const ESTABLISHED = ['en','fr','es','de','it','nl','ar'];
   ESTABLISHED.forEach(l => {
     const bag = T[l] || {};
     const missing = CORE.filter(k => bag[k] === undefined || bag[k] === '');
@@ -125,9 +125,21 @@ group('1. i18n completeness');
   chk('science content is fully localised in French', sciHave('fr') === sciKeys.length,
       sciHave('fr') + '/' + sciKeys.length);
   ['es','de','it','nl','ar'].forEach(l => {
-    const pct = Math.round(sciHave(l)/sciKeys.length*100);
-    chk(l + ': science depth is declared, not overstated', pct < 100, pct + '% — falls back to English');
+    chk(l + ': science content is localised in full', sciHave(l) === sciKeys.length,
+        sciHave(l) + '/' + sciKeys.length);
   });
+  /* And the number the interface shows is a measurement, not a promise: take
+     one string out of a bag and the declared count has to drop by exactly one.
+     This is the check that would have caught a language claiming 100 % while
+     falling back to English. */
+  const before = R("contentCoverage('de')");
+  const savedText = T.de['takeaway.mg.1'];
+  delete T.de['takeaway.mg.1'];
+  const after = R("contentCoverage('de')");
+  T.de['takeaway.mg.1'] = savedText;
+  chk('the declared content count falls by one when a string is removed',
+      after.translated === before.translated - 1 && after.total === before.total,
+      before.translated + ' -> ' + after.translated + ' of ' + after.total);
   const EX = R('EX');
   const missingNames = [];
   ESTABLISHED.forEach(l => EX.forEach(e => { if(!T[l] || !T[l]['ex.'+e.id]) missingNames.push(l+':'+e.id); }));

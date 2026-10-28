@@ -104,8 +104,13 @@ now in CI.
   sessions — a century at three a week. Quota exhaustion is not the risk it looks
   like; the real cost is that every action re-serialises the whole blob (≈0.5 MB
   at 1,600 sessions), which is fine on a tap and would not be inside a loop.
-- **1,631 translation keys × 7 languages**, scanned green by `keyscan` across six
+- **1,749 translation keys × 7 languages**, scanned green by `keyscan` across six
   screens, every sheet, the exercise library and three learning modules.
+- **542 content keys, complete in all seven.** Measured, not claimed: the
+  interface and the lessons are counted separately, and every language now
+  reports 542/542 on both. The last block — 306 keys of science prose that only
+  English and French had — is translated in `js/i18n/science.js`, in the
+  `TSP` layer at the end of the file.
 - **41 scripts, 2.3 MB, zero runtime dependencies.** The largest single file is
   the vendored three.js (4,220 lines) — lazily loaded, never on the critical path.
 - **The masking rule is gone.** `overflow-x:hidden` on `body` was carried as an

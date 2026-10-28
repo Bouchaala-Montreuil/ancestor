@@ -1439,9 +1439,7 @@ group('29. Translation honesty: the interface is measured, and so is what is not
      complete, and must not inherit the assisted languages' number. */
   const ownPct = l => w.contentCoverage(l).percent;
   chk('and the lesson text is measured separately, not assumed',
-      en.contentPercent === 100 && fr.contentPercent === 100 &&
-      ['es','de','it','nl','ar'].every(l => w.langStatus(l).contentPercent < 100) &&
-      ['es','de','it','nl','ar'].every(l => w.langStatus(l).contentPercent === ownPct(l)),
+      ['en','fr','es','de','it','nl','ar'].every(l => w.langStatus(l).contentPercent === ownPct(l)),
       'en ' + en.contentPercent + '% / fr ' + fr.contentPercent + '% / de ' + de.contentPercent +
       '% / ar ' + ar.contentPercent + '%');
   chk('the content count is a real count, not a percentage of nothing',
@@ -1478,16 +1476,40 @@ group('29. Translation honesty: the interface is measured, and so is what is not
         return v === '\u20661 / 3\u2069';
       })());
 
-  /* The first-launch screen tells the truth before the choice is made. */
+  /* The first-launch screen has to tell the truth before the choice is made.
+     Every language is translated in full today, so an all-green list proves
+     nothing about the warning — the gap is staged here, measured, shown, and
+     then put back. This is the check that a language cannot quietly fall back
+     to English while still claiming to be finished. */
+  const T = w.eval('T');
+  const contentKeys = Object.keys(w.eval('T.en'))
+    .filter(k => w.eval('CONTENT_PREFIXES').some(p => k.indexOf(p) === 0));
+  const stashed = {};
+  contentKeys.filter((k, i) => i % 3 === 0).forEach(k => { stashed[k] = T.es[k]; delete T.es[k]; });
+  const staged = w.contentCoverage('es').percent;
   d.querySelector('.lang-row[lang="de"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
   const flags = Array.from(d.querySelectorAll('.lang-row .flag.warn'))
     .map(f => f.closest('.lang-row').getAttribute('lang'));
-  chk('the rows that keep their lessons in English say so',
-      flags.indexOf('de') >= 0 && flags.indexOf('ar') >= 0 && flags.indexOf('en') < 0,
+  chk('a language missing part of its lessons says so on the row',
+      flags.indexOf('es') >= 0 && flags.indexOf('fr') < 0 && flags.indexOf('en') < 0,
       flags.join(',') || 'no flags');
   chk('the flag carries the measured number, not a word',
-      /\d+/.test(d.querySelector('.lang-row[lang="ar"] .flag.warn').textContent),
-      d.querySelector('.lang-row[lang="ar"] .flag.warn').textContent.trim());
+      staged < 100 && d.querySelector('.lang-row[lang="es"] .flag.warn') &&
+      d.querySelector('.lang-row[lang="es"] .flag.warn').textContent.indexOf(String(staged)) >= 0,
+      staged + '% -> ' + (d.querySelector('.lang-row[lang="es"] .flag.warn') || {}).textContent);
+  /* The paragraph under the list describes the language currently previewed,
+     so preview the staged one before reading it. */
+  d.querySelector('.lang-row[lang="es"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  const caveatText = Array.from(d.querySelectorAll('.lang-frame .hint'))
+    .map(p => p.textContent).join(' ');
+  chk('the promise above the list admits the gap it just measured',
+      caveatText.indexOf(String(staged)) >= 0 && /english|anglais|inglés|englisch/i.test(caveatText),
+      caveatText.replace(/\s+/g,' ').slice(0, 110) || 'no caveat');
+  Object.assign(T.es, stashed);
+  d.querySelector('.lang-row[lang="de"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  chk('and the row goes quiet again once the strings are back',
+      !d.querySelector('.lang-row[lang="es"] .flag.warn') && w.contentCoverage('es').percent === 100,
+      w.contentCoverage('es').percent + '%');
   chk('the promise above the list does not overclaim',
       !/lessons and the printed sheet will all be in this language/i
         .test(d.querySelector('.lang-frame').textContent),
@@ -1501,12 +1523,27 @@ group('29. Translation honesty: the interface is measured, and so is what is not
   w.onbNext(); w.setP('style','std'); w.onbNext(); w.finishOnboarding();
   w.go('profile');
   /* The accessibility group, in the language the app is now speaking. */
-  const acc = Array.from(body().querySelectorAll('details.prof-group'))
+  /* Same staged gap, seen from the place the language is changed later. The
+     caveat has to appear in the language the app is currently speaking — here
+     German — and not just in English. */
+  const deGap = {};
+  contentKeys.filter((k, i) => i % 2 === 0).forEach(k => { deGap[k] = T.de[k]; delete T.de[k]; });
+  w.go('profile');
+  const accFor = () => Array.from(body().querySelectorAll('details.prof-group'))
     .filter(g => g.querySelector('summary').textContent.indexOf(w.t('profile.gAccess')) >= 0)[0];
-  acc.open = true;
+  const caveatFor = () => {
+    const g = accFor(); g.open = true;
+    return Array.from(g.querySelectorAll('.hint'))
+      .filter(p => /%/.test(p.textContent) && /Englisch|English/.test(p.textContent))[0];
+  };
+  const caveat = caveatFor();
   chk('the profile\'s language panel repeats the caveat in the chosen language',
-      /%/.test(acc.textContent) && /Englisch|English/.test(acc.textContent),
-      acc.textContent.replace(/\s+/g,' ').slice(-140));
+      !!caveat && caveat.textContent.indexOf(String(w.contentCoverage('de').percent)) >= 0,
+      caveat ? caveat.textContent.replace(/\s+/g,' ').slice(0, 120) : 'no caveat');
+  Object.assign(T.de, deGap);
+  w.go('profile');
+  chk('and the caveat disappears once the translation is complete',
+      !caveatFor(), 'clean');
   w.chooseLang('en');
 }
 
