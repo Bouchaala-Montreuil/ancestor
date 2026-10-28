@@ -7,3 +7,4 @@ app/dist/
 # python bytecode from the site checker
 __pycache__/
 *.pyc
+app/package-lock.json
