@@ -83,6 +83,83 @@ function sessionName(id, days){
   return 'Session ' + id;
 }
 
+/* ---------- training focus -------------------------------------------
+   The programme answers two different questions: what is being trained
+   (goals) and what is being emphasised (focus). Until now only the first
+   existed, so every plan was the same plan wearing different rep ranges.
+
+   The rules here are deliberately small and legible, because a programme a
+   person cannot explain to themselves is a programme they will abandon:
+     1. A session whose focus already covers a prioritised muscle keeps it at
+        the front of its focus list, so pickForPattern() picks it first.
+     2. A session that does NOT cover a prioritised muscle gets one extra
+        movement for it, if the session length has room.
+     3. Nothing is ever removed. Emphasis adds attention; it never subtracts
+        coverage, which is what keeps a glute block from becoming a leg curl
+        competition.
+   ---------------------------------------------------------------------- */
+const EMPHASIS_MAX_EXTRA_SESSIONS = 2;
+
+/* Which muscles this emphasis prioritises, in the profile's own words. */
+function focusMuscles(profile){
+  if(typeof emphasisMuscles === 'function') return emphasisMuscles(profile);
+  const e = (profile && profile.emphasis) || 'balanced';
+  if(e === 'lower')  return ['quads','hamstrings','glutes','calves'];
+  if(e === 'glutes') return ['glutes','hamstrings','quads'];
+  if(e === 'upper')  return ['chest','back','shoulders','biceps','triceps'];
+  return [];
+}
+
+/* Movement patterns that train a muscle group, most specific first. */
+const MUSCLE_PATTERNS = {
+  glutes:     ['hinge','squat'],
+  hamstrings: ['hinge'],
+  quads:      ['squat'],
+  calves:     ['calf'],
+  chest:      ['pushH','pushV'],
+  back:       ['pullH','pullV'],
+  lowerback:  ['hinge'],
+  shoulders:  ['pushV','pushH'],
+  biceps:     ['curl'],
+  triceps:    ['extend'],
+  forearms:   ['curl'],
+  abs:        ['core']
+};
+
+function patternsForMuscles(muscles){
+  const out = [];
+  (muscles || []).forEach(m => (MUSCLE_PATTERNS[m] || []).forEach(p => {
+    if(out.indexOf(p) < 0) out.push(p);
+  }));
+  return out;
+}
+
+/* A session covers a muscle if the muscle is in its focus or in the primary
+   mover of one of its movements. */
+function sessionCovers(sess, muscle){
+  if((sess.focus || []).indexOf(muscle) >= 0) return true;
+  return (sess.exercises || []).some(e => {
+    const ex = EX_BY_ID[e.id];
+    return ex && ex.m && ex.m.some(([m]) => m === muscle);
+  });
+}
+
+/* A plain-language account of what the focus did to the plan, so the screens
+   can say it rather than leaving the user to infer it from the exercise list. */
+function emphasisSummary(plan, profile){
+  const p = profile || {};
+  const e = p.emphasis || 'balanced';
+  const focus = focusMuscles(p);
+  if(e === 'balanced' || !focus.length) return { key:'plan.focusBalanced', muscles:[] };
+  const covered = (plan.sessions || []).filter(s => focus.some(m => sessionCovers(s, m))).length;
+  return {
+    key: 'plan.focus' + e.charAt(0).toUpperCase() + e.slice(1),
+    muscles: focus,
+    sessions: covered,
+    total: (plan.sessions || []).length
+  };
+}
+
 /* ---------- candidate pool ---------- */
 function allowedExercises(profile){
   // `equipment` (v1) still governs; `environment` (v2) narrows it further.
@@ -109,6 +186,23 @@ function goalBonus(ex, profile){
   const needs = p.needs || {};
   const cat = ex.cat || [], acc = ex.acc || [];
   let bonus = 0;
+  /* Training focus. Weighted above the goal nudges below because it is the
+     answer to "which movement in this pattern", not "whether to train". */
+  const focus = focusMuscles(p);
+  if(focus.length){
+    /* Weighted by how much of the movement is the asked-for muscle, and by how
+       high that muscle is in the focus list. This only ever breaks ties BETWEEN
+       movements of the same kind (see the type weight in pickForPattern): a
+       share on its own rewards isolation, because isolation exists to put almost
+       all of the work on one muscle, and that is not what "emphasise glutes"
+       means at the top of a session. */
+    let best = 0;
+    focus.forEach((m, i) => {
+      const hit = (ex.m || []).filter(([mm]) => mm === m)[0];
+      if(hit) best = Math.max(best, hit[1] * (14 - i * 3));
+    });
+    bonus += best;
+  }
   if(g.indexOf('m') >= 0 && cat.indexOf('mobility') >= 0)    bonus += 3;
   if(g.indexOf('b') >= 0 && cat.indexOf('balance')  >= 0)    bonus += 3;
   if(g.indexOf('f') >= 0 && cat.indexOf('functional') >= 0) bonus += 2;
@@ -119,13 +213,29 @@ function goalBonus(ex, profile){
   return bonus;
 }
 
-function pickForPattern(pool, pattern, used, focus, profile){
-  const cands = pool.filter(e => e.pat === pattern && used.indexOf(e.id) < 0);
+function pickForPattern(pool, pattern, used, focus, profile, avoid){
+  const ban = avoid || used;
+  const isBonusSlot = !!(avoid && avoid.length);
+  const cands = pool.filter(e => e.pat === pattern && used.indexOf(e.id) < 0 && ban.indexOf(e.id) < 0);
   if(!cands.length) return null;
-  // prefer exercises whose prime mover is in this session's focus
-  const score = e => (focus.indexOf(e.m[0][0]) >= 0 ? 2 : 0)
-                   + (e.type === 'compound' ? 1 : 0)
-                   + goalBonus(e, profile);
+  /* Kind first, preference second.
+       prime slot — a compound, because the first movement of a pattern is the
+       one that carries the session;
+       bonus slot — a movement whose PRIME mover is the muscle being topped up,
+       preferring an isolation when one exists.
+     Both ×10 terms exist because without them the focus share outvoted the
+     kind, and a glute block opened with leg extensions; and a leg curl (prime
+     mover: hamstrings) won a glute top-up because it was the only isolation in
+     the hinge pattern. */
+  const target = isBonusSlot ? focus[0] : null;
+  const primeIsTarget = e => !!target && e.m && e.m[0] && e.m[0][0] === target;
+  const score = e => isBonusSlot
+      ? (primeIsTarget(e) ? 10 : 0)
+        + (e.type === 'isolation' ? 2 : 0)
+        + goalBonus(e, profile)
+      : 10 * (e.type === 'compound' ? 1 : 0)
+        + (focus.indexOf(e.m[0][0]) >= 0 ? 2 : 0)
+        + goalBonus(e, profile);
   cands.sort((a,b) => score(b) - score(a));
   return cands[0];
 }
@@ -165,19 +275,57 @@ function buildPlan(profile){
   const count = EXERCISES_BY_MINUTES[profile.sessionMinutes] || 5;
   const rest = restFor(profile);
 
+  const focus = focusMuscles(profile);
+  /* An exercise already used this week is not prescribed again — that is how a
+     glute block turns into five hip hinges and two chest movements. `weeklyUsed`
+     is plan-wide, so the check is "has the week seen this?", not "this session". */
+  const weeklyUsed = [];
+  let extrasLeft = focus.length ? EMPHASIS_MAX_EXTRA_SESSIONS : 0;
+
   const sessions = split.map(s => {
     const used = [];
     const list = [];
-    for(let i=0;i<count;i++){
-      const pat = s.patterns[i % s.patterns.length];
-      let ex = pickForPattern(pool, pat, used, s.focus, profile);
+    /* Focus ordering: a session that already trains a prioritised muscle names
+       it first, so the prime slot goes to it. A session that trains none of the
+       prioritised muscles may gain ONE movement for them, on at most two
+       sessions in the week, and never one the week has already used. */
+    /* The top-up targets the ONE muscle asked for first, not the whole list:
+       "one extra movement for glutes" is a sentence a person can check, while
+       "one extra movement for whichever of four muscles this session lacks" is
+       how a push day ended up with a leg curl on it. */
+    const uncovered = focus.slice(0, 1).filter(m => (s.focus || []).indexOf(m) < 0);
+    let extraPat = null;
+    if(uncovered.length && count < 7 && extrasLeft > 0){
+      const pats = patternsForMuscles(uncovered);
+      for(let i2 = 0; i2 < pats.length && !extraPat; i2++){
+        const ok = pool.some(e => e.pat === pats[i2] && weeklyUsed.indexOf(e.id) < 0 &&
+                                  used.indexOf(e.id) < 0);
+        if(ok) extraPat = pats[i2];
+      }
+    }
+    if(extraPat) extrasLeft--;
+    const patterns = extraPat ? s.patterns.concat([extraPat]) : s.patterns.slice();
+    const limit = patterns.length > s.patterns.length ? count + 1 : count;
+    const orderedFocus = focus.filter(m => (s.focus || []).indexOf(m) >= 0)
+                              .concat(s.focus || []);
+    for(let i=0;i<limit;i++){
+      const pat = patterns[i % patterns.length];
+      /* The emphasis slot is the only one that refuses a repeat: the rest of the
+         session keeps the old behaviour, where a pattern may come round twice. */
+      const avoid = (extraPat && i >= patterns.length - 1) ? weeklyUsed : null;
+      /* The top-up slot is scored against the one muscle it exists for, so it
+         cannot be won by a different member of the focus list. */
+      const focusArg = avoid ? [focus[0]]
+                             : (orderedFocus.length ? orderedFocus : s.focus);
+      let ex = pickForPattern(pool, pat, used, focusArg, profile, avoid);
       if(!ex){
         // fall back to anything unused that touches the focus
-        ex = pool.filter(e => used.indexOf(e.id) < 0 && e.m.some(([m]) => s.focus.indexOf(m) >= 0))
+        ex = pool.filter(e => used.indexOf(e.id) < 0 && e.m.some(([m]) => (s.focus || []).indexOf(m) >= 0))
                  .sort((a,b)=> (b.type==='compound'?1:0) - (a.type==='compound'?1:0))[0] || null;
       }
       if(!ex) break;
       used.push(ex.id);
+      weeklyUsed.push(ex.id);
       const cfg = setsFor(ex, profile);
       /* A goal bias of "4-7 reps" is meaningless for a 40-second hold or a
          40-metre carry: the exercise's own range is already expressed in the
@@ -205,6 +353,13 @@ function buildPlan(profile){
     mode: profile.style || 'std',
     split: days,
     restSec: rest,
+    /* What the plan was asked to emphasise, and the muscles that came out of
+       it. Stored on the plan so a rebuilt profile can be compared against the
+       plan actually in hand — that comparison is what lets the settings screen
+       say "rebuild to apply" instead of guessing. */
+    emphasis: profile.emphasis || 'balanced',
+    priorities: (profile.priorities || []).slice(),
+    focusMuscles: focus,
     builtAt: Date.now(),
     sessions: sessions,
     poolSize: pool.length,

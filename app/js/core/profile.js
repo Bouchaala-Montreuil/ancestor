@@ -40,6 +40,60 @@ const NEEDS = [
   { id:'noBalance',     key:'noBalance',     label:'need.noBalance',     desc:'need.noBalance.d' }
 ];
 
+/* ---------------------------------------------------------------- focus
+   What the programme is asked to emphasise. This is a TRAINING preference and
+   nothing else: it is never derived from, and never gated by, anything else the
+   user tells us. Every option is open to every user.
+
+   `custom` reads its muscles from profile.priorities, which is also what the
+   per-muscle chips on the onboarding and settings screens write to. */
+const EMPHASIS = [
+  { id:'balanced', label:'emphasis.balanced', desc:'emphasis.balanced.d' },
+  { id:'lower',    label:'emphasis.lower',    desc:'emphasis.lower.d' },
+  { id:'upper',    label:'emphasis.upper',    desc:'emphasis.upper.d' },
+  { id:'glutes',   label:'emphasis.glutes',   desc:'emphasis.glutes.d' },
+  { id:'custom',   label:'emphasis.custom',   desc:'emphasis.custom.d' }
+];
+
+/* The muscle groups a person can prioritise. `arms` is a display grouping for
+   biceps + triceps; `core` for abs; the engine expands them. */
+const PRIORITY_GROUPS = [
+  { id:'glutes',     label:'mg.glutes',      muscles:['glutes'] },
+  { id:'quads',      label:'priority.quads', muscles:['quads'], note:'priority.quads.n' },
+  { id:'hamstrings', label:'mg.hamstrings',  muscles:['hamstrings'] },
+  { id:'back',       label:'mg.back',        muscles:['back','lowerback'] },
+  { id:'chest',      label:'mg.chest',       muscles:['chest'] },
+  { id:'shoulders',  label:'mg.shoulders',   muscles:['shoulders'] },
+  { id:'arms',       label:'priority.arms',  muscles:['biceps','triceps','forearms'] },
+  { id:'core',       label:'priority.core',  muscles:['abs'] },
+  { id:'balanced',   label:'priority.all',   muscles:[] }
+];
+
+/* The muscles an emphasis actually asks the generator to favour. Empty means
+   "no preference stated" — balanced, or nothing chosen yet. */
+function emphasisMuscles(profile){
+  const p = profile || {};
+  const e = p.emphasis || 'balanced';
+  if(e === 'balanced') return [];
+  if(e === 'lower')    return ['quads','hamstrings','glutes','calves'];
+  if(e === 'glutes')   return ['glutes','hamstrings','quads'];
+  if(e === 'upper')    return ['chest','back','shoulders','biceps','triceps'];
+  if(e === 'custom')   return priorityMuscles(p.priorities);
+  return [];
+}
+
+/* Chips are groups; the engine wants muscles. Unknown ids are ignored rather
+   than trusted, so a corrupted record degrades to "no preference". */
+function priorityMuscles(ids){
+  if(!Array.isArray(ids) || !ids.length) return [];
+  const out = [];
+  PRIORITY_GROUPS.forEach(g => {
+    if(g.id === 'balanced') return;
+    if(ids.indexOf(g.id) >= 0) g.muscles.forEach(m => { if(out.indexOf(m) < 0) out.push(m); });
+  });
+  return out;
+}
+
 /* Accessibility display preferences — visual, cognitive and motion. */
 const DISPLAY_DEFAULTS = {
   textScale: 1,          // 1 | 1.15 | 1.3
@@ -52,6 +106,10 @@ const DISPLAY_DEFAULTS = {
 function defaultV2Profile(){
   return {
     goals: ['h'],
+    /* Training focus. Additive in schema v3.1: absent on older records and
+       filled in by migrateProfile() without touching anything else. */
+    emphasis: 'balanced',
+    priorities: [],
     environment: 'gym',
     positions: [],                       // empty = any position
     needs: {},                           // optional, self-reported
@@ -94,6 +152,14 @@ function migrateProfile(p){
   }
   // keep `goal` in sync for any code path that still reads it
   if(!p.goal && p.goals.length) p.goal = p.goals[0];
+
+  /* Schema v3.1 — training focus. An older record has neither field; a record
+     whose emphasis names something we do not ship falls back to balanced rather
+     than silently producing an empty plan. */
+  if(typeof p.emphasis !== 'string' || !EMPHASIS.some(o => o.id === p.emphasis)) p.emphasis = d.emphasis;
+  if(!Array.isArray(p.priorities)) p.priorities = [];
+  p.priorities = p.priorities.filter(id => PRIORITY_GROUPS.some(g => g.id === id && g.id !== 'balanced'));
+  if(p.emphasis === 'custom' && !p.priorities.length) p.emphasis = 'balanced';
 
   if(p.bodyweight === undefined) p.bodyweight = d.bodyweight;
   if(p.bodyweight !== null && (typeof p.bodyweight !== 'number' || !isFinite(p.bodyweight) || p.bodyweight <= 0)) p.bodyweight = null;
@@ -168,7 +234,8 @@ function applyDisplay(profile){
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { GOALS, ENVIRONMENTS, NEEDS, DISPLAY_DEFAULTS, defaultV2Profile,
-                     migrateProfile, profileSet, activeGoals, hasGoal, toggleGoal, needOn, toggleNeed,
-                     hasAnyNeed, goalRepBias, equipmentFor, applyDisplay };
+  module.exports = { GOALS, ENVIRONMENTS, NEEDS, EMPHASIS, PRIORITY_GROUPS, DISPLAY_DEFAULTS,
+                     defaultV2Profile, migrateProfile, profileSet, activeGoals, hasGoal, toggleGoal,
+                     needOn, toggleNeed, hasAnyNeed, goalRepBias, equipmentFor, applyDisplay,
+                     emphasisMuscles, priorityMuscles };
 }

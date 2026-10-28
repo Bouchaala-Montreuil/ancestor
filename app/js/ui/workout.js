@@ -207,6 +207,28 @@ function renderWorkoutPlanner(){
   });
   h += '</div>';
 
+  /* --- What the week is asked to emphasise --- */
+  /* The plan says what it is built around, in one line, before the exercises.
+     This is the "explain why a programme was recommended" requirement, and it is
+     generated from the plan's own stamp rather than from today's settings — so a
+     stale plan cannot claim a focus it was not built with. */
+  if(typeof emphasisSummary === 'function'){
+    const es = emphasisSummary(s.plan, { emphasis: s.plan.emphasis, priorities: s.plan.priorities });
+    if(es && es.key){
+      const vars = { n: es.sessions || 0, total: es.total || sessions.length, list: '' };
+      if(es.key === 'plan.focusCustom'){
+        const names = (s.plan.priorities || []).map(gid => {
+          const g = (typeof PRIORITY_GROUPS !== 'undefined' ? PRIORITY_GROUPS : [])
+                      .filter(x => x.id === gid)[0];
+          return g ? t(g.label) : '';
+        }).filter(Boolean);
+        if(names.length) vars.list = names.join(', ');
+      }
+      h += '<div class="plan-focus"><span class="eyebrow">' + esc(t('plan.focus')) + '</span>' +
+           '<p class="body-sm mb-0">' + esc(t(es.key, vars)) + '</p></div>';
+    }
+  }
+
   /* --- Selected Day Blueprint Header --- */
   h += '<div class="panel heavy">';
   h += '<div class="panel-hd"><div class="shrink">' +

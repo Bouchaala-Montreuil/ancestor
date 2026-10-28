@@ -5,7 +5,7 @@ decides what to do today from what you actually lifted, then shows you the
 working. No account, no cloud, no tracking.
 
 ```
-app/       the product — six tabs, 68 exercises, 11 lessons, 7 languages
+app/       the product — four destinations, 88 exercises, 11 lessons, 7 languages
 design/    the direction, the system, the artefacts, the roadmap, the case study
 site/      the landing page (one file; figures copied from the app)
 ```
@@ -33,7 +33,7 @@ python3 -m http.server 8080                # the repo (app, site and design/ doc
 ```bash
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do
   node tests/$t.js
-done                                        # 1,328 checks over 10 suites
+done                                        # 1,368 checks over 10 suites
 python3 build.py && node tools/smoke_dist.js   # the single file, booted and used
 python3 ../site/build.py && python3 ../site/check.py
 ```

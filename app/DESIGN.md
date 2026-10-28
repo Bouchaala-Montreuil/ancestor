@@ -846,7 +846,7 @@ pattern. The static suite fails if a disclosure is restyled outside `.dis`.
 
 Contrast, target sizes, focus visibility, reduced-motion parity and the
 "no colour-only feedback" rules are unchanged and still enforced by
-`tests/design.js` (225 checks), the 52 real-browser checks in `tests/browser.js`
+`tests/design.js` (227 checks), the 63 real-browser checks in `tests/browser.js`
 and `tools/qa_audit.js` (1 accepted Medium: the
 `overflow-x:hidden` note in `ARCHITECTURE.md` §4).
 

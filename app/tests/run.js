@@ -40,7 +40,7 @@ vm.createContext(sandbox);
 
 const FILES = [
   'js/i18n/core.js','js/i18n/ui.js','js/i18n/exercises.js','js/i18n/screens.js',
-  'js/i18n/acc.js','js/i18n/ar.js','js/i18n/v2.js','js/i18n/science.js','js/i18n/science2.js','js/i18n/ex_modes.js','js/i18n/modes.js','js/i18n/lesson_bodies_en.js','js/i18n/lesson_bodies_fr.js','js/i18n/lesson_bodies_es_de.js','js/i18n/lesson_bodies_it_nl_ar.js','js/i18n/locale.js',
+  'js/i18n/acc.js','js/i18n/ar.js','js/i18n/v2.js','js/i18n/science.js','js/i18n/science2.js','js/i18n/ex_modes.js','js/i18n/modes.js','js/i18n/focus.js','js/i18n/lesson_bodies_en.js','js/i18n/lesson_bodies_fr.js','js/i18n/lesson_bodies_es_de.js','js/i18n/lesson_bodies_it_nl_ar.js','js/i18n/locale.js',
   'js/data/exercises.js','js/data/ex_meta.js','js/data/ex_logging.js','js/data/anatomy_map.js',
  'js/data/evidence.js','js/data/lessons.js',
   'js/core/time.js','js/core/profile.js','js/core/store.js',

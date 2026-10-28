@@ -41,8 +41,10 @@ function boot(seed){
   return { w, d };
 }
 function onboard(w, d){
+  w.chooseLang('en');                 /* step zero: the language screen */
   w.setConsent();
   w.setP('experience','i'); w.setP('goal','h'); w.onbNext();
+  w.onbNext(); w.onbNext();           /* focus, approach */
   w.setP('equipment','gym'); w.onbNext();
   w.setP('daysPerWeek',3); w.onbNext();
   w.setP('shiftType','none'); w.onbNext();
@@ -117,7 +119,8 @@ group('3. Navigation: persistent buttons and a shared indicator');
   const { w, d } = boot();
   onboard(w, d);
   const nav = d.getElementById('nav');
-  chk('the nav renders six sections', nav.querySelectorAll('button').length === 6);
+  chk('the nav renders four destinations', nav.querySelectorAll('button').length === 4,
+      Array.from(nav.querySelectorAll('button')).map(b => b.textContent.trim()).join(' / '));
   const first = nav.querySelector('button');
   w.go('progress');
   chk('the nav is NOT rebuilt on navigation', nav.querySelector('button') === first);
@@ -135,8 +138,8 @@ group('3. Navigation: persistent buttons and a shared indicator');
   chk('the indicator moves when the section changes', moved !== ind.style.transform || true, moved);
   w.switchLang('fr');
   chk('the nav is rebuilt when the language changes',
-      nav.querySelectorAll('button').length === 6 &&
-      /Progr/.test(nav.textContent) === false || nav.querySelectorAll('button').length === 6);
+      nav.querySelectorAll('button').length === 4 &&
+      nav.textContent.indexOf(w.t('nav.progress')) >= 0, nav.textContent.trim());
 }
 
 /* ==================================================================== */
@@ -460,21 +463,22 @@ group('10. Progress rings, chart tooltips, metric switcher, exercise detail & 7-
 group('11. Onboarding step guard, split workout planner, live exercise addition & 84-exercise atlas');
 {
   const fresh = boot();
+  fresh.w.chooseLang('en');           /* answer the language question first */
   fresh.w.setConsent();
   chk('onboarding opens step 2 (exp)', fresh.w.ANC.onbStep === 'exp');
   const expTiles = fresh.d.querySelectorAll('#screenBody .tile');
   expTiles[0].dispatchEvent(new fresh.w.MouseEvent('click', { bubbles:true }));
   chk('clicking experience tile selects experience WITHOUT prematurely skipping goal choice',
       fresh.w.ANC.onbStep === 'exp' && fresh.w.getState().profile.experience === 'b');
-  for(let stepIdx = 1; stepIdx <= 8; stepIdx++){
+  for(let stepIdx = 1; stepIdx <= 9; stepIdx++){
     fresh.w.onbGo(stepIdx);
     const hasBack = Array.from(fresh.d.querySelectorAll('#screenBody button'))
       .some(b => b.textContent.trim() === fresh.w.t('btn.back'));
-    if(stepIdx === 7){
+    if(stepIdx === 9){
       const rawPat = ['pushH','pushV','pullH','pullV'].some(p => fresh.d.querySelector('#screenBody').textContent.includes(p));
       chk('onboarding exercise step translates all movement pattern headings', !rawPat);
     }
-    if(stepIdx === 8) chk('every onboarding step from 2..9 provides a Back button', hasBack);
+    if(stepIdx === 9) chk('every onboarding step before the preview provides a Back button', hasBack);
   }
 
   const { w, d } = boot();

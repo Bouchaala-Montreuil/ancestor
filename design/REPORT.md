@@ -29,9 +29,9 @@ python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,328 checks over ten headless suites**, all green —
-design 225, premium 213, ui 260, run 142, inclusive 65, personas 68, science 124,
-logic 123, anatomy 64, print 44 — plus **52 real-browser checks** in
+Current: **1,368 checks over ten headless suites**, all green —
+design 227, premium 213, ui 278, run 142, inclusive 65, personas 73, science 124,
+logic 138, anatomy 64, print 44 — plus **63 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---
@@ -160,13 +160,43 @@ i18n and calculation modules were not restructured.
 
 ### Journey A — first run
 
-Eight steps, one question each, with the question explained before it is asked,
+Eleven steps, one question each, and the first of them is **the language**.
+Before this pass the only way to change language was a `langsel` strip of seven
+26 px buttons in the masthead — on every screen, in a script the reader might not
+know, and it vanished from the header entirely below 400 px. A first launch now
+opens on one screen: the seven languages written in their own names and scripts
+(Arabic right-to-left inside its own row), a tap applying the language
+immediately, and `Continue` recording the answer. The row is a native button with
+`lang` and `dir`, so a screen reader switches voice at the row instead of reading
+an Arabic name with an English one. The strip in the masthead is gone; changing
+language is one row later, under Profile → Accessibility & display.
+
+The next two questions are new, and they are the feature: *which areas do you
+want to prioritise* (nine, multi-select, plus a "whole body, balanced" answer),
+and *how should the programme lean* (five approaches). Both write into
+`profile.emphasis` / `profile.priorities`, and both are **preferences that never
+subtract**: the engine changes which movement opens a session and may add at most
+two extra movements a week in the favoured pattern. A balanced plan is
+byte-identical to the plan this app produced before the feature existed — the
+regression is asserted, not assumed. Changing the answer never rewrites the
+programme in the drawer: the plan carries its own `emphasis` stamp, the profile
+shows a warning when the two disagree, and `Rebuild plan` is the only control
+that applies it.
+
+Each step asks one question, with it explained before it is asked,
 a visible step count, `Back` on every step, and "optional" that really is
 optional (skipping does not block finishing, and the starting point is still a
 usable programme). The exercise step is the change that matters: it now shows
 what the person already has — 90 controls in the DOM, **14 reachable at once**,
 88 of 88 pressable chips carrying `aria-pressed` — because the first question in
 a gym app should not be a curriculum.
+
+**The bar is four destinations, not six.** Home / Session / Progress / Profile —
+the three places a thumb goes mid-set, plus the record. Body and Science left the
+bar; both keep their 24 px marks, both are full-width rows under Profile →
+Explore, and Today links to both. The indicator element hides itself when a view
+is outside the bar rather than pointing at nothing, and the labels got the 1.5 px
+the extra room bought (`8 px → 9.5 px`).
 
 ### Journey B — returning home
 

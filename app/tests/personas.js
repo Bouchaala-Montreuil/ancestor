@@ -364,6 +364,94 @@ group('10. Existing user whose historical data must remain intact');
 }
 
 /* ==================================================================== */
+group('Training focus across personas: a real plan for every body');
+{
+  /* The focus question is the one step a beginner or an older lifter is most
+     likely to answer differently from an intermediate, so the check is that it
+     never produces a shorter, emptier or impossible programme for them. */
+  const personas = [
+    { name:'beginner at home',            experience:'b', goal:'g', equipment:'home',    days:2 },
+    { name:'intermediate, gym, 4 days',   experience:'i', goal:'h', equipment:'gym',     days:4 },
+    { name:'advanced, 5 days',            experience:'a', goal:'s', equipment:'gym',     days:5 },
+    { name:'older lifter, 2 days, knee',  experience:'b', goal:'hl', equipment:'minimal', days:2,
+      limits:['knee'], age:68 }
+  ];
+  const emphases = ['balanced','lower','upper','glutes','custom'];
+  const bad = [];
+  /* Planned set-volume per muscle: sets × the muscle's share of the movement. */
+  const vol = (w, plan) => {
+    const out = {};
+    plan.sessions.forEach(x => x.exercises.forEach(e => {
+      const meta = byId(w, e.id);
+      if(meta) meta.m.forEach(([m, wt]) => { out[m] = (out[m] || 0) + e.sets * wt; });
+    }));
+    return out;
+  };
+  const share = (v, muscles) => muscles.reduce((n, m) => n + (v[m] || 0), 0);
+  personas.forEach(per => {
+    /* The baseline for this body, before any emphasis is applied. */
+    const { w: wb, d: db } = boot();
+    const sb = onboardAs(wb, db, per);
+    sb.profile.emphasis = 'balanced'; sb.profile.priorities = [];
+    const basePlan = wb.buildPlan(sb.profile);
+    const vBase = vol(wb, basePlan);
+    emphases.forEach(e => {
+      const { w, d } = boot();
+      const s = onboardAs(w, d, per);
+      s.profile.emphasis = e;
+      s.profile.priorities = (e === 'custom') ? ['chest','shoulders'] : [];
+      s.plan = w.buildPlan(s.profile);
+      const count = s.plan.sessions.reduce((n, x) => n + x.exercises.length, 0);
+      const focus = w.eval('focusMuscles')(s.profile);
+      const leads = s.plan.sessions.filter(x => {
+        const ex = byId(w, x.exercises[0].id);
+        return ex && focus.indexOf(ex.m[0][0]) >= 0;
+      }).length;
+      if(s.plan.sessions.length !== per.days) bad.push(per.name + '/' + e + ': ' + s.plan.sessions.length + ' sessions');
+      if(count < per.days * 4) bad.push(per.name + '/' + e + ': only ' + count + ' exercises');
+      /* Equipment was not widened by the focus: nothing new may need a barbell. */
+      if(per.equipment !== 'gym' && s.plan.sessions.some(x => x.exercises.some(ex => {
+        const meta = byId(w, ex.id);
+        return meta && ['bb','cable','machine'].indexOf(meta.equip) >= 0;
+      }))) bad.push(per.name + '/' + e + ': needs a machine');
+      /* A stated limitation is still respected. */
+      if(per.limits && s.plan.sessions.some(x => x.exercises.some(ex => {
+        const meta = byId(w, ex.id);
+        return meta && (meta.avoid || []).some(a => per.limits.indexOf(a) >= 0);
+      }))) bad.push(per.name + '/' + e + ': ignores the knee');
+      /* The promise in the copy: more attention for the chosen muscles, never
+         less for anything. A smaller gym cannot always add volume, so the floor
+         is "not less"; where equipment allows, it must be strictly more. */
+      if(e !== 'balanced' && e !== 'custom' && focus.length){
+        const got = share(vol(w, s.plan), focus);
+        const had = share(vBase, focus);
+        if(got < had - 1e-9) bad.push(per.name + '/' + e + ': drops the favoured muscles');
+        if(per.equipment === 'gym' && got <= had && e !== 'lower')
+          bad.push(per.name + '/' + e + ': no more work for the favoured muscles');
+      }
+    });
+  });
+  chk('4 personas × 5 emphases all produce a trainable week', bad.length === 0,
+      bad.slice(0, 4).join('; ') || '20 plans');
+
+  /* First launch in Arabic: the language rows must be readable, RTL, and the
+     names still in their own scripts. */
+  const { w, d } = boot();
+  w.pickLang('ar');
+  const rows = Array.from(d.querySelectorAll('.lang-row'));
+  chk('the Arabic choice is offered in Arabic', rows.length === 7 &&
+      rows.some(r => r.getAttribute('lang') === 'ar' && /العربية/.test(r.textContent)));
+  chk('the Arabic name is set right-to-left inside the row',
+      d.querySelector('.lang-row[lang="ar"] .lang-nm').getAttribute('dir') === 'rtl');
+  chk('choosing Arabic flips the document direction before Continue',
+      d.documentElement.lang === 'ar' && d.documentElement.dir === 'rtl',
+      d.documentElement.lang + '/' + d.documentElement.dir);
+  chk('and the English row is still written in English, not translated',
+      rows.some(r => r.getAttribute('lang') === 'en' && /English/.test(r.textContent)));
+  w.chooseLang('en');
+}
+
+/* ==================================================================== */
 console.log('\n' + '='.repeat(70));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' PERSONA CHECKS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

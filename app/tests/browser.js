@@ -111,6 +111,72 @@ function startServer(){
     await page.goto(baseUrl + '/', { waitUntil: 'networkidle0' });
 
     /* ================================================================== */
+    group('0. First launch: the language question, on a real 390 px phone');
+    {
+      await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+      await page.reload({ waitUntil: 'networkidle0' });
+
+      const rows = await page.$$eval('.lang-row', els => els.map(e => ({
+        lang: e.getAttribute('lang'), dir: e.querySelector('.lang-nm').getAttribute('dir'),
+        name: e.querySelector('.lang-nm').textContent.trim(),
+        box: Math.round(e.querySelector('.box').getBoundingClientRect().width)
+      })));
+      chk('seven languages, each named in its own script', rows.length === 7 &&
+          rows.some(r => r.lang === 'ar' && /العربية/.test(r.name)) &&
+          rows.some(r => r.lang === 'nl' && /Nederlands/.test(r.name)),
+          rows.map(r => r.name).join(' / '));
+      chk('the Arabic row declares its own direction', rows.filter(r => r.lang === 'ar')
+          .every(r => r.dir === 'rtl') && rows.filter(r => r.lang !== 'ar')
+          .every(r => r.dir === 'ltr'));
+      chk('every row has a real tap target and a visible mark',
+          rows.every(r => r.box >= 16), rows.map(r => r.box).join(','));
+
+      const fit = await page.evaluate(() => ({
+        docW: document.documentElement.scrollWidth,
+        winW: window.innerWidth,
+        rows: Array.from(document.querySelectorAll('.lang-row')).map(r => Math.round(r.getBoundingClientRect().right))
+      }));
+      chk('nothing overflows the language screen at 390 px',
+          fit.docW <= fit.winW && Math.max.apply(null, fit.rows) <= fit.winW + 1,
+          fit.docW + ' / ' + fit.winW);
+
+      /* Tapping Arabic must flip the whole page before Continue is pressed. */
+      await page.click('.lang-row[lang="ar"]');
+      const rtl = await page.evaluate(() => ({
+        dir: document.documentElement.dir, lang: document.documentElement.lang,
+        chosen: getState().langChosen,
+        overflow: document.documentElement.scrollWidth - window.innerWidth
+      }));
+      chk('tapping Arabic flips the page to RTL immediately',
+          rtl.dir === 'rtl' && rtl.lang === 'ar', rtl.dir + '/' + rtl.lang);
+      chk('the question is still unanswered until Continue', rtl.chosen === false);
+      chk('an RTL first screen does not overflow at 390 px', rtl.overflow <= 0, rtl.overflow + ' px');
+      await shot(page, 'lang-ar-390.png');
+
+      /* The narrowest phone still sold, in the direction that grows the heading
+         the most: the Arabic title is one long word pair with no hyphen. */
+      await page.setViewport({ width: 320, height: 640, deviceScaleFactor: 2 });
+      const tight = await page.evaluate(() => ({
+        overflow: document.documentElement.scrollWidth - window.innerWidth,
+        h1: document.querySelector('.lang-frame h1').getBoundingClientRect().right
+      }));
+      chk('and it still fits at 320 px', tight.overflow <= 0, tight.overflow + ' px');
+      await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+
+      await page.click('.lang-row[lang="en"]');
+      await page.click('.lang-frame .onb-actions button');
+      const answered = await page.evaluate(() => ({
+        chosen: getState().langChosen, lang: getState().lang,
+        step: ANC.onbStep, hasNav: getComputedStyle(document.getElementById('nav')).display !== 'none'
+      }));
+      chk('Continue records the answer and opens the first step',
+          answered.chosen === true && answered.lang === 'en' && answered.step === 'welcome',
+          JSON.stringify(answered));
+      chk('the bottom bar stays out of the way of onboarding', answered.hasNav === false);
+      await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
+    }
+
+    /* ================================================================== */
     group('1. Onboarding, live workout logging & completion in real Chromium');
     await page.evaluate(() => {
       setConsent();
@@ -118,6 +184,9 @@ function startServer(){
       setP('experience', 'i');
       setP('goal', 'h');
       onbNext();
+      setP('emphasis', 'glutes');       /* step 3: focus */
+      onbNext();
+      onbNext();                        /* step 4: approach */
       setP('equipment', 'gym');
       onbNext();
       setP('daysPerWeek', 3);
@@ -557,6 +626,51 @@ function startServer(){
     await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
     chk('zero horizontal overflow across 8 views × 6 viewports (320..1440 px) × LTR & RTL (96 layouts)',
         overflows.length === 0, overflows.slice(0, 5).join('; ') || '96/96 clean');
+
+    /* The bottom bar is fixed, so anything that ends inside its 65 px is
+       unreachable however far the page scrolls. Measured at 390 px on the six
+       destinations, with the page scrolled to its true end: the lowest visible
+       element must stop at or above the bar. Content inside a closed <details>
+       is laid out but not painted (Chrome gives it content-visibility), so it is
+       excluded rather than counted as "hidden behind the bar". */
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    const occluded = [];
+    for(const v of ['home', 'session', 'progress', 'profile', 'body', 'science']){
+      await page.evaluate(vn => {
+        closeSheet();
+        if(vn === 'session') setSessionSub('plan');
+        go(vn);
+      }, v);
+      await new Promise(r => setTimeout(r, 350));
+      const res = await page.evaluate(() => {
+        window.scrollTo(0, 999999);
+        const bar = document.getElementById('nav').getBoundingClientRect();
+        const inClosed = e => {
+          let n = e;
+          while(n && n !== document.body){
+            if(n.tagName === 'DETAILS' && !n.open) return true;
+            n = n.parentElement;
+          }
+          return false;
+        };
+        const els = Array.from(document.querySelectorAll(
+          '#screenBody button, #screenBody a, #screenBody h1, #screenBody h2, ' +
+          '#screenBody p, #screenBody summary, #screenBody td'))
+          .filter(e => e.getBoundingClientRect().height > 0 && !inClosed(e));
+        const lowest = els.reduce((a, e) => Math.max(a, e.getBoundingClientRect().bottom), 0);
+        const straddling = els.filter(e => {
+          const r = e.getBoundingClientRect();
+          return r.top < bar.top - 1 && r.bottom > bar.top + 1;
+        }).length;
+        return { barTop: Math.round(bar.top), lowest: Math.round(lowest), straddling };
+      });
+      if(res.straddling > 0 || res.lowest > res.barTop + 1)
+        occluded.push(v + ': lowest ' + res.lowest + ' vs bar ' + res.barTop +
+                      ' (' + res.straddling + ' straddling)');
+    }
+    await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
+    chk('nothing on the six destinations ends beneath the fixed bottom bar',
+        occluded.length === 0, occluded.join('; ') || '6/6 clear');
 
     /* Real Chromium Accessibility Tree (AXTree) audit for VoiceOver/TalkBack/NVDA */
     const cdp = await page.target().createCDPSession();

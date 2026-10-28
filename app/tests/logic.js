@@ -704,6 +704,116 @@ group('15. Questions asked once are not asked again, and they work');
 }
 
 /* ==================================================================== */
+group('Training focus: emphasis adds attention, never subtracts coverage');
+{
+  const { w, d } = boot();
+  w.chooseLang('en');
+  const byId = w.eval('EX_BY_ID');
+
+  /* A fixed, ordinary profile: 3 days, gym, 50 minutes, intermediate, hypertrophy. */
+  function base(over){
+    return Object.assign({}, w.getState().profile, {
+      experience:'i', goal:'h', equipment:'gym', environment:'gym',
+      daysPerWeek:3, sessionMinutes:50, emphasis:'balanced', priorities:[]
+    }, over || {});
+  }
+  /* Planned set-volume per muscle, the same weighting the review uses:
+     n sets × the muscle's share of the movement. */
+  function plannedVolume(plan){
+    const out = {};
+    (plan.sessions || []).forEach(sess => (sess.exercises || []).forEach(e => {
+      const ex = byId[e.id];
+      if(!ex) return;
+      ex.m.forEach(([m, weight]) => { out[m] = (out[m] || 0) + (e.sets || 0) * weight; });
+    }));
+    return out;
+  }
+  const countEx = plan => (plan.sessions || []).reduce((n, s) => n + s.exercises.length, 0);
+
+  const balanced = w.buildPlan(base());
+  const vBalanced = plannedVolume(balanced);
+  chk('a balanced plan is the same eighteen exercises it always was',
+      countEx(balanced) === 18 && balanced.sessions.length === 3, countEx(balanced) + ' exercises');
+  chk('and it says so on its own stamp',
+      balanced.emphasis === 'balanced' && (balanced.priorities || []).length === 0);
+  chk('asking for balanced twice gives the same sessions',
+      JSON.stringify(w.buildPlan(base({ emphasis:'balanced', priorities:[] })).sessions) ===
+      JSON.stringify(balanced.sessions));
+
+  /* Every emphasis is legal; none of them may delete a muscle from the week. */
+  const covered = v => Object.keys(v).filter(m => v[m] > 0).length;
+  const emphases = ['lower','upper','glutes'];
+  const problems = [];
+  emphases.forEach(e => {
+    const plan = w.buildPlan(base({ emphasis:e }));
+    const v = plannedVolume(plan);
+    if(covered(v) < covered(vBalanced)) problems.push(e + ' covers ' + covered(v) + ' muscles');
+    if(countEx(plan) > countEx(balanced) + 2)
+      problems.push(e + ' added ' + (countEx(plan) - countEx(balanced)) + ' exercises');
+  });
+  chk('no emphasis removes a muscle from the week', problems.length === 0,
+      problems.join('; ') || '3 emphases, full coverage');
+  chk('at most two extra exercises a week, as the copy promises', problems.length === 0);
+
+  const glutes = w.buildPlan(base({ emphasis:'glutes' }));
+  const vGlutes = plannedVolume(glutes);
+  chk('glute emphasis raises planned glute work',
+      vGlutes.glutes > vBalanced.glutes,
+      vBalanced.glutes.toFixed(2) + ' → ' + vGlutes.glutes.toFixed(2));
+  chk('and it does not buy that volume by cutting the quads',
+      vGlutes.quads >= vBalanced.quads,
+      vBalanced.quads.toFixed(2) + ' → ' + vGlutes.quads.toFixed(2));
+
+  const upper = w.buildPlan(base({ emphasis:'upper' }));
+  chk('upper emphasis raises chest work',
+      plannedVolume(upper).chest > vBalanced.chest,
+      vBalanced.chest.toFixed(2) + ' → ' + plannedVolume(upper).chest.toFixed(2));
+
+  const custom = w.buildPlan(base({ emphasis:'custom', priorities:['chest','shoulders'] }));
+  const vCustom = plannedVolume(custom);
+  chk('custom priorities favour exactly what was asked for',
+      vCustom.chest > vBalanced.chest && vCustom.shoulders > vBalanced.shoulders,
+      'chest ' + vBalanced.chest.toFixed(2) + '→' + vCustom.chest.toFixed(2) +
+      ', shoulders ' + vBalanced.shoulders.toFixed(2) + '→' + vCustom.shoulders.toFixed(2));
+
+  /* No session may list the same movement twice: emphasis widens the pool, it
+     does not let one movement be counted twice in the same day. */
+  const dupes = [];
+  ['balanced','lower','upper','glutes','custom'].forEach(e => {
+    const plan = w.buildPlan(base({ emphasis:e,
+      priorities: e === 'custom' ? ['chest','shoulders'] : [] }));
+    plan.sessions.forEach(sess => {
+      const ids = sess.exercises.map(x => x.id);
+      if(new Set(ids).size !== ids.length) dupes.push(e + ':' + sess.name);
+    });
+  });
+  chk('no session repeats a movement', dupes.length === 0, dupes.join(', ') || '5 plans clean');
+
+  /* Changing the answer never rebuilds the programme behind the user's back. */
+  const { w:w2 } = boot();
+  w2.chooseLang('en');
+  w2.getState().profile = Object.assign(w2.getState().profile, base());
+  w2.getState().plan = w2.buildPlan(w2.getState().profile);
+  const before = JSON.stringify(w2.getState().plan);
+  const vBefore = plannedVolume(w2.getState().plan);
+  w2.setEmphasis('glutes');
+  chk('changing the focus leaves the programme in hand untouched',
+      JSON.stringify(w2.getState().plan) === before);
+  chk('but the mismatch is now visible on the profile',
+      w2.planFocusStale(w2.getState()) === true);
+  w2.rebuildPlan();
+  chk('rebuilding applies the new focus',
+      w2.getState().plan.emphasis === 'glutes' && w2.planFocusStale(w2.getState()) === false);
+  const vAfter = plannedVolume(w2.getState().plan);
+  chk('and the programme in hand now carries the glute work',
+      vAfter.glutes > vBefore.glutes,
+      vBefore.glutes.toFixed(2) + ' → ' + vAfter.glutes.toFixed(2));
+  chk('the rebuilt plan names its focus on the session screen',
+      w2.getState().plan.emphasis === 'glutes' &&
+      w2.emphasisSummary(w2.getState().plan, w2.getState().profile).key === 'plan.focusGlutes');
+}
+
+/* ==================================================================== */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' LOGIC TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

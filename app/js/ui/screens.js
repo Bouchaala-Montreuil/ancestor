@@ -1847,6 +1847,47 @@ Screens.profile = function(){
     '<button class="chip ' + (hasGoal(p, g.id) ? 'on' : '') + '" onclick="toggleGoalP(\'' + g.id +
     '\')" aria-pressed="' + (hasGoal(p, g.id) ? 'true' : 'false') + '">' + esc(t(g.label)) + '</button>').join('') + '</div></div>';
 
+  /* Training focus. Sits directly under Goals because it is the other half of
+     the same question: Goals says what the training is FOR, this says where the
+     week leans. The stale banner appears only when the plan in hand was built
+     with a different answer — never on a fresh plan. */
+  /* Folded, not hidden. Goals is the question the profile is organised around;
+     where the week *leans* is a refinement of it, and it is already stated in
+     words above every plan and on the session screen. Putting thirteen more
+     controls on the surface would double the length of a page whose whole point
+     is that it stays short — so it is one summary line that names its own
+     current answer, and the controls are one tap behind it. */
+  h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.focus')) +
+       '</h3></div>';
+  const emphNow = EMPHASIS.filter(e => e.id === (p.emphasis || 'balanced'))[0] || EMPHASIS[0];
+  const prNow = (p.priorities || []).length;
+  h += '<details class="prof-sub"' + (planFocusStale(s) ? ' open' : '') + '>' +
+       '<summary><span class="prof-sub-t">' + esc(t(emphNow.label)) + '</span>' +
+       (prNow ? '<span class="prof-sub-v">\u00b7 ' + esc(prNow === 1 ? t('profile.focusOne') : t('profile.focusN', {n: prNow})) + '</span>' : '') +
+       (planFocusStale(s) ? '<span class="flag warn">' + esc(t('focus.shortStale')) + '</span>' : '') +
+       '</summary><div class="prof-sub-body">';
+  if(planFocusStale(s)){
+    h += banner('warn', t('focus.stale'), '') +
+         '<div class="row mb-3"><button class="btn sm" onclick="rebuildPlan()">' +
+         esc(t('focus.rebuild')) + '</button></div>';
+  }
+  h += '<div class="tiles">' + EMPHASIS.map(e =>
+    '<button type="button" class="tile radio ' + ((p.emphasis || 'balanced') === e.id ? 'on' : '') + '" ' +
+    'aria-pressed="' + ((p.emphasis || 'balanced') === e.id ? 'true' : 'false') + '" ' +
+    'onclick="setEmphasis(\'' + e.id + '\')">' +
+    '<span class="box"></span><span><span class="t">' + esc(t(e.label)) + '</span>' +
+    '<span class="d">' + esc(t(e.desc)) + '</span></span></button>').join('') + '</div>';
+  h += '<p class="hint mt-3">' + esc(t('profile.focusHint')) + '</p>';
+  h += '<div class="mt-4"><p class="eyebrow mb-2">' + esc(t('profile.priorities')) + '</p>' +
+       '<div class="chips">' + PRIORITY_GROUPS.filter(g => g.id !== 'balanced').map(g => {
+         const on = (p.priorities || []).indexOf(g.id) >= 0;
+         return '<button type="button" class="chip ' + (on ? 'on' : '') + '" ' +
+           'aria-pressed="' + (on ? 'true' : 'false') + '" onclick="togglePriority(\'' + g.id + '\')">' +
+           esc(t(g.label)) + '</button>';
+       }).join('') + '</div>' +
+       '<p class="hint mt-2">' + esc(t('profile.prioritiesHint')) + '</p></div>';
+  h += '</div></details></div>';
+
   /* Training Style, Bodyweight & Units */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('onb.style.t')) + '</h3></div>';
   h += '<div class="tiles">' +
@@ -1992,7 +2033,17 @@ Screens.profile = function(){
        '</h3></div><div class="tiles">' +
        LANGS.map(l => '<button class="tile radio ' + (CURRENT_LANG===l?'on':'') + '" onclick="switchLang(\'' + l + '\')"><span class="box"></span>' +
          '<span><span class="t">' + esc(langName(l)) + ' (' + esc(langLabel(l)) + ')</span></span></button>').join('') +
-       '</div></div>';
+       '</div>' +
+       /* If the language you are reading is not fully translated, say so here as
+          well as on the first-launch screen: a partly translated interface is a
+          fact about the product, not a secret kept in a corner. */
+       (function(){
+         const cov = (typeof langStatus === 'function') ? langStatus(CURRENT_LANG) : null;
+         return (cov && cov.percent < 100)
+           ? '<p class="hint mt-2">' + esc(t('lang.coverageNote', { p: cov.percent })) + '</p>'
+           : '';
+       })() +
+       '</div>';
 
   h += groupClose;
 
@@ -2026,6 +2077,20 @@ Screens.profile = function(){
        '</b> ' + esc(t('body.note2d')) + '</div></div>';
 
   h += groupClose;
+  /* Explore. Body and Science left the bottom bar because a thumb's map has
+     room for four destinations, not six. They are not hidden: each is a full row
+     here, drawn with the same mark it had in the bar, and Today links to both. */
+  h += groupOpen(t('profile.explore'), t('nav.body') + ' · ' + t('nav.science'), false);
+  h += '<div class="stack">' +
+       '<button class="btn quiet block nav-link" onclick="go(\'body\')">' +
+         '<svg viewBox="0 0 24 24" aria-hidden="true" class="nav-link-mark">' + NAV_MARK.body + '</svg>' +
+         esc(t('nav.body')) + '</button>' +
+       '<button class="btn quiet block nav-link" onclick="go(\'science\')">' +
+         '<svg viewBox="0 0 24 24" aria-hidden="true" class="nav-link-mark">' + NAV_MARK.science + '</svg>' +
+         esc(t('nav.science')) + '</button>' +
+       '</div>';
+  h += groupClose;
+
   h += '</div>'; /* end right profile-col */
   h += '</div>'; /* end profile-grid */
   return { html: h };
@@ -2056,7 +2121,14 @@ function setDisplay(key, value){
 
 function rebuildPlan(){
   const s = getState();
-  s.plan = buildPlan(s.profile); saveState(); savedToast('you.saved'); go('session');
+  const wasStale = planFocusStale(s);
+  s.plan = buildPlan(s.profile);
+  saveState();
+  /* The message says which of the two things happened, because "saved" alone
+     cannot tell a person whether the programme they are looking at is the new
+     one. Logged sessions and any active session are untouched by design. */
+  savedToast(wasStale ? 'focus.rebuilt' : 'you.saved');
+  go('session');
 }
 function replayOnboarding(){ const s = getState(); s.onboarded = false; saveState(); onbIdx = 0; go('onb'); }
 
@@ -2259,7 +2331,86 @@ function saveFeel(){
 /* ===================================================================== */
 /*  ONBOARDING (restyled, same data model)                                */
 /* ===================================================================== */
-const ONB_STEPS = ['welcome','exp','equip','avail','shift','sleep','style','ex','ready'];
+/* ===================================================================== */
+/*  FIRST LAUNCH — language, before anything else is asked                */
+/* ===================================================================== */
+/* The screen is the whole of onboarding step zero: it renders instead of the
+   welcome step while `state.langChosen` is false, and it disappears for good
+   once a language has been chosen. It is a step, not a modal, because a person
+   who cannot read the interface cannot dismiss a dialog they cannot read.
+
+   The list prints each language in its own name and script, the way its
+   speakers write it. Coverage is measured, not claimed: `langStatus()` counts
+   the translated keys, so a language that is 97% done says 97%. */
+Screens.lang = function(){
+  const status = (typeof langStatus === 'function') ? langStatus : (() => null);
+  const rows = LANGS.map(l => {
+    const st = status(l) || { percent: 100, status: 'full' };
+    const on = (l === CURRENT_LANG);   // the page is already in the picked language
+    /* A language is written in its own script in this list, so each row
+       declares its own direction and language: the Arabic row reads
+       right-to-left inside an otherwise left-to-right page. */
+    const rtl = (typeof isRTL === 'function') && isRTL(l);
+    return '<button type="button" class="lang-row ' + (on ? 'on' : '') + '" ' +
+      'lang="' + l + '" ' +
+      'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
+      'onclick="pickLang(\'' + l + '\')">' +
+      '<span class="box" aria-hidden="true"></span>' +
+      '<span class="lang-nm" dir="' + (rtl ? 'rtl' : 'ltr') + '">' + esc(langName(l)) + '</span>' +
+      '<span class="lang-code">' + esc(String(l).toUpperCase()) + '</span>' +
+      (st.status !== 'full'
+        ? '<span class="flag sm warn">' + esc(t('lang.coverage')) + ' ' + st.percent + '%</span>'
+        : '') +
+      '</button>';
+  }).join('');
+
+  /* No second wordmark: the masthead is already above this screen and says the
+     name. Repeating it inside the frame made the first thing a new user sees a
+     logo stacked on a logo. */
+  let h = '<div class="onb-frame lang-frame">' +
+    '<h1 class="display pre mb-2">' + esc(t('lang.title')) + '</h1>' +
+    '<p class="onb-prose">' + esc(t('lang.sub')) + '</p>' +
+    '<div class="lang-list">' + rows + '</div>' +
+    '<div class="onb-actions">' +
+    '<button class="btn block" onclick="chooseLang(CURRENT_LANG)">' +
+    esc(t('lang.continue')) + '</button></div>' +
+    '<p class="hint mt-3">' + esc(t('lang.note')) + '</p>' +
+    '</div>';
+  return { html: h, noNav: true };
+};
+
+/* Choosing applies immediately — the whole page re-renders in the new language,
+   including this screen — and is written in two places for two different
+   reasons: `localStorage['ancestor.lang']` so the very first paint of the next
+   launch is already in the right language (i18n/core.js reads it before any
+   screen exists), and the record itself so an export carries the choice. */
+/* Two acts, not one.
+   `pickLang` applies a language the moment it is tapped — the heading above the
+   list changes under the finger, which is the only honest way to answer "did I
+   get the right one?" — and writes it to the language key, so a launcher who
+   abandons the screen still comes back to the language they were reading.
+   `chooseLang` is the Continue button: it marks the question answered, which is
+   what stops the screen appearing on every launch. Tapping a row alone does not
+   answer it, so a mis-tap is one more tap to undo instead of a page in a script
+   you cannot read. */
+function pickLang(l){
+  if(LANGS.indexOf(l) < 0) return;
+  setLang(l);
+  render();
+  window.scrollTo(0, 0);
+}
+function chooseLang(l){
+  const pick = (LANGS.indexOf(l) >= 0) ? l : CURRENT_LANG;
+  setLang(pick);
+  const s = getState();
+  s.lang = pick;
+  s.langChosen = true;
+  saveState();
+  render();
+  window.scrollTo(0, 0);
+}
+
+const ONB_STEPS = ['welcome','exp','focus','approach','equip','avail','shift','sleep','style','ex','ready'];
 let ONB_EX_OPEN = {};
 function onbExOpen(pat, open){ if(open) ONB_EX_OPEN[pat] = true; else delete ONB_EX_OPEN[pat]; }
 let onbIdx = 0;
@@ -2313,6 +2464,54 @@ Screens.onb = function(){
       '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn grow"  ' + (p.experience && p.goal ? '' : 'disabled') +
       ' onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+  }
+
+  if(step === 'focus'){
+    /* Multi-select, nothing pre-selected, and the "whole body" chip is an answer
+       rather than a reset: choosing it clears the specific picks, because a
+       programme cannot emphasise everything and one thing at once. */
+    const picked = p.priorities || [];
+    b = head + '<h1 class="display pre mb-3">' + esc(t('onb.focus.t')) + '</h1>' +
+      '<p class="onb-prose">' + esc(t('onb.focus.d')) + '</p>' +
+      '<div class="focus-grid">' +
+      PRIORITY_GROUPS.map(g => {
+        const on = (g.id === 'balanced') ? (!picked.length && (p.emphasis || 'balanced') === 'balanced')
+                                         : picked.indexOf(g.id) >= 0;
+        return '<button type="button" class="tile focus-tile ' + (on ? 'on' : '') + '" ' +
+          'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
+          'onclick="togglePriority(\'' + g.id + '\')">' +
+          '<span class="box"></span><span><span class="t">' + esc(t(g.label)) + '</span>' +
+          (g.id === 'balanced' ? '<span class="d">' + esc(t('emphasis.balanced.d')) + '</span>' : '') +
+          '</span></button>';
+      }).join('') + '</div>' +
+      '<p class="hint mt-3">' + esc(t('onb.focus.note')) + '</p>' +
+      '<div class="onb-actions">' +
+      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+  }
+
+  if(step === 'approach'){
+    /* Five options, all of them available to everybody. Nothing on this screen
+       reads any earlier answer: the copy says so, the code does it by writing
+       the choice straight into `emphasis`. */
+    b = head + '<h1 class="display pre mb-3">' + esc(t('onb.approach.t')) + '</h1>' +
+      '<p class="onb-prose">' + esc(t('onb.approach.d')) + '</p>' +
+      '<div class="tiles">' + EMPHASIS.map(e =>
+        tile((p.emphasis || 'balanced') === e.id, t(e.label), t(e.desc),
+             "setEmphasis('" + e.id + "')", true)).join('') + '</div>' +
+      ((p.emphasis === 'custom')
+        ? '<p class="eyebrow mt-4 mb-2">' + esc(t('profile.priorities')) + '</p>' +
+          '<div class="focus-grid">' + PRIORITY_GROUPS.filter(g => g.id !== 'balanced').map(g => {
+            const on = (p.priorities || []).indexOf(g.id) >= 0;
+            return '<button type="button" class="chip ' + (on ? 'on' : '') + '" ' +
+              'aria-pressed="' + (on ? 'true' : 'false') + '" onclick="togglePriority(\'' + g.id + '\')">' +
+              esc(t(g.label)) + '</button>';
+          }).join('') + '</div>'
+        : '') +
+      '<p class="hint mt-3">' + esc(t('onb.approach.note')) + '</p>' +
+      '<div class="onb-actions">' +
+      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'equip'){
@@ -2473,6 +2672,55 @@ function setConsent(){ const s = getState(); s.consented = true; saveState(); on
    end: the answer was stored and then ignored. profileSet() keeps them in
    step in both directions. */
 function setP(k,v){ const s = getState(); profileSet(s.profile, k, v); saveState(); render(); }
+
+/* Training focus has two setters rather than one, because the two answers do
+   different things: `setEmphasis` picks which strategy the generator follows,
+   `togglePriority` edits the muscle list the custom strategy reads. Both live in
+   the profile, so they travel with the record and survive a language change, a
+   reload and an import.
+
+   Neither touches `state.plan`. Editing what you want is not the same act as
+   rebuilding what you have, and silently regenerating a plan under someone who
+   is mid-week — or mid-session — is exactly the overwrite the brief forbids. */
+function setEmphasis(id){
+  if(!EMPHASIS.some(e => e.id === id)) return;
+  const s = getState();
+  s.profile.emphasis = id;
+  saveState(); render();
+}
+function togglePriority(id){
+  if(id === 'balanced'){
+    const s = getState();
+    s.profile.priorities = [];
+    s.profile.emphasis = 'balanced';
+    saveState(); render(); return;
+  }
+  const s = getState();
+  const arr = Array.isArray(s.profile.priorities) ? s.profile.priorities : [];
+  const i = arr.indexOf(id);
+  if(i >= 0) arr.splice(i, 1); else arr.push(id);
+  s.profile.priorities = arr;
+  /* Picking muscles IS choosing the custom strategy: making a person find a
+     "custom" tile afterwards would be a second answer to one question. */
+  if(arr.length) s.profile.emphasis = 'custom';
+  else if(s.profile.emphasis === 'custom') s.profile.emphasis = 'balanced';
+  saveState(); render();
+}
+/* Does the plan in hand match the focus in the profile? Compared on what the
+   plan was BUILT with, which is stamped on it, not on what today's settings say. */
+function planFocusStale(s){
+  const plan = (s || getState()).plan;
+  if(!plan || !plan.sessions || !plan.sessions.length) return false;
+  if(typeof plan.emphasis === 'undefined') return false;   // built before focus existed
+  const p = (s || getState()).profile || {};
+  const a = plan.emphasis || 'balanced';
+  const b = p.emphasis || 'balanced';
+  if(a !== b) return true;
+  if(a !== 'custom') return false;
+  const x = (plan.priorities || []).slice().sort().join(',');
+  const y = (p.priorities || []).slice().sort().join(',');
+  return x !== y;
+}
 function setLimit(l){
   const s = getState(), arr = s.profile.limits;
   if(l === '__none__'){ s.profile.limits = []; }

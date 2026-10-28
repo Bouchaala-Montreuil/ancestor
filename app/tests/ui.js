@@ -47,9 +47,17 @@ function boot(seed){
 }
 
 /* Walks the onboarding flow with sensible defaults. */
-function completeOnboarding(w,d,{exp='i',goal='h',equip='gym',days=3,shift='night',style='std'}={}){
+function completeOnboarding(w,d,{exp='i',goal='h',equip='gym',days=3,shift='night',style='std',
+                                 emphasis='balanced',priorities=[]}={}){
+  /* Step zero: the language screen. Every walk starts by answering it, the same
+     way a first-time user does. */
+  w.chooseLang('en');
   w.setConsent();
   w.setP('experience',exp); w.setP('goal',goal); w.onbNext();
+  if(priorities.length){ priorities.forEach(p => w.togglePriority(p)); }
+  if(emphasis !== 'balanced') w.setEmphasis(emphasis);
+  w.onbNext();                                    // focus
+  w.onbNext();                                    // approach
   w.setP('equipment',equip); w.onbNext();
   w.setP('daysPerWeek',days); w.onbNext();
   w.setP('shiftType',shift); w.onbNext();
@@ -73,20 +81,54 @@ const $$ = s => Array.prototype.slice.call(d.querySelectorAll(s));
 
 chk('app boots and renders', !!sb() && sb().innerHTML.length > 100,
     (sb() ? sb().innerHTML.length + ' chars' : 'nothing'));
-chk('onboarding shown to a new user', txt().includes('Train when you are ready'));
-chk('privacy disclosure appears first', txt().includes('stays on your device'));
+/* First launch asks one thing before anything else: which language. */
+chk('a first launch opens on the language screen', txt().includes('Choose your language'));
+chk('the language screen comes before the privacy step',
+    !txt().includes('stays on your device'), txt().slice(0, 60));
+chk('every language is listed in its own name and script',
+    $$('.lang-row').length === 7 && txt().includes('العربية') && txt().includes('Nederlands'),
+    $$('.lang-row').length + ' rows');
+chk('the language rows name their own language and direction',
+    $$('.lang-row[lang]').length === 7 &&
+    d.querySelector('.lang-row[lang="ar"] .lang-nm').getAttribute('dir') === 'rtl' &&
+    d.querySelector('.lang-row[lang="en"] .lang-nm').getAttribute('dir') === 'ltr');
 chk('bottom nav hidden during onboarding', $('#nav').style.display === 'none');
-chk('seven language buttons rendered', $$('#langs button').length === 7,
-    $$('#langs button').length);
+chk('no permanent language menu in the header', !$('#langs'),
+    $('#langs') ? 'still there' : 'removed');
+
+/* Choosing applies immediately; Continue is what records the answer. */
+{ const fr = $$('.lang-row').filter(b => b.getAttribute('lang') === 'fr')[0];
+  fr.dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  chk('tapping a language applies it immediately', /Choisissez votre langue/.test(txt()),
+      txt().slice(0, 40));
+  chk('and it is remembered before Continue is pressed',
+      w.localStorage.getItem('ancestor.lang') === 'fr');
+  chk('but the question is not answered until Continue',
+      w.getState().langChosen === false);
+  const cont = $$('.lang-frame .onb-actions button').pop();
+  cont.dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  chk('Continue answers the question and moves on',
+      w.getState().langChosen === true && w.getState().lang === 'fr' &&
+      txt().includes('quand tu es prêt'), w.ANC.onbStep);
+  w.chooseLang('en');       // back to English for the rest of the suite
+  w.onbGo(0);
+}
+chk('onboarding shown to a returning, answered user', txt().includes('Train when you are ready') ||
+    txt().includes('when you are ready'), txt().slice(0,40));
+chk('privacy disclosure appears first in the flow', txt().includes('stays on your device'));
 
 w.setConsent();
 chk('step 2 — experience', txt().includes('How long have you been'));
 w.setP('experience','i'); w.setP('goal','h'); w.onbNext();
-chk('step 3 — equipment', txt().includes('What equipment'));
+chk('step 3 — focus', txt().includes('prioritise'));
+w.onbNext();
+chk('step 4 — approach', txt().includes('programme lean'));
+w.onbNext();
+chk('step 5 — equipment', txt().includes('What equipment'));
 w.setP('equipment','gym'); w.onbNext();
-chk('step 4 — availability', txt().includes('How many days a week'));
+chk('step 6 — availability', txt().includes('How many days a week'));
 w.setP('daysPerWeek',3); w.setP('sessionMinutes',50); w.onbNext();
-chk('step 5 — shifts', txt().includes('Do you work shifts'));
+chk('step 7 — shifts', txt().includes('Do you work shifts'));
 w.setP('shiftType','night');
 d.querySelector('#sh_s').value = '19:00';
 d.querySelector('#sh_e').value = '07:00';
@@ -97,25 +139,27 @@ chk('a 12 h night shift is stored correctly',
     w.shiftHours(w.getState().shifts[0]) + ' h');
 chk('midnight crossing is disclosed in the UI', txt().includes('midnight'));
 w.onbNext();
-chk('step 6 — sleep', txt().includes('How much sleep'));
+chk('step 8 — sleep', txt().includes('How much sleep'));
 w.setP('sleepHours',6); w.setP('sleepVariability',3); w.setP('usualWake',16);
 w.onbNext();
-chk('step 7 — training style', txt().includes('Which training style'));
+chk('step 9 — training style', txt().includes('Which training style'));
 chk('no style is presented as universally optimal',
     txt().includes('No style is universally optimal'));
 w.setP('style','std'); w.setP('unit','kg');
 { const b = $$('#screenBody button.btn'); b[b.length-1].dispatchEvent(new w.MouseEvent('click',{bubbles:true})); }
-chk('step 8 — exercise confirmation', txt().includes('perform comfortably'), 'step=' + w.ANC.onbStep);
+chk('step 10 — exercise confirmation', txt().includes('perform comfortably'), 'step=' + w.ANC.onbStep);
 w.onbNext();
-chk('step 9 — programme preview', txt().includes('Building your program'), 'step=' + w.ANC.onbStep);
+chk('step 11 — programme preview', txt().includes('Building your program'), 'step=' + w.ANC.onbStep);
 
 w.finishOnboarding();
 chk('onboarding completes and a plan is generated',
     !!w.getState().plan && w.getState().plan.sessions.length === 3,
     w.getState().plan.sessions.length + ' sessions');
 chk('nav becomes visible', $('#nav').style.display !== 'none');
-chk('six primary sections', $$('#nav button').length === 6,
+chk('four primary destinations', $$('#nav button').length === 4,
     $$('#nav button').map(b => b.textContent.trim()).join(' / '));
+chk('and nothing else is in the bar', $$('#nav button').every(b =>
+    ['home','session','progress','profile'].indexOf(b.getAttribute('data-nav')) >= 0));
 
 /* ================================================================ */
 group('2. Today — decision, anatomy, performance');
@@ -324,8 +368,10 @@ group('10. Export, erase and error handling');
 
   w2.doErase();
   chk('erase clears storage', w2.localStorage.getItem('ancestor.state.v1') === null);
-  chk('erase returns to onboarding',
-      (d2.querySelector('#screenBody')||d2.body).textContent.includes('Train when you are ready'));
+  /* Erase is a factory reset, so what comes back is a FIRST launch — which, since
+     this pass, is the language question before the privacy one. */
+  chk('erase returns to a first launch, language screen included',
+      (d2.querySelector('#screenBody')||d2.body).textContent.includes('Choose your language'));
 }
 
 /* ================================================================ */
@@ -463,7 +509,7 @@ group('14. The failure state');
   /* The guard itself: the render must not call a screen unprotected. */
   const appSrc = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
   chk('the screen render is wrapped, so one bad view cannot take the app down',
-      /try \{\s*out = onboarding \? Screens\.onb\(\)/.test(appSrc) &&
+      /try \{\s*out = askingLang/.test(appSrc) &&
       /catch \(err\)[\s\S]{0,200}failureState/.test(appSrc));
 
   /* Every empty state carries the same mark — the blank tally form. */
@@ -605,7 +651,7 @@ group('16. Progressive disclosure: one action per moment');
   w7.closeSheet();
 }
 
-group('17. Profile: four records that name their own value');
+group('17. Profile: five records that name their own value');
 {
   const dom8 = await boot();
   const w8 = dom8.window, d8 = w8.document;
@@ -621,19 +667,60 @@ group('17. Profile: four records that name their own value');
     return true;
   };
 
-  chk('the profile is one h1 and four h2 groups',
+  chk('the profile is one h1 and five h2 groups',
       body().querySelectorAll('h1').length === 1 &&
-      body().querySelectorAll('h2').length === 4,
+      body().querySelectorAll('h2').length === 5,
       body().querySelectorAll('h1').length + ' h1, ' +
       body().querySelectorAll('h2').length + ' h2');
   const groups = Array.from(body().querySelectorAll('details.prof-group'));
   chk('every group is a native disclosure with a summary',
-      groups.length === 4 && groups.every(g => g.firstElementChild.tagName === 'SUMMARY'));
+      groups.length === 5 && groups.every(g => g.firstElementChild.tagName === 'SUMMARY'));
   chk('every group names its current value while closed',
       groups.every(g => {
         const v = g.querySelector('.prof-val');
         return v && v.textContent.trim().length > 0;
       }), groups.map(g => (g.querySelector('.prof-val') || {}).textContent).join(' | '));
+
+  /* The training focus is a folded refinement: one line that states its own
+     answer, thirteen controls one tap behind it. */
+  const focusFold = body().querySelector('details.prof-sub');
+  chk('training focus is one fold on the programme group, closed at rest',
+      !!focusFold && !focusFold.hasAttribute('open'),
+      focusFold ? focusFold.querySelector('summary').textContent.trim() : 'missing');
+  chk('and the fold names its current answer, not its question',
+      focusFold.querySelector('.prof-sub-t').textContent.trim() === w8.t('emphasis.balanced'),
+      focusFold.querySelector('.prof-sub-t').textContent.trim());
+  {
+    const before = body().querySelectorAll('button').length;
+    focusFold.open = true;
+    chk('opening it reveals five approaches and eight priority chips',
+        focusFold.open && focusFold.querySelectorAll('.tile').length === 5 &&
+        focusFold.querySelectorAll('.chip').length === 8,
+        focusFold.querySelectorAll('.tile').length + ' tiles, ' +
+        focusFold.querySelectorAll('.chip').length + ' chips');
+    focusFold.open = false;
+    chk('and closing it puts thirteen controls away',
+        body().querySelectorAll('button').length === before,
+        body().querySelectorAll('button').length + ' vs ' + before + ' before');
+  }
+  /* Changing the answer does not rewrite the programme in the drawer. */
+  {
+    const planBefore = JSON.stringify(w8.getState().plan);
+    w8.setEmphasis('glutes');
+    chk('changing the focus never rebuilds the plan silently',
+        JSON.stringify(w8.getState().plan) === planBefore);
+    const f = body().querySelector('details.prof-sub');
+    chk('the fold says the plan in hand does not match',
+        f.hasAttribute('open') && /class="flag warn"/.test(f.innerHTML) &&
+        !!body().querySelector('[onclick*="rebuildPlan"]'),
+        f.querySelector('summary').textContent.replace(/\s+/g,' ').trim());
+    w8.rebuildPlan();
+    chk('rebuilding clears the warning and lands on the session screen',
+        w8.ANC.view === 'session' &&
+        !body().ownerDocument.querySelector('.prof-sub .flag.warn') &&
+        w8.getState().plan.emphasis === 'glutes');
+    w8.go('profile');
+  }
 
   /* A fold has to advertise what it holds. The four summaries are the whole
      table of contents for a page of 160+ controls, so the things people arrive
@@ -1112,8 +1199,10 @@ group("18. Onboarding's exercise step: remove, do not select");
   };
 
   /* walk to the exercise step the way a person does */
+  w9.chooseLang('en');                             /* step zero: language */
   w9.setConsent();
   w9.setP('experience','i'); w9.setP('goal','h'); w9.onbNext();
+  w9.onbNext(); w9.onbNext();                       /* focus, approach */
   w9.setP('equipment','gym'); w9.onbNext();
   w9.setP('daysPerWeek',3); w9.onbNext();
   w9.setP('shiftType','night'); w9.onbNext();

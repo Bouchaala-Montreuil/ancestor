@@ -168,7 +168,9 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;
-  padding-bottom:calc(var(--tabbar-h) + var(--safe-b));
+  /* The bar is 64 px of button plus its 1 px rule: without the rule in the sum,
+     the last line of a long screen sits exactly one pixel under the bar. */
+  padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--hair));
   overflow-x:hidden;
 }
 img,svg{max-width:100%}
@@ -487,16 +489,6 @@ header{
   text-transform:uppercase;color:var(--tech-ink);white-space:nowrap;
 }
 .hd-right{display:flex;align-items:center;gap:var(--s2)}
-.langsel{display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end;max-width:190px}
-.langsel button{
-  background:transparent;border:var(--hair) solid transparent;color:var(--ink-3);
-  font-family:var(--f-mono);font-size:9px;font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;padding:5px 5px;min-width:26px;min-height:26px;
-  border-radius:var(--r-xs);cursor:pointer;line-height:1;
-}
-.langsel button:hover{color:var(--ink);border-color:var(--line)}
-.langsel button.on{background:var(--ink);border-color:var(--ink);color:var(--ivory)}
-
 /* ------------------------------------------------------------ NAVIGATION */
 nav.tabbar{
   position:fixed;bottom:0;inset-inline:0;z-index:60;
@@ -536,7 +528,8 @@ body.typing:has(.restbar) .setcard:focus-within .set-actions{bottom:76px}
   flex:1 1 0;min-height:var(--tabbar-h);min-width:44px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:5px;background:none;border:0;cursor:pointer;color:var(--ink-3);
-  font-family:var(--f-mono);font-size:8px;font-weight:600;
+  /* Four destinations instead of six: the label has room to be read now. */
+  font-family:var(--f-mono);font-size:9.5px;font-weight:600;
   letter-spacing:.1em;text-transform:uppercase;padding:8px 2px 9px;
   transition:color var(--t-fast) var(--ease);
 }
@@ -557,6 +550,18 @@ body.typing:has(.restbar) .setcard:focus-within .set-actions{bottom:76px}
   position:absolute;top:0;inset-inline-start:0;width:0;height:2px;background:var(--burnt);
   will-change:transform,width;pointer-events:none;
 }
+
+/* A section that is not in the bar, drawn as a full-width row in settings. */
+.nav-link{display:flex;align-items:center;gap:var(--s3);justify-content:flex-start;
+  font-size:11px;letter-spacing:.12em}
+.nav-link-mark{width:19px;height:19px;fill:currentColor;stroke:none;flex:0 0 auto}
+
+/* What the week is built around, stated once above the plan. */
+.plan-focus{
+  border-inline-start:3px solid var(--burnt);padding:var(--s2) 0 var(--s2) var(--s4);
+  margin:var(--s4) 0;max-width:60ch;
+}
+.plan-focus .eyebrow{margin-bottom:2px}
 
 /* ---------------------------------------------------------------- BUTTONS */
 .btn{
@@ -2228,6 +2233,68 @@ table.data tbody tr:last-child td{border-bottom:0}
 .onb-bar i.on{background:var(--ink)}
 .onb-bar i.on:last-of-type{background:var(--burnt)}
 
+/* ------------------------------------------------- first launch: language
+   Seven rows, each written in its own script, inside the same frame the rest of
+   onboarding uses. The row is a native button so it is in the tab order, and its
+   `lang`/`dir` attributes make a screen reader switch voice mid-list — an Arabic
+   word read with an English voice is not a name, it is noise. */
+.lang-frame{padding-top:var(--s5)}
+.lang-list{border-top:2px solid var(--ink);margin-bottom:var(--s5)}
+.lang-row{
+  display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;
+  gap:var(--s3) var(--s4);min-height:60px;width:100%;padding:var(--s3) 0;
+  background:transparent;border:0;border-bottom:var(--hair) solid var(--line-soft);
+  border-radius:0;text-align:start;cursor:pointer;color:var(--ink);
+}
+.lang-row:hover{background:rgba(32,33,31,.03)}
+.lang-row:active{background:var(--recess)}
+.lang-row:focus-visible{outline:2px solid var(--burnt);outline-offset:-2px}
+.lang-row .box{
+  width:18px;height:18px;border:var(--hair) solid var(--ink);border-radius:var(--r-xs);
+  grid-column:1;grid-row:1;position:relative;
+}
+.lang-row.on .box{background:var(--ink)}
+.lang-row.on .box::after{
+  content:"";position:absolute;inset:3px;background:var(--ivory);
+  clip-path:polygon(14% 52%,0 68%,38% 100%,100% 22%,84% 8%,36% 70%);
+}
+.lang-nm{
+  grid-column:2;grid-row:1;font-family:var(--f-body);font-size:17px;font-weight:500;
+  line-height:1.2;text-align:start;
+}
+.lang-code{
+  grid-column:3;grid-row:1;font-family:var(--f-mono);font-size:9px;font-weight:600;
+  letter-spacing:.14em;color:var(--tech-ink);
+}
+.lang-row .flag{grid-column:2 / -1;grid-row:2;justify-self:start}
+.lang-row.on .lang-nm{font-weight:700}
+
+/* A folded refinement inside a profile group: one line that names its answer. */
+.prof-sub{border-top:var(--hair) solid var(--line-soft);margin-top:var(--s3)}
+.prof-sub > summary{
+  display:flex;align-items:center;gap:var(--s3);min-height:var(--hit);cursor:pointer;
+  list-style:none;padding:var(--s2) 0;
+}
+.prof-sub > summary::-webkit-details-marker{display:none}
+.prof-sub > summary::after{
+  content:"+";margin-inline-start:auto;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--ink-3);
+}
+.prof-sub[open] > summary::after{content:"\2212"}
+.prof-sub > summary:focus-visible{outline:2px solid var(--burnt);outline-offset:2px}
+.prof-sub-t{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink)}
+.prof-sub-v{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;color:var(--tech-ink)}
+.prof-sub-body{padding-bottom:var(--s2)}
+
+/* Priority chips on the focus step: two columns of answer, not a chip cloud. */
+.focus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--s4);
+  border-top:var(--hair) solid var(--line)}
+.focus-grid .tile{min-height:56px;border-bottom:var(--hair) solid var(--line);
+  background:transparent;box-shadow:none;border-radius:0;padding:var(--s3) 0}
+.focus-grid .tile.on{box-shadow:inset 3px 0 0 var(--burnt);padding-inline-start:var(--s3)}
+@media (max-width:400px){.focus-grid{grid-template-columns:minmax(0,1fr)}}
+
 /* One question, set as large as the screen allows. */
 .onb-frame h1.display,
 .onb-frame h1{
@@ -2673,7 +2740,6 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   :root{--s7:56px}
   .shell{padding:0 var(--s6)}
   .hd{padding:var(--s3) var(--s6)}
-  .langsel{max-width:none}
   .masthead{padding:var(--s7) 0 var(--s5)}
   .masthead-title{max-width:18ch}
   .layout{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:var(--s6)}
@@ -2737,11 +2803,10 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   .dash-fig-duo{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
-/* Narrow phones: keep the wordmark and the language switch on one line. */
+/* Narrow phones: keep the wordmark on one line. */
 @media (max-width:400px){
   .wordmark b{font-size:18px;letter-spacing:.1em}
   .wordmark #ver{display:none}
-  .langsel button{min-width:22px;font-size:8px;padding:4px 3px}
   .masthead-idx{font-size:9px;letter-spacing:.12em}
   .dec-state{font-size:clamp(38px,12vw,54px)}
   .cov-row{grid-template-columns:minmax(66px,80px) 1fr 38px;gap:var(--s2)}
@@ -2783,11 +2848,10 @@ html[data-simple="on"] .chart-tip-readout{display:none}
    Only the two clickable flags get this. The other sixty-seven are labels: an
    invisible target on a word that does nothing is not a kindness. */
 @media (pointer: coarse){
-  .link-btn,.langsel button,.fail-more summary,.prev-copy-btn,.dis summary,
+  .link-btn,.fail-more summary,.prev-copy-btn,.dis summary,
   .lab-btn,button.flag,.btn.sm,.prof-group > summary,
   .next-ex-more > summary{position:relative}
   .link-btn::after,
-  .langsel button::after,
   .fail-more summary::after,
   .prev-copy-btn::after,
   .lab-btn::after,

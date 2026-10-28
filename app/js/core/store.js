@@ -15,6 +15,13 @@ function defaultState(){
     created: Date.now(),
     onboarded: false,
     consented: false,
+    /* First-launch language. `langChosen` is what makes the language screen a
+       once-only event: the language itself lives in its own key so a person can
+       change it from settings without touching this record, but the fact that
+       they were asked belongs here, with the rest of their answers. A record
+       written before this field existed reads as `false` and is asked once. */
+    lang: null,
+    langChosen: false,
     profile: {
       name: '',
       experience: null,        // 'b' | 'i' | 'a'
@@ -240,6 +247,9 @@ function migrate(s){
   if(!out.adaptation || typeof out.adaptation !== 'object') out.adaptation = {};
   out.science = Object.assign({ read:[], achievements:[], explorers:[], evidenceOpened:[] },
                               out.science || {});
+  /* Language: only one of the seven we ship, otherwise "not chosen". */
+  if(typeof out.lang !== 'string' || (typeof LANGS !== 'undefined' && LANGS.indexOf(out.lang) < 0)) out.lang = null;
+  out.langChosen = out.langChosen === true || !!out.lang;
   out.version = SCHEMA_VERSION;
   return out;
 }

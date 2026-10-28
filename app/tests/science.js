@@ -63,9 +63,18 @@ group('1. Science Hub navigation');
   onboardAs(w, d);
   w.go('science');
   chk('the hub opens', w.ANC.view === 'science', w.ANC.view);
-  chk('it is in the primary navigation',
-      Array.from(d.querySelectorAll('#nav button')).some(b => b.textContent.trim() === w.t('nav.science')),
-      Array.from(d.querySelectorAll('#nav button')).map(b=>b.textContent.trim()).join(' / '));
+  /* Science left the bottom bar so the bar holds four destinations. It is one tap
+     from Profile (and from Today) as a full-width row with its own mark — the
+     requirement is reachability, not a seat in the bar. */
+  const inBar = Array.from(d.querySelectorAll('#nav button'));
+  w.go('profile');
+  const row = Array.from(d.querySelectorAll('#screenBody .nav-link'))
+    .filter(b => b.textContent.trim() === w.t('nav.science'))[0];
+  chk('it is one tap from Profile, with its mark',
+      inBar.every(b => b.textContent.trim() !== w.t('nav.science')) &&
+      !!row && !!row.querySelector('svg.nav-link-mark'),
+      inBar.map(b=>b.textContent.trim()).join(' / '));
+  w.go('science');
   chk('three sections are offered',
       txt(d).indexOf(w.t('sci.tabLessons')) >= 0 &&
       txt(d).indexOf(w.t('sci.tabExplorers')) >= 0 &&

@@ -13,6 +13,11 @@ const _frame = (x, y, w, h) =>
   _bar(x, y, w, T_ICON) + _bar(x, y + h - T_ICON, w, T_ICON) +
   _bar(x, y, T_ICON, h) + _bar(x + w - T_ICON, y, T_ICON, h);
 
+/* Four primary destinations, not six.
+   A bottom bar is a thumb's map, and six was a menu: Body and Science are places
+   you go to study something, not places a session takes you. Both stay one tap
+   from Today (the figure and the lesson card are already entry points) and from
+   Profile's Explore section, so nothing was deleted — it was ranked. */
 const NAV = [
   /* a calendar with one day inked — today, not a week */
   { id:'home', icon:
@@ -24,12 +29,6 @@ const NAV = [
       _bar(7.0, Y_ICON, T_ICON, Y2_ICON - Y_ICON) +
       _bar(13.4, Y_ICON, T_ICON, Y2_ICON - Y_ICON) +
       '<rect x="2.30" y="10.8" width="19.4" height="2.4" transform="rotate(-16 12 12)"/>' },
-  /* the figure, as mass */
-  { id:'body', icon:
-      _bar(9.6, 3.2, 4.8, 4.8) +
-      _bar(4.4, 9.6, 15.2, 3.2) +
-      _bar(6.4, 13.6, 11.2, 2.6) +
-      _bar(7.6, 17.0, 8.8, 2.2) },
   /* ascending bars on a baseline */
   { id:'progress', icon:
       _bar(M_ICON, Y2_ICON + 0.4, R_ICON - M_ICON, T_ICON) +
@@ -41,14 +40,24 @@ const NAV = [
      the same device that numbers every section in the app */
   { id:'profile', icon:
       '<path fill-rule="evenodd" d="M3.2 4.2h17.6v15.6H3.2z M7.6 8.6h8.8v2.4H7.6z M7.6 13h5.6v2.4H7.6z"/>' },
-  /* a library: five stacked spines, an index of what is known */
-  { id:'science', icon:
+];
+
+/* The two marks that moved out of the bar are still drawn here, in the same
+   hand, so the Explore links on Profile and Today are the same drawing wherever
+   the section appears. */
+const NAV_MARK = {
+  body:
+      _bar(9.6, 3.2, 4.8, 4.8) +
+      _bar(4.4, 9.6, 15.2, 3.2) +
+      _bar(6.4, 13.6, 11.2, 2.6) +
+      _bar(7.6, 17.0, 8.8, 2.2),
+  science:
       _bar(M_ICON + 3.0, Y_ICON, R_ICON - M_ICON - 3.0, T_ICON) +
       _bar(M_ICON + 1.4, Y_ICON + 3.6, R_ICON - M_ICON - 1.4, T_ICON) +
       _bar(M_ICON, Y_ICON + 7.2, R_ICON - M_ICON, T_ICON) +
       _bar(M_ICON + 1.4, Y_ICON + 10.8, R_ICON - M_ICON - 1.4, T_ICON) +
-      _bar(M_ICON + 3.0, Y_ICON + 14.4, R_ICON - M_ICON - 3.0, T_ICON) }
-];
+      _bar(M_ICON + 3.0, Y_ICON + 14.4, R_ICON - M_ICON - 3.0, T_ICON)
+};
 
 let VIEW = 'home';
 
@@ -64,13 +73,24 @@ function go(v){
   transitionView(() => { render(); window.scrollTo(0,0); });
 }
 
-function renderLangs(){
-  const el = $('#langs'); if(!el) return;
-  el.innerHTML = LANGS.map(l =>
-    '<button class="' + (l === CURRENT_LANG ? 'on' : '') + '" onclick="switchLang(\'' + l + '\')">' +
-    langLabel(l) + '</button>').join('');
+/* Language is a setting, not a permanent control. The seven chips that used to
+   sit in every header are gone: on a 390 px phone they took the whole right half
+   of the masthead, and a language you switch once does not belong in the
+   furniture. `switchLang` stays because settings calls it. */
+function switchLang(l){
+  setLang(l);
+  const s = getState();
+  s.lang = l;
+  saveLangChosen(s);
+  saveState();
+  render();
+  window.scrollTo(0, 0);
 }
-function switchLang(l){ setLang(l); render(); }
+/* Changing a language must never be read as "this person has not answered the
+   first-run question": it is the same answer, given again. */
+function saveLangChosen(s){
+  if(s) s.langChosen = true;
+}
 
 /* The nav is built once and then updated in place. Rebuilding its markup on
    every render would destroy the selection indicator, and an indicator that
@@ -82,7 +102,11 @@ function renderNav(show){
   if(!show){ nav.style.display = 'none'; NAV_SIG = ''; return; }
   nav.style.display = '';
 
-  const active = (VIEW === 'lesson' || VIEW === 'module') ? 'science' : VIEW;
+  /* Body, Science, a lesson and a module are all reachable but none of them owns
+     a slot in the bar, so none of them may light one up: a selected mark that
+     points at a different screen is a lie about where you are. */
+  const inBar = NAV.some(n => n.id === VIEW);
+  const active = inBar ? VIEW : null;
   const sig = CURRENT_LANG + '|' + NAV.map(n => n.id).join(',');
   if(NAV_SIG !== sig || !nav.querySelector('.inner')){
     nav.innerHTML = '<div class="inner"><i class="nav-ind" hidden></i>' + NAV.map(n =>
@@ -101,9 +125,12 @@ function renderNav(show){
     b.setAttribute('aria-current', on ? 'page' : 'false');
     if(on) activeBtn = b;
   });
+  const ind = nav.querySelector('.nav-ind');
   if(activeBtn){
     const axis = (typeof window !== 'undefined' && window.innerWidth >= 1024) ? 'y' : 'x';
-    moveIndicator(nav.querySelector('.nav-ind'), activeBtn, axis);
+    moveIndicator(ind, activeBtn, axis);
+  } else if(ind){
+    ind.hidden = true;
   }
 }
 
@@ -205,9 +232,13 @@ function reportUncaught(err){
 function render(){
   const s = getState();
   const onboarding = !s.onboarded;
-  const view = onboarding ? 'onb' : VIEW;
+  /* Step zero of onboarding is the language the rest of it is written in. The
+     gate is "has a language ever been chosen", not "is there a saved string" —
+     a record from before this screen existed reads as not-yet-asked, which is
+     true, and asking once is the right number of times. */
+  const askingLang = onboarding && !s.langChosen;
+  const view = onboarding ? (askingLang ? 'lang' : 'onb') : VIEW;
 
-  renderLangs();
   renderNav(!onboarding);
 
   // Accessibility + locale preferences come from the profile, every render.
@@ -219,7 +250,8 @@ function render(){
      designed failure state that says the log is intact and offers a way out. */
   let out;
   try {
-    out = onboarding ? Screens.onb()
+    out = askingLang ? (Screens.lang ? Screens.lang() : Screens.onb())
+        : onboarding ? Screens.onb()
         : (Screens[view] ? Screens[view]() : Screens.home());
   } catch (err) {
     if (typeof console !== 'undefined' && console.error) console.error(err);

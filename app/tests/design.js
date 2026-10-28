@@ -195,7 +195,7 @@ group('7. Layout: mobile first, adapts upward');
   chk('a two-column layout activates at 720 px', /@media\s*\(min-width:720px\)/.test(css));
   chk('navigation becomes a side rail at 1024 px',
       /@media\s*\(min-width:1024px\)/.test(css) && /nav\.tabbar\{[^}]*width:200px/s.test(css));
-  chk('at most six primary sections', (function(){
+  chk('at most six primary sections (now four)', (function(){
     const m = /const NAV = \[([\s\S]*?)\];/.exec(fs.readFileSync(path.join(ROOT,'js/app.js'),'utf8'));
     return m ? (m[1].match(/id:'/g) || []).length <= 6 : false;
   })(), (function(){
@@ -284,9 +284,11 @@ group('8d. Onboarding is designed, not inherited');
   const scr = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
   chk('the step index is a number, not a sentence',
       /class="onb-idx"/.test(scr) && /pad2\(onbIdx \+ 1\)/.test(scr));
-  chk('all eight step footers share one action bar',
-      (scr.match(/class="onb-actions"/g) || []).length === 8,
-      (scr.match(/class="onb-actions"/g) || []).length + ' of 8');
+  /* Eleven steps, one footer component — the language question is step zero and
+     uses the same bar, so the count is the step count, not a coincidence. */
+  chk('every step footer uses the same action bar',
+      (scr.match(/class="onb-actions"/g) || []).length === 11,
+      (scr.match(/class="onb-actions"/g) || []).length + ' of 11');
   chk('the action bar is pinned so Continue is always reachable',
       /\.onb-actions\{[^}]*position:fixed/s.test(css));
   chk('answers are full-width rows, not a tile grid',
@@ -449,7 +451,20 @@ group('8i. The navigation marks are drawn, not borrowed');
   const nav = /const NAV = \[([\s\S]*?)\n\];/.exec(app);
   const body = nav ? nav[1] : '';
 
-  chk('six marks, one per section', (body.match(/id:'/g) || []).length === 6);
+  chk('four marks, one per destination', (body.match(/id:'/g) || []).length === 4);
+  chk('the two that left the bar kept their marks', (function(){
+    const mk = /const NAV_MARK = \{([\s\S]*?)\n\};/.exec(app);
+    return !!mk && /body:/.test(mk[1]) && /science:/.test(mk[1]);
+  })());
+  chk('and they are still reachable from the profile', (function(){
+    const scr = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'), 'utf8');
+    /* The source builds onclick="go(\'body\')" inside a single-quoted JS string,
+       so the escape belongs to the app's source text, not to this check. */
+    const esc4 = String.fromCharCode(92);
+    const link = id => 'go(' + esc4 + "'" + id + esc4 + "')";
+    return /NAV_MARK\.body/.test(scr) && /NAV_MARK\.science/.test(scr) &&
+           scr.indexOf(link('body')) >= 0 && scr.indexOf(link('science')) >= 0;
+  })());
   chk('every mark is built from the wordmark numbers',
       /T_ICON = 2\.4/.test(app) && /M_ICON = 3\.2/.test(app) && /Y_ICON = 4\.2/.test(app));
   /* A 1.4 px hairline disappears on a 3x phone screen; 2.4 px of mass does not. */
@@ -873,7 +888,7 @@ group('8n. Every target is big enough for a thumb in a gym');
       smallClickable.length + ' small controls; unhandled: ' + unhandled.join(', '));
 
   chk('the expansion only exists on a coarse pointer',
-      /@media\s*\(pointer:\s*coarse\)[\s\S]*?\.langsel button/.test(bare) &&
+      /@media\s*\(pointer:\s*coarse\)[\s\S]*?\.link-btn/.test(bare) &&
       bare.split('@media (pointer: coarse)').length === 2);
 
   const hit = token('hit');
