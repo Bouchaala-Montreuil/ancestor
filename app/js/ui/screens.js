@@ -2039,9 +2039,14 @@ Screens.profile = function(){
           fact about the product, not a secret kept in a corner. */
        (function(){
          const cov = (typeof langStatus === 'function') ? langStatus(CURRENT_LANG) : null;
-         return (cov && cov.percent < 100)
-           ? '<p class="hint mt-2">' + esc(t('lang.coverageNote', { p: cov.percent })) + '</p>'
-           : '';
+         if(!cov) return '';
+         /* Interface first, then the honest caveat about what is not translated.
+            Both numbers are measured by langStatus(); neither is typed in. */
+         const chrome = (cov.percent < 100)
+           ? '<p class="hint mt-2">' + esc(t('lang.coverageNote', { p: cov.percent })) + '</p>' : '';
+         const content = (cov.contentPercent !== undefined && cov.contentPercent < 100)
+           ? '<p class="hint mt-2">' + esc(t('lang.contentNote', { p: cov.contentPercent })) + '</p>' : '';
+         return chrome + content;
        })() +
        '</div>';
 
@@ -2345,7 +2350,7 @@ function saveFeel(){
 Screens.lang = function(){
   const status = (typeof langStatus === 'function') ? langStatus : (() => null);
   const rows = LANGS.map(l => {
-    const st = status(l) || { percent: 100, status: 'full' };
+    const st = status(l) || { percent: 100, contentPercent: 100, status: 'full' };
     const on = (l === CURRENT_LANG);   // the page is already in the picked language
     /* A language is written in its own script in this list, so each row
        declares its own direction and language: the Arabic row reads
@@ -2358,8 +2363,11 @@ Screens.lang = function(){
       '<span class="box" aria-hidden="true"></span>' +
       '<span class="lang-nm" dir="' + (rtl ? 'rtl' : 'ltr') + '">' + esc(langName(l)) + '</span>' +
       '<span class="lang-code">' + esc(String(l).toUpperCase()) + '</span>' +
-      (st.status !== 'full'
-        ? '<span class="flag sm warn">' + esc(t('lang.coverage')) + ' ' + st.percent + '%</span>'
+      /* The interface is fully translated in all seven; the lesson text is not.
+         Saying only the first number would be the flattering version, so the
+         row carries the second one too. */
+      ((st.contentPercent !== undefined && st.contentPercent < 100)
+        ? '<span class="flag sm warn">' + esc(t('lang.contentPct', { p: st.contentPercent })) + '</span>'
         : '') +
       '</button>';
   }).join('');
@@ -2375,6 +2383,12 @@ Screens.lang = function(){
     '<button class="btn block" onclick="chooseLang(CURRENT_LANG)">' +
     esc(t('lang.continue')) + '</button></div>' +
     '<p class="hint mt-3">' + esc(t('lang.note')) + '</p>' +
+    (function(){
+      const st = status(CURRENT_LANG);
+      return (st && st.contentPercent !== undefined && st.contentPercent < 100)
+        ? '<p class="hint mt-2">' + esc(t('lang.contentNote', { p: st.contentPercent })) + '</p>'
+        : '';
+    })() +
     '</div>';
   return { html: h, noNav: true };
 };

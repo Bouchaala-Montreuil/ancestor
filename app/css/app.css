@@ -266,6 +266,7 @@ h1.display{
   margin:0 0 var(--s3);
 }
 .masthead-title{
+  overflow-wrap:break-word;hyphens:auto;
   font-family:var(--f-display);
   font-size:var(--fs-mega);
   font-weight:700;
@@ -370,6 +371,14 @@ h1.title,h2.title,h2.sub,h3.sub{
 .sect .aside{
   font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--tech-ink);white-space:nowrap;
+  flex:0 1 auto;min-width:0;
+}
+/* A label that cannot wrap is a label that overflows: "Letzte sieben Tage" at
+   320 px in German pushed the whole document 34 px wider than the phone. It
+   wraps now, and the rule between title and label gives up its width first. */
+@media (max-width:430px){
+  .sect .aside{white-space:normal;text-align:end;overflow-wrap:anywhere}
+  .sect .rule{min-width:var(--s2)}
 }
 
 /* masthead — the screen's opening statement */
@@ -738,7 +747,11 @@ button.flag:hover{border-color:var(--ink)}
 }
 .decision .readiness .bar{margin-top:3px}
 @media (max-width:430px){
-  .decision .readiness{min-width:70px;max-width:70px}
+  /* The column is as wide as its longest word, not a fixed 70 px: a fixed
+     column split "Verfügbarkeit" and "beschikbaarheid" mid-word under the
+     number. It still cannot take more than 44% of the row, so TRAIN—the one
+     thing on this card that must stay large—keeps its side. */
+  .decision .readiness{min-width:70px;max-width:44%;flex:0 0 auto}
   .decision .readiness .v{font-size:26px}
   .dec-state{font-size:clamp(38px,11.5vw,58px)}
 }
@@ -1279,7 +1292,11 @@ html[data-motion="on"] .wait .ws{opacity:.6;animation:none}
 @media (prefers-reduced-motion: reduce){.wait .ws{opacity:.6;animation:none}}
 
 /* tables */
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 var(--s4)}
+/* A grid item defaults to min-width:auto, so a wide table inside one widened the
+   column and then the page, instead of scrolling inside its own wrapper — 302 px
+   of German muscle table in a 272 px column at 320 px. */
+.layout > *{min-width:0}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 var(--s4);max-width:100%}
 .table-wrap table.caption{display:none}
 table.data{
   width:100%;border-collapse:collapse;font-size:var(--fs-sm);
@@ -1415,7 +1432,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 /* The search field was the one child that could shrink, so next to a row of
    muscle chips it collapsed to 215 px and cut the placeholder mid-word. It now
    asks for 280 px and takes a line of its own rather than a stump. */
-.atlas-toolbar > .field{flex:1 1 280px;min-width:280px;max-width:520px}
+.atlas-toolbar > .field{flex:1 1 280px;min-width:min(280px,100%);max-width:520px}
 
 /* ------------------------------------------------------------- EXERCISES */
 /* The atlas is a register: one ruled row per exercise, one tap to the sheet
@@ -1790,6 +1807,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 .lesson-title{
   display:block;font-family:var(--f-display);font-size:19px;line-height:1.12;
   letter-spacing:.025em;text-transform:uppercase;color:var(--ink);
+  overflow-wrap:break-word;hyphens:auto;
 }
 .lesson-sum{
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
@@ -2807,6 +2825,10 @@ html[data-simple="on"] .chart-tip-readout{display:none}
 @media (max-width:400px){
   .wordmark b{font-size:18px;letter-spacing:.1em}
   .wordmark #ver{display:none}
+  /* "WISSENSCHAFT" at 40 px is 315 px wide: wider than the 272 px a 320 px
+     phone has inside the shell, and an uppercase display word cannot be
+     hyphenated. The title steps down instead of pushing the page sideways. */
+  .masthead-title{font-size:clamp(30px,10.7vw,54px)}
   .masthead-idx{font-size:9px;letter-spacing:.12em}
   .dec-state{font-size:clamp(38px,12vw,54px)}
   .cov-row{grid-template-columns:minmax(66px,80px) 1fr 38px;gap:var(--s2)}

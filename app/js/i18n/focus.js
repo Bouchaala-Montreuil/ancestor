@@ -16,11 +16,13 @@ const TFOCUS = {};
 
 TFOCUS.en = {
 'lang.title':'Choose your language',
-'lang.sub':'The interface, the lessons and the printed sheet will all be in this language.',
+'lang.sub':'The interface and the printed sheet will be in this language. Where lesson text is only in English, the row says how much.',
 'lang.note':'You can change this at any time in Profile, under Accessibility & display.',
 'lang.continue':'Continue in English',
 'lang.choose':'Choose',
 'lang.coverageNote':'{p}% of this interface is translated.',
+'lang.contentPct':'Lessons {p}%',
+'lang.contentNote':'The interface is fully translated. {p}% of the lesson text, coaching cues and exercise names are; the rest stays in English, and each lesson says so at the top.',
 
 'onb.focus.t':'Which areas do you want to prioritise?',
 'onb.focus.d':'Pick any that matter to you. These shape how the programme is built — they never remove anything from it.',
@@ -69,11 +71,13 @@ TFOCUS.en = {
 
 TFOCUS.fr = {
 'lang.title':'Choisissez votre langue',
-'lang.sub':'L\'interface, les leçons et la fiche imprimée seront dans cette langue.',
+'lang.sub':'L\'interface et la fiche imprimée seront dans cette langue. Là où le texte des leçons n\'existe qu\'en anglais, la ligne indique dans quelle proportion.',
 'lang.note':'Vous pouvez la changer à tout moment dans Profil, sous Accessibilité et affichage.',
 'lang.continue':'Continuer en français',
 'lang.choose':'Choisir',
 'lang.coverageNote':'{p} % de cette interface est traduite.',
+'lang.contentPct':'Leçons {p} %',
+'lang.contentNote':'L\'interface est entièrement traduite. {p} % du texte des leçons, des consignes et des noms d\'exercices le sont aussi ; le reste est en anglais, et chaque leçon le signale en haut.',
 
 'onb.focus.t':'Quelles zones voulez-vous prioriser ?',
 'onb.focus.d':'Choisissez celles qui comptent pour vous. Elles orientent la construction du programme — elles n\'en retirent jamais rien.',
@@ -122,11 +126,13 @@ TFOCUS.fr = {
 
 TFOCUS.es = {
 'lang.title':'Elige tu idioma',
-'lang.sub':'La interfaz, las lecciones y la hoja impresa estarán en este idioma.',
+'lang.sub':'La interfaz y la hoja impresa estarán en este idioma. Donde el texto de las lecciones solo existe en inglés, la fila lo indica.',
 'lang.note':'Puedes cambiarlo cuando quieras en Perfil, en Accesibilidad y pantalla.',
 'lang.continue':'Continuar en español',
 'lang.choose':'Elegir',
 'lang.coverageNote':'El {p} % de esta interfaz está traducido.',
+'lang.contentPct':'Lecciones {p} %',
+'lang.contentNote':'La interfaz está traducida por completo. También lo está el {p} % del texto de las lecciones, las indicaciones y los nombres de ejercicios; el resto permanece en inglés y cada lección lo dice al principio.',
 
 'onb.focus.t':'¿Qué zonas quieres priorizar?',
 'onb.focus.d':'Elige las que te importen. Orientan cómo se construye el programa: nunca le quitan nada.',
@@ -175,11 +181,13 @@ TFOCUS.es = {
 
 TFOCUS.de = {
 'lang.title':'Sprache wählen',
-'lang.sub':'Oberfläche, Lektionen und das gedruckte Blatt erscheinen in dieser Sprache.',
+'lang.sub':'Oberfläche und gedrucktes Blatt erscheinen in dieser Sprache. Wo Lektionstexte nur auf Englisch vorliegen, steht es in der Zeile.',
 'lang.note':'Du kannst sie jederzeit unter Profil → Bedienung & Darstellung ändern.',
 'lang.continue':'Auf Deutsch fortfahren',
 'lang.choose':'Wählen',
 'lang.coverageNote':'{p} % dieser Oberfläche sind übersetzt.',
+'lang.contentPct':'Lektionen {p} %',
+'lang.contentNote':'Die Oberfläche ist vollständig übersetzt. Ebenso {p} % des Lektionstexts, der Hinweise und Übungsnamen; der Rest bleibt Englisch, und jede Lektion sagt das oben.',
 
 'onb.focus.t':'Welche Bereiche möchtest du bevorzugen?',
 'onb.focus.d':'Wähle, was dir wichtig ist. Das prägt den Aufbau des Programms — es entfernt nie etwas.',
@@ -228,11 +236,13 @@ TFOCUS.de = {
 
 TFOCUS.it = {
 'lang.title':'Scegli la lingua',
-'lang.sub':'Interfaccia, lezioni e scheda stampata saranno in questa lingua.',
+'lang.sub':'Interfaccia e scheda stampata saranno in questa lingua. Dove il testo delle lezioni esiste solo in inglese, la riga lo indica.',
 'lang.note':'Puoi cambiarla quando vuoi in Profilo, sotto Accessibilità e display.',
 'lang.continue':'Continua in italiano',
 'lang.choose':'Scegli',
 'lang.coverageNote':'Il {p}% di questa interfaccia è tradotto.',
+'lang.contentPct':'Lezioni {p} %',
+'lang.contentNote':'L\'interfaccia è tradotta del tutto. Lo è anche il {p} % del testo delle lezioni, delle indicazioni e dei nomi degli esercizi; il resto resta in inglese e ogni lezione lo dice in cima.',
 
 'onb.focus.t':'Quali zone vuoi privilegiare?',
 'onb.focus.d':'Scegli quelle che contano per te. Orientano la costruzione del programma — non tolgono mai nulla.',
@@ -281,11 +291,13 @@ TFOCUS.it = {
 
 TFOCUS.nl = {
 'lang.title':'Kies je taal',
-'lang.sub':'De interface, de lessen en het gedrukte blad zijn in deze taal.',
+'lang.sub':'De interface en het gedrukte blad zijn in deze taal. Waar lestekst alleen in het Engels bestaat, staat dat in de rij.',
 'lang.note':'Je kunt dit altijd wijzigen in Profiel, onder Toegankelijkheid en weergave.',
 'lang.continue':'Doorgaan in het Nederlands',
 'lang.choose':'Kiezen',
 'lang.coverageNote':'{p}% van deze interface is vertaald.',
+'lang.contentPct':'Lessen {p}%',
+'lang.contentNote':'De interface is volledig vertaald. Dat geldt ook voor {p}% van de lestekst, de aanwijzingen en de oefennamen; de rest blijft Engels, en elke les zegt dat bovenaan.',
 
 'onb.focus.t':'Welke gebieden wil je voorrang geven?',
 'onb.focus.d':'Kies wat voor jou telt. Het bepaalt hoe het programma wordt opgebouwd — het haalt er nooit iets uit.',
@@ -334,11 +346,13 @@ TFOCUS.nl = {
 
 TFOCUS.ar = {
 'lang.title':'اختر لغتك',
-'lang.sub':'ستظهر الواجهة والدروس والورقة المطبوعة بهذه اللغة.',
+'lang.sub':'ستظهر الواجهة والورقة المطبوعة بهذه اللغة. وحيثما كان نص الدروس بالإنجليزية فقط، يبيّن السطر ذلك.',
 'lang.note':'يمكنك تغييرها في أي وقت من الملف الشخصي، تحت إمكانية الوصول والعرض.',
 'lang.continue':'المتابعة بالعربية',
 'lang.choose':'اختيار',
 'lang.coverageNote':'نسبة ترجمة هذه الواجهة {p}%.',
+'lang.contentPct':'الدروس {p}%',
+'lang.contentNote':'الواجهة مترجمة بالكامل. وكذلك {p}% من نص الدروس والإرشادات وأسماء التمارين؛ والباقي يبقى بالإنجليزية، وكل درس يذكر ذلك في أوله.',
 
 'onb.focus.t':'أي المناطق تريد إعطاءها الأولوية؟',
 'onb.focus.d':'اختر ما يهمّك. هذه الخيارات توجّه بناء البرنامج ولا تحذف منه شيئاً.',

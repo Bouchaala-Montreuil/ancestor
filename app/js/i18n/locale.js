@@ -95,8 +95,20 @@ const CORE_PREFIXES = [
   'app.','nav.','btn.','c.','home.','decision.','readiness.','state.','body.','progress.',
   'session.','profile.','you.','mg.','mst.','onb.','sleep.','shift.','feel.',
   'chart.','tl.','about.p','unc.','dlg.','err.','goal.','env.','need.','a11y.',
-  'log.','hist.','pat.','equip.','lab3d.','done.','tip.','mod.','modA.','modB.','modC.','mile.','bw.','exd.','rsn.','plan.'
+  'log.','hist.','pat.','equip.','lab3d.','done.','tip.','mod.','modA.','modB.','modC.','mile.','bw.','exd.','rsn.','plan.',
+  /* Chrome that lives under a science prefix but is not lesson prose: the search
+     field, the level filter, the explorer controls, the program footer, the
+     about text, and the "where this appears" labels. Leaving them out of the
+     measure is how the Science hub could read half-English while every language
+     reported 100 %. */
+  'sci.','feature.','sim.','lab.','prog.','about.t','about.p0'
 ];
+
+/* Content that is allowed to stay in English and is measured separately, so the
+   number shown to the user is the truth about the interface and not a flattering
+   average. `howMuchIsEnglish()` below counts it. */
+const CONTENT_PREFIXES = ['why.','ev.','rule.','vol.','mge.','met.','cat.','les.',
+                          'takeaway.','myth.','quiz.','ex.','cue.','ach.','train.'];
 
 function coreKeys(){
   const en = T.en || {};
@@ -113,6 +125,23 @@ function coverage(lang){
     percent: core.length ? Math.round(have.length / core.length * 100) : 0
   };
 }
+
+/* The other half of the truth: lesson prose, coaching cues and exercise names.
+   The app says in the Science hub that the full lesson text is in English; this
+   is the figure behind that sentence, and it is shown on the language screen so
+   a reader knows what they are choosing before they choose it. */
+function contentCoverage(lang){
+  const en = T.en || {};
+  const keys = Object.keys(en).filter(k => CONTENT_PREFIXES.some(p => k.indexOf(p) === 0));
+  const bag = T[lang] || {};
+  const have = keys.filter(k => bag[k] !== undefined && bag[k] !== '');
+  return {
+    lang: lang,
+    translated: have.length,
+    total: keys.length,
+    percent: keys.length ? Math.round(have.length / keys.length * 100) : 0
+  };
+}
 function coverageAll(){
   return LANGS.map(coverage).sort((a,b) => b.percent - a.percent);
 }
@@ -122,7 +151,10 @@ const SUPPORT_THRESHOLD = 95;
 function isSupported(lang){ return coverage(lang).percent >= SUPPORT_THRESHOLD; }
 function langStatus(lang){
   const c = coverage(lang);
-  return { lang:lang, percent:c.percent, status: c.percent >= SUPPORT_THRESHOLD ? 'full' : 'partial' };
+  const content = contentCoverage(lang);
+  return { lang:lang, percent:c.percent,
+           contentPercent: content.percent,
+           status: c.percent >= SUPPORT_THRESHOLD ? 'full' : 'partial' };
 }
 
 /* ------------------------------------------------------------ applying */
@@ -146,6 +178,6 @@ function missingKeys(lang){
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { RTL_LANGS, LOCALE_TAG, LANG_NAME, localeTag, isRTL, langName, langLabel,
                      formatNumber, formatDate, plural, convertWeight, convertStateUnits,
-                     coverage, coverageAll, isSupported, langStatus, applyLocale, missingKeys,
+                     coverage, coverageAll, contentCoverage, isSupported, langStatus, applyLocale, missingKeys,
                      coreKeys, KG_PER_LB };
 }

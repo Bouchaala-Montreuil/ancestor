@@ -1421,6 +1421,58 @@ group('28. Rest can reach a person who is not looking at the tab');
 }
 
 /* ================================================================ */
+group('29. Translation honesty: the interface is measured, and so is what is not');
+{
+  const dom = await boot();
+  const w = dom.window, d = w.document;
+  const body = () => d.getElementById('screenBody');
+
+  /* Both numbers come from the language bags, not from a constant. */
+  const en = w.langStatus('en'), de = w.langStatus('de'), ar = w.langStatus('ar');
+  chk('every language translates the interface in full',
+      ['en','fr','es','de','it','nl','ar'].every(l => w.langStatus(l).percent === 100),
+      ['en','fr','es','de','it','nl','ar'].map(l => l + ':' + w.langStatus(l).percent).join(' '));
+  chk('and the lesson text is measured separately, not assumed',
+      en.contentPercent === 100 && de.contentPercent < 100 && ar.contentPercent < de.contentPercent,
+      'en ' + en.contentPercent + '% / de ' + de.contentPercent + '% / ar ' + ar.contentPercent + '%');
+  chk('the content count is a real count, not a percentage of nothing',
+      w.contentCoverage('en').total > 400 &&
+      w.contentCoverage('en').translated + 1 > w.contentCoverage('de').translated,
+      w.contentCoverage('de').translated + '/' + w.contentCoverage('de').total + ' content keys in German');
+
+  /* The first-launch screen tells the truth before the choice is made. */
+  d.querySelector('.lang-row[lang="de"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  const flags = Array.from(d.querySelectorAll('.lang-row .flag.warn'))
+    .map(f => f.closest('.lang-row').getAttribute('lang'));
+  chk('the rows that keep their lessons in English say so',
+      flags.indexOf('de') >= 0 && flags.indexOf('ar') >= 0 && flags.indexOf('en') < 0,
+      flags.join(',') || 'no flags');
+  chk('the flag carries the measured number, not a word',
+      /\d+/.test(d.querySelector('.lang-row[lang="ar"] .flag.warn').textContent),
+      d.querySelector('.lang-row[lang="ar"] .flag.warn').textContent.trim());
+  chk('the promise above the list does not overclaim',
+      !/lessons and the printed sheet will all be in this language/i
+        .test(d.querySelector('.lang-frame').textContent),
+      d.querySelector('.lang-sub, .onb-prose').textContent.replace(/\s+/g,' ').slice(0, 80));
+
+  /* Same honesty on the profile, where the language is changed later. */
+  w.chooseLang('de');
+  w.setConsent(); w.setP('experience','i'); w.setP('goal','h'); w.onbNext();
+  w.onbNext(); w.onbNext(); w.setP('equipment','gym'); w.onbNext();
+  w.setP('daysPerWeek',3); w.onbNext(); w.setP('shiftType','none'); w.onbNext();
+  w.onbNext(); w.setP('style','std'); w.onbNext(); w.finishOnboarding();
+  w.go('profile');
+  /* The accessibility group, in the language the app is now speaking. */
+  const acc = Array.from(body().querySelectorAll('details.prof-group'))
+    .filter(g => g.querySelector('summary').textContent.indexOf(w.t('profile.gAccess')) >= 0)[0];
+  acc.open = true;
+  chk('the profile\'s language panel repeats the caveat in the chosen language',
+      /%/.test(acc.textContent) && /Englisch|English/.test(acc.textContent),
+      acc.textContent.replace(/\s+/g,' ').slice(-140));
+  w.chooseLang('en');
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

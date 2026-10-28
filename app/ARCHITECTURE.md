@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `88df42f`, with 1,368 headless checks and 63 real-browser checks.
+Read on 2026-10-28 against `88df42f`, with 1,375 headless checks and 64 real-browser checks.
 
 ---
 
@@ -28,7 +28,7 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,368 checks — plus `tests/browser.js` (63 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,375 checks — plus `tests/browser.js` (64 real-Chromium checks),
 which needs a real Chrome and covers the three things jsdom cannot: WebGL, layout
 overflow at 320/360/768/1280, and a service-worker reload with the network severed.
 
@@ -45,7 +45,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,368 checks that only execute when a person remembers. | no `.github/` | **pipeline written** — `app/ci/checks.yml`, one copy from running |
+| S5 | Medium | Nothing ran the suites. 1,375 checks that only execute when a person remembers. | no `.github/` | **pipeline written** — `app/ci/checks.yml`, one copy from running |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |

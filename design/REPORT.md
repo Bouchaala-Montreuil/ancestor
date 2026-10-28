@@ -22,16 +22,16 @@ was quietly not measuring what it said it measured.
 
 ```
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do node tests/$t.js; done
-node tests/browser.js          # 52 real Chromium: WebGL, layouts, keyboard, plan rows, atlas, SW offline
+node tests/browser.js          # 64 real Chromium: WebGL, layouts, keyboard, plan rows, atlas, SW offline
 node tools/keyscan.js          # 1,668 keys × 7 languages, 0 leaks
 node tools/qa_audit.js         # 1 accepted Medium (documented)
 python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
-Current: **1,368 checks over ten headless suites**, all green —
-design 227, premium 213, ui 278, run 142, inclusive 65, personas 73, science 124,
-logic 138, anatomy 64, print 44 — plus **63 real-browser checks** in
+Current: **1,375 checks over ten headless suites**, all green —
+design 227, premium 213, ui 285, run 142, inclusive 65, personas 73, science 124,
+logic 138, anatomy 64, print 44 — plus **64 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---

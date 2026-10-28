@@ -580,9 +580,20 @@ function startServer(){
     const views = ['home', 'session', 'library', 'body', 'progress', 'profile', 'science', 'module'];
     const overflows = [];
 
-    for(const lang of ['en', 'ar']){
+    /* Two directions were audited before this pass, and the two longest words in
+       the app are German: "Verfügbarkeit" under the readiness figure and "Letzte
+       sieben Tage" beside a section rule. Both overflowed a 320 px phone and
+       neither language was in the loop. Every language now runs at the two
+       narrow widths; English and Arabic keep the full six. */
+    const combos = [];
+    ['en', 'fr', 'es', 'de', 'it', 'nl', 'ar'].forEach(lang => {
+      const set = (lang === 'en' || lang === 'ar') ? widths : [320, 390];
+      set.forEach(vw => combos.push({ lang, vw }));
+    });
+
+    for(const { lang, vw } of combos){
       await page.evaluate(l => { switchLang(l); }, lang);
-      for(const vw of widths){
+      {
         await page.setViewport({ width: vw, height: 780, deviceScaleFactor: 1 });
         for(const v of views){
           await page.evaluate(viewName => {
@@ -624,8 +635,34 @@ function startServer(){
     }
     await page.evaluate(() => switchLang('en'));
     await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
-    chk('zero horizontal overflow across 8 views × 6 viewports (320..1440 px) × LTR & RTL (96 layouts)',
-        overflows.length === 0, overflows.slice(0, 5).join('; ') || '96/96 clean');
+    chk('zero horizontal overflow across 8 views × 7 languages × 320..1440 px (' +
+        combos.length * views.length + ' layouts)',
+        overflows.length === 0,
+        overflows.slice(0, 5).join('; ') || (combos.length * views.length) + ' layouts clean');
+
+    /* The verdict card's figure and its caption, at the narrowest phone, in every
+       language: the caption used to break mid-word ("VERFÜGBAR / KEIT"). */
+    {
+      const wrapped = [];
+      await page.setViewport({ width: 320, height: 780, deviceScaleFactor: 1 });
+      for(const lang of ['en', 'fr', 'es', 'de', 'it', 'nl', 'ar']){
+        await page.evaluate(l => { closeSheet(); switchLang(l); go('home'); }, lang);
+        await new Promise(r => setTimeout(r, 120));
+        const res = await page.evaluate(() => {
+          const cap = document.querySelector('.decision .readiness .cap');
+          if(!cap) return null;
+          const cs = getComputedStyle(cap);
+          const oneLine = Math.round(cap.getBoundingClientRect().height) <=
+                          Math.ceil(parseFloat(cs.lineHeight)) + 1;
+          return { oneLine, text: cap.textContent.trim(),
+                   over: document.documentElement.scrollWidth - window.innerWidth };
+        });
+        if(!res || !res.oneLine || res.over > 0) wrapped.push(lang + ':' + JSON.stringify(res));
+      }
+      chk('the readiness caption stays on one line at 320 px in all seven languages',
+          wrapped.length === 0, wrapped.join('; ') || '7/7');
+      await page.evaluate(() => switchLang('en'));
+    }
 
     /* The bottom bar is fixed, so anything that ends inside its 65 px is
        unreachable however far the page scrolls. Measured at 390 px on the six
