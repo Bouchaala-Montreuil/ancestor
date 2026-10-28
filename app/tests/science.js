@@ -70,6 +70,13 @@ group('1. Science Hub navigation');
   w.go('profile');
   const row = Array.from(d.querySelectorAll('#screenBody .nav-link'))
     .filter(b => b.textContent.trim() === w.t('nav.science'))[0];
+  chk('and one tap from Today, where the lessons are read',
+      (function(){
+        w.go('home');
+        const el = Array.from(d.querySelectorAll('#screenBody .link-btn'))
+          .filter(b => b.textContent.indexOf(w.t('sci.title')) === 0)[0];
+        return !!el && el.getAttribute('onclick').indexOf("science") >= 0;
+      })(), 'link in the Learn header');
   chk('it is one tap from Profile, with its mark',
       inBar.every(b => b.textContent.trim() !== w.t('nav.science')) &&
       !!row && !!row.querySelector('svg.nav-link-mark'),

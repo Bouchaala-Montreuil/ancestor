@@ -372,8 +372,13 @@ Screens.home = function(){
          '<span class="flag sm ok">' + readyCount + ' / ' + MUSCLES.length + ' ' + esc(t('mst.ready')) + '</span>' +
        '</div></div></div>';
 
+  /* Learn carries the card for the next lesson, and the hub itself as a link:
+     Science left the bottom bar, and a destination that can only be reached by
+     reading one lesson first is not reachable. */
   h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.learnTitle')) +
-       '</h3><span class="rule"></span></div>' + nextLessonCard(s) + '</div>';
+       '</h3><span class="rule"></span>' +
+       '<span class="aside"><button type="button" class="link-btn" onclick="go(\'science\')">' +
+       esc(t('sci.title')) + ' \u2192</button></span></div>' + nextLessonCard(s) + '</div>';
 
   h += '</div>'; /* end right bento-col */
   h += '</div>'; /* end bento-home */
