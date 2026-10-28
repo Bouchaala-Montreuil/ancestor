@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `2c63c2f`, with 1,390 headless checks and 68 real-browser checks.
+Read on 2026-10-28 against `037789e`, with 1,390 headless checks and 68 real-browser checks.
 
 ---
 
