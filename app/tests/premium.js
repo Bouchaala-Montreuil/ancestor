@@ -414,6 +414,12 @@ group('9. Bundle and source hygiene');
   const bp = fs.readFileSync(path.join(ROOT, 'build.py'), 'utf8');
   chk('build.py builds from index.html', bp.includes('html = read("index.html")'));
   chk('build.py inlines the lazy payloads', bp.includes('inline_payload("three-runtime"'));
+  /* gzip stamps the archive with the second it was made, so two builds of the
+     same sources differed by a byte in each payload header and every rebuild
+     was a diff nobody could read. mtime=0 is what makes the release artifact
+     reproducible — and an artifact you cannot reproduce is one you cannot diff. */
+  chk('build.py stamps its gzip payloads with a fixed mtime, so rebuilds are byte-identical',
+      /_gzip\.compress\(raw,\s*compresslevel=9,\s*mtime=0\)/.test(bp));
   chk('the service worker caches the model',
       fs.readFileSync(path.join(ROOT,'sw.js'),'utf8').includes('assets/anatomy-male-mobile.glb'));
 }

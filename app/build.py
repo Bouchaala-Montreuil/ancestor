@@ -93,7 +93,10 @@ def inline_payload(block_id, path, encode):
         raise SystemExit("index.html is missing the %s payload block" % block_id)
     with open(os.path.join(ROOT, path), "rb") as f:
         raw = f.read()
-    gz = _gzip.compress(raw, compresslevel=9)
+    # mtime=0: gzip stamps the archive with the time it was made, which made two
+    # builds of identical sources differ by a byte in the header every time — and
+    # a release artifact that cannot be reproduced is one nobody can diff.
+    gz = _gzip.compress(raw, compresslevel=9, mtime=0)
     data = base64.b64encode(gz).decode()
     html = html[:m.start()] + ('<script type="text/plain" id="%s" data-enc="gzip-b64">%s</script>'
                                % (block_id, data)) + html[m.end():]
