@@ -9,6 +9,7 @@
      2. Real layout & horizontal-overflow audit at 320 / 360 / 768 / 1280 px
         across every primary screen and interactive module, in LTR and RTL
      3. Real Service Worker registration, cache population & full offline reload
+     3b. Both failure strips (refused write, damaged record) at 320 px, de & ar
      4. Real offline execution of dist/ancestor.html (gzip-b64 decompression
         via DecompressionStream + WebGL rendering with network severed)
      5. Zero uncaught page errors and zero console errors
@@ -1030,6 +1031,107 @@ function startServer(){
     });
     chk('IndexedDB automatic mirror recovers all user sessions if localStorage is cleared',
         idbRecovered === 3, 'recovered sessions=' + idbRecovered);
+
+    /* ================================================================== */
+    /* The two failure strips are the only copy in the app that is read while
+       something is already wrong, so nobody looks at them until they are the
+       last thing between a user and a lost log. `tests/ui.js` owns the strings
+       and the flag logic; what jsdom cannot show is whether the longest of
+       them — German, and Arabic in RTL — fits a 320 px phone while the user is
+       being told their session is not on disk. Both branches run on a real
+       page here, and the strip has to appear on its own: nothing in this group
+       calls `paintStoreFlag`, it is the app that notices. */
+    group('5b. A refused write and a damaged record say so at 320 px, in German and Arabic');
+
+    const failCases = [];
+    /* A context per case, not a cleared page: by this point the suite's own
+       origin holds a saved state and an IndexedDB mirror of it, so
+       `localStorage.clear()` is not a first run — the app recovers the record
+       and opens on Home, and a second page in the same context inherits the
+       first case's log. These strips only exist before there is a record, so
+       each case gets a genuinely empty device. */
+    for(const branch of ['store', 'load']){
+      for(const lang of ['de', 'ar']){
+        const failCtx = await browser.createBrowserContext();
+        const fp = await failCtx.newPage();
+        await fp.setViewport({ width: 320, height: 844, deviceScaleFactor: 1 });
+        await fp.goto(baseUrl + '/index.html', { waitUntil: 'networkidle0' });
+        await fp.waitForFunction(() => document.querySelector('.lang-row'), { timeout: 20000 });
+        if(branch === 'store'){
+          await fp.evaluate(l => {
+            chooseLang(l); setConsent(); setP('experience','i'); setP('goal','h');
+            onbNext(); onbNext(); onbNext(); setP('equipment','gym'); onbNext();
+            setP('daysPerWeek',3); setP('sessionMinutes',50); onbNext();
+            setP('shiftType','none'); onbNext(); onbNext(); setP('style','std');
+            onbNext(); onbNext(); finishOnboarding();
+          }, lang);
+          /* A device that refuses the write at the moment it is made — which is
+             when a real quota dies, not at boot. Overriding it from the first
+             byte instead would break the boot itself, which is a different bug. */
+          await fp.evaluate(() => {
+            window.__origSetItem = Storage.prototype.setItem;
+            Storage.prototype.setItem = function(){
+              const e = new Error('refused'); e.name = 'QuotaExceededError'; throw e;
+            };
+            saveState();
+          });
+        } else {
+          /* A truncated blob on disk: the record exists and cannot be parsed. */
+          await fp.evaluate(() => {
+            localStorage.setItem('ancestor.state.v1', '{"schema":3,"sessions":[');
+            location.reload();
+          });
+          await fp.waitForFunction(() => document.querySelector('.lang-row'), { timeout: 20000 });
+          await fp.evaluate(l => { chooseLang(l); }, lang);
+        }
+        await fp.waitForFunction(b => {
+          const el = document.getElementById('storeFlag');
+          if(!el || el.hidden) return false;
+          return el.querySelector('.sf-t').textContent === t(b === 'store' ? 'app.store.title' : 'app.load.title');
+        }, { timeout: 10000 }, branch);
+        const m = await fp.evaluate(b => {
+          const el = document.getElementById('storeFlag');
+          const words = [...el.querySelectorAll('.sf-t,.sf-b,.sf-x')];
+          return {
+            visible: !el.hidden,
+            title: el.querySelector('.sf-t').textContent,
+            body: el.querySelector('.sf-b').textContent,
+            wantTitle: t(b === 'store' ? 'app.store.title' : 'app.load.title'),
+            wantBody: t(b === 'store' ? 'app.store.body' : 'app.load.body'),
+            docW: document.documentElement.scrollWidth,
+            vw: window.innerWidth,
+            dir: document.documentElement.getAttribute('dir'),
+            clipped: words.filter(w => w.scrollWidth > w.clientWidth + 1).length
+          };
+        }, branch);
+        await shot(fp, 'fail-' + branch + '-' + lang + '-320.png');
+        if(branch === 'store'){
+          /* The strip is a report, not a state: the next write that lands has to
+             take it away again without a reload. */
+          m.clears = await fp.evaluate(() => {
+            Storage.prototype.setItem = window.__origSetItem;
+            saveState();
+            return document.getElementById('storeFlag').hidden === true && !STORAGE_FAILED;
+          });
+        }
+        await failCtx.close();
+        failCases.push(Object.assign({ branch, lang }, m));
+      }
+    }
+    const label = c => (c.branch === 'store' ? 'a refused write' : 'a damaged record') +
+                       ' at 320 px in ' + (c.lang === 'ar' ? 'Arabic (RTL)' : 'German');
+    failCases.forEach(c => {
+      chk(label(c) + ' is announced, with the app\'s own translated words',
+          c.visible && c.title === c.wantTitle && c.body === c.wantBody,
+          c.title.slice(0, 60) + (c.title === c.wantTitle && c.body === c.wantBody ? '' : ' -> not the translated copy'));
+      chk(label(c) + ' fits: no overflow and no clipped line',
+          c.docW <= c.vw + 1 && c.clipped === 0 && (c.lang !== 'ar' || c.dir === 'rtl'),
+          'doc ' + c.docW + '/' + c.vw + ', clipped ' + c.clipped + ', dir ' + c.dir);
+      if(c.branch === 'store'){
+        chk(label(c) + ' goes away by itself once a write lands again',
+            c.clears === true, 'hidden after the retry: ' + c.clears);
+      }
+    });
 
     /* ================================================================== */
     group('6. Shipped single-file bundle (dist/ancestor.html) offline + gzip-b64 WebGL');

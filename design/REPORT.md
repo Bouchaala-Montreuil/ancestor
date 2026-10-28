@@ -30,8 +30,8 @@ python3 site/build.py && python3 site/check.py   # 62 site checks
 ```
 
 Current: **1,450 checks over ten headless suites**, all green —
-design 227, premium 213, ui 285, run 142, inclusive 65, personas 73, science 125,
-logic 138, anatomy 64, print 88 — plus **76 real-browser checks** in
+design 227, premium 213, ui 308, run 144, inclusive 70, personas 73, science 125,
+logic 138, anatomy 64, print 88 — plus **86 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL, all green.
 
 ---

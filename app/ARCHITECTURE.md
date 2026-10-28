@@ -5,7 +5,7 @@ screens do when something goes wrong; this covers what the *system* does, what i
 cannot do, and where the assumptions were hiding.
 
 Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,450 headless checks and
-76 real-browser checks.
+86 real-browser checks.
 
 ---
 
@@ -29,9 +29,11 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,450 checks — plus `tests/browser.js` (76 real-Chromium checks),
-which needs a real Chrome and covers the three things jsdom cannot: WebGL, layout
-overflow at 320/360/768/1280, and a service-worker reload with the network severed.
+**Tests.** Ten headless suites (jsdom) — 1,450 checks — plus `tests/browser.js` (86 real-Chromium checks),
+which needs a real Chrome and covers what jsdom cannot: WebGL, layout overflow at
+320/360/768/1280, a service-worker reload with the network severed, and the two
+failure strips — a refused write and a damaged record — on a 320 px phone in
+German and in Arabic, where they are longest and read right to left.
 
 **Delivery.** `release/ancestor.html`, 2.4 MB, everything inlined including the
 woff2 and the three.js runtime. A service worker caches the file list, cache-first.
