@@ -110,7 +110,7 @@ function renderNav(show){
   const sig = CURRENT_LANG + '|' + NAV.map(n => n.id).join(',');
   if(NAV_SIG !== sig || !nav.querySelector('.inner')){
     nav.innerHTML = '<div class="inner"><i class="nav-ind" hidden></i>' + NAV.map(n =>
-      '<button data-nav="' + n.id + '" class="" onclick="go(\'' + n.id + '\')" ' +
+      '<button data-nav="' + n.id + '" class="" data-act="go" data-a1="' + n.id + '" ' +
       'aria-label="' + esc(t('nav.' + n.id)) + '">' +
       '<svg viewBox="0 0 24 24">' + n.icon + '</svg><span>' + esc(t('nav.' + n.id)) + '</span></button>'
     ).join('') + '</div>';

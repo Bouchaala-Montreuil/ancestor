@@ -358,7 +358,7 @@ function lineChart(opts){
     return '<g class="chart-pt" tabindex="0" role="listitem" aria-label="' + esc(fullTip) + '" ' +
       'onmouseenter="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
       'onfocus="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
-      'onclick="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')">' +
+      'data-act="showChartTip" data-a1="' + tipId + '" data-a2="' + esc(jsTip) + '">' +
       '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(p.v).toFixed(1) + '" r="11" fill="transparent"/>' +
       (p.best
         ? '<circle class="dv-dot best" style="animation-delay:' +
@@ -424,7 +424,7 @@ function barChart(opts){
     g += '<g class="chart-bar-g" tabindex="0" role="listitem" aria-label="' + esc(tipTxt) + '" ' +
          'onmouseenter="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
          'onfocus="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
-         'onclick="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')">' +
+         'data-act="showChartTip" data-a1="' + tipId + '" data-a2="' + esc(jsTip) + '">' +
          (zero
            ? '<rect class="chart-bar zero" x="' + bx.toFixed(1) + '" y="' + (H-PB-2) +
              '" width="' + bwid.toFixed(1) + '" height="2"/>'
@@ -556,8 +556,8 @@ function failureState(err){
     '<h3>' + esc(t('app.fail.title')) + '</h3>' +
     '<p>' + esc(t('app.fail.body')) + '</p>' +
     '<div class="act">' +
-      '<button class="btn" onclick="render()">' + esc(t('app.fail.retry')) + '</button>' +
-      '<button class="btn quiet" onclick="go(\'home\')">' + esc(t('nav.today')) + '</button>' +
+      '<button class="btn" data-act="render">' + esc(t('app.fail.retry')) + '</button>' +
+      '<button class="btn quiet" data-act="go" data-a1="home">' + esc(t('nav.today')) + '</button>' +
     '</div>' +
     (detail ? '<details class="fail-more"><summary>' + esc(t('app.fail.detail')) + '</summary>' +
       '<pre>' + esc(detail) + '</pre></details>' : '') +

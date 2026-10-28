@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- The policy is a backstop, not the defence: escaping is. It exists so
+     that one missed `esc()` cannot become script execution. `script-src`
+     has no unsafe-inline, which is why every handler in this app is a
+     delegated action (js/core/acts.js) rather than an onclick attribute.
+     'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
+     and still forbids eval() and new Function() in JavaScript.
+     build.py appends the sha256 of each inlined block. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#20211F">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -55,7 +63,7 @@
     <span class="sf-k" aria-hidden="true">!</span>
     <span class="sf-t"></span>
     <span class="sf-b"></span>
-    <button class="btn quiet sm sf-x" onclick="doExport()"></button>
+    <button class="btn quiet sm sf-x" data-act="doExport"></button>
   </div>
   <!-- A deploy replaced the files under a tab that is still running the old
        ones. Not an alarm: nothing is lost, but the two versions should not be
@@ -64,7 +72,7 @@
     <span class="uf-k" aria-hidden="true">↑</span>
     <span class="uf-t"></span>
     <span class="uf-b"></span>
-    <button class="btn quiet sm uf-x" onclick="reloadApp()"></button>
+    <button class="btn quiet sm uf-x" data-act="reloadApp"></button>
   </div>
 </header>
 
@@ -79,6 +87,7 @@
 
 <nav id="nav" class="tabbar" role="navigation" aria-label="Primary"></nav>
 
+<script src="js/core/acts.js"></script>
 <script src="js/i18n/core.js"></script>
 <script src="js/i18n/ui.js"></script>
 <script src="js/i18n/exercises.js"></script>

@@ -75,7 +75,8 @@ group('1. Science Hub navigation');
         w.go('home');
         const el = Array.from(d.querySelectorAll('#screenBody .link-btn'))
           .filter(b => b.textContent.indexOf(w.t('sci.title')) === 0)[0];
-        return !!el && el.getAttribute('onclick').indexOf("science") >= 0;
+        return !!el && el.getAttribute('data-act') === 'go' &&
+                       el.getAttribute('data-a1') === 'science';
       })(), 'link in the Learn header');
   chk('it is one tap from Profile, with its mark',
       inBar.every(b => b.textContent.trim() !== w.t('nav.science')) &&
@@ -412,9 +413,12 @@ group('8. Entry points from existing screens');
   chk('Session offers "Why this?" per exercise', txt(d).indexOf(w.t('sci.whyOpen')) >= 0);
   w.go('body'); w.selectMuscle('chest');
   chk('the muscle record offers "Why this?"', txt(d).indexOf(w.t('sci.whyOpen')) >= 0);
-  chk('the muscle record links related lessons',
-      /openLesson\(/.test(sb(d).innerHTML),
-      (sb(d).innerHTML.match(/openLesson\('([^']+)'\)/g)||[]).slice(0,3).join(', '));
+  /* The lesson links are actions, so the check reads the action and where it
+     points — which is also what the browser reads. */
+  const lessonLinks = Array.from(sb(d).querySelectorAll('[data-act="openLesson"]'))
+    .map(b => b.getAttribute('data-a1'));
+  chk('the muscle record links related lessons', lessonLinks.length > 0,
+      lessonLinks.slice(0, 3).join(', '));
 }
 
 /* ==================================================================== */
@@ -493,14 +497,14 @@ group('10. Accessibility and offline');
   chk('hub controls are real buttons',
       Array.from(sb(d).querySelectorAll('button')).every(b => b.tagName === 'BUTTON'));
   const dead = Array.from(sb(d).querySelectorAll('button')).filter(b => {
-    const oc = b.getAttribute('onclick');
-    return oc && typeof w[oc.replace(/\(.*/,'').trim()] !== 'function';
+    const act = b.getAttribute('data-act') || b.getAttribute('data-in');
+    return act && typeof w.ACTS[act] !== 'function';
   });
   chk('no dead control in the hub', dead.length === 0,
-      dead.slice(0,3).map(b=>b.getAttribute('onclick')).join(', '));
+      dead.slice(0,3).map(b => b.getAttribute('data-act') || b.getAttribute('data-in')).join(', '));
   // keyboard operable
   const lessonBtn = Array.from(sb(d).querySelectorAll('button'))
-    .find(b => (b.getAttribute('onclick')||'').indexOf('openLesson') === 0);
+    .find(b => b.getAttribute('data-act') === 'openLesson');
   chk('lessons open from a real button element', !!lessonBtn);
   // offline: no network in jsdom, everything still works
   chk('the hub works without network access', w.ANC.view === 'science');

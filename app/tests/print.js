@@ -385,11 +385,11 @@ const SEED = `
   {
     const workout = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
     chk('the completion card offers the record of the session it just saved',
-        /openPrintRecord\(/.test(workout) && /sum\.sessionId/.test(workout));
+        /data-act="openPrintRecord"/.test(workout) && /sum\.sessionId/.test(workout));
     chk('and the summary carries the id it needs', /sessionId: rec\.id/.test(workout));
     const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
     chk('the history table offers it per session',
-        /openPrintRecord\(/.test(screens) && /sess\.id/.test(screens));
+        /data-act="openPrintRecord"/.test(screens) && /sess\.id/.test(screens));
     chk('the button names the session it prints, for a screen reader',
         /aria-label="' \+ esc\(t\('pa\.printRecord'\)\)/.test(screens));
 
@@ -412,11 +412,11 @@ const SEED = `
   group('11. The button is reachable from the planner');
   {
     const ui = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
-    chk('the planner offers a print action', /openPrintCard\(/.test(ui));
+    chk('the planner offers a print action', /data-act="openPrintCard"/.test(ui));
     const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
-    chk('the Today verdict offers a print action', /openPrintCard\(/.test(screens));
+    chk('the Today verdict offers a print action', /data-act="openPrintCard"/.test(screens));
     chk('Today prints the session the verdict is about',
-        /openPrintCard\(\s*' \+/.test(screens) || /next\.session\.id/.test(screens));
+        /data-act="openPrintCard"' \+\s*\(next \?/.test(screens) || /next\.session\.id/.test(screens));
     const build = fs.readFileSync(path.join(ROOT, 'build.py'), 'utf8');
     chk('the new scripts are picked up by the build',
         /index\.html/.test(build));

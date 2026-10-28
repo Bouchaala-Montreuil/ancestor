@@ -458,10 +458,9 @@ group('8i. The navigation marks are drawn, not borrowed');
   })());
   chk('and they are still reachable from the profile', (function(){
     const scr = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'), 'utf8');
-    /* The source builds onclick="go(\'body\')" inside a single-quoted JS string,
-       so the escape belongs to the app's source text, not to this check. */
-    const esc4 = String.fromCharCode(92);
-    const link = id => 'go(' + esc4 + "'" + id + esc4 + "')";
+    /* The source names the action instead of writing a handler, so the check
+       reads the same markup the browser does. */
+    const link = id => 'data-act="go" data-a1="' + id + '"';
     return /NAV_MARK\.body/.test(scr) && /NAV_MARK\.science/.test(scr) &&
            scr.indexOf(link('body')) >= 0 && scr.indexOf(link('science')) >= 0;
   })());
@@ -608,8 +607,36 @@ group('8l. Every state has a producer and a way out');
   chk('the failure state keeps the stack trace behind a disclosure',
       /fail-more/.test(comp) && /<details/.test(comp));
 
+  /* The policy in index.html has no 'unsafe-inline', which means a single
+     forgotten onclick attribute is a control that silently does nothing. The
+     source is the place to forbid it: a rendered-DOM check only sees the
+     screens a test happened to open. */
+  const sources = ['index.html'].concat(
+      fs.readdirSync(path.join(ROOT, 'js')).filter(f => /\.js$/.test(f)).map(f => 'js/' + f),
+      fs.readdirSync(path.join(ROOT, 'js/ui')).map(f => 'js/ui/' + f),
+      fs.readdirSync(path.join(ROOT, 'js/core')).map(f => 'js/core/' + f));
+  const offenders = sources.filter(f => {
+    const body = fs.readFileSync(path.join(ROOT, f), 'utf8');
+    return /\son(click|input|change|submit|keydown|pointerdown)\s*=/.test(body);
+  });
+  chk('no source file carries an inline event handler', offenders.length === 0,
+      offenders.join(', ') || sources.length + ' files clean');
+  chk('index.html ships the policy, and it is the strict one',
+      (function(){
+        const doc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+        const m = /Content-Security-Policy" content="([^"]+)"/.exec(doc);
+        if(!m) return false;
+        const script = m[1].split(';').map(x => x.trim()).filter(x => x.indexOf('script-src') === 0)[0] || '';
+        const tokens = script.split(/\s+/);
+        return tokens.indexOf("'self'") >= 0 && tokens.indexOf("'unsafe-inline'") < 0 &&
+               tokens.indexOf("'unsafe-eval'") < 0;
+      })());
+
+  /* The route back is an action now, not a handler string: the markup names
+     where it goes and the element carries the destination. */
   chk('the failure state always offers retry and a route back',
-      /app\.fail\.retry/.test(comp) && /go\(\\'home\\'\)/.test(comp));
+      /app\.fail\.retry/.test(comp) &&
+      /data-act="go" data-a1="home"/.test(comp));
 
   /* Every empty state names its situation and its consequence. */
   const calls = all.match(/emptyState\([^)]*\)/g) || [];

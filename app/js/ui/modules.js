@@ -55,7 +55,7 @@ Screens.module = function(){
      is the screen's h1 — the science hub's masthead is not on this page. */
   let h = '<div class="sect"><h1 class="title">' + esc(t(m.titleKey)) +
           '</h1><span class="rule"></span>' +
-          '<span class="aside"><button class="chip sm" onclick="closeModule()">' +
+          '<span class="aside"><button class="chip sm" data-act="closeModule">' +
           esc(t('sci.backToHub')) + '</button></span></div>';
 
   h += '<p class="body-sm mb-5" style="max-width:64ch">' +
@@ -65,7 +65,7 @@ Screens.module = function(){
   h += '<div class="modebar mb-5">' +
        '<i class="mode-ind" id="modInd"></i>' +
        m.steps.map((s, i) =>
-         '<button class="chip sm ' + (i === MOD_STEP ? 'on' : '') + '" data-step="' + i + '" onclick="setModStep(' + i + ')" ' +
+         '<button class="chip sm ' + (i === MOD_STEP ? 'on' : '') + '" data-step="' + i + '" data-act="setModStep" data-a1="' + i + '" data-t1="l" ' +
          'aria-pressed="' + (i === MOD_STEP ? 'true' : 'false') + '">' +
          esc(String(i+1)) + '. ' + esc(t(s.labelKey)) + '</button>').join('') +
        '</div>';
@@ -115,9 +115,9 @@ Screens.module = function(){
   /* navigation between stages */
   h += '<div class="row mt-4">';
   h += '<button class="btn quiet" ' + (MOD_STEP === 0 ? 'disabled' : '') +
-       ' onclick="setModStep(' + (MOD_STEP - 1) + ')">' + esc(t('btn.back')) + '</button>';
+       ' data-act="setModStep" data-a1="' + (MOD_STEP - 1) + '" data-t1="l">' + esc(t('btn.back')) + '</button>';
   h += '<button class="btn" ' + (MOD_STEP === m.steps.length - 1 ? 'disabled' : '') +
-       ' onclick="setModStep(' + (MOD_STEP + 1) + ')">' + esc(t('btn.next')) + '</button>';
+       ' data-act="setModStep" data-a1="' + (MOD_STEP + 1) + '" data-t1="l">' + esc(t('btn.next')) + '</button>';
   h += '</div>';
 
   /* Connect the module to the user's own log, without pretending the module
@@ -375,12 +375,12 @@ function energyDiagram(focus){
   let h = '<div class="energy-model">';
   h += '<div class="em-row' + (focus === 'intake' ? ' focus' : '') + '"><label for="emIn">' + esc(t('modB.s1.label')) + '</label>' +
        '<input id="emIn" type="range" min="1000" max="4500" step="50" value="' + ENERGY.intake +
-       '" oninput="setEnergy(\'intake\',this.value)">' +
+       '" data-in="setEnergy" data-a1="intake" data-t2="v">' +
        '<output class="num" id="emInV">' + ENERGY.intake + '</output></div>';
   h += '<div class="em-bar"><i class="in" style="width:' + pct.toFixed(1) + '%"></i></div>';
   h += '<div class="em-row' + (focus === 'expenditure' ? ' focus' : '') + '"><label for="emOut">' + esc(t('modB.s2.label')) + '</label>' +
        '<input id="emOut" type="range" min="1000" max="4500" step="50" value="' + ENERGY.expenditure +
-       '" oninput="setEnergy(\'expenditure\',this.value)">' +
+       '" data-in="setEnergy" data-a1="expenditure" data-t2="v">' +
        '<output class="num" id="emOutV">' + ENERGY.expenditure + '</output></div>';
   h += '<div class="em-bar"><i class="out" style="width:' + pctOut.toFixed(1) + '%"></i></div>';
   h += '<div class="em-result' + (focus === 'stored' ? ' focus' : '') + '"><span class="k">' + esc(t('modB.balance')) + '</span>' +
@@ -422,15 +422,15 @@ function recoverySimDiagram(){
   let h = '<div class="energy-model" id="recSimModel">';
   h += '<div class="em-row"><label for="rsSets">' + esc(t('c.sets')) + '</label>' +
        '<input id="rsSets" type="range" min="1" max="8" step="1" value="' + REC_SIM.sets +
-       '" oninput="setRecSim(\'sets\',this.value)">' +
+       '" data-in="setRecSim" data-a1="sets" data-t2="v">' +
        '<output class="num" id="rsSetsV">' + REC_SIM.sets + '</output></div>';
   h += '<div class="em-row"><label for="rsRir">RIR</label>' +
        '<input id="rsRir" type="range" min="0" max="4" step="1" value="' + REC_SIM.rir +
-       '" oninput="setRecSim(\'rir\',this.value)">' +
+       '" data-in="setRecSim" data-a1="rir" data-t2="v">' +
        '<output class="num" id="rsRirV">' + REC_SIM.rir + '</output></div>';
   h += '<div class="em-row"><label for="rsSleep">' + esc(t('tl.sleep')) + ' (h)</label>' +
        '<input id="rsSleep" type="range" min="4" max="10" step="0.5" value="' + REC_SIM.sleep +
-       '" oninput="setRecSim(\'sleep\',this.value)">' +
+       '" data-in="setRecSim" data-a1="sleep" data-t2="v">' +
        '<output class="num" id="rsSleepV">' + REC_SIM.sleep + '</output></div>';
   h += '<div class="em-result focus"><span class="k">' + esc(t('body.recovery')) + '</span>' +
        '<span class="v num" id="rsDays">' + days + '</span>' +

@@ -29,6 +29,6 @@ setTimeout(()=>{
   w.go('progress');
   console.log('  charts / tables    :', d.querySelectorAll('.chart').length,'/',d.querySelectorAll('table.data').length);
   w.go('profile');
-  console.log('  language rows      :', Array.from(d.querySelectorAll('#screenBody .tile')).filter(b=>(b.getAttribute('onclick')||'').includes('switchLang')).length);
+  console.log('  language rows      :', Array.from(d.querySelectorAll('#screenBody .tile')).filter(b=>b.getAttribute('data-act')==='switchLang').length);
   console.log('\n  BUNDLE OK');
 },400);

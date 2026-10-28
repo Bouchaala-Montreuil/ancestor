@@ -61,7 +61,7 @@ Screens.science = function(){
        TABS.map(v =>
         '<button type="button" role="tab" aria-selected="' + (SCI_VIEW===v?'true':'false') +
         '" class="subnav-btn chip seamless ' + (SCI_VIEW===v?'on':'') + '" ' +
-        'onclick="setSciView(\'' + v + '\')">' +
+        'data-act="setSciView" data-a1="' + v + '">' +
         esc(t(v==='lessons' ? 'sci.tabLessons'
              : v==='modules' ? 'sci.tabModules'
              : v==='explorers' ? 'sci.tabExplorers' : 'sci.tabEvidence')) + '</button>').join('') +
@@ -92,7 +92,7 @@ function sciModules(){
   LEARNING_MODULES.forEach(m => {
     /* The tab is already called Interactive; saying it again on every card is
        the third time on one screen. The card leads with the thing itself. */
-    h += '<button class="panel mod-card" onclick="openModule(\'' + m.id + '\')">';
+    h += '<button class="panel mod-card" data-act="openModule" data-a1="' + m.id + '">';
     h += '<h3 class="mod-title">' + esc(t(m.titleKey)) + '</h3>';
     h += '<p class="body-sm mb-3">' + esc(t(m.summaryKey)) + '</p>';
     h += '<div class="chips">' +
@@ -108,12 +108,12 @@ function sciModules(){
 function sciLessons(){
   let h = '';
   h += '<div class="field"><label for="sciSearchInput">' + esc(t('sci.search')) + '</label>' +
-       '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" oninput="setSciQuery(this.value)" placeholder="' + esc(t('sci.search')) + '"></div>';
+       '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" data-in="setSciQuery" data-t1="v" placeholder="' + esc(t('sci.search')) + '"></div>';
   /* Eleven categories. Wrapped, they were five rows of buttons before the first
      lesson; as one rail they are one row that scrolls. */
   h += '<div class="chips rail mb-4" role="group" aria-label="' + esc(t('sci.catLabel')) + '">' +
-       '<button class="chip sm ' + (SCI_CAT==='all'?'on':'') + '" onclick="setSciCat(\'all\')">' + esc(t('sci.all')) + '</button>' +
-       SCIENCE_CATEGORIES.map(c => '<button class="chip sm ' + (SCI_CAT===c.id?'on':'') + '" onclick="setSciCat(\'' + c.id + '\')">' +
+       '<button class="chip sm ' + (SCI_CAT==='all'?'on':'') + '" data-act="setSciCat" data-a1="all">' + esc(t('sci.all')) + '</button>' +
+       SCIENCE_CATEGORIES.map(c => '<button class="chip sm ' + (SCI_CAT===c.id?'on':'') + '" data-act="setSciCat" data-a1="' + c.id + '">' +
        esc(t(c.label)) + '</button>').join('') + '</div>';
 
   const q = SCI_QUERY.trim().toLowerCase();
@@ -123,7 +123,7 @@ function sciLessons(){
 
   if(!list.length){
     h += emptyState('sci.noResults', 'sci.noResults.body', 'inbox',
-      '<button class="btn quiet sm" onclick="setSciCat(\'all\');setSciQuery(\'\')">' + esc(t('sci.all')) + '</button>', 2);
+      '<button class="btn quiet sm" data-act="setSciCatAll">' + esc(t('sci.all')) + '</button>', 2);
     return h;
   }
 
@@ -133,7 +133,7 @@ function sciLessons(){
     const numIdx = String(LESSONS.indexOf(l) + 1).padStart(2, '0');
     /* A register, not a card: number, title, one line of what it covers, and
        how long it takes. The category is not repeated — you filtered by it. */
-    h += '<button type="button" class="lesson-card' + (done ? ' done' : '') + '" onclick="openLesson(\'' + l.id + '\')">' +
+    h += '<button type="button" class="lesson-card' + (done ? ' done' : '') + '" data-act="openLesson" data-a1="' + l.id + '">' +
       '<span class="lesson-idx">' + numIdx + '</span>' +
       '<span class="lesson-main">' +
         '<span class="lesson-title">' + esc(t(l.titleKey)) + '</span>' +
@@ -160,7 +160,7 @@ Screens.lesson = function(){
   let h = '';
 
   h += '<div class="row mb-3">' +
-       '<button class="btn quiet sm" onclick="backToScience()">' + esc(t('sci.backToHub')) + '</button>' +
+       '<button class="btn quiet sm" data-act="backToScience">' + esc(t('sci.backToHub')) + '</button>' +
        '<span class="flag plain">' + l.mins + ' ' + esc(t('sci.minutes')) + '</span>' +
        '<span class="flag accent">' + esc(t('cat.' + l.cat.replace(/-(\w)/g,(m,c)=>c.toUpperCase()))) + '</span></div>';
 
@@ -207,7 +207,7 @@ Screens.lesson = function(){
       h += '<div class="mb-4"><p class="mb-2" style="font-size:14px;font-weight:600">' +
            esc(t(qq.q)) + '</p><div class="chips">' +
            qq.options.map((o, oi) =>
-             '<button class="chip sm ' + (picked === oi ? 'on' : '') + (q.done ? (oi === qq.answer ? ' on' : '') : '') + '" onclick="answerQuiz(\'' + l.id + '\',' + i + ',' + oi + ')" ' +
+             '<button class="chip sm ' + (picked === oi ? 'on' : '') + (q.done ? (oi === qq.answer ? ' on' : '') : '') + '" data-act="answerQuiz" data-a1="' + l.id + '" data-a2="' + i + '" data-t2="l" data-a3="' + oi + '" data-t3="l" ' +
              'aria-pressed="' + (picked === oi ? 'true' : 'false') + '">' + esc(t(o)) + '</button>').join('') +
            '</div>';
       if(q.done && picked !== undefined){
@@ -219,13 +219,13 @@ Screens.lesson = function(){
       h += '</div>';
     });
     if(!q.done){
-      h += '<button class="btn" onclick="finishQuiz(\'' + l.id + '\')" ' +
+      h += '<button class="btn" data-act="finishQuiz" data-a1="' + l.id + '" ' +
            (q.answers.filter(a => a !== undefined).length < (l.quiz||[]).length ? 'disabled' : '') + '>' +
            esc(t('sci.check')) + '</button>';
     } else {
       h += '<div class="banner ok"><span class="ic">OK</span><span>' + esc(t('sci.finished')) + ' — ' +
            numExpr(q.correct + ' / ' + q.total) + '</span></div>';
-      if(q.correct < q.total) h += '<button class="btn quiet sm mt-2"  onclick="retryQuiz(\'' + l.id + '\')">' +
+      if(q.correct < q.total) h += '<button class="btn quiet sm mt-2"  data-act="retryQuiz" data-a1="' + l.id + '">' +
            esc(t('sci.tryAgain')) + '</button>';
     }
     h += '</div>';
@@ -242,11 +242,11 @@ Screens.lesson = function(){
   /* links into the app */
   h += '<div class="sect"><h2 class="title">' + esc(t('sci.features')) + '</h2><span class="rule"></span></div>' +
        '<div class="chips">' + (l.features||[]).map(f =>
-         '<button class="chip" onclick="go(\'' + f.view + '\')">' + esc(t(f.label)) + '</button>').join('') +
+         '<button class="chip" data-act="go" data-a1="' + f.view + '">' + esc(t(f.label)) + '</button>').join('') +
        '</div></article>';
 
   if(!isRead(l.id)){
-    h += '<button class="btn block" onclick="markRead(\'' + l.id + '\')">' + esc(t('sci.markRead')) + '</button>';
+    h += '<button class="btn block" data-act="markRead" data-a1="' + l.id + '">' + esc(t('sci.markRead')) + '</button>';
   }
   return { html: h };
 };
@@ -342,7 +342,7 @@ function sciExplorers(){
     { id:'sim',        label:'sim.title'        }
   ];
   let h = '<div class="chips mb-4">' +
-    items.map(i => '<button class="chip ' + (EXPLORER===i.id?'on':'') + '" onclick="openExplorer(\'' + i.id + '\')">' +
+    items.map(i => '<button class="chip ' + (EXPLORER===i.id?'on':'') + '" data-act="openExplorer" data-a1="' + i.id + '">' +
       esc(t(i.label)) + '</button>').join('') + '</div>';
 
   if(!EXPLORER){
@@ -377,7 +377,7 @@ function explorerMuscle(){
   h += '</div>';
   h += '<div class="uncertain mt-3"><b>' + esc(t('sci.legendPrin')) + '</b>' +
        esc(t('mge.modelWarning')) + '</div>';
-  h += '<div class="mt-3"><button class="btn quiet sm" onclick="go(\'body\')">' +
+  h += '<div class="mt-3"><button class="btn quiet sm" data-act="go" data-a1="body">' +
        esc(t('feature.body')) + '</button></div>';
   h += '</div>';
   return h;
@@ -412,7 +412,7 @@ function explorerMechanics(){
   const ex = EX_BY_ID[exId];
   let h = '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('lab.mechanics')) + '</h3></div>';
   h += '<div class="field"><label>' + esc(t('lab.chooseEx')) + '</label><div class="chips scroll">' +
-       ids.slice(0,24).map(id => '<button class="chip sm ' + (exId===id?'on':'') + '" onclick="setMechEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div></div>';
+       ids.slice(0,24).map(id => '<button class="chip sm ' + (exId===id?'on':'') + '" data-act="setMechEx" data-a1="' + id + '">' + esc(t('ex.'+id)) + '</button>').join('') + '</div></div>';
   if(ex){
     if(typeof exerciseVisualSvg === 'function') h += exerciseVisualSvg(ex);
     h += '<div class="chips mb-3">' +
@@ -421,7 +421,7 @@ function explorerMechanics(){
       '</div>';
     h += '<p class="body-sm">' + esc(t('cue.'+exId)) + '</p>';
     h += '<p class="hint mt-2">' + esc(t('takeaway.mm.2')) + '</p>';
-    h += '<div class="mt-3"><button class="btn quiet sm" onclick="selectMuscle(\'' + ex.m[0][0] + '\');go(\'body\')">' +
+    h += '<div class="mt-3"><button class="btn quiet sm" data-act="openMuscle" data-a1="' + ex.m[0][0] + '">' +
          esc(t('home.mapCta')) + '</button></div>';
   }
   h += '</div>';
@@ -451,9 +451,9 @@ function explorerSim(){
   let h = '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('sim.title')) + '</h3></div>';
   h += '<p class="body-sm mb-3">' + esc(t('sim.note')) + '</p>';
   h += '<div class="field"><label for="simSets">' + esc(t('sim.sets')) + ' — ' + SIM.sets + '</label>' +
-       '<input id="simSets" type="range" min="1" max="10" value="' + SIM.sets + '" oninput="setSim(\'sets\',+this.value)"></div>';
+       '<input id="simSets" type="range" min="1" max="10" value="' + SIM.sets + '" data-in="setSim" data-a1="sets" data-t2="N"></div>';
   h += '<div class="field"><label for="simFreq">' + esc(t('sim.freq')) + ' — ' + SIM.freq + '</label>' +
-       '<input id="simFreq" type="range" min="1" max="6" value="' + SIM.freq + '" oninput="setSim(\'freq\',+this.value)"></div>';
+       '<input id="simFreq" type="range" min="1" max="6" value="' + SIM.freq + '" data-in="setSim" data-a1="freq" data-t2="N"></div>';
   const weekly = SIM.sets * SIM.freq;
   const band = volumeBandFor(weekly);
   const pct = Math.min(100, Math.round(weekly / 30 * 100));
@@ -463,7 +463,7 @@ function explorerSim(){
        metric(t('sci.confidence'), t('sim.illustrative')) + '</div>';
   h += '<div class="uncertain"><b>' + esc(t('sim.assumptions')) + '</b>' + esc(t('sim.assume')) + '</div>';
   h += '<div class="uncertain mt-2"><b>' + esc(t('sim.limits')) + '</b>' + esc(t('sim.limitBody')) + '</div>';
-  h += '<div class="mt-3"><button class="btn quiet sm" onclick="go(\'progress\')">' +
+  h += '<div class="mt-3"><button class="btn quiet sm" data-act="go" data-a1="progress">' +
        esc(t('feature.progress')) + '</button></div>';
   h += '</div>';
   return h;
@@ -603,7 +603,7 @@ function whyPanel(ex, kind, id){
          esc(t('sci.nextStep')) + ' · ' + esc(t('sci.alternatives')) + '</p>' +
          '<p class="hint mb-2">' + esc(t('sci.nextStepHint')) + '</p>' +
       '<div class="tiles">' + ex.alternatives.map(a =>
-        '<button class="tile" onclick="closeSheet()"><span class="box"></span><span><span class="t">' + esc(a.label) +
+        '<button class="tile" data-act="closeSheet"><span class="box"></span><span><span class="t">' + esc(a.label) +
         '</span><span class="d">' + esc(a.note) + '</span></span></button>').join('') + '</div></div>';
   }
 
@@ -616,12 +616,12 @@ function whyPanel(ex, kind, id){
     (ex.distinguish||[]).map(d => '<div>' + esc(d.text) + '</div>').join('') + '</div>';
 
   h += '<div class="row mt-4">' +
-    '<button class="btn" onclick="acceptWhy()">' + esc(t('sci.accept')) + '</button>' +
-    '<button class="btn quiet" onclick="rejectWhy()">' + esc(t('sci.reject')) + '</button></div>';
+    '<button class="btn" data-act="acceptWhy">' + esc(t('sci.accept')) + '</button>' +
+    '<button class="btn quiet" data-act="rejectWhy">' + esc(t('sci.reject')) + '</button></div>';
 
   if(ex.lessons && ex.lessons.length){
     h += '<div class="chips mt-3">' + ex.lessons.map(lid =>
-      '<button class="chip sm" onclick="closeSheet();openLesson(\'' + lid + '\')">' + esc(t((lesson(lid)||{titleKey:'sci.title'}).titleKey)) + '</button>').join('') + '</div>';
+      '<button class="chip sm" data-act="openLessonFromSheet" data-a1="' + lid + '">' + esc(t((lesson(lid)||{titleKey:'sci.title'}).titleKey)) + '</button>').join('') + '</div>';
   }
   return h;
 }

@@ -206,8 +206,11 @@ chk('the viewer disables raycasting on context meshes',
     /o\.raycast\s*=\s*function\s*\(\s*\)\s*\{\s*\}/.test(viewerSrc));
 chk('the fascia layer is hidden until the user asks for it',
     /shell\.push\(o\)[\s\S]{0,200}o\.visible\s*=\s*false/.test(viewerSrc));
-chk('a control exposes the fascia layer', viewerSrc.includes("labToggleContext(\\'shell\\')"));
-chk('a control exposes the skeleton layer', viewerSrc.includes("labToggleContext(\\'bone\\')"));
+/* The lab's chips name an action and pass the layer as an argument. */
+chk('a control exposes the fascia layer',
+    /'labToggleContext',[^)]*'shell'/.test(viewerSrc));
+chk('a control exposes the skeleton layer',
+    /'labToggleContext',[^)]*'bone'/.test(viewerSrc));
 
 /* ------------------------------------------------------------------ 7 */
 group('7. Raycast picking resolves the structure under the pointer');

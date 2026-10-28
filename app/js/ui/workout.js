@@ -85,14 +85,14 @@ function sessionSubnavHtml(){
           '<i class="subnav-ind" hidden></i>';
   if(ACTIVE){
     h += '<button type="button" role="tab" aria-selected="' + (cur==='live'?'true':'false') +
-         '" class="subnav-btn ' + (cur==='live'?'on':'') + '" onclick="setSessionSub(\'live\')">' +
+         '" class="subnav-btn ' + (cur==='live'?'on':'') + '" data-act="setSessionSub" data-a1="live">' +
          esc(t('plan.tabActive')) + '<span class="subnav-cnt" aria-hidden="true">●</span></button>';
   }
   h += '<button type="button" role="tab" aria-selected="' + (cur==='plan' && !ACTIVE ? 'true' : (cur==='plan'?'true':'false')) +
-       '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) + '" onclick="setSessionSub(\'' + (ACTIVE ? 'plan-peek' : 'plan') + '\')">' +
+       '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) + '" data-act="setSessionSub" data-a1="' + (ACTIVE ? 'plan-peek' : 'plan') + '">' +
        esc(t('plan.tabPlan')) + '</button>';
   h += '<button type="button" role="tab" aria-selected="' + (cur==='library'?'true':'false') +
-       '" class="subnav-btn ' + (cur==='library'?'on':'') + '" onclick="setSessionSub(\'library\')">' +
+       '" class="subnav-btn ' + (cur==='library'?'on':'') + '" data-act="setSessionSub" data-a1="library">' +
        esc(t('plan.tabLibrary')) + '<span class="subnav-cnt" aria-hidden="true">' + EX.length + '</span></button>';
   h += '</div>';
   return h;
@@ -148,7 +148,7 @@ function renderWorkoutPlanner(){
 
   if(!s.plan || !s.plan.sessions || !s.plan.sessions.length){
     h += emptyState('session.noplan', 'session.noplanBody', 'plan',
-      '<button class="btn" onclick="rebuildPlan()">' + esc(t('profile.rebuild')) + '</button>', 2);
+      '<button class="btn" data-act="rebuildPlan">' + esc(t('profile.rebuild')) + '</button>', 2);
     return { html: h };
   }
 
@@ -195,7 +195,7 @@ function renderWorkoutPlanner(){
       ? '<span class="flag sm ok">' + esc(t('plan.recommended')) + '</span>'
       : '';
     h += '<button type="button" role="tab" aria-selected="' + (on?'true':'false') +
-         '" class="day-card ' + (on?'on':'') + '" onclick="selectPlanDay(\'' + ds.id + '\')">' +
+         '" class="day-card ' + (on?'on':'') + '" data-act="selectPlanDay" data-a1="' + ds.id + '">' +
          '<span class="d-idx"><span>' + esc(t('plan.day')) + ' ' + (idx + 1) + '</span>' +
          statusBadge + '</span>' +
          '<span class="d-nm">' + esc(ds.name) + '</span>' +
@@ -240,30 +240,30 @@ function renderWorkoutPlanner(){
   if((selected.focus || []).length){
     h += '<div class="chips mb-3">' +
          selected.focus.slice(0, 6).map(m =>
-           '<button type="button" class="flag plain tap" onclick="selectMuscle(\'' + m + '\');go(\'body\')">' +
+           '<button type="button" class="flag plain tap" data-act="openMuscle" data-a1="' + m + '">' +
            esc(t('mg.' + m)) + '</button>'
          ).join('') + '</div>';
   }
 
   h += '<div class="row">' +
-       '<button class="btn" onclick="startSession(\'' + selected.id + '\')">' +
+       '<button class="btn" data-act="startSession" data-a1="' + selected.id + '">' +
        esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>' +
-       '<button class="btn quiet sm" onclick="togglePlanEdit()" aria-pressed="' + (PLAN_EDIT?'true':'false') + '">' +
+       '<button class="btn quiet sm" data-act="togglePlanEdit" aria-pressed="' + (PLAN_EDIT?'true':'false') + '">' +
        esc(PLAN_EDIT ? t('btn.done') : t('plan.customize')) + '</button>' +
-       '<button class="btn quiet sm" onclick="openAddExerciseSheet(\'plan\',\'' + selected.id + '\')">+ ' +
+       '<button class="btn quiet sm" data-act="openAddExerciseSheet" data-a1="plan" data-a2="' + selected.id + '">+ ' +
        esc(t('plan.addEx')) + '</button>' +
-       '<button class="btn quiet sm" onclick="startCustomSession()">' +
+       '<button class="btn quiet sm" data-act="startCustomSession">' +
        esc(t('plan.custom')) + '</button>' +
-       '<button class="btn quiet sm" onclick="openPrintCard(\'' + selected.id + '\')">' +
+       '<button class="btn quiet sm" data-act="openPrintCard" data-a1="' + selected.id + '">' +
        esc(t('pa.button')) + '</button>' +
-       '<button class="btn quiet sm" onclick="go(\'profile\')">' + esc(t('prog.change')) + '</button>' +
+       '<button class="btn quiet sm" data-act="go" data-a1="profile">' + esc(t('prog.change')) + '</button>' +
        '</div>';
 
   if(PLAN_EDIT){
     h += '<div class="row mt-3" style="padding-top:var(--s3);border-top:var(--hair) solid var(--line)">' +
          '<span class="eyebrow">' + esc(t('session.rest')) + ':</span>' +
          [60, 90, 120, 180].map(sec =>
-           '<button type="button" class="chip sm ' + ((s.plan.restSec||120)===sec?'on':'') + '" onclick="setPlanRest(' + sec + ')">' + sec + 's</button>'
+           '<button type="button" class="chip sm ' + ((s.plan.restSec||120)===sec?'on':'') + '" data-act="setPlanRest" data-a1="' + sec + '" data-t1="l">' + sec + 's</button>'
          ).join('') + '</div>';
   }
   h += '</div>';
@@ -272,7 +272,7 @@ function renderWorkoutPlanner(){
   if(!(selected.exercises || []).length){
     h += '<div class="mt-3">' +
          emptyState('plan.emptyDay', 'plan.emptyDayBody', 'plan',
-           '<button class="btn" onclick="openAddExerciseSheet(\'plan\',\'' + selected.id + '\')">+ ' +
+           '<button class="btn" data-act="openAddExerciseSheet" data-a1="plan" data-a2="' + selected.id + '">+ ' +
            esc(t('plan.addEx')) + '</button>', 2) + '</div>';
     return { html: h, noRefresh: true };
   }
@@ -288,7 +288,7 @@ function renderWorkoutPlanner(){
     h += '<div class="plan-ex-top">';
     h += '<span class="plan-ex-idx">' + String(i + 1).padStart(2, '0') + '</span>';
     h += '<div class="plan-ex-main">';
-    h += '<button type="button" class="plan-ex-title" onclick="openExerciseDetail(\'' + e.id + '\')">' +
+    h += '<button type="button" class="plan-ex-title" data-act="openExerciseDetail" data-a1="' + e.id + '">' +
          esc(t('ex.' + e.id)) + '</button>';
     h += '<div class="chips mt-1">' +
          '<span class="flag accent">' + numExpr(e.sets + ' × ' + targetRangeText(ex)) + '</span>' +
@@ -301,17 +301,17 @@ function renderWorkoutPlanner(){
     if(PLAN_EDIT){
       h += '<div class="plan-ex-rx">' +
            '<div class="stepper" role="group" aria-label="' + esc(t('c.sets')) + '">' +
-             '<button type="button" onclick="adjustPlanSets(\'' + selected.id + '\',' + i + ',-1)" aria-label="-">−</button>' +
+             '<button type="button" data-act="adjustPlanSets" data-a1="' + selected.id + '" data-a2="' + i + '" data-t2="l" data-a3="-1" data-t3="n" aria-label="-">−</button>' +
              '<span>' + e.sets + ' ' + esc(t('c.sets')) + '</span>' +
-             '<button type="button" onclick="adjustPlanSets(\'' + selected.id + '\',' + i + ',1)" aria-label="+">+</button>' +
+             '<button type="button" data-act="adjustPlanSets" data-a1="' + selected.id + '" data-a2="' + i + '" data-t2="l" data-a3="1" data-t3="n" aria-label="+">+</button>' +
            '</div>' +
            '<button type="button" class="btn quiet sm" ' + (i===0?'disabled':'') +
-             ' onclick="movePlanExercise(\'' + selected.id + '\',' + i + ',-1)" aria-label="Up">↑</button>' +
+             ' data-act="movePlanExercise" data-a1="' + selected.id + '" data-a2="' + i + '" data-t2="l" data-a3="-1" data-t3="n" aria-label="Up">↑</button>' +
            '<button type="button" class="btn quiet sm" ' + (i===selected.exercises.length-1?'disabled':'') +
-             ' onclick="movePlanExercise(\'' + selected.id + '\',' + i + ',1)" aria-label="Down">↓</button>' +
-           '<button type="button" class="btn quiet sm" onclick="openPlanSub(\'' + selected.id + '\',' + i + ')">' +
+             ' data-act="movePlanExercise" data-a1="' + selected.id + '" data-a2="' + i + '" data-t2="l" data-a3="1" data-t3="n" aria-label="Down">↓</button>' +
+           '<button type="button" class="btn quiet sm" data-act="openPlanSub" data-a1="' + selected.id + '" data-a2="' + i + '" data-t2="l">' +
              esc(t('session.sub')) + '</button>' +
-           '<button type="button" class="btn danger sm" onclick="removePlanExercise(\'' + selected.id + '\',' + i + ')">' +
+           '<button type="button" class="btn danger sm" data-act="removePlanExercise" data-a1="' + selected.id + '" data-a2="' + i + '" data-t2="l">' +
              esc(t('log.removeSet')) + '</button>' +
            '</div>';
     }
@@ -339,9 +339,9 @@ function renderWorkoutPlanner(){
     }
 
     h += '<div class="row mt-2">' +
-         '<button type="button" class="btn quiet sm" onclick="openWhy(\'progression\',\'' + e.id + '\')">' +
+         '<button type="button" class="btn quiet sm" data-act="openWhy" data-a1="progression" data-a2="' + e.id + '">' +
            esc(t('sci.whyOpen')) + '</button>' +
-         '<button type="button" class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' +
+         '<button type="button" class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '">' +
            esc(t('exd.open')) + '</button></div>';
     h += '</div>';
   });
@@ -391,7 +391,7 @@ function openPlanSub(dayId, exIdx){
   const subs = substitutesFor(s.profile, curId);
   sheet(t('session.sub'), subs.length ? (
     '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p><div class="tiles">' +
-    subs.map(e => '<button class="tile" onclick="applyPlanSub(\'' + dayId + '\',' + exIdx + ',\'' + e.id + '\')"><span class="box"></span>' +
+    subs.map(e => '<button class="tile" data-act="applyPlanSub" data-a1="' + dayId + '" data-a2="' + exIdx + '" data-t2="l" data-a3="' + e.id + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('ex.'+e.id)) + '</span><span class="d">' +
       esc(e.m.map(x => t('mg.'+x[0])).join(', ')) + '</span></span></button>').join('') + '</div>')
     : emptyState('session.nosub','session.nosubBody','inbox'));
@@ -413,15 +413,15 @@ function openAddExerciseSheet(targetKind, dayId){
   const list = pool.length ? pool : EX;
   let h = '<div class="field"><label for="addExFilter">' + esc(t('sci.search')) + '</label>' +
           '<input type="text" id="addExFilter" placeholder="' + esc(t('plan.searchEx')) +
-          '" oninput="filterAddExSheet(this.value)"></div>';
+          '" data-in="filterAddExSheet" data-t1="v"></div>';
   h += '<div class="tiles scroll" id="addExList">';
   list.forEach(e => {
     const spec = exLogSpec(e);
     const searchBlob = (t('ex.'+e.id) + ' ' + t('pat.'+e.pat) + ' ' + e.m.map(x=>t('mg.'+x[0])).join(' ')).toLowerCase();
     const action = targetKind === 'active'
-      ? 'addExerciseToActive(\'' + e.id + '\')'
-      : 'addExerciseToPlan(\'' + (dayId || '') + '\',\'' + e.id + '\')';
-    h += '<button type="button" class="tile" data-q="' + esc(searchBlob) + '" onclick="' + action + '">' +
+      ? actAttr('addExerciseToActive', e.id)
+      : actAttr('addExerciseToPlan', dayId || '', e.id);
+    h += '<button type="button" class="tile" data-q="' + esc(searchBlob) + '"' + action + '>' +
          '<span class="box"></span><span class="grow">' +
          '<span class="t">' + esc(t('ex.' + e.id)) + '</span>' +
          '<span class="d">' + esc(t('pat.' + e.pat)) + ' · ' + esc(t('equip.' + e.equip)) +
@@ -626,11 +626,11 @@ function renderLive(){
        '</div></div>';
   h += '<div class="live-hud-meta">' +
        (liveLoadVol > 0 ? '<span>' + Math.round(liveLoadVol) + ' ' + esc(unit()) + '·' + esc(t('log.repsShort')) + '</span>' : '') +
-       '<button type="button" class="btn quiet sm" onclick="togglePauseWorkout()" aria-pressed="' + (ACTIVE.paused?'true':'false') + '">' +
+       '<button type="button" class="btn quiet sm" data-act="togglePauseWorkout" aria-pressed="' + (ACTIVE.paused?'true':'false') + '">' +
        esc(ACTIVE.paused ? t('session.restResume') : t('session.restPause')) + '</button>' +
-       '<button type="button" class="btn quiet sm" onclick="startRest(' + (ACTIVE.restSec || 120) + ')">' +
+       '<button type="button" class="btn quiet sm" data-act="startRest" data-a1="' + (ACTIVE.restSec || 120) + '" data-t1="l">' +
        esc(t('session.rest')) + ' ' + (ACTIVE.restSec || 120) + 's</button>' +
-       '<button type="button" class="btn quiet sm" onclick="openAddExerciseSheet(\'active\')">+ ' + esc(t('plan.addEx')) + '</button>' +
+       '<button type="button" class="btn quiet sm" data-act="openAddExerciseSheet" data-a1="active">+ ' + esc(t('plan.addEx')) + '</button>' +
        '</div></div>';
   h += '<div class="session-progress" id="sessProg"><span class="eyebrow">' +
        esc(t('log.remaining', { n: logged, m: total })) +
@@ -665,7 +665,7 @@ function renderLive(){
     /* The state is recorded from the click, not from `toggle`: a `toggle` event
        also fires for the element the page just created, which would freeze
        "current" into "always open" after the first re-render. */
-    h += '<summary class="ex-block-sum" onclick="exOpen(\'' + e.id + '\', !this.parentElement.open)"><span class="ex-block-hd">' +
+    h += '<summary class="ex-block-sum" data-act="exOpen" data-a1="' + e.id + '" data-t2="o"><span class="ex-block-hd">' +
          (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(ex) : '') +
          '<span class="mono ex-block-idx">' + String(ei+1).padStart(2,'0') + '</span>' +
          '<h2 class="sess-ex-h">' + esc(t('ex.'+e.id)) + '</h2>' +
@@ -687,7 +687,7 @@ function renderLive(){
       h += '<div class="prev-line"><span class="k">' + esc(t('c.previous')) + '</span>' +
            '<b>' + esc(prev.text) + '</b><span class="d">' + esc(dateLabel(prev.date)) + '</span>' +
            (prev.best && prev.best.set
-             ? '<button type="button" class="prev-copy-btn" onclick="copyPrevToExercise(' + ei + ')">' +
+             ? '<button type="button" class="prev-copy-btn" data-act="copyPrevToExercise" data-a1="' + ei + '" data-t1="l">' +
                esc(t('log.useLast')) + '</button>' : '') +
            '</div>';
     } else {
@@ -705,15 +705,15 @@ function renderLive(){
     h += '<div class="ex-note-wrap">' +
          '<label for="exnote_' + ei + '" class="sr-only">' + esc(t('log.notePlaceholder')) + '</label>' +
          '<input id="exnote_' + ei + '" type="text" value="' + esc(e.note || '') +
-         '" placeholder="' + esc(t('log.notePlaceholder')) + '" oninput="setExNote(' + ei + ',this.value)"></div>';
+         '" placeholder="' + esc(t('log.notePlaceholder')) + '" data-in="setExNote" data-a1="' + ei + '" data-t1="l" data-t2="v"></div>';
 
     h += '<details class="dis ex-opts"><summary><span class="dis-t">' +
          esc(t('log.exOptions')) + '</span></summary><div class="row mt-2">';
-    h += '<button class="btn quiet sm" onclick="addSet(' + ei + ')">' + esc(t('log.addSet')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="skipSet(' + ei + ')">' + esc(t('session.skipset')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="skipExercise(' + ei + ')">' + esc(t('log.skipEx')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="openSub(' + ei + ')">' + esc(t('session.sub')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="openExerciseDetail(\'' + e.id + '\')">' + esc(t('exd.open')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="addSet" data-a1="' + ei + '" data-t1="l">' + esc(t('log.addSet')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="skipSet" data-a1="' + ei + '" data-t1="l">' + esc(t('session.skipset')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="skipExercise" data-a1="' + ei + '" data-t1="l">' + esc(t('log.skipEx')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="openSub" data-a1="' + ei + '" data-t1="l">' + esc(t('session.sub')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '">' + esc(t('exd.open')) + '</button>';
     h += '</div></details>';
 
     h += '<p class="hint mb-1 mt-2">' +
@@ -725,12 +725,12 @@ function renderLive(){
   });
 
   h += '<div class="panel mt-4 heavy">';
-  h += '<button class="btn ' + (logged ? '' : 'secondary') + ' block" onclick="finishSession()">' +
+  h += '<button class="btn ' + (logged ? '' : 'secondary') + ' block" data-act="finishSession">' +
        esc(t('session.finish')) + ' (' + numExpr(logged + '/' + total) + ')</button>';
   /* Discard is destructive and reversible by nobody: it sits below the primary
      action, in text weight, and still asks before it throws the session away. */
   h += '<p class="hint mt-2 mb-0 tac">' +
-       '<button type="button" class="link-btn" onclick="discardSession()">' +
+       '<button type="button" class="link-btn" data-act="discardSession">' +
        esc(t('session.discard')) + '</button></p>';
   h += '</div>';
   return h;
@@ -752,7 +752,7 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
          : '<span class="flag sm ' + STATE_FLAG[state] + '">' + esc(t(STATE_LABEL[state])) + '</span>') +
        (set.warmup ? '<span class="flag sm plain">' + esc(t('log.warmupShort')) + '</span>' : '') +
        (!locked && spec.unilateral && (spec.hasReps || spec.hasTime)
-         ? '<button type="button" class="prev-copy-btn" onclick="toggleLrSplit(' + ei + ',' + si + ')" aria-pressed="' +
+         ? '<button type="button" class="prev-copy-btn" data-act="toggleLrSplit" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" aria-pressed="' +
            (set.lrSplit ? 'true' : 'false') + '">' + esc(t('log.lrSplit')) + '</button>' : '') +
        '</div>';
 
@@ -776,19 +776,19 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
 
   h += '<div class="set-actions">';
   if(locked){
-    h += '<button class="btn quiet sm" onclick="unskipSet(' + ei + ',' + si + ')">' + esc(t('btn.retry')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="unskipSet" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l">' + esc(t('btn.retry')) + '</button>';
   } else {
     h += '<button class="btn ' + (set.committed ? 'quiet' : '') + ' sm" id="logbtn_' + ei + '_' + si + '" ' +
-         (ready ? '' : 'disabled') + ' onclick="toggleSet(' + ei + ',' + si + ')">' +
+         (ready ? '' : 'disabled') + ' data-act="toggleSet" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l">' +
          esc(set.committed ? t('log.correct') : t('log.logSet')) + '</button>';
   }
   h += '</div>';
   if(!locked){
     h += '<details class="dis inline set-opts"><summary><span class="dis-t">' +
          esc(t('log.setOptions')) + '</span></summary><div class="row mt-1">' +
-         '<button class="btn quiet sm" onclick="toggleWarmup(' + ei + ',' + si + ')" aria-pressed="' +
+         '<button class="btn quiet sm" data-act="toggleWarmup" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" aria-pressed="' +
          (set.warmup ? 'true' : 'false') + '">' + esc(t('log.warmup')) + '</button>' +
-         '<button class="btn quiet sm" onclick="removeSet(' + ei + ',' + si + ')">' +
+         '<button class="btn quiet sm" data-act="removeSet" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l">' +
          esc(t('log.removeSet')) + '</button></div></details>';
   }
   h += '</div>';
@@ -817,7 +817,7 @@ function fieldHtml(f, ei, si, set, ex, range, u, nSets){
          (optional ? ' <span class="opt">' + esc(t('c.optional')) + '</span>' : '') +
          '<span class="sr-only">, ' + esc(t('session.setOf')) + ' ' + numExpr((si+1) + ' / ' + nSets) + '</span></label>' +
          '<input id="' + fid + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' + esc(val) + '" ' +
-         'oninput="setVal(' + ei + ',' + si + ',\'' + f.attr + '\',this.value)">' +
+         'data-in="setVal" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + f.attr + '" data-t4="v">' +
          '<span class="u">' + esc(suffix) + '</span></div>';
 }
 
@@ -830,11 +830,11 @@ function sideFieldsHtml(f, ei, si, set, range){
   const idL = 'sf_' + ei + '_' + si + '_' + lKey, idR = 'sf_' + ei + '_' + si + '_' + rKey;
   return '<div class="fld"><label for="' + idL + '">' + esc(t('lab3d.side.left')) + '</label>' +
          '<input id="' + idL + '" type="number" inputmode="decimal" step="1" placeholder="—" value="' + esc(vL) + '" ' +
-         'oninput="setSideVal(' + ei + ',' + si + ',\'' + baseAttr + '\',\'L\',this.value)">' +
+         'data-in="setSideVal" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + baseAttr + '" data-a4="L" data-t5="v">' +
          '<span class="u">' + esc(suffix) + '</span></div>' +
          '<div class="fld"><label for="' + idR + '">' + esc(t('lab3d.side.right')) + '</label>' +
          '<input id="' + idR + '" type="number" inputmode="decimal" step="1" placeholder="—" value="' + esc(vR) + '" ' +
-         'oninput="setSideVal(' + ei + ',' + si + ',\'' + baseAttr + '\',\'R\',this.value)">' +
+         'data-in="setSideVal" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + baseAttr + '" data-a4="R" data-t5="v">' +
          '<span class="u">' + esc(suffix) + '</span></div>';
 }
 
@@ -1020,7 +1020,7 @@ function openSub(ei){
   const subs = substitutesFor(getState().profile, ACTIVE.exercises[ei].id);
   sheet(t('session.sub'), subs.length ? (
     '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p><div class="tiles">' +
-    subs.map(e => '<button class="tile" onclick="applySub(' + ei + ',\'' + e.id + '\')"><span class="box"></span>' +
+    subs.map(e => '<button class="tile" data-act="applySub" data-a1="' + ei + '" data-t1="l" data-a2="' + e.id + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('ex.'+e.id)) + '</span><span class="d">' +
       esc(e.m.map(function(x){ return t('mg.'+x[0]); }).join(', ')) + '</span></span></button>').join('') + '</div>')
     : emptyState('session.nosub','session.nosubBody','inbox'));
@@ -1162,11 +1162,11 @@ function showCompletion(sum){
   /* The sheet is a document, and the moment you want the record of it is the
      moment it exists. It sits beside "view history" rather than behind it. */
   h += '<div class="done-actions">' +
-       '<button class="btn" onclick="closeCompletion(\'progress\')">' + esc(t('done.viewHistory')) + '</button>' +
+       '<button class="btn" data-act="closeCompletion" data-a1="progress">' + esc(t('done.viewHistory')) + '</button>' +
        (sum.sessionId
-         ? '<button class="btn quiet" onclick="openPrintRecord(\'' + sum.sessionId + '\')">' +
+         ? '<button class="btn quiet" data-act="openPrintRecord" data-a1="' + sum.sessionId + '">' +
            esc(t('pa.printRecord')) + '</button>' : '') +
-       '<button class="btn quiet" onclick="closeCompletion(\'home\')">' + esc(t('done.backHome')) + '</button>' +
+       '<button class="btn quiet" data-act="closeCompletion" data-a1="home">' + esc(t('done.backHome')) + '</button>' +
        '</div>';
   h += '</div></div>';
   host.innerHTML = h;
@@ -1246,14 +1246,14 @@ function renderExerciseLibrary(){
   h += '<div class="field mb-3"><label for="libSearchInput">' +
        esc(t('plan.searchLabel')) + ' (' + numExpr(filtered.length + ' / ' + EX.length) + ')</label>' +
        '<input id="libSearchInput" type="text" value="' + esc(LIB_QUERY) +
-       '" placeholder="' + esc(t('plan.searchEx')) + '" oninput="setLibQuery(this.value)"></div>';
+       '" placeholder="' + esc(t('plan.searchEx')) + '" data-in="setLibQuery" data-t1="v"></div>';
 
   /* Muscle filter */
   h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('exd.muscles')) + '</span><div class="chips">' +
-       '<button type="button" class="chip sm ' + (LIB_MUSCLE==='all'?'on':'') + '" onclick="setLibMuscle(\'all\')">' + esc(t('sci.all')) + '</button>' +
+       '<button type="button" class="chip sm ' + (LIB_MUSCLE==='all'?'on':'') + '" data-act="setLibMuscle" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        MUSCLES.map(m =>
-         '<button type="button" class="chip sm ' + (LIB_MUSCLE===m?'on':'') + '" onclick="setLibMuscle(\'' + m + '\')">' +
+         '<button type="button" class="chip sm ' + (LIB_MUSCLE===m?'on':'') + '" data-act="setLibMuscle" data-a1="' + m + '">' +
          esc(t('mg.' + m)) + '</button>'
        ).join('') + '</div></div>';
 
@@ -1271,17 +1271,17 @@ function renderExerciseLibrary(){
 
   h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('plan.equipLabel')) + '</span><div class="chips">' +
-       '<button type="button" class="chip sm ' + (LIB_EQUIP==='all'?'on':'') + '" onclick="setLibEquip(\'all\')">' + esc(t('sci.all')) + '</button>' +
+       '<button type="button" class="chip sm ' + (LIB_EQUIP==='all'?'on':'') + '" data-act="setLibEquip" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        ['barbell','dumbbell','machine','cable','bodyweight','band'].map(eq =>
-         '<button type="button" class="chip sm ' + (LIB_EQUIP===eq?'on':'') + '" onclick="setLibEquip(\'' + eq + '\')">' +
+         '<button type="button" class="chip sm ' + (LIB_EQUIP===eq?'on':'') + '" data-act="setLibEquip" data-a1="' + eq + '">' +
          esc(t('equip.' + eq)) + '</button>'
        ).join('') + '</div></div>';
 
   h += '<div class="anat-filter-row">' +
        '<span class="anat-filter-lbl">' + esc(t('chart.basis')) + '</span><div class="chips">' +
-       '<button type="button" class="chip sm ' + (LIB_MODE==='all'?'on':'') + '" onclick="setLibMode(\'all\')">' + esc(t('sci.all')) + '</button>' +
+       '<button type="button" class="chip sm ' + (LIB_MODE==='all'?'on':'') + '" data-act="setLibMode" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        ['load','bodyweight','weighted','assisted','timed','distance'].map(md =>
-         '<button type="button" class="chip sm ' + (LIB_MODE===md?'on':'') + '" onclick="setLibMode(\'' + md + '\')">' +
+         '<button type="button" class="chip sm ' + (LIB_MODE===md?'on':'') + '" data-act="setLibMode" data-a1="' + md + '">' +
          esc(t('exd.mode.' + md)) + '</button>'
        ).join('') + '</div></div>';
   h += '</div></details>';
@@ -1289,7 +1289,7 @@ function renderExerciseLibrary(){
 
   if(!filtered.length){
     h += emptyState('sci.noResults', 'sci.noResults.body', 'inbox',
-      '<button class="btn quiet sm" onclick="resetLibFilters()">' + esc(t('sci.all')) + '</button>');
+      '<button class="btn quiet sm" data-act="resetLibFilters">' + esc(t('sci.all')) + '</button>');
     return h;
   }
 
@@ -1314,7 +1314,7 @@ function renderExerciseLibrary(){
     ].filter(Boolean).join(' · ');
 
     h += '<button type="button" class="ex-card' + (inPool ? '' : ' excluded') +
-         '" onclick="openExerciseDetail(\'' + e.id + '\')">';
+         '" data-act="openExerciseDetail" data-a1="' + e.id + '">';
     h += '<span class="ex-thumb">' +
          (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(e) : '') + '</span>';
     h += '<span class="ex-main">' +

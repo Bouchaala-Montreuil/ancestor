@@ -220,29 +220,29 @@ Screens.home = function(){
      thumb: seven equal buttons is the same as no instruction. */
   h += '<div class="dash-actions">';
   if(ACTIVE){
-    h += '<button class="btn" onclick="go(\'session\')">' + esc(t('plan.resumeLive')) + '</button>';
+    h += '<button class="btn" data-act="go" data-a1="session">' + esc(t('plan.resumeLive')) + '</button>';
   } else if(d.state === 'stop'){
     /* The estimate says rest. The only useful action is to change what it reads. */
-    h += '<button class="btn" onclick="go(\'profile\')">' + esc(t('home.correct')) + '</button>';
+    h += '<button class="btn" data-act="go" data-a1="profile">' + esc(t('home.correct')) + '</button>';
   } else if(shown === 'rest'){
-    h += '<button class="btn" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>';
-    h += '<button class="btn secondary" onclick="startSession()">' + esc(t('btn.start')) + '</button>';
+    h += '<button class="btn" data-act="openSheet" data-a1="sleep">' + esc(t('home.logsleep')) + '</button>';
+    h += '<button class="btn secondary" data-act="startSession">' + esc(t('btn.start')) + '</button>';
   } else if(next){
-    h += '<button class="btn" onclick="startSession()">' +
+    h += '<button class="btn" data-act="startSession">' +
          esc(t('home.startNext', { name: next.session.name })) + '</button>';
   }
-  h += '<button class="btn quiet" onclick="setSessionSub(\'plan\');go(\'session\')">' + esc(t('plan.tabPlan')) + '</button>';
+  h += '<button class="btn quiet" data-act="setSessionSubGo" data-a1="plan">' + esc(t('plan.tabPlan')) + '</button>';
   h += '</div>';
   h += '<details class="dis"><summary><span class="dis-t">' + esc(t('home.moreWays')) +
        '</span></summary><div class="row mt-2">';
-  h += '<button class="btn quiet sm" onclick="openAnalysis()">' + esc(t('home.analysis')) + '</button>';
+  h += '<button class="btn quiet sm" data-act="openAnalysis">' + esc(t('home.analysis')) + '</button>';
   /* The paper is one tap from the answer: print the session the verdict is
      about, not whichever day happens to be selected in the planner. */
-  h += '<button class="btn quiet sm" onclick="openPrintCard(' +
-       (next ? "'" + next.session.id + "'" : '') + ')">' + esc(t('pa.button')) + '</button>';
-  h += '<button class="btn quiet sm" onclick="openWhy(\'decision\')">' + esc(t('sci.whyOpen')) + '</button>';
+  h += '<button class="btn quiet sm" data-act="openPrintCard"' +
+       (next ? ' data-a1="' + next.session.id + '"' : '') + '>' + esc(t('pa.button')) + '</button>';
+  h += '<button class="btn quiet sm" data-act="openWhy" data-a1="decision">' + esc(t('sci.whyOpen')) + '</button>';
   if(d.state === 'stop' && !ACTIVE){
-    h += '<button class="btn quiet sm" onclick="go(\'profile\')">' + esc(t('home.correct')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="go" data-a1="profile">' + esc(t('home.correct')) + '</button>';
   }
   h += '</div></details>';
   h += '</div></div>';
@@ -304,7 +304,7 @@ Screens.home = function(){
   if(weekGoalMet || milesEarned > 0){
     h += '<div class="chips mb-3">' +
          (weekGoalMet ? '<span class="flag ok">' + esc(t('mile.weeklyGoal')) + '</span>' : '') +
-         '<button type="button" class="flag plain tap" onclick="go(\'progress\')">' +
+         '<button type="button" class="flag plain tap" data-act="go" data-a1="progress">' +
            esc(t('mile.title')) + ': ' + numExpr(milesEarned + '/' + miles.length) + '</button>' +
          '</div>';
   }
@@ -327,9 +327,9 @@ Screens.home = function(){
        '</h3><span class="rule"></span></div>';
   h += '<div class="panel">' + timelineStrip(s, now) +
        '<div class="mt-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">' +
-       '<button class="btn quiet sm" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>' +
-       '<button class="btn quiet sm" onclick="openSheet(\'shift\')">' + esc(t('home.logshift')) + '</button>' +
-       '<button class="btn quiet sm" onclick="openSheet(\'feel\')">' + esc(t('home.logfeel')) + '</button>' +
+       '<button class="btn quiet sm" data-act="openSheet" data-a1="sleep">' + esc(t('home.logsleep')) + '</button>' +
+       '<button class="btn quiet sm" data-act="openSheet" data-a1="shift">' + esc(t('home.logshift')) + '</button>' +
+       '<button class="btn quiet sm" data-act="openSheet" data-a1="feel">' + esc(t('home.logfeel')) + '</button>' +
        '</div></div></div>';
 
   h += '</div>'; /* end left bento-col */
@@ -357,7 +357,7 @@ Screens.home = function(){
   const readyCount = MUSCLES.filter(m => !recMap[m] || recMap[m].state === 'ready' || recMap[m].state === 'fresh').length;
   h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.map')) +
        '</h3><span class="rule"></span>' +
-       '<span class="aside"><button class="chip sm" onclick="go(\'body\')">' + esc(t('lab.open')) + '</button></span></div>';
+       '<span class="aside"><button class="chip sm" data-act="go" data-a1="body">' + esc(t('lab.open')) + '</button></span></div>';
   h += '<div class="panel dash-figlink">' +
        '<div class="fig-stage bare">' +
        '<div class="dash-fig-duo">' +
@@ -367,7 +367,7 @@ Screens.home = function(){
            '<span class="dash-fig-cap">' + esc(t('body.back')) + '</span></div>' +
        '</div></div>' +
        '<div class="row between mt-2">' +
-         '<button type="button" class="link-btn" onclick="go(\'body\')">' +
+         '<button type="button" class="link-btn" data-act="go" data-a1="body">' +
          esc(t('home.mapCta')) + '</button>' +
          '<span class="flag sm ok">' + numExpr(readyCount + ' / ' + MUSCLES.length) + ' ' + esc(t('mst.ready')) + '</span>' +
        '</div></div></div>';
@@ -377,7 +377,7 @@ Screens.home = function(){
      reading one lesson first is not reachable. */
   h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.learnTitle')) +
        '</h3><span class="rule"></span>' +
-       '<span class="aside"><button type="button" class="link-btn" onclick="go(\'science\')">' +
+       '<span class="aside"><button type="button" class="link-btn" data-act="go" data-a1="science">' +
        esc(t('sci.title')) + ' \u2192</button></span></div>' + nextLessonCard(s) + '</div>';
 
   h += '</div>'; /* end right bento-col */
@@ -552,7 +552,7 @@ function contextualInsight(state, now, decision){
   if(!state.sessions.length){
     return { basisKey:'sci.algorithm', text: t('home.insightEmpty'),
              because: t('home.insightEmptyBody'),
-             action: '<button class="btn" onclick="go(\'session\')">' + esc(t('progress.start')) + '</button>' };
+             action: '<button class="btn" data-act="go" data-a1="session">' + esc(t('progress.start')) + '</button>' };
   }
   /* a group trained far less than the others */
   const trained = week.review.filter(r => r.sets > 0);
@@ -566,7 +566,7 @@ function contextualInsight(state, now, decision){
                                             high: Math.round(highest.sets*10)/10,
                                             other: t('mg.' + highest.muscle) }),
                because: t('home.insightGapBody'),
-               action: '<button class="btn quiet" onclick="go(\'body\')">' +
+               action: '<button class="btn quiet" data-act="go" data-a1="body">' +
                        esc(t('home.insightGapCta')) + '</button>' };
     }
   }
@@ -585,8 +585,8 @@ function contextualInsight(state, now, decision){
     if(!anyRecord){
       return { basisKey:'sci.algorithm', text: t('home.insightFlat'),
                because: t('home.insightFlatBody'),
-               action: '<button class="btn quiet" onclick="openWhy(\'progression\',\'' +
-                       exIds[0] + '\')">' + esc(t('sci.whyOpen')) + '</button>' };
+               action: '<button class="btn quiet" data-act="openWhy" data-a1="progression" data-a2="' +
+                       exIds[0] + '">' + esc(t('sci.whyOpen')) + '</button>' };
     }
   }
   /* recovery-driven */
@@ -606,7 +606,7 @@ function nextLessonCard(state){
   const pool = LESSONS.filter(l => read.indexOf(l.id) < 0);
   const l = pool[0] || LESSONS[0];
   if(!l) return '';
-  let h = '<button class="panel dash-lesson" onclick="openLesson(\'' + l.id + '\')">';
+  let h = '<button class="panel dash-lesson" data-act="openLesson" data-a1="' + l.id + '">';
   h += '<p class="eyebrow">' + esc(t('sci.nextLesson')) + '</p>';
   h += '<h3 class="sub mb-0 mt-2">' + esc(t(l.titleKey)) + '</h3>';
   h += '<p class="body-sm mb-0">' + esc(t(l.summaryKey)) + '</p>';
@@ -790,11 +790,11 @@ function paintRestHost(){
     '<span class="t" id="restT" aria-hidden="true">' + fmtClock(left) + '</span>' +
     '<span class="sr-only" id="restSay" role="status" aria-live="polite">' +
       esc(label + ' · ' + fmtClock(left)) + '</span>' +
-    '<button class="btn quiet sm" onclick="toggleRest()">' +
+    '<button class="btn quiet sm" data-act="toggleRest">' +
       esc(REST.paused ? t('session.restResume') : t('session.restPause')) + '</button>' +
-    '<button class="btn quiet sm" onclick="resetRest()">' + esc(t('session.restReset')) + '</button>' +
-    '<button class="btn quiet sm" onclick="addRest(15)">+' + 15 + 's</button>' +
-    '<button class="btn quiet sm" onclick="stopRest();render()">' + esc(t('btn.close')) + '</button>' +
+    '<button class="btn quiet sm" data-act="resetRest">' + esc(t('session.restReset')) + '</button>' +
+    '<button class="btn quiet sm" data-act="addRest" data-a1="15" data-t1="n">+' + 15 + 's</button>' +
+    '<button class="btn quiet sm" data-act="closeRest">' + esc(t('btn.close')) + '</button>' +
     '</div></div>';
   paintRest();
 }
@@ -891,13 +891,13 @@ Screens.body = function(){
   h += '<div class="fig-stage">';
   h += '<div class="anat-toolbar">' +
        '<div class="chips" role="group" aria-label="' + esc(t('lab3d.mode')) + '">' +
-       '<button class="chip sm ' + (BODY_MODE==='model'?'on':'') + '" onclick="setBodyMode(\'model\')"' +
+       '<button class="chip sm ' + (BODY_MODE==='model'?'on':'') + '" data-act="setBodyMode" data-a1="model"' +
        ' aria-pressed="' + (BODY_MODE==='model'?'true':'false') + '">' + esc(t('lab3d.mode3d')) + '</button>' +
-       '<button class="chip sm ' + (BODY_MODE==='flat'?'on':'') + '" onclick="setBodyMode(\'flat\')"' +
+       '<button class="chip sm ' + (BODY_MODE==='flat'?'on':'') + '" data-act="setBodyMode" data-a1="flat"' +
        ' aria-pressed="' + (BODY_MODE==='flat'?'true':'false') + '">' + esc(t('lab3d.modeFlat')) + '</button></div>' +
        '<div class="chips">' +
-       '<button class="chip sm ' + (BODY_SIDE==='front'?'on':'') + '" onclick="setSide(\'front\')">' + esc(t('body.front')) + '</button>' +
-       '<button class="chip sm ' + (BODY_SIDE==='back'?'on':'') + '" onclick="setSide(\'back\')">' + esc(t('body.back')) + '</button></div>' +
+       '<button class="chip sm ' + (BODY_SIDE==='front'?'on':'') + '" data-act="setSide" data-a1="front">' + esc(t('body.front')) + '</button>' +
+       '<button class="chip sm ' + (BODY_SIDE==='back'?'on':'') + '" data-act="setSide" data-a1="back">' + esc(t('body.back')) + '</button></div>' +
        '</div>';
   /* the 3D viewer mounts here, and owns its own loading / error states */
   h += '<div class="fig-wrap lab-host" id="labHost"' + (BODY_MODE==='model' ? '' : ' hidden') + '></div>';
@@ -912,13 +912,13 @@ Screens.body = function(){
        anatomyFigure(s, { side:BODY_SIDE, selected:BODY_ZOOM ? BODY_SEL : null, now:now, pointerOnly:true }) +
        '</div>';
   h += '<div class="fig-controls"' + (BODY_MODE==='model' ? ' hidden' : '') + '>';
-  h += '<button class="fig-btn" title="' + esc(t('body.rotate')) + '" onclick="rotateFig()" aria-label="' +
+  h += '<button class="fig-btn" title="' + esc(t('body.rotate')) + '" data-act="rotateFig" aria-label="' +
        esc(t('body.rotate')) + '"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2"/>' +
        '<path d="M21 12a9 9 0 0 1-15.5 6.2"/><path d="M18 3v5h-5M6 21v-5h5"/></svg></button>';
-  h += '<button class="fig-btn" title="' + esc(t('body.zoom')) + '" onclick="toggleZoom()" ' +
+  h += '<button class="fig-btn" title="' + esc(t('body.zoom')) + '" data-act="toggleZoom" ' +
        (BODY_SEL ? '' : 'disabled') + ' aria-label="' + esc(t('body.zoom')) +
        '"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8 11h6"/></svg></button>';
-  h += '<button class="fig-btn" title="' + esc(t('body.reset')) + '" onclick="resetFig()" aria-label="' +
+  h += '<button class="fig-btn" title="' + esc(t('body.reset')) + '" data-act="resetFig" aria-label="' +
        esc(t('body.reset')) + '"><svg viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6"/>' +
        '<path d="M4 10a8 8 0 0 1 13-3M20 14a8 8 0 0 1-13 3"/></svg></button>';
   h += '</div>';
@@ -929,14 +929,14 @@ Screens.body = function(){
          '<div class="anat-filter-row" role="group" aria-label="' + esc(t('lab3d.filterLayer')) + '">' +
          '<span class="anat-filter-lbl">' + esc(t('lab3d.filterLayer')) + '</span><div class="chips">' +
          ['all','superficial','deep'].map(ly =>
-           '<button class="chip sm ' + (BODY_LAYER===ly?'on':'') + '" onclick="setLabLayer(\'' + ly + '\')" ' +
+           '<button class="chip sm ' + (BODY_LAYER===ly?'on':'') + '" data-act="setLabLayer" data-a1="' + ly + '" ' +
            'aria-pressed="' + (BODY_LAYER===ly?'true':'false') + '">' +
            esc(ly==='all' ? t('sci.all') : t('lab3d.layer.'+ly)) + '</button>'
          ).join('') + '</div></div>' +
          '<div class="anat-filter-row" role="group" aria-label="' + esc(t('lab3d.filterRegion')) + '">' +
          '<span class="anat-filter-lbl">' + esc(t('lab3d.filterRegion')) + '</span><div class="chips">' +
          ['all','chest','back','shoulder','arms','forearms','core','hips','thigh','calves','neck'].map(rg =>
-           '<button class="chip sm ' + (BODY_REGION===rg?'on':'') + '" onclick="setLabRegion(\'' + rg + '\')" ' +
+           '<button class="chip sm ' + (BODY_REGION===rg?'on':'') + '" data-act="setLabRegion" data-a1="' + rg + '" ' +
            'aria-pressed="' + (BODY_REGION===rg?'true':'false') + '">' +
            esc(rg==='all' ? t('sci.all') : t('lab3d.reg.'+rg)) + '</button>'
          ).join('') + '</div></div></div>';
@@ -957,7 +957,7 @@ Screens.body = function(){
          : (r.daysLeft > 0 ? r.daysLeft + ' d' : Math.max(1, Math.round(r.hoursLeft || 1)) + ' h'))
       : t('mst.fresh');
     const remLabel = esc(remPlain);
-    h += '<button class="mrow ' + (BODY_SEL===m?'sel':'') + '" onclick="selectMuscle(\'' + m + '\')"' +
+    h += '<button class="mrow ' + (BODY_SEL===m?'sel':'') + '" data-act="selectMuscle" data-a1="' + m + '"' +
          ' aria-pressed="' + (BODY_SEL===m?'true':'false') + '"' +
          ' aria-label="' + esc(t('mg.'+m) + ', ' + (r && r.since !== null ? t('mst.'+st) + ' — ' + remPlain : t('mst.fresh'))) + '">' +
          '<span class="sw" style="background:' + STATE_HEX[st] + ';opacity:' +
@@ -994,7 +994,7 @@ Screens.body = function(){
          '<span class="row nowrap">' +
          '<span class="flag ' + (r.state==='ready'?'ok':r.state==='caution'?'warn':r.state==='rest'?'alert':'nodata') + '">' +
          esc(t('mst.'+r.state)) + '</span>' +
-         '<button class="btn quiet sm" onclick="clearMuscle()" aria-label="' + esc(t('body.close')) + '">' +
+         '<button class="btn quiet sm" data-act="clearMuscle" aria-label="' + esc(t('body.close')) + '">' +
          esc(t('body.close')) + '</button></span></div>';
 
     const grpAction = groupAnatomicalAction(m);
@@ -1017,7 +1017,7 @@ Screens.body = function(){
     h += dataTable(
       [{label:t('progress.exercise')},{label:t('exd.role')},{label:t('body.contribution'),n:true}],
       related.slice(0,8).map(e => [
-        '<button type="button" class="link-btn" onclick="openExerciseDetail(\'' + e.id + '\')">' +
+        '<button type="button" class="link-btn" data-act="openExerciseDetail" data-a1="' + e.id + '">' +
           esc(t('ex.'+e.id)) + '</button>',
         esc(t('pat.'+e.pat)),
         Math.round(muscleWeight(e,m)*100) + '%'
@@ -1038,7 +1038,7 @@ Screens.body = function(){
           const ex = EX_BY_ID[x.exId];
           const b = ex ? bestSetScore(workingSets(x.sets), ex, s.profile) : null;
           return [esc(dateLabel(x.date)),
-                  '<button type="button" class="link-btn" onclick="openExerciseDetail(\'' + x.exId + '\')">' +
+                  '<button type="button" class="link-btn" data-act="openExerciseDetail" data-a1="' + x.exId + '">' +
                     esc(x.name) + '</button>',
                   esc(b ? formatSet(b.set, ex, s.profile) : '—'),
                   workingSets(x.sets).length];
@@ -1058,15 +1058,15 @@ Screens.body = function(){
     h += '<div class="uncertain mt-3"><b>' + esc(t('body.missing')) + '</b>' +
          esc(t('body.estimateNote')) + ' ' + r.observations + ' ' + esc(t('body.observations')) + '.</div>';
     h += '<div class="chips mb-0 mt-3">' +
-         lessonsForMuscle(m).map(function(lid){ return '<button class="chip sm" onclick="openLesson(\'' + lid +
-         '\')">' + esc(t((lesson(lid)||{titleKey:'sci.title'}).titleKey)) + '</button>'; }).join('') + '</div>';
+         lessonsForMuscle(m).map(function(lid){ return '<button class="chip sm" data-act="openLesson" data-a1="' + lid +
+         '">' + esc(t((lesson(lid)||{titleKey:'sci.title'}).titleKey)) + '</button>'; }).join('') + '</div>';
     h += '<div class="row mt-4">' +
-         '<button class="btn quiet" onclick="openWhy(\'recovery\',\'' + m + '\')">' +
+         '<button class="btn quiet" data-act="openWhy" data-a1="recovery" data-a2="' + m + '">' +
          esc(t('sci.whyOpen')) + '</button>' +
-         '<button class="btn" onclick="go(\'session\')">' + esc(t('body.train')) + '</button>' +
-         '<button class="btn quiet" onclick="openExerciseLibrary(\'' + m + '\')">' + esc(t('plan.tabLibrary')) + '</button>' +
-         '<button class="btn quiet" onclick="toggleZoom()">' + esc(t('body.zoomTo')) + '</button>' +
-         '<button class="btn quiet" onclick="clearMuscle()">' + esc(t('body.fullView')) + '</button>' +
+         '<button class="btn" data-act="go" data-a1="session">' + esc(t('body.train')) + '</button>' +
+         '<button class="btn quiet" data-act="openExerciseLibrary" data-a1="' + m + '">' + esc(t('plan.tabLibrary')) + '</button>' +
+         '<button class="btn quiet" data-act="toggleZoom">' + esc(t('body.zoomTo')) + '</button>' +
+         '<button class="btn quiet" data-act="clearMuscle">' + esc(t('body.fullView')) + '</button>' +
          '</div>';
     h += '</div>';
   }
@@ -1076,9 +1076,9 @@ Screens.body = function(){
     const selTitle = LAB_STRUCT ? LAB_STRUCT.label : t('mg.' + BODY_SEL);
     h += '<div class="body-mob-bar" role="region" aria-label="' + esc(selTitle) + '">' +
          '<span class="body-mob-t">' + esc(selTitle) + '</span>' +
-         '<button type="button" class="btn sm" onclick="openMobileMuscleSheet()">' +
+         '<button type="button" class="btn sm" data-act="openMobileMuscleSheet">' +
            esc(t('lab.open')) + '</button>' +
-         '<button type="button" class="btn quiet sm" onclick="clearMuscle()">' +
+         '<button type="button" class="btn quiet sm" data-act="clearMuscle">' +
            esc(t('body.close')) + '</button></div>';
   }
   h += '</div>';
@@ -1095,7 +1095,7 @@ function labStructPanel(info){
   const side = info.side ? esc(t('lab3d.side.' + info.side)) : '';
   let h = '<div class="panel inset lab-struct">';
   h += '<div class="panel-hd"><h2 class="sub">' + esc(info.label) + '</h2>' +
-       '<button class="btn quiet sm" onclick="clearMuscle()" aria-label="' +
+       '<button class="btn quiet sm" data-act="clearMuscle" aria-label="' +
        esc(t('body.close')) + '">' + esc(t('body.close')) + '</button></div>';
   h += '<div class="chips mb-2">' +
        (info.side ? '<span class="flag plain">' + side + '</span>' : '') +
@@ -1289,7 +1289,7 @@ function openExerciseDetail(exId){
   h += '<div class="factors mb-4 bare">';
   (ex.m || []).forEach(([m, w], idx) => {
     h += '<div class="factor"><span class="dot"></span><span class="txt">' +
-         '<button type="button" class="link-btn" onclick="closeSheet();selectMuscle(\'' + m + '\');go(\'body\')">' +
+         '<button type="button" class="link-btn" data-act="openMuscleFromSheet" data-a1="' + m + '">' +
          esc(t('mg.' + m)) + '</button>' +
          (idx === 0 ? ' <span class="hint">(' + esc(t('lab.primary')) + ')</span>' : '') +
          '</span><span class="w">' + Math.round(w * 100) + '%</span></div>';
@@ -1355,21 +1355,21 @@ function openExerciseDetail(exId){
   if(subs.length){
     h += '<p class="eyebrow mb-2">' + esc(t('session.sub')) + '</p>';
     h += '<div class="chips mb-3">' +
-         subs.map(sb => '<button type="button" class="chip sm" onclick="openExerciseDetail(\'' + sb.id + '\')">' +
+         subs.map(sb => '<button type="button" class="chip sm" data-act="openExerciseDetail" data-a1="' + sb.id + '">' +
            esc(t('ex.' + sb.id)) + '</button>').join('') + '</div>';
   }
 
   const targetDay = (typeof PLAN_DAY !== 'undefined' && PLAN_DAY)
     || (s.plan && s.plan.sessions && s.plan.sessions[0] ? s.plan.sessions[0].id : '');
   h += '<div class="row mt-3">' +
-       (prime ? '<button type="button" class="btn quiet sm" onclick="closeSheet();selectMuscle(\'' + prime + '\');go(\'body\')">' +
+       (prime ? '<button type="button" class="btn quiet sm" data-act="openMuscleFromSheet" data-a1="' + prime + '">' +
          esc(t('home.mapCta')) + '</button>' : '') +
        (ACTIVE
-         ? '<button type="button" class="btn sm" onclick="addExerciseToActive(\'' + exId + '\')">+ ' + esc(t('plan.tabActive')) + '</button>'
+         ? '<button type="button" class="btn sm" data-act="addExerciseToActive" data-a1="' + exId + '">+ ' + esc(t('plan.tabActive')) + '</button>'
          : (targetDay
-             ? '<button type="button" class="btn quiet sm" onclick="addExerciseToPlan(\'' + targetDay + '\',\'' + exId + '\')">+ ' + esc(t('plan.tabPlan')) + '</button>'
+             ? '<button type="button" class="btn quiet sm" data-act="addExerciseToPlan" data-a1="' + targetDay + '" data-a2="' + exId + '">+ ' + esc(t('plan.tabPlan')) + '</button>'
              : '')) +
-       '<button type="button" class="btn quiet sm" onclick="openWhy(\'progression\',\'' + exId + '\')">' +
+       '<button type="button" class="btn quiet sm" data-act="openWhy" data-a1="progression" data-a2="' + exId + '">' +
        esc(t('sci.whyOpen')) + '</button></div>';
 
   sheet(t('ex.' + ex.id), h);
@@ -1419,7 +1419,7 @@ Screens.progress = function(){
        explicitly labelled and visually separated from anything personal. */
     h += '<div class="mt-3">' +
       emptyState('progress.nodata', 'progress.nodataBody', 'chart',
-        '<button class="btn" onclick="go(\'session\')">' + esc(t('progress.start')) + '</button>', 2) +
+        '<button class="btn" data-act="go" data-a1="session">' + esc(t('progress.start')) + '</button>', 2) +
       '</div>';
     h += '<div class="panel mt-3">' +
       '<div class="eyebrow mb-2">' + esc(t('progress.sample')) + '</div>' +
@@ -1461,12 +1461,12 @@ Screens.progress = function(){
   h += '<div class="panel">';
   h += '<div class="chips mb-3">';
   [30,90,0].forEach(pd => {
-    h += '<button class="chip sm ' + (PROG_PERIOD===pd?'on':'') + '" onclick="setPeriod(' + pd + ')">' +
+    h += '<button class="chip sm ' + (PROG_PERIOD===pd?'on':'') + '" data-act="setPeriod" data-a1="' + pd + '" data-t1="l">' +
          esc(pd===0?t('progress.pall'):pd===30?t('progress.p30'):t('progress.p90')) + '</button>';
   });
   h += '</div>';
   h += '<div class="chips mb-3">' +
-       exIds.map(id => '<button class="chip sm ' + (PROG_EX===id?'on':'') + '" onclick="setProgEx(\'' + id + '\')">' + esc(t('ex.'+id)) + '</button>').join('') + '</div>';
+       exIds.map(id => '<button class="chip sm ' + (PROG_EX===id?'on':'') + '" data-act="setProgEx" data-a1="' + id + '">' + esc(t('ex.'+id)) + '</button>').join('') + '</div>';
 
   const eps = exerciseHistory(PROG_EX).filter(h2 => h2.date >= from).map(h2 => {
     const b = bestSetScore(workingSets(h2.sets), progEx, s.profile);
@@ -1486,10 +1486,10 @@ Screens.progress = function(){
 
   h += '<div class="chips mb-4"  role="group" aria-label="' + esc(t('chart.metric')) + '">' +
        availMetrics.map(m =>
-         '<button class="chip sm ' + (activeMetric===m.id?'on':'') + '" onclick="setProgMetric(\'' + m.id + '\')">' +
+         '<button class="chip sm ' + (activeMetric===m.id?'on':'') + '" data-act="setProgMetric" data-a1="' + m.id + '">' +
          esc(m.label) + '</button>'
        ).join('') +
-       '<button class="btn quiet sm push" onclick="openExerciseDetail(\'' + PROG_EX + '\')">' +
+       '<button class="btn quiet sm push" data-act="openExerciseDetail" data-a1="' + PROG_EX + '">' +
        esc(t('exd.open')) + '</button></div>';
 
   if(activeMetric === 'e1rm'){
@@ -1540,15 +1540,15 @@ Screens.progress = function(){
          row, so the session's own actions live there: one control, one sheet. */
       h += '<tr><td>' + (i===0
              ? '<span class="td-date">' + esc(dateLabel(sess.date)) + '</span>' +
-               '<button class="link-btn" onclick="openPrintRecord(\'' + sess.id + '\')" ' +
+               '<button class="link-btn" data-act="openPrintRecord" data-a1="' + sess.id + '" ' +
                'aria-label="' + esc(t('pa.printRecord')) + ' · ' + esc(dateLabel(sess.date)) + '">' +
                esc(t('pa.printShort')) + '</button>'
              : '') + '</td>' +
-           '<td><button type="button" class="link-btn" onclick="openExerciseDetail(\'' + e.id + '\')">' +
+           '<td><button type="button" class="link-btn" data-act="openExerciseDetail" data-a1="' + e.id + '">' +
            esc(t('ex.'+e.id)) + '</button></td><td class="n">' + done.length + '</td>' +
            '<td class="n">' + esc(b ? formatSet(b.set, ex, s.profile) : '—') + '</td>' +
-           '<td class="n"><button class="btn quiet sm" onclick="openSessionEditor(\'' + sess.id +
-           '\',' + idx + ')">' + esc(t('hist.edit')) + '</button></td></tr>';
+           '<td class="n"><button class="btn quiet sm" data-act="openSessionEditor" data-a1="' + sess.id +
+           '" data-a2="' + idx + '" data-t2="l">' + esc(t('hist.edit')) + '</button></td></tr>';
     });
   });
   h += '</tbody></table></div></div>';
@@ -1594,12 +1594,12 @@ function bodyweightTrendPanel(s){
     avg7 = Math.round(tail.reduce((acc, x) => acc + x.w, 0) / tail.length * 10) / 10;
   }
   let h = '<div class="sect"><h2 class="sub">' + esc(t('profile.bodyweight')) + '</h2><span class="rule"></span>' +
-          '<span class="aside"><button type="button" class="chip sm" onclick="openSheet(\'bw\')">+ ' +
+          '<span class="aside"><button type="button" class="chip sm" data-act="openSheet" data-a1="bw">+ ' +
           esc(t('bw.log')) + '</button></span></div>';
   h += '<div class="panel">';
   if(!list.length){
     h += '<p class="body-sm mb-3">' + esc(t('bw.empty')) + '</p>' +
-         '<button type="button" class="btn quiet sm" onclick="openSheet(\'bw\')">+ ' + esc(t('bw.log')) + '</button>';
+         '<button type="button" class="btn quiet sm" data-act="openSheet" data-a1="bw">+ ' + esc(t('bw.log')) + '</button>';
   } else {
     h += '<div class="chips mb-3">' +
          '<span class="flag accent">' + esc(t('bw.latest')) + ': ' + latest.w + ' ' + esc(u) + '</span>' +
@@ -1701,22 +1701,22 @@ function renderSessionEditor(){
       h += '<div class="fld"><label class="fld-cap" for="ed_' + i + '_' + f.attr + '">' +
            esc(t(labelKey)) + '</label>' +
            '<input id="ed_' + i + '_' + f.attr + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' +
-           esc(val === null || val === undefined ? '' : val) + '" oninput="editField(' + i + ',\'' +
-           f.attr + '\',this.value)"><span class="u">' +
+           esc(val === null || val === undefined ? '' : val) + '" data-in="editField" data-a1="' + i + '" data-t1="l" data-a2="' +
+           f.attr + '" data-t3="v"><span class="u">' +
            esc(f.key === 'distance' ? distanceUnit(u)
              : (f.key === 'time' ? t('log.unit.s')
              : (f.key === 'reps' ? t('log.repsShort') : u))) + '</span></div>';
     });
-    h += '<button class="btn sm" onclick="saveEditedSet(' + i + ')">' + esc(t('hist.save')) + '</button>';
-    h += '<button class="btn quiet sm" onclick="markWarmupEditedSet(' + i + ')" aria-pressed="' +
+    h += '<button class="btn sm" data-act="saveEditedSet" data-a1="' + i + '" data-t1="l">' + esc(t('hist.save')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="markWarmupEditedSet" data-a1="' + i + '" data-t1="l" aria-pressed="' +
          (set.warmup ? 'true' : 'false') + '">' + esc(t('hist.warmupRow')) + '</button>';
-    h += '<button class="btn danger sm" onclick="deleteEditedSet(' + i + ')">' + esc(t('hist.delSet')) + '</button>';
+    h += '<button class="btn danger sm" data-act="deleteEditedSet" data-a1="' + i + '" data-t1="l">' + esc(t('hist.delSet')) + '</button>';
     h += '</div></div>';
   });
 
   h += '<div class="row mt-4">' +
-       '<button class="btn" onclick="closeSessionEditor()">' + esc(t('btn.done')) + '</button>' +
-       '<button class="btn danger" onclick="deleteWholeSession()">' + esc(t('hist.delSession')) + '</button></div>';
+       '<button class="btn" data-act="closeSessionEditor">' + esc(t('btn.done')) + '</button>' +
+       '<button class="btn danger" data-act="deleteWholeSession">' + esc(t('hist.delSession')) + '</button></div>';
   sheet(t('hist.title'), h);
 }
 
@@ -1826,8 +1826,8 @@ Screens.profile = function(){
           esc(t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('profile.title')) + '</h1></div>' +
           '<div class="row">' +
-          '<button class="btn sm" onclick="rebuildPlan()">' + esc(t('profile.rebuild')) + '</button>' +
-          '<button class="btn quiet sm" onclick="go(\'onb\')">' + esc(t('onb.redo')) + '</button></div></div>';
+          '<button class="btn sm" data-act="rebuildPlan">' + esc(t('profile.rebuild')) + '</button>' +
+          '<button class="btn quiet sm" data-act="go" data-a1="onb">' + esc(t('onb.redo')) + '</button></div></div>';
 
   h += '<div class="profile-grid">';
 
@@ -1837,17 +1837,17 @@ Screens.profile = function(){
 
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('prog.title')) + '</h3></div>';
   h += '<div class="field"><label for="pf_name">' + esc(t('onb.name')) + '</label>' +
-       '<input id="pf_name" type="text" value="' + esc(p.name) + '" oninput="setP(\'name\',this.value)"></div>';
+       '<input id="pf_name" type="text" value="' + esc(p.name) + '" data-in="setP" data-a1="name" data-t2="v"></div>';
   h += '<div class="field"><label>' + esc(t('onb.exp.t')) + '</label><div class="chips">' +
-       ['b','i','a'].map(g => '<button class="chip sm ' + (p.experience===g?'on':'') + '" onclick="setP(\'experience\',\'' + g + '\')">' + esc(t('onb.exp.'+g)) + '</button>').join('') + '</div></div>';
+       ['b','i','a'].map(g => '<button class="chip sm ' + (p.experience===g?'on':'') + '" data-act="setP" data-a1="experience" data-a2="' + g + '">' + esc(t('onb.exp.'+g)) + '</button>').join('') + '</div></div>';
   h += '<div class="grid2"><div class="field"><label>' + esc(t('onb.avail.t')) + '</label><div class="chips">' +
-       [2,3,4,5,6].map(d => '<button class="chip sm ' + (p.daysPerWeek===d?'on':'') + '" onclick="setP(\'daysPerWeek\',' + d + ')">' + d + '</button>').join('') + '</div></div>' +
+       [2,3,4,5,6].map(d => '<button class="chip sm ' + (p.daysPerWeek===d?'on':'') + '" data-act="setP" data-a1="daysPerWeek" data-a2="' + d + '" data-t2="l">' + d + '</button>').join('') + '</div></div>' +
        '<div class="field"><label>' + esc(t('onb.avail.len')) + '</label><div class="chips">' +
-       [20,35,50,70].map(m => '<button class="chip sm ' + (p.sessionMinutes===m?'on':'') + '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
+       [20,35,50,70].map(m => '<button class="chip sm ' + (p.sessionMinutes===m?'on':'') + '" data-act="setP" data-a1="sessionMinutes" data-a2="' + m + '" data-t2="l">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
        '</div></div></div>';
   h += '<div class="field mb-0"><label>' + esc(t('profile.limits')) + '</label><div class="chips">' +
        [['shoulder','shoulder'],['knee','knee'],['lowerback','lowback'],['wrist','wrist'],['elbow','elbow']].map(x =>
-       '<button class="chip sm ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" onclick="setLimit(\'' + x[0] + '\')">' +
+       '<button class="chip sm ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" data-act="setLimit" data-a1="' + x[0] + '">' +
        esc(t('onb.limits.'+x[1])) + '</button>').join('') + '</div>' +
        '<p class="hint mt-1">' + esc(t('onb.limits.note')) + '</p></div>';
   h += '</div>';
@@ -1856,8 +1856,8 @@ Screens.profile = function(){
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('onb.goal.t')) +
        '</h3><span class="hint">' + esc(t('onb.whyBody')) + '</span></div>';
   h += '<div class="chips">' + GOALS.map(g =>
-    '<button class="chip ' + (hasGoal(p, g.id) ? 'on' : '') + '" onclick="toggleGoalP(\'' + g.id +
-    '\')" aria-pressed="' + (hasGoal(p, g.id) ? 'true' : 'false') + '">' + esc(t(g.label)) + '</button>').join('') + '</div></div>';
+    '<button class="chip ' + (hasGoal(p, g.id) ? 'on' : '') + '" data-act="toggleGoalP" data-a1="' + g.id +
+    '" aria-pressed="' + (hasGoal(p, g.id) ? 'true' : 'false') + '">' + esc(t(g.label)) + '</button>').join('') + '</div></div>';
 
   /* Training focus. Sits directly under Goals because it is the other half of
      the same question: Goals says what the training is FOR, this says where the
@@ -1880,13 +1880,13 @@ Screens.profile = function(){
        '</summary><div class="prof-sub-body">';
   if(planFocusStale(s)){
     h += banner('warn', t('focus.stale'), '') +
-         '<div class="row mb-3"><button class="btn sm" onclick="rebuildPlan()">' +
+         '<div class="row mb-3"><button class="btn sm" data-act="rebuildPlan">' +
          esc(t('focus.rebuild')) + '</button></div>';
   }
   h += '<div class="tiles">' + EMPHASIS.map(e =>
     '<button type="button" class="tile radio ' + ((p.emphasis || 'balanced') === e.id ? 'on' : '') + '" ' +
     'aria-pressed="' + ((p.emphasis || 'balanced') === e.id ? 'true' : 'false') + '" ' +
-    'onclick="setEmphasis(\'' + e.id + '\')">' +
+    'data-act="setEmphasis" data-a1="' + e.id + '">' +
     '<span class="box"></span><span><span class="t">' + esc(t(e.label)) + '</span>' +
     '<span class="d">' + esc(t(e.desc)) + '</span></span></button>').join('') + '</div>';
   h += '<p class="hint mt-3">' + esc(t('profile.focusHint')) + '</p>';
@@ -1894,7 +1894,7 @@ Screens.profile = function(){
        '<div class="chips">' + PRIORITY_GROUPS.filter(g => g.id !== 'balanced').map(g => {
          const on = (p.priorities || []).indexOf(g.id) >= 0;
          return '<button type="button" class="chip ' + (on ? 'on' : '') + '" ' +
-           'aria-pressed="' + (on ? 'true' : 'false') + '" onclick="togglePriority(\'' + g.id + '\')">' +
+           'aria-pressed="' + (on ? 'true' : 'false') + '" data-act="togglePriority" data-a1="' + g.id + '">' +
            esc(t(g.label)) + '</button>';
        }).join('') + '</div>' +
        '<p class="hint mt-2">' + esc(t('profile.prioritiesHint')) + '</p></div>';
@@ -1904,23 +1904,23 @@ Screens.profile = function(){
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('onb.style.t')) + '</h3></div>';
   h += '<div class="tiles">' +
     ['hit','std','min','freq'].map(k =>
-      '<button class="tile radio ' + (p.style===k?'on':'') + '" onclick="setP(\'style\',\'' + k + '\')">' +
+      '<button class="tile radio ' + (p.style===k?'on':'') + '" data-act="setP" data-a1="style" data-a2="' + k + '">' +
       '<span class="box"></span><span><span class="t">' + esc(t('onb.style.'+k)) + '</span>' +
       '<span class="d">' + esc(t('onb.style.'+k+'.d')) + '</span></span></button>').join('') + '</div>';
   h += '<div class="grid2 mt-4"><div class="field mb-0"><label for="pf_bw">' +
        esc(t('profile.bodyweight')) + ' <span class="hint">' + esc(t('c.optional')) + '</span></label>' +
        '<input id="pf_bw" type="number" inputmode="decimal" step="any" min="0" placeholder="—" value="' +
        (p.bodyweight === null || p.bodyweight === undefined ? '' : esc(p.bodyweight)) +
-       '" oninput="setBodyweight(this.value)"><p class="hint mt-1">' + esc(t('profile.bodyweightHint')) + '</p></div>' +
+       '" data-in="setBodyweight" data-t1="v"><p class="hint mt-1">' + esc(t('profile.bodyweightHint')) + '</p></div>' +
        '<div class="field mb-0"><label>' + esc(t('onb.units.t')) + '</label><div class="chips">' +
-       '<button class="chip ' + (p.unit==='kg'?'on':'') + '" onclick="setP(\'unit\',\'kg\')">' + esc(t('onb.units.kg')) + '</button>' +
-       '<button class="chip ' + (p.unit==='lb'?'on':'') + '" onclick="setP(\'unit\',\'lb\')">' + esc(t('onb.units.lb')) + '</button></div></div></div>';
+       '<button class="chip ' + (p.unit==='kg'?'on':'') + '" data-act="setP" data-a1="unit" data-a2="kg">' + esc(t('onb.units.kg')) + '</button>' +
+       '<button class="chip ' + (p.unit==='lb'?'on':'') + '" data-act="setP" data-a1="unit" data-a2="lb">' + esc(t('onb.units.lb')) + '</button></div></div></div>';
   h += '</div>';
 
   /* Unified Environment & Equipment */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.environment')) + '</h3></div>' +
        '<div class="tiles">' + ENVIRONMENTS.map(env =>
-       '<button class="tile radio ' + (p.environment === env.id ? 'on' : '') + '" onclick="setEnvEquip(\'' + env.id + '\')"><span class="box"></span>' +
+       '<button class="tile radio ' + (p.environment === env.id ? 'on' : '') + '" data-act="setEnvEquip" data-a1="' + env.id + '"><span class="box"></span>' +
        '<span><span class="t">' + esc(t(env.label)) + '</span><span class="d">' + esc(t(env.desc)) +
        '</span></span></button>').join('') + '</div></div>';
 
@@ -1929,7 +1929,7 @@ Screens.profile = function(){
        '<span class="hint">' + numExpr(enabledCount + ' / ' + avail.length) + '</span></div>';
   h += '<p class="body-sm mb-3">' + esc(t('onb.ex.d')) + '</p>';
   h += '<p class="hint mb-3">' + esc(t('onb.ex.hint')) + '</p>';
-  h += '<button type="button" class="btn quiet block mb-3"  onclick="openExerciseLibrary()">' +
+  h += '<button type="button" class="btn quiet block mb-3"  data-act="openExerciseLibrary">' +
        esc(t('plan.tabLibrary')) + ' (' + EX.length + ')</button>';
   /* Same component as the onboarding step, for the same reason: this is a list
      of things you remove from, not a form you fill in. It used to be twelve
@@ -1949,13 +1949,13 @@ Screens.profile = function(){
            const on = p.exercises ? p.exercises[e.id] !== false : true;
            return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
                   'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
-                  'onclick="toggleEx(\'' + e.id + '\')">' +
+                  'data-act="toggleEx" data-a1="' + e.id + '">' +
                   esc(t('ex.'+e.id)) + '</button>';
          }).join('') + '</div></details>';
   });
   if(enabledCount < avail.length){
     h += '<p class="hint mt-3 mb-0">' + esc(t('plan.excludedCount', { n: avail.length - enabledCount })) +
-         ' <button type="button" class="link-btn" onclick="restoreExPool()">' +
+         ' <button type="button" class="link-btn" data-act="restoreExPool">' +
          esc(t('profile.restorePool')) + '</button></p>';
   }
   h += '</div>';
@@ -1967,7 +1967,7 @@ Screens.profile = function(){
        '<span class="flag sm ' + (notifyOn ? 'ok' : 'plain') + '">' +
        esc(notifyOn ? t('rest.notifyStateOn') : t('rest.notifyStateOff')) + '</span></div>';
   h += '<button type="button" class="tile ' + (notifyOn ? 'on' : '') + '" role="switch" ' +
-       'aria-checked="' + (notifyOn ? 'true' : 'false') + '" onclick="setRestNotify()">' +
+       'aria-checked="' + (notifyOn ? 'true' : 'false') + '" data-act="setRestNotify">' +
        '<span class="box"></span><span><span class="t">' + esc(t('rest.notifyLbl')) +
        '</span><span class="d">' + esc(t('rest.notifyHint')) + '</span></span></button>';
   if(!restAlertSupported()){
@@ -1989,34 +1989,34 @@ Screens.profile = function(){
        '</h3><span class="hint">' + esc(t('onb.shift.note')) + '</span></div>';
   h += '<div class="field"><label>' + esc(t('onb.shift.t')) + '</label><div class="chips">' +
        [['none','no'],['night','night'],['rotating','rot']].map(x =>
-       '<button class="chip sm ' + (p.shiftType===x[0]?'on':'') + '" onclick="setP(\'shiftType\',\'' + x[0] + '\')">' + esc(t('onb.shift.'+x[1])) + '</button>').join('') + '</div></div>';
+       '<button class="chip sm ' + (p.shiftType===x[0]?'on':'') + '" data-act="setP" data-a1="shiftType" data-a2="' + x[0] + '">' + esc(t('onb.shift.'+x[1])) + '</button>').join('') + '</div></div>';
   h += '<div class="field"><label for="pf_slp">' + esc(t('onb.sleep.t')) + '</label>' +
        '<div class="row nowrap row-base">' +
        '<span class="num num-lg">' + p.sleepHours + '</span>' +
        '<span class="hint">' + esc(t('onb.sleep.h')) + '</span></div>' +
        '<input id="pf_slp" type="range" min="3" max="11" step="0.5" value="' + p.sleepHours +
-       '" oninput="setP(\'sleepHours\',+this.value)"></div>';
+       '" data-in="setP" data-a1="sleepHours" data-t2="N"></div>';
   h += '<div class="field mb-0"><label for="pf_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
        '<input id="pf_wake" type="time" value="' + String(p.usualWake).padStart(2,'0') +
-       ':00" oninput="setP(\'usualWake\',+this.value.slice(0,2))"></div>';
+       ':00" data-in="setP" data-a1="usualWake" data-t2="hour"></div>';
   h += '<div class="row mt-3">' +
-       '<button class="btn quiet sm" onclick="openSheet(\'shift\')">' + esc(t('home.logshift')) + '</button>' +
-       '<button class="btn quiet sm" onclick="openSheet(\'sleep\')">' + esc(t('home.logsleep')) + '</button>' +
-       '<button class="btn quiet sm" onclick="openSheet(\'feel\')">' + esc(t('home.logfeel')) + '</button></div>';
+       '<button class="btn quiet sm" data-act="openSheet" data-a1="shift">' + esc(t('home.logshift')) + '</button>' +
+       '<button class="btn quiet sm" data-act="openSheet" data-a1="sleep">' + esc(t('home.logsleep')) + '</button>' +
+       '<button class="btn quiet sm" data-act="openSheet" data-a1="feel">' + esc(t('home.logfeel')) + '</button></div>';
   h += '</div>';
 
   /* Adaptations */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('a11y.needsTitle')) +
        '</h3></div><p class="body-sm mb-3">' + esc(t('a11y.needsHint')) + '</p>';
   h += '<div class="chips">' + NEEDS.map(n =>
-    '<button class="chip ' + (needOn(p, n.id) ? 'on' : '') + '" onclick="toggleNeedP(\'' + n.id +
-    '\')" aria-pressed="' + (needOn(p, n.id) ? 'true' : 'false') + '">' + esc(t(n.label)) + '</button>').join('') + '</div>';
+    '<button class="chip ' + (needOn(p, n.id) ? 'on' : '') + '" data-act="toggleNeedP" data-a1="' + n.id +
+    '" aria-pressed="' + (needOn(p, n.id) ? 'true' : 'false') + '">' + esc(t(n.label)) + '</button>').join('') + '</div>';
   h += '<div class="uncertain mt-3"><b>' + esc(t('a11y.disclaimer')) + '</b></div>';
   if(hasAnyNeed(p)){
     const excluded = EX.filter(e => !exerciseAllowed(e, p) && (EQUIP_SETS[p.equipment] || []).indexOf(e.equip) >= 0);
     h += '<p class="hint mt-2">' + excluded.length + ' ' + esc(t('a11y.adaptedOut')) + '</p>';
   }
-  h += '<div class="mt-3"><button class="btn quiet sm" onclick="rebuildPlan()">' +
+  h += '<div class="mt-3"><button class="btn quiet sm" data-act="rebuildPlan">' +
        esc(t('profile.rebuild')) + '</button></div></div>';
 
   h += groupClose;
@@ -2025,17 +2025,17 @@ Screens.profile = function(){
   h += groupOpen(t('profile.gAccess'), valA11y, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('a11y.title')) + '</h3></div>';
   h += '<div class="field"><label>' + esc(t('a11y.textSize')) + '</label><div class="chips">' +
-       [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') + '" onclick="setDisplay(\'textScale\',' + v + ')">' + Math.round(v*100) + '%</button>').join('') +
+       [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') + '" data-act="setDisplay" data-a1="textScale" data-a2="' + v + '" data-t2="l">' + Math.round(v*100) + '%</button>').join('') +
        '</div><p class="hint mt-1">' + esc(t('a11y.textSizeHint')) + '</p></div>';
   h += '<div class="tiles">' +
-    '<button class="tile ' + (p.display.highContrast ? 'on' : '') + '" onclick="setDisplay(\'highContrast\',' + (p.display.highContrast ? 'false' : 'true') +
-      ')" role="switch" aria-checked="' + (p.display.highContrast ? 'true' : 'false') + '"><span class="box"></span>' +
+    '<button class="tile ' + (p.display.highContrast ? 'on' : '') + '" data-act="setDisplay" data-a1="highContrast" data-a2="' + (p.display.highContrast ? 'false' : 'true') +
+      '" data-t2="l" role="switch" aria-checked="' + (p.display.highContrast ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.contrast')) + '</span><span class="d">' + esc(t('a11y.contrastHint')) + '</span></span></button>' +
-    '<button class="tile ' + (p.display.reducedMotion === 'on' ? 'on' : '') + '" onclick="setDisplay(\'reducedMotion\',\'' + (p.display.reducedMotion === 'on' ? 'auto' : 'on') +
-      '\')" role="switch" aria-checked="' + (p.display.reducedMotion === 'on' ? 'true' : 'false') + '"><span class="box"></span>' +
+    '<button class="tile ' + (p.display.reducedMotion === 'on' ? 'on' : '') + '" data-act="setDisplay" data-a1="reducedMotion" data-a2="' + (p.display.reducedMotion === 'on' ? 'auto' : 'on') +
+      '" role="switch" aria-checked="' + (p.display.reducedMotion === 'on' ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.motion')) + '</span><span class="d">' + esc(t('a11y.motionHint')) + '</span></span></button>' +
-    '<button class="tile ' + (p.display.simpleUI ? 'on' : '') + '" onclick="setDisplay(\'simpleUI\',' + (p.display.simpleUI ? 'false' : 'true') +
-      ')" role="switch" aria-checked="' + (p.display.simpleUI ? 'true' : 'false') + '"><span class="box"></span>' +
+    '<button class="tile ' + (p.display.simpleUI ? 'on' : '') + '" data-act="setDisplay" data-a1="simpleUI" data-a2="' + (p.display.simpleUI ? 'false' : 'true') +
+      '" data-t2="l" role="switch" aria-checked="' + (p.display.simpleUI ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.simple')) + '</span><span class="d">' + esc(t('a11y.simpleHint')) + '</span></span></button>' +
     '</div>';
   h += '<p class="hint mt-2">' + esc(t('keyboard.hint')) + '</p></div>';
@@ -2043,7 +2043,7 @@ Screens.profile = function(){
   /* Language */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.language')) +
        '</h3></div><div class="tiles">' +
-       LANGS.map(l => '<button class="tile radio ' + (CURRENT_LANG===l?'on':'') + '" onclick="switchLang(\'' + l + '\')"><span class="box"></span>' +
+       LANGS.map(l => '<button class="tile radio ' + (CURRENT_LANG===l?'on':'') + '" data-act="switchLang" data-a1="' + l + '"><span class="box"></span>' +
          '<span><span class="t">' + esc(langName(l)) + ' (' + esc(langLabel(l)) + ')</span></span></button>').join('') +
        '</div>' +
        /* If the language you are reading is not fully translated, say so here as
@@ -2081,10 +2081,10 @@ Screens.profile = function(){
   h += '<p class="hint mb-3">' + esc(t('you.lastBackup')) + ': ' +
        esc(s.lastExportAt ? dateLabel(s.lastExportAt) : t('state.none')) + ' · ' + esc(t('you.idbNote')) + '</p>';
   h += '<div class="stack">' +
-       '<button class="btn quiet" onclick="openSheet(\'bw\')">+ ' + esc(t('bw.log')) + '</button>' +
-       '<button class="btn quiet" onclick="doExport()">' + esc(t('you.export')) + '</button>' +
-       '<button class="btn quiet" onclick="doImport(this)">' + esc(t('you.import')) + '</button>' +
-       '<button class="btn danger" onclick="doErase()">' + esc(t('you.erase')) + '</button></div></div>';
+       '<button class="btn quiet" data-act="openSheet" data-a1="bw">+ ' + esc(t('bw.log')) + '</button>' +
+       '<button class="btn quiet" data-act="doExport">' + esc(t('you.export')) + '</button>' +
+       '<button class="btn quiet" data-act="doImport" data-t1="e">' + esc(t('you.import')) + '</button>' +
+       '<button class="btn danger" data-act="doErase">' + esc(t('you.erase')) + '</button></div></div>';
 
   /* About */
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.about')) + '</h3></div>';
@@ -2111,7 +2111,7 @@ Screens.profile = function(){
          '<p class="mono mt-2">' + esc((crash.build || '—') + ' · ' + crash.message) + '</p>' +
          (crash.stack ? '<pre>' + esc(String(crash.stack).slice(0, 600)) + '</pre>' : '') +
          '<p class="body-sm mt-2">' + esc(t('app.crash.note')) + '</p>' +
-         '<button class="btn quiet sm mt-2" onclick="forgetCrash(); render();">' +
+         '<button class="btn quiet sm mt-2" data-act="forgetCrashShown">' +
          esc(t('app.crash.clear')) + '</button></details>';
   }
   h += '</div>';
@@ -2122,10 +2122,10 @@ Screens.profile = function(){
      here, drawn with the same mark it had in the bar, and Today links to both. */
   h += groupOpen(t('profile.explore'), t('nav.body') + ' · ' + t('nav.science'), false);
   h += '<div class="stack">' +
-       '<button class="btn quiet block nav-link" onclick="go(\'body\')">' +
+       '<button class="btn quiet block nav-link" data-act="go" data-a1="body">' +
          '<svg viewBox="0 0 24 24" aria-hidden="true" class="nav-link-mark">' + NAV_MARK.body + '</svg>' +
          esc(t('nav.body')) + '</button>' +
-       '<button class="btn quiet block nav-link" onclick="go(\'science\')">' +
+       '<button class="btn quiet block nav-link" data-act="go" data-a1="science">' +
          '<svg viewBox="0 0 24 24" aria-hidden="true" class="nav-link-mark">' + NAV_MARK.science + '</svg>' +
          esc(t('nav.science')) + '</button>' +
        '</div>';
@@ -2257,10 +2257,10 @@ function sheet(title, bodyHtml){
      title row is sticky and carries the way out, at the top, in reach of a
      thumb. One Close, not two: a second control with the same name is noise for
      a screen reader. */
-  host.innerHTML = '<div class="sheet sheet-backdrop" onclick="if(event.target===this)closeSheet()">' +
+  host.innerHTML = '<div class="sheet sheet-backdrop" data-act="closeSheetBackdrop">' +
     '<div class="panel sheet-panel" role="dialog" aria-modal="true" aria-label="' + esc(title) + '" tabindex="-1">' +
     '<div class="sheet-hd"><h2>' + esc(title) + '</h2>' +
-    '<button type="button" class="btn quiet sm sheet-x" onclick="closeSheet()">' +
+    '<button type="button" class="btn quiet sm sheet-x" data-act="closeSheet">' +
     esc(t('btn.close')) + '</button></div>' + bodyHtml +
     '</div></div>';
   const panel = host.querySelector('.panel');
@@ -2285,9 +2285,9 @@ function openSheet(kind){
     '<div class="field"><label for="sl_e">' + esc(t('sleep.end')) + '</label>' +
     '<input type="datetime-local" id="sl_e" value="' + toLocalInput(Date.now()) + '"></div>' +
     '<div class="field"><label>' + esc(t('sleep.quality')) + '</label><div class="chips" id="sl_q">' +
-    [1,2,3,4,5].map(q => '<button class="chip sm ' + (q===3?'on':'') + '" onclick="pickQuality(' + q + ')">' + esc(t('sleep.q'+q)) + '</button>').join('') + '</div></div>' +
+    [1,2,3,4,5].map(q => '<button class="chip sm ' + (q===3?'on':'') + '" data-act="pickQuality" data-a1="' + q + '" data-t1="l">' + esc(t('sleep.q'+q)) + '</button>').join('') + '</div></div>' +
     '<p class="hint mb-4">' + esc(t('sleep.note')) + '</p>' +
-    '<button class="btn block" onclick="saveSleep()">' + esc(t('btn.save')) + '</button>');
+    '<button class="btn block" data-act="saveSleep">' + esc(t('btn.save')) + '</button>');
 
   if(kind === 'shift') return sheet(t('shift.title'),
     '<div class="field"><label for="sf_s">' + esc(t('shift.start')) + '</label>' +
@@ -2295,17 +2295,17 @@ function openSheet(kind){
     '<div class="field"><label for="sf_e">' + esc(t('shift.end')) + '</label>' +
     '<input type="datetime-local" id="sf_e" value="' + toLocalInput(Date.now()) + '"></div>' +
     '<p class="hint mb-4">' + esc(t('onb.shift.note')) + '</p>' +
-    '<button class="btn block" onclick="saveShift()">' + esc(t('btn.save')) + '</button>');
+    '<button class="btn block" data-act="saveShift">' + esc(t('btn.save')) + '</button>');
 
   if(kind === 'feel') return sheet(t('feel.title'),
     [['soreness','feel.soreness'],['joint','feel.joint'],['fatigue','feel.fatigue'],['illness','feel.illness']]
       .map(([k,lbl]) => '<div class="field"><label>' + esc(t(lbl)) + '</label><div class="chips" id="fl_' + k + '">' +
-        [0,1,2,3].map(v => '<button class="chip sm ' + (v===0?'on':'') + '" onclick="pickFeel(\'' + k + '\',' + v + ')">' +
+        [0,1,2,3].map(v => '<button class="chip sm ' + (v===0?'on':'') + '" data-act="pickFeel" data-a1="' + k + '" data-a2="' + v + '" data-t2="l">' +
           (v===0?esc(t('feel.none')):esc(t('feel.'+['mild','moderate','high'][v-1]))) + '</button>').join('') +
         '</div></div>').join('') +
     '<div class="banner warn mb-4"><span class="ic">i</span><span>' +
     esc(t('feel.stop')) + '</span></div>' +
-    '<button class="btn block" onclick="saveFeel()">' + esc(t('btn.save')) + '</button>');
+    '<button class="btn block" data-act="saveFeel">' + esc(t('btn.save')) + '</button>');
 
   if(kind === 'bw'){
     const s = getState(), u = unit();
@@ -2317,11 +2317,11 @@ function openSheet(kind){
       '<div class="field"><label for="bw_d">' + esc(t('progress.date')) + '</label>' +
       '<input type="date" id="bw_d" value="' + dateKey(Date.now()) + '"></div></div>' +
       '<p class="hint mb-3">' + esc(t('profile.bodyweightHint')) + '</p>' +
-      '<button class="btn block" onclick="saveBodyweightSheet()">' + esc(t('btn.save')) + '</button>' +
+      '<button class="btn block" data-act="saveBodyweightSheet">' + esc(t('btn.save')) + '</button>' +
       (recent.length ? '<div class="mt-4">' + recent.map(b =>
         '<div class="factor"><span class="dot"></span><span class="txt"><b>' + b.w + ' ' + esc(u) +
         '</b> · ' + esc(dateLabel(b.date)) + '</span>' +
-        '<button type="button" class="btn danger sm" onclick="removeBodyweightRow(\'' + b.id + '\')">' +
+        '<button type="button" class="btn danger sm" data-act="removeBodyweightRow" data-a1="' + b.id + '">' +
         esc(t('hist.delSet')) + '</button></div>').join('') + '</div>' : ''));
   }
 }
@@ -2394,7 +2394,7 @@ Screens.lang = function(){
     return '<button type="button" class="lang-row ' + (on ? 'on' : '') + '" ' +
       'lang="' + l + '" ' +
       'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
-      'onclick="pickLang(\'' + l + '\')">' +
+      'data-act="pickLang" data-a1="' + l + '">' +
       '<span class="box" aria-hidden="true"></span>' +
       '<span class="lang-nm" dir="' + (rtl ? 'rtl' : 'ltr') + '">' + esc(langName(l)) + '</span>' +
       '<span class="lang-code">' + esc(String(l).toUpperCase()) + '</span>' +
@@ -2415,7 +2415,7 @@ Screens.lang = function(){
     '<p class="onb-prose">' + esc(t('lang.sub')) + '</p>' +
     '<div class="lang-list">' + rows + '</div>' +
     '<div class="onb-actions">' +
-    '<button class="btn block" onclick="chooseLang(CURRENT_LANG)">' +
+    '<button class="btn block" data-act="chooseCurrentLang">' +
     esc(t('lang.continue')) + '</button></div>' +
     '<p class="hint mt-3">' + esc(t('lang.note')) + '</p>' +
     (function(){
@@ -2466,8 +2466,8 @@ let onbIdx = 0;
 function onbGo(i){ onbIdx = Math.max(0, Math.min(ONB_STEPS.length-1, i)); render(); window.scrollTo(0,0); }
 function onbNext(){ onbGo(onbIdx+1); }
 
-function tile(on, title, desc, onclick, radio){
-  return '<button class="tile ' + (on?'on':'') + (radio?' radio':'') + '" onclick="' + onclick + '">' +
+function tile(on, title, desc, act, args, radio){
+  return '<button class="tile ' + (on?'on':'') + (radio?' radio':'') + '"' + actAttr(act, ...(args || [])) + '>' +
     '<span class="box"></span><span><span class="t">' + esc(title) + '</span>' +
     (desc ? '<span class="d">' + esc(desc) + '</span>' : '') + '</span></button>';
 }
@@ -2493,7 +2493,7 @@ Screens.onb = function(){
       '<div class="panel"><p class="eyebrow mb-3">' + esc(t('onb.privacy.t')) + '</p>';
     [1,2,3,4].forEach(i => { b += '<div class="factor"><span class="dot"></span><span class="txt">' +
       esc(t('onb.privacy.l'+i)) + '</span></div>'; });
-    b += '<div class="mt-4"><button class="btn block" onclick="setConsent()">' +
+    b += '<div class="mt-4"><button class="btn block" data-act="setConsent">' +
       esc(t('onb.privacy.agree')) + '</button></div></div>';
     return { html: '<div class="onb-frame">' + bar + b + '</div>', noNav: true };
   }
@@ -2501,18 +2501,18 @@ Screens.onb = function(){
   if(step === 'exp'){
     b = head + '<h1 class="display pre mb-4">' + esc(t('onb.exp.t')) + '</h1>' +
       '<div class="tiles">' +
-      tile(p.experience==='b', t('onb.exp.b'), t('onb.exp.b.d'), "setP('experience','b')", true) +
-      tile(p.experience==='i', t('onb.exp.i'), t('onb.exp.i.d'), "setP('experience','i')", true) +
-      tile(p.experience==='a', t('onb.exp.a'), t('onb.exp.a.d'), "setP('experience','a')", true) +
+      tile(p.experience==='b', t('onb.exp.b'), t('onb.exp.b.d'), 'setP', ['experience','b'], true) +
+      tile(p.experience==='i', t('onb.exp.i'), t('onb.exp.i.d'), 'setP', ['experience','i'], true) +
+      tile(p.experience==='a', t('onb.exp.a'), t('onb.exp.a.d'), 'setP', ['experience','a'], true) +
       '</div><div class="sp-4"></div>' +
       '<p class="eyebrow mb-2">' + esc(t('onb.goal.t')) + '</p><div class="chips">' +
-      ['h','s','r','g'].map(g => '<button class="chip ' + (p.goal===g?'on':'') + '" onclick="setP(\'goal\',\'' + g + '\')">' + esc(t('onb.goal.'+g)) + '</button>').join('') +
+      ['h','s','r','g'].map(g => '<button class="chip ' + (p.goal===g?'on':'') + '" data-act="setP" data-a1="goal" data-a2="' + g + '">' + esc(t('onb.goal.'+g)) + '</button>').join('') +
       '</div>' +
       '<div class="onb-why">' + esc(t('onb.whyBody')) + '</div>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn grow"  ' + (p.experience && p.goal ? '' : 'disabled') +
-      ' onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      ' data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'focus'){
@@ -2528,15 +2528,15 @@ Screens.onb = function(){
                                          : picked.indexOf(g.id) >= 0;
         return '<button type="button" class="tile focus-tile ' + (on ? 'on' : '') + '" ' +
           'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
-          'onclick="togglePriority(\'' + g.id + '\')">' +
+          'data-act="togglePriority" data-a1="' + g.id + '">' +
           '<span class="box"></span><span><span class="t">' + esc(t(g.label)) + '</span>' +
           (g.id === 'balanced' ? '<span class="d">' + esc(t('emphasis.balanced.d')) + '</span>' : '') +
           '</span></button>';
       }).join('') + '</div>' +
       '<p class="hint mt-3">' + esc(t('onb.focus.note')) + '</p>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow" data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'approach'){
@@ -2547,75 +2547,75 @@ Screens.onb = function(){
       '<p class="onb-prose">' + esc(t('onb.approach.d')) + '</p>' +
       '<div class="tiles">' + EMPHASIS.map(e =>
         tile((p.emphasis || 'balanced') === e.id, t(e.label), t(e.desc),
-             "setEmphasis('" + e.id + "')", true)).join('') + '</div>' +
+             'setEmphasis', [e.id], true)).join('') + '</div>' +
       ((p.emphasis === 'custom')
         ? '<p class="eyebrow mt-4 mb-2">' + esc(t('profile.priorities')) + '</p>' +
           '<div class="focus-grid">' + PRIORITY_GROUPS.filter(g => g.id !== 'balanced').map(g => {
             const on = (p.priorities || []).indexOf(g.id) >= 0;
             return '<button type="button" class="chip ' + (on ? 'on' : '') + '" ' +
-              'aria-pressed="' + (on ? 'true' : 'false') + '" onclick="togglePriority(\'' + g.id + '\')">' +
+              'aria-pressed="' + (on ? 'true' : 'false') + '" data-act="togglePriority" data-a1="' + g.id + '">' +
               esc(t(g.label)) + '</button>';
           }).join('') + '</div>'
         : '') +
       '<p class="hint mt-3">' + esc(t('onb.approach.note')) + '</p>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow" onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow" data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'equip'){
     b = head + '<h1 class="display mb-4">' + esc(t('onb.equip.t')) + '</h1>' +
       '<div class="tiles">' +
-      tile(p.equipment==='gym', t('onb.equip.gym'), t('onb.equip.gym.d'), "setP('equipment','gym')", true) +
-      tile(p.equipment==='home', t('onb.equip.home'), t('onb.equip.home.d'), "setP('equipment','home')", true) +
-      tile(p.equipment==='minimal', t('onb.equip.min'), t('onb.equip.min.d'), "setP('equipment','minimal')", true) +
+      tile(p.equipment==='gym', t('onb.equip.gym'), t('onb.equip.gym.d'), 'setP', ['equipment','gym'], true) +
+      tile(p.equipment==='home', t('onb.equip.home'), t('onb.equip.home.d'), 'setP', ['equipment','home'], true) +
+      tile(p.equipment==='minimal', t('onb.equip.min'), t('onb.equip.min.d'), 'setP', ['equipment','minimal'], true) +
       '</div><div class="sp-5"></div>' +
       '<p class="eyebrow mb-2">' + esc(t('onb.limits.t').replace('\n',' ')) + '</p>' +
-      '<div class="chips"><button class="chip ' + (p.limits.length===0?'on':'') + '" onclick="setLimit(\'__none__\')">' + esc(t('onb.limits.h')) + '</button>' +
+      '<div class="chips"><button class="chip ' + (p.limits.length===0?'on':'') + '" data-act="setLimit" data-a1="__none__">' + esc(t('onb.limits.h')) + '</button>' +
       [['shoulder','shoulder'],['knee','knee'],['lowerback','lowback'],['wrist','wrist'],['elbow','elbow']].map(x =>
-      '<button class="chip ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" onclick="setLimit(\'' + x[0] + '\')">' +
+      '<button class="chip ' + (p.limits.indexOf(x[0])>=0?'on':'') + '" data-act="setLimit" data-a1="' + x[0] + '">' +
       esc(t('onb.limits.'+x[1])) + '</button>').join('') + '</div>' +
       '<p class="hint mt-2">' + esc(t('onb.limits.note')) + '</p>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'avail'){
     b = head + '<h1 class="display pre mb-4">' +
       esc(t('onb.avail.t')) + '</h1><div class="chips mb-5">' +
-      [2,3,4,5,6].map(d => '<button class="chip ' + (p.daysPerWeek===d?'on':'') + '" onclick="setP(\'daysPerWeek\',' + d + ')">' + d + '</button>').join('') + '</div>' +
+      [2,3,4,5,6].map(d => '<button class="chip ' + (p.daysPerWeek===d?'on':'') + '" data-act="setP" data-a1="daysPerWeek" data-a2="' + d + '" data-t2="l">' + d + '</button>').join('') + '</div>' +
       '<p class="eyebrow mb-2">' + esc(t('onb.avail.len')) + '</p>' +
-      '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') + '" onclick="setP(\'sessionMinutes\',' + m + ')">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
+      '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') + '" data-act="setP" data-a1="sessionMinutes" data-a2="' + m + '" data-t2="l">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
       '</div><div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'shift'){
     b = head + '<h1 class="display mb-4">' + esc(t('onb.shift.t')) + '</h1>' +
       '<div class="tiles">' +
-      tile(p.shiftType==='none', t('onb.shift.no'), '', "setP('shiftType','none')", true) +
-      tile(p.shiftType==='night', t('onb.shift.night'), '', "setP('shiftType','night')", true) +
-      tile(p.shiftType==='rotating', t('onb.shift.rot'), '', "setP('shiftType','rotating')", true) +
+      tile(p.shiftType==='none', t('onb.shift.no'), '', 'setP', ['shiftType','none'], true) +
+      tile(p.shiftType==='night', t('onb.shift.night'), '', 'setP', ['shiftType','night'], true) +
+      tile(p.shiftType==='rotating', t('onb.shift.rot'), '', 'setP', ['shiftType','rotating'], true) +
       '</div>';
     if(p.shiftType !== 'none'){
       b += '<div class="panel mt-4"><p class="eyebrow mb-3">' +
         esc(t('onb.shift.times')) + '</p><div class="grid2">' +
         '<div class="field"><label for="sh_s">' + esc(t('shift.start')) + '</label>' +
-        '<input type="time" id="sh_s" value="19:00" oninput="syncShiftPreview()"></div>' +
+        '<input type="time" id="sh_s" value="19:00" data-in="syncShiftPreview"></div>' +
         '<div class="field"><label for="sh_e">' + esc(t('shift.end')) + '</label>' +
-        '<input type="time" id="sh_e" value="07:00" oninput="syncShiftPreview()"></div></div>' +
+        '<input type="time" id="sh_e" value="07:00" data-in="syncShiftPreview"></div></div>' +
         '<p id="sh_prev" class="hint" style="color:var(--burnt-text)"></p>' +
-        '<button class="btn quiet sm" onclick="addShiftFromOnb()">' + esc(t('onb.shift.add')) + '</button>';
+        '<button class="btn quiet sm" data-act="addShiftFromOnb">' + esc(t('onb.shift.add')) + '</button>';
       b += '<div class="mt-3">' + (s.shifts||[]).slice(-4).map(sh =>
         '<div class="factor"><span class="dot"></span><span class="txt">' + esc(sh.start.slice(5)) + ' → ' +
         esc(sh.end.slice(5)) + '</span><span class="w">' + shiftHours(sh).toFixed(1) + ' h</span></div>').join('') + '</div></div>';
     }
     b += '<p class="hint mt-3">' + esc(t('onb.shift.note')) + '</p>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'sleep'){
@@ -2625,36 +2625,36 @@ Screens.onb = function(){
       '<span class="num num-xl" id="sl_v">' + p.sleepHours + '</span>' +
       '<span class="hint">' + esc(t('onb.sleep.h')) + '</span></div>' +
       '<input aria-label="' + esc(t('onb.sleep.t')) + '" type="range" min="3" max="11" step="0.5" value="' + p.sleepHours +
-      '" oninput="setP(\'sleepHours\',+this.value);document.getElementById(\'sl_v\').textContent=this.value"></div>' +
+      '" data-in="setSleepHours"></div>' +
       '<div class="panel"><p class="eyebrow mb-2">' + esc(t('onb.sleep.var')) +
-      '</p><div class="chips">' + [1,2,3].map(v => '<button class="chip ' + (p.sleepVariability===v?'on':'') + '" onclick="setP(\'sleepVariability\',' + v + ')">' + esc(t('onb.sleep.var.'+v)) + '</button>').join('') +
+      '</p><div class="chips">' + [1,2,3].map(v => '<button class="chip ' + (p.sleepVariability===v?'on':'') + '" data-act="setP" data-a1="sleepVariability" data-a2="' + v + '" data-t2="l">' + esc(t('onb.sleep.var.'+v)) + '</button>').join('') +
       '</div></div>' +
       '<div class="panel"><div class="field m-0"><label for="onb_wake">' + esc(t('onb.sleep.wake')) + '</label>' +
       '<input id="onb_wake" type="time" value="' + String(p.usualWake).padStart(2,'0') +
-      ':00" oninput="setP(\'usualWake\',+this.value.slice(0,2))"></div></div>' +
+      ':00" data-in="setP" data-a1="usualWake" data-t2="hour"></div></div>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'style'){
     b = head + '<h1 class="display pre mb-4">' +
       esc(t('onb.style.t')) + '</h1><div class="tiles">' +
-      tile(p.style==='hit', t('onb.style.hit'), t('onb.style.hit.d'), "setP('style','hit')", true) +
-      tile(p.style==='std', t('onb.style.std'), t('onb.style.std.d'), "setP('style','std')", true) +
-      tile(p.style==='min', t('onb.style.min'), t('onb.style.min.d'), "setP('style','min')", true) +
-      tile(p.style==='freq', t('onb.style.freq'), t('onb.style.freq.d'), "setP('style','freq')", true) +
+      tile(p.style==='hit', t('onb.style.hit'), t('onb.style.hit.d'), 'setP', ['style','hit'], true) +
+      tile(p.style==='std', t('onb.style.std'), t('onb.style.std.d'), 'setP', ['style','std'], true) +
+      tile(p.style==='min', t('onb.style.min'), t('onb.style.min.d'), 'setP', ['style','min'], true) +
+      tile(p.style==='freq', t('onb.style.freq'), t('onb.style.freq.d'), 'setP', ['style','freq'], true) +
       '</div><div class="banner info mt-4"><span class="ic">i</span><span>' +
       esc(t('onb.style.note')) + '</span></div>' +
       '<div class="panel mt-3"><p class="eyebrow mb-2">' +
       esc(t('onb.units.t')) + '</p><div class="chips">' +
-      '<button class="chip ' + (p.unit==='kg'?'on':'') + '" onclick="setP(\'unit\',\'kg\')">' +
+      '<button class="chip ' + (p.unit==='kg'?'on':'') + '" data-act="setP" data-a1="unit" data-a2="kg">' +
       esc(t('onb.units.kg')) + '</button>' +
-      '<button class="chip ' + (p.unit==='lb'?'on':'') + '" onclick="setP(\'unit\',\'lb\')">' +
+      '<button class="chip ' + (p.unit==='lb'?'on':'') + '" data-act="setP" data-a1="unit" data-a2="lb">' +
       esc(t('onb.units.lb')) + '</button></div></div>' +
       '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'ex'){
@@ -2684,13 +2684,13 @@ Screens.onb = function(){
           const on = p.exercises ? p.exercises[e.id] !== false : true;
           return '<button type="button" class="chip sm ' + (on?'on':'') + '" ' +
             'aria-pressed="' + (on ? 'true' : 'false') + '" ' +
-            'onclick="toggleEx(\'' + e.id + '\')">' +
+            'data-act="toggleEx" data-a1="' + e.id + '">' +
             esc(t('ex.'+e.id)) + '</button>';
         }).join('') + '</div></details>';
     });
     b += '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="onbNext()">' + esc(t('btn.next')) + '</button></div>';
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
 
   if(step === 'ready'){
@@ -2707,8 +2707,8 @@ Screens.onb = function(){
       b += '</div>';
     });
     b += '<div class="onb-actions">' +
-      '<button class="btn quiet" onclick="onbGo(onbIdx-1)">' + esc(t('btn.back')) + '</button>' +
-      '<button class="btn grow"  onclick="finishOnboarding()">' +
+      '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
+      '<button class="btn grow"  data-act="finishOnboarding">' +
       esc(t('onb.ready.cta')) + '</button></div>';
   }
 

@@ -224,24 +224,24 @@ function mountAnatomyLab(host, opts){
 }
 
 function labControlsHtml(){
-  const btn = (id, key, fn, pressed) =>
+  const btn = (id, key, act, pressed, ...args) =>
     '<button type="button" class="fig-btn lab-btn" id="' + id + '" title="' + esc(t(key)) +
     '" aria-label="' + esc(t(key)) + '"' + (pressed !== undefined ? ' aria-pressed="' + pressed + '"' : '') +
-    ' onclick="' + fn + '">' + LAB_ICONS[key] + '</button>';
+    actAttr(act, ...args) + '>' + LAB_ICONS[key] + '</button>';
   return '<div class="lab-controls">' +
     '<div class="lab-controls-row">' +
-      btn('labFront','lab3d.front','labSetView(\'front\')') +
-      btn('labBack','lab3d.back','labSetView(\'back\')') +
-      btn('labReset','body.reset','labResetView()') +
+      btn('labFront','lab3d.front','labSetView','front') +
+      btn('labBack','lab3d.back','labSetView','back') +
+      btn('labReset','body.reset','labResetView') +
     '</div>' +
     '<div class="lab-controls-row">' +
-      btn('labZoomIn','body.zoom','labZoom(0.82)') +
-      btn('labZoomOut','lab3d.zoomOut','labZoom(1.22)') +
-      btn('labIso','lab3d.isolate','labToggleIsolate()', 'false') +
+      btn('labZoomIn','body.zoom','labZoom', 0.82) +
+      btn('labZoomOut','lab3d.zoomOut','labZoom', 1.22) +
+      btn('labIso','lab3d.isolate','labToggleIsolate', 'false') +
     '</div>' +
     '<div class="lab-controls-row">' +
-      btn('labBone','lab3d.showBone','labToggleContext(\'bone\')', 'true') +
-      btn('labShell','lab3d.showShell','labToggleContext(\'shell\')', 'false') +
+      btn('labBone','lab3d.showBone','labToggleContext', 'true', 'bone') +
+      btn('labShell','lab3d.showShell','labToggleContext', 'false', 'shell') +
     '</div>' +
   '</div>';
 }

@@ -139,6 +139,40 @@ html = inline_images(html)
 html = html.replace("document.addEventListener('DOMContentLoaded', boot);",
                     "boot();   // the load event has already fired by now")
 
+# ---------------------------------------------------------------------------
+# The policy, finished. index.html ships `script-src 'self'` because it loads
+# forty-odd files by URL. This build inlines every one of them, and an inline
+# block is not 'self': without permission the browser refuses all of them and
+# nothing runs — which is a silent white page, not a security win. So each block
+# is hashed and the hashes are written into the same meta tag. The hashes are of
+# the exact bytes between the tags, so a change anywhere invalidates one, and
+# the build can never ship a policy that does not describe what it wrote.
+# The three.js runtime is not a <script> block: it ships gzipped inside a
+# text/plain payload and the Lab builds a script element from the decompressed
+# text when it opens. That is still an inline script to the browser, so the
+# policy has to name it — and because the payload is only ever the bytes of this
+# one file, its hash is the hash the browser will compute at runtime.
+LAZY_SCRIPTS = ["js/vendor/three-bundle.js"]
+
+def stamp_csp(doc):
+    import hashlib as _hashlib
+    def sha(text):
+        return "'sha256-%s'" % base64.b64encode(_hashlib.sha256(text.encode('utf-8')).digest()).decode()
+    hashes = []
+    for m in re.finditer(r'<script>([\s\S]*?)</script>', doc):
+        hashes.append(sha(m.group(1)))
+    for rel in LAZY_SCRIPTS:
+        fp = os.path.join(ROOT, rel)
+        if os.path.exists(fp):
+            with open(fp, 'r', encoding='utf-8') as fh:
+                hashes.append(sha(fh.read()))
+    if not hashes:
+        return doc
+    return doc.replace("script-src 'self' 'wasm-unsafe-eval';",
+                       "script-src 'self' 'wasm-unsafe-eval' " + " ".join(hashes) + ";", 1)
+
+html = stamp_csp(html)
+
 out = os.path.join(DIST, "ancestor.html")
 with open(out, "w", encoding="utf-8") as f:
     f.write(html)
@@ -157,7 +191,7 @@ external = [e for e in external if not e.startswith("#") and " +" not in e]
 print("Built : %s" % out)
 print("Size  : %.0f KB" % (size / 1024))
 print("Date  : %s" % date.today().isoformat())
-print("Files : %d scripts + stylesheet inlined" % len(SCRIPTS))
+print("Files : %d scripts + stylesheet inlined, CSP stamped" % len(SCRIPTS))
 if external:
     print("\n  WARNING — external references found (bundle is NOT self-contained):")
     for e in external:

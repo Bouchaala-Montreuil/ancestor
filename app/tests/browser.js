@@ -888,13 +888,13 @@ function startServer(){
         setSessionSub && setSessionSub('plan');
         go('progress');
         const inTable = [...document.querySelectorAll('#screenBody button')]
-          .filter(b => /openPrintRecord\(/.test(b.getAttribute('onclick') || ''));
+          .filter(b => b.getAttribute('data-act') === 'openPrintRecord');
         /* And the completion card, which is rendered from a summary object. */
         showCompletion({ sessionId: 'rec-b1', prs: [], baselines: [], sets: 12, exercises: 3,
                          durationMs: 3600e3, volume: 2400, muscles: [], newMilestones: [],
                          thisWeek: 2, targetDays: 3 });
         const inDone = [...document.querySelectorAll('#doneOverlay button')]
-          .filter(b => /openPrintRecord\(/.test(b.getAttribute('onclick') || ''));
+          .filter(b => b.getAttribute('data-act') === 'openPrintRecord');
         const label = inDone.length ? inDone[0].textContent.trim() : '';
         const box = inDone.length ? inDone[0].getBoundingClientRect() : null;
         const name = inTable.length ? inTable[0].getAttribute('aria-label') || '' : '';
@@ -1160,6 +1160,69 @@ function startServer(){
     chk('dist/ancestor.html decompresses gzip-b64 runtime + GLB and renders 218 3D muscles offline',
         distLab.muscles === 218 && distLab.px.nonEmpty > 400,
         'muscles=' + distLab.muscles + ', nonEmptyPx=' + distLab.px.nonEmpty);
+    /* ================================================================== */
+    /* The policy is only worth having if it is the real one and it is doing
+       something. These four checks are the difference between a meta tag and a
+       backstop: the directive has no escape hatch in it, an injected inline
+       script does not run, an injected handler attribute does not run, and the
+       shipped bundle carries the hash of every block it inlined — because a
+       wrong hash is a silent white page, not a security win. */
+    group('6b. The Content-Security-Policy is real, and it blocks what it should');
+    const cspPage = await browser.newPage();
+    const cspLog = [];
+    cspPage.on('console', m => { if(m.type() === 'error') cspLog.push(m.text()); });
+    await cspPage.goto(baseUrl + '/index.html', { waitUntil: 'networkidle0' });
+
+    const policy = await cspPage.evaluate(() => {
+      const m = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+      return m ? m.getAttribute('content') : '';
+    });
+    const scriptSrc = (policy.split(';').map(s => s.trim())
+      .filter(s => s.indexOf('script-src') === 0)[0] || '');
+    /* Tokens, not substrings: 'wasm-unsafe-eval' is a different permission from
+       'unsafe-eval', and it is the only one this app needs. */
+    const tokens = scriptSrc.split(/\s+/);
+    const has = t => tokens.indexOf("'" + t + "'") >= 0;
+    chk('index.html ships a policy, and its script-src has no inline or eval escape',
+        !!policy && has('self') && !has('unsafe-inline') && !has('unsafe-eval') && has('wasm-unsafe-eval'),
+        scriptSrc.slice(0, 70));
+
+    const attack = await cspPage.evaluate(async () => {
+      const out = { pwned: 'no' };
+      window.__pwned = 'no';
+      const s = document.createElement('script');
+      s.textContent = 'window.__pwned = "inline"';
+      document.body.appendChild(s);
+      out.inline = window.__pwned;
+      const b = document.createElement('button');
+      b.setAttribute('onclick', 'window.__pwned = "handler"');
+      document.body.appendChild(b);
+      b.click();
+      out.handler = window.__pwned;
+      out.blocks = document.querySelectorAll('[data-act]').length;
+      return out;
+    });
+    chk('an injected inline script does not run', attack.inline === 'no', attack.inline);
+    chk('an injected handler attribute does not run', attack.handler === 'no', attack.handler);
+    chk('the running app still found its own actions', attack.blocks > 5, attack.blocks + ' bound controls');
+    chk('the refusals are the only thing in the console', cspLog.length === 2 &&
+        cspLog.every(m => /Content Security Policy/.test(m)), cspLog.length + ' messages');
+    await cspPage.close();
+
+    const bundled = fs.readFileSync(path.join(ROOT, 'dist/ancestor.html'), 'utf8');
+    const bPolicy = (/Content-Security-Policy" content="([^"]+)"/.exec(bundled) || [,''])[1];
+    const bScript = (bPolicy.split(';').map(s => s.trim())
+      .filter(s => s.indexOf('script-src') === 0)[0] || '');
+    const blocks = (bundled.match(/<script>/g) || []).length;
+    const hashes = (bScript.match(/'sha256-/g) || []).length;
+    /* Every inlined block, plus the three.js runtime — which is not a block in
+       the file at all: it ships gzipped and the Lab builds a script element from
+       it when it opens, so its hash has to be in the policy or the 3D view dies
+       on the one page that cannot report it. */
+    chk('the bundle permits every block it inlined, and the lazy runtime, by hash',
+        hashes === blocks + 1 && bScript.indexOf('unsafe-inline') < 0,
+        hashes + ' hashes for ' + blocks + ' inline blocks + 1 lazy runtime');
+
     chk('zero errors in dist/ancestor.html', distErrors.length === 0, distErrors.join('; '));
     chk('zero console or page errors across the entire modular browser journey',
         errors.length === 0, errors.join('; '));

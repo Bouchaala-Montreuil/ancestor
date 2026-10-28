@@ -207,8 +207,11 @@ chk('set inputs rendered', $$('.setcard input').length > 0,
 const cards = $$('.setcard');
 const fill = (i, wv, rv) => {
   const inp = cards[i].querySelectorAll('input');
-  inp[0].value = wv; inp[0].dispatchEvent(new w.Event('input'));
-  inp[1].value = rv; inp[1].dispatchEvent(new w.Event('input'));
+  /* bubbles: a real `input` event does, and the app listens once on the
+     document rather than on every field, so a non-bubbling synthetic one
+     would be a test of a thing browsers never send. */
+  inp[0].value = wv; inp[0].dispatchEvent(new w.Event('input', { bubbles: true }));
+  inp[1].value = rv; inp[1].dispatchEvent(new w.Event('input', { bubbles: true }));
 };
 fill(0,'60','9'); fill(1,'30','11');
 chk('typed values reach the model',
@@ -339,13 +342,12 @@ group('9. No decorative controls, no dead links');
   w2.go('home');
   const handlers = [];
   $$('#screenBody button, #nav button, header button').forEach(b => {
-    const oc = b.getAttribute('onclick');
-    if(!oc) return;
-    const name = oc.replace(/\(.*/, '').trim();
-    handlers.push({ name, ok: typeof w2[name] === 'function' });
+    const act = b.getAttribute('data-act');
+    if(!act) return;
+    handlers.push({ name: act, ok: typeof w2.ACTS[act] === 'function' });
   });
   const broken = handlers.filter(h => !h.ok);
-  chk('every onclick resolves to a real function', broken.length === 0,
+  chk('every declared action resolves to a registered one', broken.length === 0,
       broken.length ? 'missing: ' + [...new Set(broken.map(b=>b.name))].join(', ')
                     : handlers.length + ' handlers checked');
   const links = $$('a[href]').filter(a => !/^(#|data:|blob:)/.test(a.getAttribute('href')));
@@ -461,7 +463,7 @@ group('12. Anatomy selection regressions (QA fixes)');
   // accessible language selector in the profile
   w5.go('profile');
   const langTiles = Array.from(d5.querySelectorAll('#screenBody .tile'))
-    .filter(b => (b.getAttribute('onclick')||'').indexOf('switchLang') === 0).length;
+    .filter(b => b.getAttribute('data-act') === 'switchLang').length;
   chk('profile exposes a full-size language selector', langTiles === 7,
       langTiles + ' language rows');
 }
@@ -549,7 +551,7 @@ group('16. Progressive disclosure: one action per moment');
       body().querySelectorAll('.dash-actions ~ details.dis').length >= 1 ||
       body().querySelectorAll('details.dis').length >= 1);
   chk('the dashboard figure is not one giant button',
-      !body().querySelector('.dash-figlink[onclick]') &&
+      !body().querySelector('.dash-figlink[data-act]') &&
       !body().querySelector('button.dash-figlink'));
   chk('nothing interactive is nested inside a button',
       Array.from(body().querySelectorAll('button,[role=button]'))
@@ -587,10 +589,10 @@ group('16. Progressive disclosure: one action per moment');
   chk('fewer than half the session buttons are exposed at once', buttons < 45,
       buttons + ' of ' + body().querySelectorAll('button').length + ' exposed');
   chk('discard is not at the top of the session',
-      !body().querySelector('.live-hud [onclick*="discardSession"]'));
+      !body().querySelector('.live-hud [data-act="discardSession"]'));
   chk('discard sits under the finish action, in text weight',
-      !!body().querySelector('.heavy [onclick*="discardSession"]') &&
-      !body().querySelector('.heavy button.btn[onclick*="discardSession"]'));
+      !!body().querySelector('.heavy [data-act="discardSession"]') &&
+      !body().querySelector('.heavy button.btn[data-act="discardSession"]'));
   chk('the disclosure is native <details>, so it works without script',
       Array.from(body().querySelectorAll('details.dis')).every(el =>
         el.querySelector(':scope > summary')));
@@ -646,7 +648,7 @@ group('16. Progressive disclosure: one action per moment');
   const sheetEl = d7.getElementById('sheetHost');
   chk('a row opens the exercise sheet, which holds add-to-plan',
       !!sheetEl && /Bench Press/.test(sheetEl.textContent) &&
-      !!sheetEl.querySelector('[onclick*="addExerciseTo"]'),
+      !!sheetEl.querySelector('[data-act="addExerciseToActive"], [data-act="addExerciseToPlan"]'),
       sheetEl ? 'sheet open' : 'no sheet');
   w7.closeSheet();
 }
@@ -712,7 +714,7 @@ group('17. Profile: five records that name their own value');
     const f = body().querySelector('details.prof-sub');
     chk('the fold says the plan in hand does not match',
         f.hasAttribute('open') && /class="flag warn"/.test(f.innerHTML) &&
-        !!body().querySelector('[onclick*="rebuildPlan"]'),
+        !!body().querySelector('[data-act="rebuildPlan"]'),
         f.querySelector('summary').textContent.replace(/\s+/g,' ').trim());
     w8.rebuildPlan();
     chk('rebuilding clears the warning and lands on the session screen',
@@ -746,10 +748,16 @@ group('17. Profile: five records that name their own value');
   chk('most of them wait to be needed', vis < 70, vis + ' of ' + all + ' exposed');
 
   /* Opening a group still changes the setting, and the summary follows. */
-  const a11y = groups.filter(g => /Accessibility/.test(g.textContent))[0];
+  /* Re-queried, not reused: `groups` was captured before the settings above
+     re-rendered the screen, and an action is delivered by an event bubbling
+     from a node that is still in the document. A stale node is not a click a
+     user can make. */
+  const a11y = Array.from(body().querySelectorAll('details.prof-group'))
+    .filter(g => /Accessibility/.test(g.textContent))[0];
   a11y.setAttribute('open', '');
   const tile = Array.from(a11y.querySelectorAll('button'))
-    .filter(b => (b.getAttribute('onclick') || '').indexOf("setDisplay('highContrast'") >= 0)[0];
+    .filter(b => b.getAttribute('data-act') === 'setDisplay' &&
+                 b.getAttribute('data-a1') === 'highContrast')[0];
   chk('a display setting is reachable inside its group', !!tile);
   const before = a11y.querySelector('.prof-val').textContent;
   tile.dispatchEvent(new w8.MouseEvent('click', {bubbles:true}));
@@ -760,7 +768,7 @@ group('17. Profile: five records that name their own value');
 
   /* Language is still a full-size choice, not a chip row. */
   const langTiles = Array.from(body().querySelectorAll('.tile'))
-    .filter(b => (b.getAttribute('onclick') || '').indexOf('switchLang') === 0).length;
+    .filter(b => b.getAttribute('data-act') === 'switchLang').length;
   chk('the language selector is still seven full rows', langTiles === 7, langTiles + ' rows');
 }
 
@@ -1150,17 +1158,17 @@ group('22. The exercise pool is the same component as the step that fills it');
 
   /* removing one opens that group and offers a way back */
   chk('no restore action while nothing is removed',
-      !body().querySelector('[onclick*="restoreExPool"]'));
+      !body().querySelector('[data-act="restoreExPool"]'));
   groups()[0].querySelector('.chip').dispatchEvent(new w13.MouseEvent('click', {bubbles:true}));
   const changed = groups().filter(g => g.hasAttribute('open'));
   chk('a group you changed opens itself', changed.length === 1, changed.length + ' open');
   chk('the changed group says so with more than colour',
       changed[0].querySelector('.flag.warn') !== null);
   chk('a restore action appears once something is removed',
-      !!body().querySelector('[onclick*="restoreExPool"]'),
-      body().querySelector('[onclick*="restoreExPool"]').parentElement.textContent.trim());
+      !!body().querySelector('[data-act="restoreExPool"]'),
+      body().querySelector('[data-act="restoreExPool"]').parentElement.textContent.trim());
 
-  const restoreBtn = body().querySelector('[onclick*="restoreExPool"]');
+  const restoreBtn = body().querySelector('[data-act="restoreExPool"]');
   restoreBtn.dispatchEvent(new w13.MouseEvent('click', {bubbles:true}));
   chk('restoring puts every exercise back',
       Object.keys(w13.getState().profile.exercises || {})
@@ -1168,7 +1176,7 @@ group('22. The exercise pool is the same component as the step that fills it');
       Object.keys(w13.getState().profile.exercises || {}).filter(
         k => w13.getState().profile.exercises[k] === false).length + ' still out');
   chk('and the restore action goes away again',
-      !body().querySelector('[onclick*="restoreExPool"]'));
+      !body().querySelector('[data-act="restoreExPool"]'));
 
   /* the profile stayed short through all of it */
   const exposed = el => {
@@ -1570,8 +1578,8 @@ group('30. A tab knows which build it is running, and says when a new one lands'
   chk('the update strip exists and starts hidden', !!el && el.hidden);
   chk('the strip offers exactly one action, and it is a reload',
       el.querySelectorAll('button').length === 1 &&
-      /reloadApp\(\)/.test(el.querySelector('button').getAttribute('onclick')),
-      el.querySelector('button').getAttribute('onclick'));
+      el.querySelector('button').getAttribute('data-act') === 'reloadApp',
+      el.querySelector('button').getAttribute('data-act'));
 
   /* Drive the real listener. jsdom has no service worker, so a stub stands in
      for it and every branch of watchForDeploy is exercised. */
@@ -1661,6 +1669,65 @@ group('30. A tab knows which build it is running, and says when a new one lands'
       body().textContent.indexOf(w.t('app.build') + ' ' + w.eval('APP_BUILD')) >= 0,
       w.eval('APP_BUILD'));
   w.eval("go('home')");
+}
+
+/* ============================================================================
+   The contract the refactor rests on: markup names an action, and the name has
+   to exist. A typo in `data-act` used to be a broken onclick — now it is a
+   control that renders, looks right, and does nothing at all when tapped, with
+   no console error to notice. So every screen, sheet and module is walked and
+   every name collected, rather than trusting the one screen a test opened.
+   ========================================================================== */
+group('31. Every action named in the app resolves to a registered one');
+{
+  const dom = await boot();
+  const w = dom.window, d = w.document;
+  completeOnboarding(w, d);
+
+  const seen = {};          /* name -> how many controls declare it */
+  const scan = () => {
+    Array.from(d.querySelectorAll('[data-act], [data-in]')).forEach(el => {
+      const n = el.getAttribute('data-act') || el.getAttribute('data-in');
+      if(n) seen[n] = (seen[n] || 0) + 1;
+    });
+  };
+  /* Views, then the surfaces that are not views. */
+  ['home','session','body','progress','profile','science'].forEach(v => { w.go(v); scan(); });
+  w.go('body'); w.selectMuscle('chest'); scan();
+  ['sleep','shift','feel','bw'].forEach(k => { w.openSheet(k); scan(); w.closeSheet(); });
+  w.openWhy('decision'); scan(); w.closeSheet();
+  w.go('science'); w.openLesson('muscle-growth'); scan(); w.backToScience();
+  w.openModule('stimulus'); scan(); w.closeModule();
+  w.go('session'); w.openExerciseLibrary(); scan();
+  if(w.SCREENS && typeof w.go === 'function'){ w.go('home'); }
+  w.go('home'); w.openWhy('decision'); scan(); w.closeSheet();
+
+  const names = Object.keys(seen);
+  const missing = names.filter(n => typeof w.ACTS[n] !== 'function');
+  chk('every action the markup names is registered', missing.length === 0,
+      missing.length ? 'unregistered: ' + missing.join(', ')
+                     : names.length + ' actions across the app');
+  /* The other direction, read from the source: an action that no call site
+     names is dead code, and dead code is how a table this long rots. The whole
+     app is scanned, not the screens this group happened to open — half of these
+     actions only exist in a live session or a module's second step. */
+  const src = ['index.html','js/app.js'].concat(
+      fs.readdirSync(path.join(ROOT, 'js/ui')).map(f => 'js/ui/' + f))
+    .map(f => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
+  const named = new Set();
+  const grab = /data-(?:act|in)="([a-z][\w$]*)"/g;
+  let m;
+  while((m = grab.exec(src))) named.add(m[1]);
+  const grab2 = /actAttr\('([a-z][\w$]*)'/g;
+  while((m = grab2.exec(src))) named.add(m[1]);
+  const unused = Object.keys(w.ACTS).filter(n => !named.has(n));
+  chk('and no registered action is dead code', unused.length === 0,
+      unused.length ? 'never named in markup: ' + unused.join(', ')
+                    : Object.keys(w.ACTS).length + ' actions, every one named');
+  const inlineHandlers = Array.from(d.querySelectorAll('*'))
+    .filter(el => Array.from(el.attributes).some(a => /^on[a-z]+$/.test(a.name)));
+  chk('nothing in the rendered document carries an on* handler attribute',
+      inlineHandlers.length === 0, inlineHandlers.length + ' elements');
 }
 
 /* ================================================================ */
