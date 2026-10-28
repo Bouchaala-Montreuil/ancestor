@@ -429,18 +429,23 @@ group('G. Navigation, settings and persistence');
       : issue({severity:'Critical',screen:'Nav',title:'Cannot navigate to ' + v});
   });
 
-  // dead buttons across the five sections
+  /* Dead buttons across the five sections. A control now declares an action
+     name instead of a handler string; the failure mode is the same one it
+     always was — a control that renders, looks right, and does nothing — and it
+     is caught the same way, against the action table rather than the globals. */
   let dead = [];
+  let checked = 0;
   ['home','session','body','progress','profile'].forEach(v => {
     w.go(v);
     Array.from(d.querySelectorAll('#screenBody button, #nav button, header button')).forEach(b => {
-      const oc = b.getAttribute('onclick');
-      if(!oc) return;
-      const fn = oc.replace(/\(.*/,'').trim();
-      if(typeof w[fn] !== 'function') dead.push(v + ':' + fn);
+      const act = b.getAttribute('data-act') || b.getAttribute('data-in');
+      if(!act) return;
+      checked++;
+      if(typeof w.ACTS[act] !== 'function') dead.push(v + ':' + act);
     });
   });
-  dead.length === 0 ? ok('no dead buttons in the five sections')
+  if(!checked) dead.push('nothing declared an action — the selector is stale');
+  dead.length === 0 ? ok('no dead buttons in the five sections (' + checked + ' actions)')
     : issue({severity:'Critical',screen:'All',title:'Dead buttons found',detail:dead.join(', ')});
 
   // profile form saves

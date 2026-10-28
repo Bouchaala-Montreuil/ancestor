@@ -420,6 +420,21 @@ group('9. Bundle and source hygiene');
      reproducible — and an artifact you cannot reproduce is one you cannot diff. */
   chk('build.py stamps its gzip payloads with a fixed mtime, so rebuilds are byte-identical',
       /_gzip\.compress\(raw,\s*compresslevel=9,\s*mtime=0\)/.test(bp));
+  /* The cache list is written by hand, and a file missing from it is invisible
+     while online — that is the whole failure mode: it only shows up on a cold
+     start with no network, where the app loads its shell and then cannot act.
+     `js/i18n/print.js` and `js/ui/printsheet.js` were missing from it until this
+     check existed, which is to say printing a past session did not work offline
+     and nothing said so. */
+  const idxHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const swSrc2 = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  const loaded = (idxHtml.match(/<script src="([^"]+)"/g) || [])
+    .map(t => /src="([^"]+)"/.exec(t)[1]).filter(u => !/^https?:/.test(u));
+  const cached = (swSrc2.match(/'\.\/([^']+)'/g) || []).map(t => t.slice(3, -1));
+  const absent = loaded.filter(u => cached.indexOf(u) < 0);
+  chk('the service worker precaches every script the page loads',
+      absent.length === 0, absent.join(', ') || loaded.length + ' scripts cached');
+
   chk('the service worker caches the model',
       fs.readFileSync(path.join(ROOT,'sw.js'),'utf8').includes('assets/anatomy-male-mobile.glb'));
 }

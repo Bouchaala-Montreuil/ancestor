@@ -252,7 +252,7 @@ There was no browser and no network in this environment when this section was
 written. That was a hard limit, not a preference, so the verification had to be
 invented:
 
-- **Ten test suites, 1,456 checks.** `design` executes the chart scale as a
+- **Ten test suites, 1,457 checks.** `design` executes the chart scale as a
   function rather than describing it; `ui`, `run`, `premium`, `inclusive`,
   `personas`, `science`, `logic`, `anatomy`, `print` cover behaviour, RTL, contrast,
   the printed sheet and the bundle.
