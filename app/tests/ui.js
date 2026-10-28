@@ -93,8 +93,23 @@ chk('the language rows name their own language and direction',
     d.querySelector('.lang-row[lang="ar"] .lang-nm').getAttribute('dir') === 'rtl' &&
     d.querySelector('.lang-row[lang="en"] .lang-nm').getAttribute('dir') === 'ltr');
 chk('bottom nav hidden during onboarding', $('#nav').style.display === 'none');
-chk('no permanent language menu in the header', !$('#langs'),
-    $('#langs') ? 'still there' : 'removed');
+/* The rule is not "the menu we deleted is gone" — a selector for `#langs` keeps
+   passing if someone puts a different control there tomorrow. The rule is that
+   the masthead never carries a language affordance, whatever it is called. */
+function langInMasthead(){
+  return $$('header *').filter(el =>
+    /^(pickLang|chooseLang|switchLang|setLang)$/.test(el.getAttribute('data-act') || '') ||
+    el.hasAttribute('lang') || /(^|\s)langs?(\s|$)/.test(el.className || ''));
+}
+chk('the masthead carries no language control on a first launch',
+    langInMasthead().length === 0 && !$('#langs'),
+    langInMasthead().map(e => e.tagName).join(',') || 'none');
+/* "Immediately after the loading animation" is a claim about two moments being
+   the same one: the veil must be gone from the DOM at the point the question is
+   already painted, and the step frame must not have been painted first. */
+chk('the veil lifts onto the language question, not onto step one',
+    !d.getElementById('appBoot') && !!$('.lang-frame') && !$('.onb-bar'),
+    d.getElementById('appBoot') ? 'veil still up' : (!!$('.lang-frame') ? 'gate underneath' : 'gate missing'));
 
 /* Choosing applies immediately; Continue is what records the answer. */
 { const fr = $$('.lang-row').filter(b => b.getAttribute('lang') === 'fr')[0];
@@ -160,6 +175,22 @@ chk('four primary destinations', $$('#nav button').length === 4,
     $$('#nav button').map(b => b.textContent.trim()).join(' / '));
 chk('and nothing else is in the bar', $$('#nav button').every(b =>
     ['home','session','progress','profile'].indexOf(b.getAttribute('data-nav')) >= 0));
+
+/* The masthead is static markup, so a language control could only come back by
+   being injected per screen: assert every destination, not just the one the
+   suite happens to be standing on. Language lives in settings, one row away. */
+{ const offenders = [];
+  ['home','session','progress','profile'].forEach(v => {
+    w.go(v);
+    if(langInMasthead().length) offenders.push(v);
+  });
+  chk('no destination puts a language control back in the masthead',
+      offenders.length === 0, offenders.join(',') || 'none');
+  chk('the way back is still one row in the settings',
+      w.go('profile') === undefined && $$('[data-act="switchLang"]').length === 7,
+      $$('[data-act="switchLang"]').length + ' rows');
+  w.go('home');
+}
 
 /* ================================================================ */
 group('2. Today — decision, anatomy, performance');

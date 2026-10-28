@@ -141,6 +141,26 @@ function startServer(){
           fit.docW <= fit.winW && Math.max.apply(null, fit.rows) <= fit.winW + 1,
           fit.docW + ' / ' + fit.winW);
 
+      /* The one thing the masthead must never become is a settings strip. This is
+         measured on the rendered pixels at 390 px rather than read off the
+         markup: a control that is present but invisible still counts as a
+         control the moment a stylesheet changes its mind. */
+      const masthead = await page.evaluate(() => {
+        const onScreen = el => {
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden';
+        };
+        return {
+          controls: Array.prototype.slice.call(document.querySelectorAll('header a, header button, header select')).filter(onScreen).length,
+          langish: Array.prototype.slice.call(document.querySelectorAll('header *'))
+            .filter(el => onScreen(el) && (/lang/i.test(el.className || '') || el.hasAttribute('lang'))).length,
+          rightSlot: Array.prototype.slice.call(document.querySelectorAll('header .hd-right > *')).filter(onScreen).length
+        };
+      });
+      chk('the masthead holds no control at 390 px, and no language anything',
+          masthead.controls === 0 && masthead.langish === 0 && masthead.rightSlot === 0,
+          JSON.stringify(masthead));
+
       /* Tapping Arabic must flip the whole page before Continue is pressed. */
       await page.click('.lang-row[lang="ar"]');
       const rtl = await page.evaluate(() => ({

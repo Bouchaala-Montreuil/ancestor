@@ -1093,6 +1093,55 @@ group('8q. The exercise register is a grid it actually uses');
 }
 
 /* ================================================================ */
+group('8r. The masthead asks nothing; the first screen asks one thing');
+{
+  /* A language you answer once is not furniture. The masthead is the mark, the
+     wordmark and — when something is wrong — the offline flag. Nothing else may
+     live there, and the way to hold that is to assert the *whole* strip rather
+     than the selector of a menu someone already deleted. */
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const hdr  = (/<header>[\s\S]*?<\/header>/.exec(html) || [''])[0];
+  const right = (/<div class="hd-right">[\s\S]*?<\/div>/.exec(hdr) || [''])[0];
+
+  /* The row that is always on screen — mark, wordmark, tagline, right slot —
+     holds no control at all. The two strips below it are the exception the app
+     earns: a record that will not open, and a deploy that replaced the files
+     under a running tab. Both start hidden, so neither is furniture. */
+  const strip = hdr.indexOf('<div class="store-flag"');
+  const top  = strip > 0 ? hdr.slice(0, strip) : hdr;
+  const acts = hdr.match(/data-act="[^"]+"/g) || [];
+  chk('the always-visible masthead row carries no control',
+      top.length > 0 && !/data-act=/.test(top) && !/<button|<a\s|<select/.test(top),
+      top.replace(/\s+/g, ' ').slice(0, 70));
+  chk('the only buttons the header owns are the two recovery offers, both hidden',
+      acts.length === 2 && acts.indexOf('data-act="doExport"') >= 0 &&
+      acts.indexOf('data-act="reloadApp"') >= 0 &&
+      /id="storeFlag"[^>]*hidden/.test(hdr) && /id="updateFlag"[^>]*hidden/.test(hdr),
+      acts.join(' ') || 'none');
+  chk('its right slot holds one thing: the offline flag, and it starts hidden',
+      /id="netFlag"/.test(right) && /id="netFlag"[^>]*hidden/.test(right) &&
+      !/data-act=/.test(right),
+      right.replace(/\s+/g, ' ').slice(0, 70));
+  chk('the header declares no language of its own, only rows and prints do',
+      !/lang=/.test(hdr));
+
+  /* "Language right after the loading animation" is an ordering claim, so it is
+     asserted as ordering: the gate is chosen before the step frame is, and the
+     language is not one of the eleven steps. */
+  const app = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+  const scr = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  chk('the language question is a gate before onboarding, not a step in it',
+      /askingLang\s*=\s*onboarding\s*&&\s*!s\.langChosen/.test(app) &&
+      /askingLang \? \(Screens\.lang \? Screens\.lang\(\) : Screens\.onb\(\)\)/.test(app) &&
+      !/const ONB_STEPS = \[[^\]]*'lang'/.test(scr),
+      'gate ' + (/askingLang\s*=/.test(app) ? 'present' : 'missing'));
+  chk('the way back to it is one row in the settings, and it is generated once',
+      (scr.match(/data-act="switchLang"/g) || []).length === 1 &&
+      /LANGS\.map\(l => '<button class="tile radio /.test(scr),
+      (scr.match(/data-act="switchLang"/g) || []).length + ' generators');
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' DESIGN TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed'); failures.forEach(f => console.log('   - ' + f)); }
