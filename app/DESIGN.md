@@ -885,17 +885,23 @@ and `tools/qa_audit.js` (1 accepted Medium: the
 
 ## 7. Per-screen status
 
-| screen | state | what is still weak |
-|---|---|---|
-| Onboarding | exercise step regrouped; eight steps, one question each | the middle steps are still one long column of chips; the step order has never been tested with a real first-run user |
-| Today | action hierarchy, three bands, prose behind one tap | 222 visible words; whether that is still too many in a gym car park has not been watched |
-| Plan | untouched | not re-audited this pass |
-| Active session | one exercise open, the rest folded; rest timer readable without sight | the block is the only focus surface; whether 153 words is still too many has not been tested with a tired user |
-| Exercise atlas | register rows, one control each, filters behind a disclosure | the sheet is now the only action surface — everything a row used to duplicate has to be there, and that is worth auditing next |
-| Progress | untouched | charts and records re-verified for scale in the previous pass; drill-down not re-audited |
-| Body / anatomy | figure semantics fixed | 59 controls on one screen; the muscle list duplicates what the figure already shows |
-| Science | untouched | 26 controls, evidence disclosures already sound |
-| Profile | four records; the pool is one accordion with an undo | every setting is now one tap deeper, and nothing measures whether people find it |
+Re-measured 2026-10-28 against the code, not remembered. *Visible* means text
+and controls outside a closed `<details>`; jsdom has no layout, so that is the
+whole of the hiding mechanism this app uses. Every row here used to carry a
+number from an earlier state of the product, and four of them were wrong.
+
+| screen | visible words | visible controls | state | what is still weak |
+|---|---|---|---|---|
+| Onboarding | — | — | exercise step regrouped; one question per step | the middle steps are still one long column of chips; never walked by a first-run user |
+| Today | 248 | 14 | action hierarchy, three bands, prose behind one tap | 248 visible words is up from the 222 this document claimed — the hub links came in since; whether it is too many in a gym car park has still not been watched |
+| Plan | 213 | 32 | re-audited (§3.22): the row is a row, not 26 px columns | the planner is the densest screen in the app and the only one with no photographs of its edit state at 320 px |
+| Active session | 143 (+29 folded per exercise) | 21 (+131 behind folds) | one exercise open, the rest folded; rest timer readable without sight | the block is the only focus surface; 143 words has not been tested with a tired user |
+| Exercise atlas | 583 | 105 | register rows, one control each, filters behind a disclosure (§3.23) | the sheet is now the only action surface — that hand-off is worth auditing next |
+| Progress | 132 | 11 | charts and records verified for scale | the drill-down has not been re-audited since §3.4 |
+| Body / anatomy | 243 | 38 | figure semantics fixed (§3.17) | 38 controls, not the 59 this document claimed; the muscle list still duplicates what the figure shows |
+| Science | 214 | 27 | evidence disclosures sound; reachable from Today since this pass | under-designed rather than undesigned — see `ROADMAP.md` B5 |
+| Profile | 260 | 42 (+138 behind four folds) | four records, the pool is one accordion with an undo (§3.24) | every setting is one tap deeper, and nothing measures whether people find it |
+
 
 ---
 
@@ -923,13 +929,18 @@ and `tools/qa_audit.js` (1 accepted Medium: the
   absolute end time, so it is correct the moment the tab resumes — but nothing
   fires while the screen is off, and there is no OS notification. "Survives a
   locked screen" means the arithmetic survives, not that it can interrupt you.
-- **The atlas and the profile were measured, not seen.** Row density, the 72 px
-  row height, the sheet hand-off and four stacked records are structural claims;
-  nobody has looked at them on a 390 px screen.
-- **Heading levels still jump on Body, Progress and the session plan** (h1 → h3
-  inside the first panel; measured at the end of this pass: Body `h1,h3`,
-  Progress `h1,h3×6`, session plan `h1,h3` — Science is now `h1,h2`). The
-  panels share one `h3` component and were left alone rather than half-converted.
+- ~~**The atlas and the profile were measured, not seen.**~~ **Seen since.** Both
+  were photographed at 320–1440 px in all seven languages in the browser passes
+  (§3.23, §3.24), and the atlas grid was the thing the photographs broke.
+- ~~**Heading levels still jump on Body, Progress and the session plan.**~~
+  **They no longer do, and the walk is a test.** `tests/ui.js` group 27 walks
+  thirteen screen states — Today, session before/during/plan, Body before and
+  after a selection, Progress, Science, Profile, the atlas, the exercise sheet,
+  a lesson — and fails if any screen has more or fewer than one `h1` or skips a
+  level. It has been green since §3.16 was written. This list contradicted
+  §3.16 for three revisions anyway, which is the lesson worth keeping: **a claim
+  in prose is not a check**, and a document that disagrees with itself has
+  already lost the argument with the code.
 - **Offline persistence is now verified for real** (service worker populated,
   network severed, page reloaded: the app boots with all 218 muscles), and the
   shipped single-file bundle renders offline too. The rest timer and the print
