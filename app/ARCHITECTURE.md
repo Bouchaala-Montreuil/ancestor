@@ -92,6 +92,15 @@ string field is `<img onerror>` and `<script>`, walks every destination, and ass
 `img`, no `script`, and no execution. The escaping discipline is now an invariant
 rather than a habit.
 
+**S12 — and if the escaping does slip.** Premium 11 proves the strings are
+escaped; the policy is what covers the day one is not. An injected
+`<script>` and an injected `on*=` attribute are both refused by the browser in
+suite 6b, and the source carries no handler attribute at all for an injected one
+to hide behind. What is *not* covered: `style-src` still allows
+`'unsafe-inline'`, because thirty-nine generated `style="…"` attributes would
+otherwise stop rendering — that is a styling hole, not a script one, and it is
+written down rather than forgotten.
+
 **S8/S9 — the tools stopped lying.** `qa_audit` reads `--hit` from the stylesheet
 instead of carrying its own opinion, accepts an invisible expander as a valid
 target, exempts chips with the same reason the design tests use, and checks
