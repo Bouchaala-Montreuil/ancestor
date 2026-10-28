@@ -805,6 +805,54 @@ print rule stops resetting the modal, group 8 fails if the tight class stops
 being applied at seven exercises, and `tests/browser.js` group 4 measures the
 sheet as A4 in a real engine — the check that would have caught all of this.
 
+### 3.26 The sheet gets its second half: the record
+
+§3.25 fixed the paper. It did not answer the question the paper raises. The
+sheet was a *form*: a prescription, empty boxes and a pen. But the app already
+knows what happened, and the moment you most want the sheet is the moment a
+session ends — which is the one moment the old print card could not serve,
+because it only knew about plans.
+
+`printSheet()` now takes either a `planId` (the form) or a `sessionId` (the
+record). One skeleton, four numbered blocks, one page of A4:
+
+| | the form | the record |
+|---|---|---|
+| header caption | *Training record · one sheet per session* | *Session record · what was actually done* |
+| the fill-in row | five rules for a pen | date, start, end, bodyweight answered from the log — **and "feel" left empty, because nobody logged it** |
+| the verdict block | the recommendation, with its reasons | the outcome: Done or Partial, *16 of 18 sets*, time, volume |
+| block 01 | target, tempo, four empty boxes | one printed line per working set, the prescription it was measured against, volume per exercise |
+| block 02 | the recovery ledger now | **the ledger as it stood that day** — recovered from the log, so the sheet is true to the session, not to today |
+| the tally | two filled groups and three empty | filled to `floor(sets / 5)` — the drawing doing the job it was drawn for |
+
+Four decisions worth keeping:
+
+- **A record is pure.** `printSheet(state, now, {sessionId})` is deterministic:
+  the same session prints the same sheet a year later, which group 9 of
+  `tests/print.js` asserts by generating it twice and comparing.
+- **Nothing is graded against a plan that was rebuilt.** The target comes from
+  the prescription stored on the session itself (`e.plan`, written when the
+  session started) or the plan day it came from — never from today's plan. A
+  session whose plan no longer exists still prints, with the exercise's own
+  range and no invented target.
+- **A partial session says so.** The outcome is sets done over sets asked for,
+  in fives; `Partial` is a state of the block, not a red mark.
+- **Every working set is a line, and a warm-up is not one.** That is more ink
+  than the form carries, so a record goes tight sooner: five exercises or
+  twelve printed lines. Measured in Chromium, a seven-exercise, twenty-one-line
+  record is 1079 px of 1122 — one page, in English, French, German and Arabic.
+
+Two entry points, because a session ends up in two places: the completion card
+offers *Print the record* the second the session is saved, and the history table
+on Progress carries a print action per session, labelled with the date it
+prints. The first render had that action as a bordered button, which doubled the
+height of every row in the tightest table in the app; it is a `.link-btn` now,
+the app's own quiet-action component, with the 44 px coarse-pointer expander
+already built into it.
+
+`design/print-record-a4.png` is the sheet; `tests/print.js` groups 9–10 and
+`tests/browser.js` group 4 hold it.
+
 **One thing the browser pass changed my mind about.** §6 of this document used
 to say the visual pass was impossible here. It was not impossible, it was
 unattempted: a Chromium binary is a 60 MB tarball on a registry that was

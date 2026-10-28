@@ -1536,7 +1536,14 @@ Screens.progress = function(){
       if(!done.length) return;
       const b = bestSetScore(done, ex, s.profile);
       const idx = (sess.exercises||[]).indexOf(e);
-      h += '<tr><td>' + (i===0 ? esc(dateLabel(sess.date)) : '') + '</td>' +
+      /* The date cell is the only place that is per session rather than per
+         row, so the session's own actions live there: one control, one sheet. */
+      h += '<tr><td>' + (i===0
+             ? '<span class="td-date">' + esc(dateLabel(sess.date)) + '</span>' +
+               '<button class="link-btn" onclick="openPrintRecord(\'' + sess.id + '\')" ' +
+               'aria-label="' + esc(t('pa.printRecord')) + ' · ' + esc(dateLabel(sess.date)) + '">' +
+               esc(t('pa.printShort')) + '</button>'
+             : '') + '</td>' +
            '<td><button type="button" class="link-btn" onclick="openExerciseDetail(\'' + e.id + '\')">' +
            esc(t('ex.'+e.id)) + '</button></td><td class="n">' + done.length + '</td>' +
            '<td class="n">' + esc(b ? formatSet(b.set, ex, s.profile) : '—') + '</td>' +

@@ -249,7 +249,7 @@ Decisions I would take, with the reasoning, so you can overrule any of them.
 | **3D anatomy lab** | **Make it inherit, don't celebrate it.** | The 2D figure is the better design object and the one people will use. The lab should look like it belongs and stop. Do not design a centrepiece around a 700 KB WebGL viewer. |
 | **Motion** | **Two tiers, not one.** | Today one duration and one curve cover everything. The verdict should arrive like a verdict (~280 ms, from below); list rows should not (~120 ms, fade). A written spec + a week of implementation is overkill; half a day for the spec and the four places it matters. |
 | **Arabic** | **Treat it as a design, not a mirror.** | `text-transform:uppercase` is meaningless in Arabic and currently applied. Needs an Arabic display face (system Noto Naskh is acceptable), correct line-height, and logical properties. 1–2 days. |
-| **Print** | **Keep, and add "reprint any past session".** | It is the differentiator and the cheapest thing to love. Half a day. |
+| ~~**Print**~~ | ~~**Keep, and add "reprint any past session".**~~ **Done.** The sheet now has two documents: the form you carry to the rack, and the record of a session already in the log — same four blocks, same paper, one printed line per working set, the tally filled to the count, recovery as it stood that day. Reachable from the completion card the moment a session is saved, and from every row of the history table. | shipped |
 
 ### The order I would actually work in
 

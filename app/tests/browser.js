@@ -818,6 +818,100 @@ function startServer(){
           sheets.filter(s => s.lang === 'ar').map(s => s.dir + ' ' + s.h + 'px').join(', '));
     }
 
+    /* The record side of the sheet, measured the same way. It carries more ink
+       than the form — one printed line per working set — so it is the worst
+       case for fitting on the paper, and it is the document a person keeps. */
+    {
+      const PX_PER_MM = 96 / 25.4;
+      const A4 = { w: 210 * PX_PER_MM, h: 297 * PX_PER_MM };
+      const recId = await page.evaluate(() => {
+        const s = getState();
+        const sn = s.plan.sessions[0];
+        const now = Date.now();
+        const rec = { id: 'rec-b1', date: now - 2*864e5, startedAt: now - 2*864e5 - 3600e3,
+          durationMs: 62*60000, planId: sn.id, name: sn.name, exercises: [] };
+        sn.exercises.forEach((e, ei) => {
+          const entry = { id: e.id, plan: { sets: e.sets, reps: e.reps.slice(), rir: e.rir }, sets: [] };
+          for (let k = 0; k < Math.max(3, e.sets); k++)
+            entry.sets.push({ w: 60 + ei*5, r: 8, rir: k ? 0 : 1, warmup:false, skipped:false, committed:true });
+          rec.exercises.push(entry);
+        });
+        s.sessions.push(rec);
+        saveState();
+        return rec.id;
+      });
+      await page.setViewport({ width: Math.round(A4.w), height: Math.round(A4.h), deviceScaleFactor: 1 });
+      await page.emulateMediaType('print');
+      const recSheets = [];
+      for(const lang of ['en', 'fr', 'de', 'ar']){
+        recSheets.push(...await page.evaluate(({ lang, id }) => {
+          const root = document.getElementById('printRoot');
+          const prev = CURRENT_LANG;
+          CURRENT_LANG = lang;
+          root.innerHTML = printSheet(getState(), Date.now(), { sessionId: id });
+          const el = root.querySelector('.sheet');
+          const r = el.getBoundingClientRect();
+          let spill = 0;
+          el.querySelectorAll('*').forEach(n => {
+            const b = n.getBoundingClientRect();
+            if(b.width || b.height) spill = Math.max(spill, Math.round(b.right - r.right), Math.round(r.left - b.left));
+          });
+          const out = { lang, dir: el.getAttribute('dir'), top: Math.round(r.top),
+                        h: Math.round(r.height), w: Math.round(r.width), spill,
+                        rows: root.querySelectorAll('.sheet-record-table tbody tr').length,
+                        lines: root.querySelectorAll('.sheet-record-table .c-sets .ln').length };
+          CURRENT_LANG = prev;
+          root.innerHTML = '';
+          return [out];
+        }, { lang, id: recId }));
+      }
+      await page.emulateMediaType(null);
+      await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
+      const overRec = recSheets.filter(s => s.h > Math.floor(A4.h) || s.top !== 0 || s.spill > 1);
+      chk('a logged session prints as one A4 record, not two sheets, in four languages',
+          overRec.length === 0,
+          overRec.map(s => s.lang + ' ' + s.h + 'px top=' + s.top + ' spill=' + s.spill).join('; ') ||
+          'max ' + Math.max(...recSheets.map(s => s.h)) + 'px of ' + Math.floor(A4.h) +
+          ', ' + recSheets[0].rows + ' exercises / ' + recSheets[0].lines + ' printed lines');
+      chk('and the Arabic record mirrors on the same page',
+          recSheets.some(s => s.lang === 'ar' && s.dir === 'rtl' && s.h <= Math.floor(A4.h)));
+    }
+
+    /* The button has to be on the screen, not only in the source. Logged a
+       session through the real UI above; these are the two places its record
+       can be reached from. */
+    {
+      const reach = await page.evaluate(() => {
+        /* The history table on Progress, with the session that was just
+           logged plus the one seeded above. */
+        setSessionSub && setSessionSub('plan');
+        go('progress');
+        const inTable = [...document.querySelectorAll('#screenBody button')]
+          .filter(b => /openPrintRecord\(/.test(b.getAttribute('onclick') || ''));
+        /* And the completion card, which is rendered from a summary object. */
+        showCompletion({ sessionId: 'rec-b1', prs: [], baselines: [], sets: 12, exercises: 3,
+                         durationMs: 3600e3, volume: 2400, muscles: [], newMilestones: [],
+                         thisWeek: 2, targetDays: 3 });
+        const inDone = [...document.querySelectorAll('#doneOverlay button')]
+          .filter(b => /openPrintRecord\(/.test(b.getAttribute('onclick') || ''));
+        const label = inDone.length ? inDone[0].textContent.trim() : '';
+        const box = inDone.length ? inDone[0].getBoundingClientRect() : null;
+        const name = inTable.length ? inTable[0].getAttribute('aria-label') || '' : '';
+        closeCompletion('home');
+        /* The record this group added is removed again: later groups count the
+           sessions in the log, and a fixture is not a session. */
+        deleteSession('rec-b1');
+        return { table: inTable.length, done: inDone.length, label,
+                 w: box ? Math.round(box.width) : 0, h: box ? Math.round(box.height) : 0, name };
+      });
+      chk('the history table offers a print action for a logged session', reach.table > 0, reach.table + ' rows');
+      chk('the session it prints is named for a screen reader, not just "Print"',
+          /record/i.test(reach.name) && /\d/.test(reach.name), reach.name);
+      chk('the completion card offers the record of the session it just saved',
+          reach.done === 1 && reach.label.length > 0, '"' + reach.label + '"');
+      chk('and that control clears a thumb', reach.h >= 44, reach.w + '×' + reach.h + ' px');
+    }
+
     /* The bottom bar is fixed, so anything that ends inside its 65 px is
        unreachable however far the page scrolls. Measured at 390 px on the six
        destinations, with the page scrolled to its true end: the lowest visible

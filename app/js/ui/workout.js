@@ -1091,7 +1091,8 @@ function finishSession(){
   const thisWeek = (s.sessions || []).filter(x => x.date >= nowFinish - 7*86400000).length;
 
   ACTIVE = null; SESSION_SUB = 'plan'; clearDraft(); stopRest(); syncLiveClock();
-  LAST_SUMMARY = { prs: records.pr, baselines: records.baseline,
+  LAST_SUMMARY = { sessionId: rec.id,
+                   prs: records.pr, baselines: records.baseline,
                    sets: exercises.reduce((a,e)=>a+e.sets.length,0),
                    exercises: exercises.length, durationMs: durationMs,
                    volume: sessVol, muscles: Object.keys(musclesMap),
@@ -1158,8 +1159,13 @@ function showCompletion(sum){
   h += '<div class="done-block"><p class="eyebrow">' + esc(t('done.nextStep')) + '</p>' +
        '<p class="body-sm mb-0">' + esc(t('done.nextStepBody')) + '</p></div>';
 
+  /* The sheet is a document, and the moment you want the record of it is the
+     moment it exists. It sits beside "view history" rather than behind it. */
   h += '<div class="done-actions">' +
        '<button class="btn" onclick="closeCompletion(\'progress\')">' + esc(t('done.viewHistory')) + '</button>' +
+       (sum.sessionId
+         ? '<button class="btn quiet" onclick="openPrintRecord(\'' + sum.sessionId + '\')">' +
+           esc(t('pa.printRecord')) + '</button>' : '') +
        '<button class="btn quiet" onclick="closeCompletion(\'home\')">' + esc(t('done.backHome')) + '</button>' +
        '</div>';
   h += '</div></div>';

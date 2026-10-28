@@ -236,7 +236,180 @@ const SEED = `
         !/class="sheet-tight"/.test(window.eval('printSheet(getState(), Date.now(), {})')));
   }
 
-  group('9. The button is reachable from the planner');
+  /* The other half of the sheet: a session that is already in the log. It is
+     the same document with the ink on it, and the things it may never do are
+     claim a recommendation after the fact, grade the person against a plan
+     that was rebuilt since, or dress a partial session as a complete one. */
+  group('9. A session in the log prints as a record, not as a form');
+  {
+    /* A session that came from a plan day and carried its own prescription,
+       with one exercise cut short and one set skipped. */
+    const recId = window.eval(`(() => {
+      const s = getState();
+      const sn = s.plan.sessions[0];
+      const DAY = 864e5, now = Date.now();
+      const rec = { id:'rec-t1', date: now - 2*DAY, startedAt: now - 2*DAY - 3600e3,
+        durationMs: 62*60000, planId: sn.id, name: sn.name, exercises: [] };
+      sn.exercises.forEach((e, ei) => {
+        const entry = { id: e.id, plan: { sets: e.sets, reps: e.reps.slice(), rir: e.rir }, sets: [] };
+        for (let k = 0; k < e.sets; k++) entry.sets.push({ w: 60 + ei*5, r: 8, rir: k ? 0 : 1,
+          warmup:false, skipped:false, committed:true });
+        /* The seeded profile is HIT — one set per exercise — so "cut short" is
+           a skipped set and a second one that never happened. */
+        if (ei === 0) { entry.sets[0].skipped = true; }
+        if (ei === 1) entry.sets.push({ w:null, r:null, warmup:false, skipped:true });
+        entry.sets.push({ w: 40, r: 5, warmup: true });  /* a warm-up is not a working set */
+        if (ei === 0) entry.note = 'left shoulder felt fine';
+        rec.exercises.push(entry);
+      });
+      s.sessions.push(rec);
+      saveState();
+      return rec.id;
+    })()`);
+    const rec = window.eval(`printSheet(getState(), Date.now(), { sessionId: '${recId}' })`);
+    const rroot = new JSDOM('<div id="r">' + rec + '</div>').window.document.getElementById('r');
+    const formHtml = window.eval('printSheet(getState(), Date.now(), {})');
+
+    chk('it is the same sheet: four numbered blocks',
+        [...rroot.querySelectorAll('.stamp')].map(x => x.textContent).join(',') === '01,02,03,04');
+    chk('the header says this is a record, not a blank form',
+        /Session record/i.test(rroot.querySelector('.sheet-cap').textContent) &&
+        !/one sheet per session/i.test(rroot.textContent));
+    chk('the fill-in row is answered by the log, not left blank',
+        /\d\d:\d\d/.test(rroot.querySelector('.sheet-fill').textContent),
+        rroot.querySelector('.sheet-fill').textContent.replace(/\s+/g, ' ').trim().slice(0, 70));
+    chk('…and "feel" stays empty, because no one logged it',
+        rroot.querySelectorAll('.sheet-fill i')[4].textContent.trim() === '');
+    chk('the verdict is the outcome, not a recommendation',
+        /Outcome/i.test(rroot.querySelector('.sheet-lab').textContent) &&
+        !/Recommendation/i.test(rroot.textContent));
+    chk('a session missing sets reads Partial, not Done',
+        /Partial/i.test(rroot.querySelector('.sheet-state').textContent),
+        rroot.querySelector('.sheet-state').textContent.trim());
+    chk('and it says by how much', /\d+ of \d+ sets/i.test(rroot.querySelector('.sheet-why').textContent),
+        rroot.querySelector('.sheet-why').textContent.replace(/\s+/g, ' ').trim());
+    chk('the percentage is the sets done over the sets asked for, in fives',
+        (() => {
+          const pctTxt = rroot.querySelector('.sheet-vright b').textContent;
+          const m = /(\d+) of (\d+)/.exec(rroot.querySelector('.sheet-why').textContent);
+          if (!m) return false;
+          const want = Math.round((+m[1] / +m[2]) * 100 / 5) * 5;
+          return pctTxt === want + '%';
+        })(), rroot.querySelector('.sheet-vright b').textContent);
+    chk('one row per exercise', rroot.querySelectorAll('.sheet-record-table tbody tr').length ===
+        window.eval(`getState().sessions.filter(x=>x.id==='${recId}')[0].exercises.length`));
+    const expectedLines = window.eval(`(() => {
+      const r = getState().sessions.filter(x => x.id === '${recId}')[0];
+      let w = 0, k = 0;
+      r.exercises.forEach(e => { w += workingSets(e.sets).length; k += e.sets.filter(x => x.skipped).length; });
+      return { work: w, skipped: k };
+    })()`);
+    chk('every working set is a printed line, and a warm-up is not one',
+        rroot.querySelectorAll('.sheet-record-table .c-sets .ln:not(.sheet-none)').length === expectedLines.work,
+        rroot.querySelectorAll('.sheet-record-table .c-sets .ln:not(.sheet-none)').length +
+        ' lines / ' + expectedLines.work + ' working sets');
+    chk('a skipped set is named, not silently dropped',
+        /skipped/i.test(rroot.querySelector('.sheet-record-table').textContent));
+    const storedPlan = window.eval(`(() => {
+      const r = getState().sessions.filter(x => x.id === '${recId}')[0];
+      return r.exercises[0].plan;
+    })()`);
+    chk('the target is the prescription stored on the session, not today’s plan',
+        rroot.querySelector('.sheet-record-table tbody .c-mono').textContent
+          .indexOf(storedPlan.sets + ' × ' + storedPlan.reps[0] + '–' + storedPlan.reps[1]) === 0,
+        rroot.querySelector('.sheet-record-table tbody .c-mono').textContent);
+    chk('the volume column is a real sum, and the rows add up to the session',
+        (() => {
+          const cells = [...rroot.querySelectorAll('.sheet-record-table tbody .c-vol')]
+            .map(td => td.textContent.replace(/[^\d]/g, ''))
+            .filter(t => t.length);
+          const printed = cells.reduce((a, t) => a + (+t), 0);
+          const real = window.eval(`Math.round(sessionTotalVolume(getState().sessions.filter(x => x.id === '${recId}')[0], getState()))`);
+          return cells.length >= 1 && Math.abs(printed - real) <= cells.length;
+        })(),
+        [...rroot.querySelectorAll('.sheet-record-table tbody .c-vol')].map(t => t.textContent.trim()).join(' | '));
+    chk('a note is printed once, with its exercise',
+        (rec.match(/left shoulder felt fine/g) || []).length === 1,
+        (rec.match(/left shoulder felt fine/g) || []).length + ' occurrences');
+    chk('the tally is the count, not an invitation',
+        rroot.querySelectorAll('.sheet-tallies .sheet-mark').length >= 1 &&
+        /Working sets · \d+/.test(rroot.querySelector('.sheet-tally-wrap').textContent),
+        rroot.querySelector('.sheet-tally-wrap').textContent.replace(/\s+/g, ' ').trim().slice(0, 40));
+    chk('the record does not inherit the form’s empty boxes',
+        rroot.querySelectorAll('.sheet-record-table .box').length === 0);
+
+    /* Same session, same paper. A record is a pure function of the log. */
+    const again = window.eval(`printSheet(getState(), Date.now(), { sessionId: '${recId}' })`);
+    chk('reprinting the same session prints the same sheet', again === rec);
+    chk('and it is a different document from the form', rec !== formHtml);
+
+    /* Grading a person against a plan they were never given would be a lie, so
+       a session with no plan day behind it still prints its own targets. */
+    const orphan = window.eval(`(() => {
+      const s = getState();
+      s.sessions.push({ id:'rec-t2', date: Date.now() - 864e5, planId:'gone', name:'Deleted split',
+        exercises:[{ id:'bb-bench', sets:[{ w:50, r:10, rir:2, warmup:false, skipped:false, committed:true }] }] });
+      saveState();
+      return printSheet(getState(), Date.now(), { sessionId:'rec-t2' });
+    })()`);
+    chk('a session whose plan no longer exists still prints',
+        /Deleted split/.test(orphan) && /sheet-record-table/.test(orphan));
+    chk('…and its target falls back to the exercise’s own range, not to today’s plan',
+        !/3 × 6–10/.test(orphan));
+
+    const lost = window.eval("printSheet(getState(), Date.now(), { sessionId:'nope' })");
+    chk('an id that is not in the log prints an empty state, not a crash',
+        /sheet-empty/.test(lost) && lost.length < 400);
+
+    const langs = window.eval('LANGS');
+    const leaks = [];
+    langs.forEach(l => {
+      const out = window.eval(`(() => {
+        const prev = CURRENT_LANG; CURRENT_LANG = '${l}';
+        const h = printSheet(getState(), Date.now(), { sessionId: '${recId}' });
+        CURRENT_LANG = prev; return h;
+      })()`);
+      const raw = out.match(/>pa\.[a-z]+</g) || [];
+      if (raw.length) leaks.push(l + ':' + raw.join(','));
+    });
+    chk('the record is translated in all seven languages', leaks.length === 0, leaks.join('; ') || '7/7');
+    const arRec = window.eval(`(() => {
+      const prev = CURRENT_LANG; CURRENT_LANG = 'ar';
+      const h = printSheet(getState(), Date.now(), { sessionId: '${recId}' });
+      CURRENT_LANG = prev; return h;
+    })()`);
+    chk('the Arabic record prints right to left', /class="sheet[^"]*" dir="rtl"/.test(arRec));
+  }
+
+  group('10. The record is reachable from both places a session ends up');
+  {
+    const workout = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
+    chk('the completion card offers the record of the session it just saved',
+        /openPrintRecord\(/.test(workout) && /sum\.sessionId/.test(workout));
+    chk('and the summary carries the id it needs', /sessionId: rec\.id/.test(workout));
+    const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+    chk('the history table offers it per session',
+        /openPrintRecord\(/.test(screens) && /sess\.id/.test(screens));
+    chk('the button names the session it prints, for a screen reader',
+        /aria-label="' \+ esc\(t\('pa\.printRecord'\)\)/.test(screens));
+
+    const rootEl = doc.getElementById('printRoot');
+    let printed = 0;
+    window.print = () => { printed++; };
+    rootEl.innerHTML = '';
+    const okRec = window.eval("openPrintRecord('rec-t1')");
+    chk('openPrintRecord mounts the record and reports success', okRec === true && rootEl.innerHTML.length > 1000);
+    await wait(200);
+    chk('and asks the browser to print it', printed >= 1, printed + ' print call(s)');
+    chk('a bad id mounts the empty state rather than throwing', (() => {
+      rootEl.innerHTML = '';
+      let threw = false;
+      try { window.eval("openPrintRecord('nope')"); } catch (e) { threw = true; }
+      return !threw && /sheet-empty/.test(rootEl.innerHTML);
+    })());
+  }
+
+  group('11. The button is reachable from the planner');
   {
     const ui = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
     chk('the planner offers a print action', /openPrintCard\(/.test(ui));

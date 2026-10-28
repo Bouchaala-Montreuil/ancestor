@@ -1690,7 +1690,13 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .done-block{margin:var(--s4) 0}
 .done-actions{margin-top:var(--s5);gap:var(--s2)}
-.done-actions .btn{flex:1 1 140px}
+/* Two in the row, not three. At 390 px a third button squeezes all three into
+   two-line labels ("SEE THE / HISTORY"), and a wrap inside a button reads as a
+   mistake. The primary and the record share the row; the way out takes its own,
+   full width. */
+.done-actions .btn{flex:1 1 calc(50% - var(--s2));min-width:0;
+  font-size:10px;letter-spacing:.1em;padding:0 var(--s2);white-space:nowrap}
+.done-actions .btn:last-child{flex:1 1 100%}
 
 /* ---------------------------------------------------------------- SCIENCE */
 /* An evidence card in the library. The citation line is the identity; the
@@ -2107,6 +2113,34 @@ table.data tbody tr:last-child td{border-bottom:0}
 .sheet .box{display:inline-block;width:100%;height:5.4mm;border:1px solid #B0AA9D;
   background:#fff}
 .sheet .box.rir{width:7mm}
+
+/* The record side of the work table. No boxes — the boxes were the promise of
+   a form — and one printed line per working set, set tight enough that eight
+   exercises and twenty-four sets still leave room for the footer. */
+/* Six date cells in the history table, each carrying a print action: the date
+   and the button are stacked, so the column stays as narrow as a date. */
+/* The date must not wrap: "26 Oct" on two lines made every row in the history
+   table two lines taller than it needed to be. */
+.td-date{display:block;margin-bottom:2px;white-space:nowrap}
+.table-wrap .btn.sm{margin:0}
+
+.sheet-record-table td{vertical-align:top;height:auto;padding:1.4mm 1.6mm 1.4mm 0}
+.sheet-record-table .c-name{width:38mm}
+.sheet-record-table .c-name small{text-transform:none;letter-spacing:.02em;line-height:1.35}
+.sheet-record-table .c-vol{text-align:end;white-space:nowrap}
+.sheet-record-table .c-sets{font-family:var(--f-mono);font-size:5.8pt;letter-spacing:.02em;
+  line-height:1.35;white-space:nowrap}
+.sheet-record-table .c-sets .ln{display:block}
+.sheet-none{color:#8C877B;font-style:normal}
+#printRoot .sheet.sheet-tight .sheet-record-table td{padding:.8mm 1.6mm .8mm 0}
+
+/* The notes a person actually wrote during the session. */
+.sheet-noted{margin-bottom:1.6mm}
+.sheet-noted-row{display:grid;grid-template-columns:38mm 1fr;gap:2mm;
+  padding:.9mm 0;border-bottom:1px solid var(--pa-line-soft)}
+.sheet-noted-row b{font-family:var(--f-mono);font-size:5.4pt;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600}
+.sheet-noted-row span{font-size:7pt;line-height:1.4}
 
 .sheet-legend{display:flex;gap:5mm;flex-wrap:wrap;margin-top:1.4mm;
   font-family:var(--f-mono);font-size:5pt;letter-spacing:.08em;text-transform:uppercase;

@@ -52,7 +52,24 @@ TP.en = {
   'pa.action'   : 'Print / Save as PDF',
   'pa.noPlan'   : 'No programme yet',
   'pa.today'    : 'Today',
-  'pa.sign'     : 'Signature'
+  'pa.sign'     : 'Signature',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'Session record · what was actually done',
+  'pa.noSession' : 'That session is not in the log',
+  'pa.outcome'   : 'Outcome',
+  'pa.done'      : 'Done',
+  'pa.partial'   : 'Partial',
+  'pa.setsDone'  : '{d} of {p} sets',
+  'pa.lifted'    : 'What was lifted',
+  'pa.recorded'  : 'Recorded',
+  'pa.workNotePast': 'every working set, as it was logged',
+  'pa.nothingLogged': 'nothing logged',
+  'pa.skippedSets': '{n} skipped',
+  'pa.recNotePast': 'as it stood that day',
+  'pa.tallyNotePast': 'One stroke per working set. The fifth closes the set.',
+  'pa.printRecord': 'Print the record',
+  'pa.printShort': 'Print',
+  'pa.vol'       : 'Volume'
 };
 
 TP.fr = {
@@ -97,7 +114,24 @@ TP.fr = {
   'pa.action'   : 'Imprimer / PDF',
   'pa.noPlan'   : 'Pas encore de programme',
   'pa.today'    : 'Aujourd’hui',
-  'pa.sign'     : 'Signature'
+  'pa.sign'     : 'Signature',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'Fiche de séance · ce qui a été fait',
+  'pa.noSession' : 'Cette séance n’est pas dans le journal',
+  'pa.outcome'   : 'Résultat',
+  'pa.done'      : 'Fait',
+  'pa.partial'   : 'Partiel',
+  'pa.setsDone'  : '{d} séries sur {p}',
+  'pa.lifted'    : 'Ce qui a été soulevé',
+  'pa.recorded'  : 'Enregistré',
+  'pa.workNotePast': 'chaque série de travail, telle qu’enregistrée',
+  'pa.nothingLogged': 'rien d’enregistré',
+  'pa.skippedSets': '{n} passé(s)',
+  'pa.recNotePast': 'telle qu’elle était ce jour-là',
+  'pa.tallyNotePast': 'Un trait par série de travail. Le cinquième ferme la série.',
+  'pa.printRecord': 'Imprimer la fiche',
+  'pa.printShort': 'Imprimer',
+  'pa.vol'       : 'Volume'
 };
 
 TP.es = {
@@ -142,7 +176,24 @@ TP.es = {
   'pa.action'   : 'Imprimir / PDF',
   'pa.noPlan'   : 'Aún no hay programa',
   'pa.today'    : 'Hoy',
-  'pa.sign'     : 'Firma'
+  'pa.sign'     : 'Firma',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'Ficha de sesión · lo que se hizo',
+  'pa.noSession' : 'Esa sesión no está en el registro',
+  'pa.outcome'   : 'Resultado',
+  'pa.done'      : 'Hecho',
+  'pa.partial'   : 'Parcial',
+  'pa.setsDone'  : '{d} de {p} series',
+  'pa.lifted'    : 'Lo que se levantó',
+  'pa.recorded'  : 'Registrado',
+  'pa.workNotePast': 'cada serie efectiva, tal como se registró',
+  'pa.nothingLogged': 'nada registrado',
+  'pa.skippedSets': '{n} omitidas',
+  'pa.recNotePast': 'como estaba ese día',
+  'pa.tallyNotePast': 'Una raya por serie efectiva. La quinta cierra la serie.',
+  'pa.printRecord': 'Imprimir la ficha',
+  'pa.printShort': 'Imprimir',
+  'pa.vol'       : 'Volumen'
 };
 
 TP.de = {
@@ -187,7 +238,24 @@ TP.de = {
   'pa.action'   : 'Drucken / PDF',
   'pa.noPlan'   : 'Noch kein Programm',
   'pa.today'    : 'Heute',
-  'pa.sign'     : 'Unterschrift'
+  'pa.sign'     : 'Unterschrift',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'Einheitenprotokoll · was tatsächlich gemacht wurde',
+  'pa.noSession' : 'Diese Einheit steht nicht im Log',
+  'pa.outcome'   : 'Ergebnis',
+  'pa.done'      : 'Erledigt',
+  'pa.partial'   : 'Teilweise',
+  'pa.setsDone'  : '{d} von {p} Sätzen',
+  'pa.lifted'    : 'Was bewegt wurde',
+  'pa.recorded'  : 'Aufgezeichnet',
+  'pa.workNotePast': 'jeder Arbeitssatz, wie aufgezeichnet',
+  'pa.nothingLogged': 'nichts erfasst',
+  'pa.skippedSets': '{n} ausgelassen',
+  'pa.recNotePast': 'wie es an diesem Tag stand',
+  'pa.tallyNotePast': 'Ein Strich je Arbeitssatz. Der fünfte schließt den Satz.',
+  'pa.printRecord': 'Protokoll drucken',
+  'pa.printShort': 'Drucken',
+  'pa.vol'       : 'Volumen'
 };
 
 TP.it = {
@@ -232,7 +300,24 @@ TP.it = {
   'pa.action'   : 'Stampa / PDF',
   'pa.noPlan'   : 'Nessun programma',
   'pa.today'    : 'Oggi',
-  'pa.sign'     : 'Firma'
+  'pa.sign'     : 'Firma',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'Scheda di sessione · cosa è stato fatto',
+  'pa.noSession' : 'Quella sessione non è nel registro',
+  'pa.outcome'   : 'Esito',
+  'pa.done'      : 'Fatto',
+  'pa.partial'   : 'Parziale',
+  'pa.setsDone'  : '{d} serie su {p}',
+  'pa.lifted'    : 'Cosa è stato sollevato',
+  'pa.recorded'  : 'Registrato',
+  'pa.workNotePast': 'ogni serie effettiva, come registrata',
+  'pa.nothingLogged': 'niente registrato',
+  'pa.skippedSets': '{n} saltate',
+  'pa.recNotePast': 'com’era quel giorno',
+  'pa.tallyNotePast': 'Un segno per serie effettiva. Il quinto chiude la serie.',
+  'pa.printRecord': 'Stampa la scheda',
+  'pa.printShort': 'Stampa',
+  'pa.vol'       : 'Volume'
 };
 
 TP.nl = {
@@ -277,7 +362,24 @@ TP.nl = {
   'pa.action'   : 'Printen / PDF',
   'pa.noPlan'   : 'Nog geen programma',
   'pa.today'    : 'Vandaag',
-  'pa.sign'     : 'Handtekening'
+  'pa.sign'     : 'Handtekening',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'Sessieverslag · wat er echt is gedaan',
+  'pa.noSession' : 'Die sessie staat niet in het log',
+  'pa.outcome'   : 'Uitkomst',
+  'pa.done'      : 'Klaar',
+  'pa.partial'   : 'Gedeeltelijk',
+  'pa.setsDone'  : '{d} van {p} sets',
+  'pa.lifted'    : 'Wat er is getild',
+  'pa.recorded'  : 'Vastgelegd',
+  'pa.workNotePast': 'elke werkset, zoals vastgelegd',
+  'pa.nothingLogged': 'niets vastgelegd',
+  'pa.skippedSets': '{n} overgeslagen',
+  'pa.recNotePast': 'zoals het die dag stond',
+  'pa.tallyNotePast': 'Eén streep per werkset. De vijfde sluit de set.',
+  'pa.printRecord': 'Verslag printen',
+  'pa.printShort': 'Printen',
+  'pa.vol'       : 'Volume'
 };
 
 TP.ar = {
@@ -322,7 +424,24 @@ TP.ar = {
   'pa.action'   : 'طباعة / PDF',
   'pa.noPlan'   : 'لا يوجد برنامج بعد',
   'pa.today'    : 'اليوم',
-  'pa.sign'     : 'التوقيع'
+  'pa.sign'     : 'التوقيع',
+  /* ---- the record of a session already logged ---- */
+  'pa.recordOf'  : 'سجل الحصة · ما تم فعله',
+  'pa.noSession' : 'هذه الحصة ليست في السجل',
+  'pa.outcome'   : 'النتيجة',
+  'pa.done'      : 'مكتملة',
+  'pa.partial'   : 'جزئية',
+  'pa.setsDone'  : '{d} من {p} مجموعات',
+  'pa.lifted'    : 'ما تم رفعه',
+  'pa.recorded'  : 'مُسجَّلة',
+  'pa.workNotePast': 'كل مجموعة عمل كما سُجّلت',
+  'pa.nothingLogged': 'لا شيء مسجَّل',
+  'pa.skippedSets': '{n} متجاوَزة',
+  'pa.recNotePast': 'كما كانت في ذلك اليوم',
+  'pa.tallyNotePast': 'خط واحد لكل مجموعة عمل. الخامس يُغلق المجموعة.',
+  'pa.printRecord': 'طباعة السجل',
+  'pa.printShort': 'طباعة',
+  'pa.vol'       : 'الحجم'
 };
 
 Object.keys(TP).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], TP[l]); });
