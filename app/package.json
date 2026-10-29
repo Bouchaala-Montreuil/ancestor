@@ -15,7 +15,8 @@
     "modules": "node tools/modules.js",
     "smoke": "node tools/smoke_dist.js",
     "test:print": "node tests/print.js",
-    "test:all": "npm test && node tests/browser.js",
+    "test:all": "npm test && node tests/browser.js && node tools/pwa_audit.js",
+    "pwa": "node tools/pwa_audit.js",
     "verify": "npm test && npm run modules -- --check && npm run figure -- --check && npm run keys && npm run qa && npm run build && npm run smoke && python3 ../site/build.py && python3 ../site/check.py"
   },
   "devDependencies": {

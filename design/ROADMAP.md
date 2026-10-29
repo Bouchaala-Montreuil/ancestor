@@ -46,7 +46,7 @@ Both corrected, and `tests/design.js` now fails if a preference hook is orphaned
 | **Session complete** | It exists. It should be a moment, not a modal. | 0.5 d |
 | **Progress sub-views** | Volume, load, 1RM, records, session log — five views sharing one shell, none individually designed. | 2 d |
 | **Sheets / modals** | Sleep, shift, feeling, analysis, why, add-exercise. Currently all inherit `.sheet` and look identical. | 1.5 d |
-| **Print from history** | Reprint any past session, not just the next one. | 0.5 d |
+| ~~**Print from history**~~ | ~~Reprint any past session, not just the next one.~~ **Already shipped** — `openPrintRecord(sessionId)` builds the same sheet from the log, reachable from the history list and from the session-complete sheet. This row was stale, which is why the table below is read against the code and not trusted. | 0 ✅ |
 
 ---
 
@@ -114,13 +114,13 @@ stylesheet".
 
 | Check | Effort |
 |---|---|
-| Real screenshots at 320 / 360 / 390 / 414 / 768 / 1024 / 1280 | 0.5 d *(needs you)* |
+| ~~Real screenshots at 320 / 360 / 390 / 414 / 768 / 1024 / 1280~~ | done — `tools/pwa_audit.js` sweeps all seven widths across six screens and fails on any horizontal overflow. What it cannot say is whether they *look* right; that is still yours. |
 | iOS Safari + Android Chrome, installed and in-browser | 0.5 d *(needs a device)* |
 | ~~Contrast audit of the new palette against WCAG AA in every state~~ | done — `STATES.md` |
 | ~~Touch-target audit (44 px minimum)~~ | done — §0.10 |
 | Screen-reader pass (VoiceOver + TalkBack) | 1 d |
 | Printed sheet on real paper, both sides on a cheap printer | 0.5 d |
-| Lighthouse / PWA install audit | 0.5 d |
+| ~~Lighthouse / PWA install audit~~ | done — `npm run pwa`, 30 checks. Chrome's own `Page.getInstallabilityErrors` turned out to be stubbed in this build (it returns an empty list for a manifest with no icons), so the criteria are applied by hand and a deliberately broken manifest is run through them as a control. |
 
 ---
 

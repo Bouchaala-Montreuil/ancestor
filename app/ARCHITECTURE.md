@@ -52,6 +52,20 @@ Verified cold, from an empty `/tmp`, on 2026-10-29: **93/93**. The suite runs
 headless with SwiftShader, so the WebGL checks mean what they claim without a
 GPU.
 
+**And the install audit, which needed the same browser.** `tools/pwa_audit.js`
+(`npm run pwa`, 30 checks) serves the app over HTTP so a service worker may
+install, then asks the questions §6 of the roadmap had been postponing: is the
+manifest the one Chrome is given, are the icons the size they claim, does the
+maskable icon survive being cropped to a circle, does a cold start work with the
+network gone, does any of six screens overflow at any of seven widths, and do the
+two home-screen shortcuts open what they name. Two of those checks are controls:
+the install criteria are run against a deliberately broken manifest and must
+refuse it, and the maskable measurement is run against an icon drawn to break it.
+Without them every green tick above would be indistinguishable from a check that
+cannot fail — which is what happened first: `Page.getInstallabilityErrors`
+returns an empty list for a manifest with no icons at all in this build, so the
+original "installable" verdict was worth nothing and was replaced.
+
 **Delivery.** `release/ancestor.html`, 2.5 MB, everything inlined including the
 woff2 and the three.js runtime. A service worker caches the file list, cache-first.
 
@@ -81,6 +95,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S18 | Medium | The public landing page said "a suitably licensed human mesh costs more megabytes than the whole app" and never named the licence — while the app ships a 904 KB licensed mesh and embeds it in the single file. The attribution notice in `assets/` named four files that exist only in the upstream atlas and said nothing about the projection derived from the mesh, which ShareAlike also covers. | `site/template.html`, `assets/ANATOMY-ATTRIBUTION.txt` | **fixed** — the page's limitation is now "a training atlas, not a clinical model", the footer credits Z-Anatomy / BodyParts3D CC BY-SA 4.0, and `site/check.py` (4 new checks) fails if the credit disappears. The notice names what this repository actually ships and declares `figure-projected.json` and the generated figure block as Adapted Material; design group **8t** fails if any path it names is missing. |
 | S19 | Medium | A failure state that expired. When the 3D model could not mount, the app fell back to the flat figure correctly and then said why in a toast: four seconds later the user was in a representation they had not chosen, with no explanation and no way back that they would find. | `js/ui/screens.js` `onFail` | **fixed** — the reason is a state (`BODY_FALLBACK`), the strip sits above the figure it explains, and `retryLab` survives until a model actually mounts. Covered in `tests/ui.js` (jsdom has no WebGL, so the real failure path is the default one there) and photographed at 390 px in French. |
 | S20 | Medium | Two smaller things the screenshots caught. The Science search field set the same string as its `<label>` and as its `placeholder` — two labels, no instruction. And the filter rail announced that it scrolls only by slicing a chip in half at the viewport edge, which reads as a layout fault. | `js/ui/science.js`, `css/app.css` | **fixed** — `sci.searchHint` in seven languages for the placeholder, and a 14 px `mask-image` at both ends of the rail so what continues fades instead of breaking. The mask is direction-neutral on purpose: 8f allows exactly one `[dir="rtl"]` rule and this is not worth spending it on. `tests/science.js` group 7d holds both. |
+| S21 | Low | The roadmap's own tables were stale in one direction that mattered: §1 listed "Print from history" as a screen that does not exist, and it has shipped for weeks (`openPrintRecord`, reachable from the history list and from the completion sheet). §6 listed the install audit as never done, which was true only because no browser was reachable. | `design/ROADMAP.md` §1, §6 | **fixed** — §6's two rows are done and dated (`tools/pwa_audit.js`, 30 checks); the print row is checked against the code before being trusted again. |
 
 ---
 
