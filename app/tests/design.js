@@ -1628,6 +1628,14 @@ group('2k. Chart labels: one number format');
 }
 
 /* ================================================================ */
+group('2l. Metric text values break between words, not inside them');
+{
+  const ci = css.indexOf('.metric .v:not(.num){');
+  chk('text metric values wrap between words only (no mid-word break at 320 px)',
+      ci > 0 && css.slice(ci, css.indexOf('}', ci)).indexOf('overflow-wrap:break-word') > 0 && css.slice(ci, css.indexOf('}', ci)).indexOf('clamp(18px') > 0);
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));
