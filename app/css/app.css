@@ -1169,6 +1169,8 @@ button.flag:hover{border-color:var(--ink)}
 .d-band{fill:var(--wash)}
 .d-band-line{stroke:var(--line);stroke-dasharray:3 3;fill:none}
 .d-t{font-family:var(--f-mono);font-size:8px;fill:var(--tech-ink);letter-spacing:.06em}
+/* Label on the orange accent box: --tech-ink on orange is about 2.4:1; the on-action ink is 7.4:1. */
+.d-box.accent + .d-t{fill:var(--on-action)}
 .d-l{font-family:var(--f-mono);font-size:8px;fill:var(--tech-ink);letter-spacing:.06em}
 .d-nm{font-family:var(--f-mono);font-size:9px;fill:var(--ink-2)}
 .d-cap{font-family:var(--f-mono);font-size:8px;fill:var(--tech-ink)}
@@ -1713,6 +1715,9 @@ table.data tbody tr:last-child td{border-bottom:0}
 .atlas-more-body{margin-top:var(--s2);padding-bottom:var(--s2)}
 
 /* --------------------------------------------------------------- SESSION */
+/* The module's Retour chip must read as one word at 320 px. Scoped to that chip only:
+   a header-wide rule pushed the German bodyweight chip past the screen edge. */
+.chip.chip-keep{white-space:nowrap;flex:none}
 .session-progress{
   /* The add-exercise button wraps onto its own line above this caption; it needs air. */
   margin-top:var(--s3);

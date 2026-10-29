@@ -55,7 +55,7 @@ Screens.module = function(){
      is the screen's h1 — the science hub's masthead is not on this page. */
   let h = '<div class="sect"><h1 class="title">' + esc(t(m.titleKey)) +
           '</h1><span class="rule"></span>' +
-          '<span class="aside"><button class="chip sm" data-act="closeModule">' +
+          '<span class="aside"><button class="chip sm chip-keep" data-act="closeModule">' +
           esc(t('sci.backToHub')) + '</button></span></div>';
 
   h += '<p class="body-sm mb-5" style="max-width:64ch">' +

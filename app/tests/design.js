@@ -1593,6 +1593,15 @@ group('2h. Progress highlight and bottom-sheet pickers');
 }
 
 /* ================================================================ */
+group('2i. Recovery diagram label on the orange box, and the Retour chip');
+{
+  chk('the label on the orange accent box uses the on-action ink, not the muted tech ink',
+      /\.d-box\.accent \+ \.d-t\{fill:var\(--on-action\)\}/.test(css));
+  chk('the module Retour chip is the only nowrap chip, so no other header is widened',
+      /\.chip\.chip-keep\{white-space:nowrap/.test(css) && !/\.aside \.chip\{white-space:nowrap/.test(css));
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));
