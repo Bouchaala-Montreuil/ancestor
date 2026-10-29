@@ -1419,7 +1419,7 @@ button.flag:hover{border-color:var(--ink)}
   background:var(--paper);border-bottom:var(--hair) solid var(--line);
   padding:var(--s2) 0;margin-bottom:var(--s3);
 }
-.sheet-hd h2{margin:0;min-width:0}
+.sheet-hd h2{margin:0;min-width:0;font-family:var(--f-display);font-weight:700;letter-spacing:.02em}
 .sheet-hd .sheet-x{flex:none;min-height:var(--hit)}
 /* Picker grids for the bottom sheets (rest durations, rep counts). Every
    target is a full 44 px; the chosen value is the only orange in the grid. */
