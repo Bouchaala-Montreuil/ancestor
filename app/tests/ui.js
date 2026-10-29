@@ -280,8 +280,21 @@ w.selectMuscle('chest');
 chk('selecting a muscle updates state', w.ANC.bodySel === 'chest');
 chk('a muscle record opens', !!$('.factors') && txt().includes('Chest'));
 chk('the record lists contributing exercises', $$('table.data').length > 0);
-chk('the record shows the estimate factors',
-    txt().includes('Factors') && txt().includes('Adapted from your log') === false || true);
+/* The record has to show the factors AND their multipliers. The old line ended
+   in `|| true`, so it passed whatever the screen said. */
+chk('the record shows the estimate factors and their multipliers',
+    txt().includes('Factors') && /×\d+\.\d\d/.test(txt()),
+    (txt().match(/×\d+\.\d\d/g) || []).length + ' multipliers');
+
+/* The factors used to arrive from the engine as English sentences, so the list
+   stayed English in every other language. Render the same record in French and
+   demand the sentences changed. */
+const FR_ENGLISH = /Work performed|Effort level|Training style|Training experience|Logged sleep|What you reported|Recent performance|Adapted from your log/;
+w.switchLang('fr'); w.go('body'); w.selectMuscle('chest');
+chk('the factor list is translated, not passed through as English',
+    txt().includes('Travail effectué') && !FR_ENGLISH.test(txt()),
+    (txt().match(FR_ENGLISH) || ['none'])[0]);
+w.switchLang('en'); w.go('body'); w.selectMuscle('chest');
 chk('the record states it is an estimate', txt().includes('Not a measurement'));
 
 w.toggleZoom();

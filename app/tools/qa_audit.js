@@ -213,7 +213,6 @@ group('B. Interactive anatomy — every region, both views');
 
   // navigating from the dashboard figure
   w.go('home');
-  w.ANC.bodySel === 'quads' || true;
   const homeSeg = d.querySelector('.seg-hit[data-m="chest"]');
   click(w, homeSeg);
   (w.ANC.view === 'body')

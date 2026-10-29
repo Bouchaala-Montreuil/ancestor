@@ -218,8 +218,9 @@ group('8. Anatomy component integrity');
   chk('rotation is implemented', /function rotateFig/.test(fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8')));
   const screensSrc = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
   const i18nSrc = fs.readFileSync(path.join(ROOT,'js/i18n/screens.js'),'utf8');
-  const langsWithDisclosure = ['en','fr','es','de','it','nl'].filter(l =>
-    new RegExp("TS2?\\['" + l + "'\\]").test(i18nSrc) || true);
+  /* This used to build `langsWithDisclosure` with a `|| true` inside the
+     filter and then never read it: a check that could not fail, guarding
+     nothing. What matters is asserted directly below, per language. */
   chk('the 2D substitution is rendered on the anatomy screen',
       /t\('body\.note2d'\)/.test(screensSrc));
   chk('every language states that it is not a 3D model',
@@ -300,6 +301,40 @@ group('8s. The flat figure is the real model, projected');
         const label = (/label: \{([\s\S]*?)\n  \}/.exec(block) || [,''])[1];
         return ((label.match(/\[\d+,\d+\]/g) || []).length) + ' numbers';
       })());
+}
+
+/* ================================================================ */
+group('8t. The anatomy licence names what actually ships');
+{
+  /* CC BY-SA 4.0 attribution is not a mood: it has to name the files that are
+     distributed, and the projection is itself Adapted Material. This notice
+     used to list four files that exist only in the atlas it was cut from, and
+     said nothing at all about the derived figure. */
+  const notice = fs.readFileSync(path.join(ROOT, 'assets/ANATOMY-ATTRIBUTION.txt'), 'utf8');
+  chk('the notice exists and is not a stub', notice.length > 1200, notice.length + ' chars');
+  chk('it gives the licence and a link to it',
+      /CC BY-SA 4\.0/.test(notice) && /creativecommons\.org\/licenses\/by-sa\/4\.0/.test(notice));
+  chk('it credits both upstream sources the licensors asked for',
+      /Z-Anatomy/.test(notice) && /BodyParts3D/.test(notice) &&
+      /Gauthier Kervyn/.test(notice) && /Database Center for Life Science/.test(notice));
+  /* every path the notice names must exist — a notice pointing at nothing is
+     worse than none, because it looks like compliance */
+  const named = (notice.match(/(?:^|[\s(])((?:assets|tools|js|release)\/[A-Za-z0-9_/-]+(?:\.[A-Za-z0-9]+)*)/gm) || [])
+    .map(x => x.trim());
+  const absent = named.filter(f => !fs.existsSync(path.join(ROOT, f)));
+  chk('every file the notice names is present', absent.length === 0,
+      named.length + ' named, missing: ' + (absent.join(' ') || 'none'));
+  chk('the derived projection is declared, not left implicit',
+      /figure-projected\.json/.test(notice) && /Adapted Material/.test(notice));
+  chk('the generated figure block is declared as derived',
+      /figure-geometry/.test(notice));
+  chk('the single-file release is declared as a redistribution',
+      /release\/ancestor\.html/.test(notice) && /lab3d\.credits/.test(notice));
+  /* and the credit has to be on screen in every language, or the notice is a
+     claim the product does not honour */
+  const modes = fs.readFileSync(path.join(ROOT, 'js/i18n/modes.js'), 'utf8');
+  chk('the in-app credit is translated seven times',
+      (modes.match(/'lab3d\.credits'/g) || []).length === 7);
 }
 
 /* ================================================================ */

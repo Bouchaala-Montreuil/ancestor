@@ -232,6 +232,20 @@ def main():
         not re.search(r'(?:src|href)\s*=\s*["\']https?:', rel.read_text())
         if rel.exists() else False)
 
+    print('\n9. The anatomy licence travels with the work')
+    page = PAGE.read_text()
+    chk('the page credits the mesh it shows',
+        'Z-Anatomy' in page and 'BodyParts3D' in page and 'CC BY-SA 4.0' in page)
+    credits = (app / 'js/i18n/modes.js').read_text()
+    n_cred = len(re.findall(r"'lab3d\.credits'", credits))
+    chk('the app credits it in all seven languages, not just English',
+        n_cred == 7, str(n_cred) + ' translations')
+    chk('the app states the licence in English exactly',
+        'Z-Anatomy / BodyParts3D, CC BY-SA 4.0' in credits)
+    chk('the mesh the projection came from is still in the build',
+        (app / 'assets/anatomy-male-mobile.glb').exists() and
+        (app / 'tools/figure-projected.json').exists())
+
     print('\n' + '=' * 60)
     if fails:
         print('  %d FAILED, %d passed' % (len(fails), passes))

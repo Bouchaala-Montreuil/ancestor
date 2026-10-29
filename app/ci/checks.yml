@@ -9,6 +9,15 @@
 #     to create or update workflow `.github/workflows/checks.yml` without
 #     `workflows` permission)
 #
+# Re-confirmed 2026-10-29 by the other route as well — writing the file through
+# the contents API rather than a push, in case the rejection was specific to
+# refs:
+#
+#   PUT /repos/{owner}/{repo}/contents/.github/workflows/checks.yml
+#   -> 403 Resource not accessible by integration
+#
+# So it is not the push, and not the branch. The token has no workflows scope.
+#
 # Two ways to switch it on, either as a person rather than as a token:
 #   1. add or edit `.github/workflows/checks.yml` in the GitHub web editor and
 #      commit from there — the web editor uses your permissions, not the App's;

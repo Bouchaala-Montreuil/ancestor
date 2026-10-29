@@ -53,7 +53,11 @@ function recoveryDays(state, muscle, now){
   }
   const stimF = 1 + clampNum((stim - REF_STIMULUS)/REF_STIMULUS * 0.30, -0.25, 0.60);
   factor *= stimF;
-  parts.push({ k:'volume', f:stimF, label:'Work performed' });
+  /* Every factor carries a KEY, never a sentence: this file has no business
+     knowing English. `labelKey` and `noteKey` are resolved by `t()` in the UI
+     (js/ui/screens.js) and in the why-engine (js/engine/why.js). An English
+     string here reached the screen untranslated in six of seven languages. */
+  parts.push({ k:'volume', f:stimF, labelKey:'rec.volume' });
 
   /* --- intensity: how close to failure --------------------------------- */
   const avgRir = recentRir(state, 21, now);
@@ -63,32 +67,32 @@ function recoveryDays(state, muscle, now){
     else if(avgRir >= 4) intF = 0.92;
   }
   factor *= intF;
-  parts.push({ k:'intensity', f:intF, label:'Effort level' });
+  parts.push({ k:'intensity', f:intF, labelKey:'rec.intensity' });
 
   /* --- style ----------------------------------------------------------- */
   const styleF = STYLE_FACTOR[p.style] !== undefined ? STYLE_FACTOR[p.style] : 1;
   factor *= styleF;
-  parts.push({ k:'style', f:styleF, label:'Training style' });
+  parts.push({ k:'style', f:styleF, labelKey:'rec.style' });
 
   /* --- experience ------------------------------------------------------ */
   const expF = EXP_FACTOR[p.experience] !== undefined ? EXP_FACTOR[p.experience] : 1;
   factor *= expF;
-  parts.push({ k:'experience', f:expF, label:'Training experience' });
+  parts.push({ k:'experience', f:expF, labelKey:'rec.experience' });
 
   /* --- sleep (logged, not assumed) ------------------------------------- */
   const ss = sleepStats(state.sleep, now, 7);
-  let sleepF = 1, sleepNote = 'no data';
+  let sleepF = 1, sleepKey = 'rec.sleep.none', irregular = false;
   if(ss.avg !== null && ss.avg !== undefined){
-    if(ss.avg < 5)      { sleepF = 1.30; sleepNote = 'under 5h'; }
-    else if(ss.avg < 6) { sleepF = 1.20; sleepNote = 'under 6h'; }
-    else if(ss.avg < 7) { sleepF = 1.08; sleepNote = 'under 7h'; }
-    else if(ss.avg > 9) { sleepF = 0.96; sleepNote = 'over 9h'; }
-    else                { sleepF = 1.00; sleepNote = '7-9h'; }
+    if(ss.avg < 5)      { sleepF = 1.30; sleepKey = 'rec.sleep.under5'; }
+    else if(ss.avg < 6) { sleepF = 1.20; sleepKey = 'rec.sleep.under6'; }
+    else if(ss.avg < 7) { sleepF = 1.08; sleepKey = 'rec.sleep.under7'; }
+    else if(ss.avg > 9) { sleepF = 0.96; sleepKey = 'rec.sleep.over9'; }
+    else                { sleepF = 1.00; sleepKey = 'rec.sleep.range'; }
     const varH = sleepStartVariability(state.sleep, now, 7);
-    if(varH !== null && varH > 4){ sleepF *= 1.08; sleepNote += ', irregular timing'; }
+    if(varH !== null && varH > 4){ sleepF *= 1.08; irregular = true; }
   }
   factor *= sleepF;
-  parts.push({ k:'sleep', f:sleepF, label:'Logged sleep', note: sleepNote });
+  parts.push({ k:'sleep', f:sleepF, labelKey:'rec.sleep', noteKey: sleepKey, noteIrregular: irregular });
 
   /* --- reported soreness / joint discomfort ---------------------------- */
   const feel = latestFeeling();
@@ -99,7 +103,7 @@ function recoveryDays(state, muscle, now){
     if(j >= 2) feelF *= 1.20; else if(j === 1) feelF *= 1.08;
   }
   factor *= feelF;
-  parts.push({ k:'reported', f:feelF, label:'What you reported' });
+  parts.push({ k:'reported', f:feelF, labelKey:'rec.reported' });
 
   /* --- performance trend as a fatigue proxy ---------------------------- */
   const tr = overallTrend(state, 21, now);
@@ -107,14 +111,14 @@ function recoveryDays(state, muscle, now){
   if(tr === 'down') trendF = 1.15;
   else if(tr === 'up') trendF = 0.96;
   factor *= trendF;
-  parts.push({ k:'trend', f:trendF, label:'Recent performance' });
+  parts.push({ k:'trend', f:trendF, labelKey:'rec.trend' });
 
   /* --- learned adaptation, bounded ------------------------------------- */
   const ad = state.adaptation && state.adaptation[muscle];
   const learned = ad ? ad.mult : 1;
   const obs = ad ? ad.obs : 0;
   factor *= learned;
-  parts.push({ k:'learned', f:learned, label:'Adapted from your log', note: obs + ' observation' + (obs===1?'':'s') });
+  parts.push({ k:'learned', f:learned, labelKey:'rec.learned', noteKey:'rec.learned.obs', noteN: obs });
 
   const days = clampNum(base * factor, 0.5, 14);
 

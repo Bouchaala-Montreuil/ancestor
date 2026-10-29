@@ -332,9 +332,14 @@ function explainRecovery(state, muscle, now){
     out.missing.push(t('why.missing.neverTrained'));
   }
   (r.parts||[]).forEach(p => {
+    const label = t(p.labelKey);
+    const note = p.noteKey
+      ? (p.noteN !== undefined ? p.noteN + ' ' + t(p.noteKey) : t(p.noteKey)) +
+        (p.noteIrregular ? ', ' + t('rec.sleep.irregular') : '')
+      : '';
     out.reasoning.push(stmt(RULE_KINDS.ALGORITHM,
-      t('why.rec.factor', { label: p.label, f: p.f.toFixed(2) })));
-    out.dataUsed.push(p.label + (p.note ? ' (' + p.note + ')' : ''));
+      t('why.rec.factor', { label: label, f: p.f.toFixed(2) })));
+    out.dataUsed.push(label + (note ? ' (' + note + ')' : ''));
   });
   out.reasoning.push(stmt(RULE_KINDS.PRINCIPLE, t('why.rec.principle'), 'recovery-model-note'));
   out.assumptions.push(t('why.assume.estimateNotMeasurement'));

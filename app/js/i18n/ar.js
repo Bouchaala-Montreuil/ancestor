@@ -57,7 +57,7 @@ const TAR = {
 'body.note2d':'تشريح تفاعلي ثنائي الأبعاد — أمامي/خلفي، تدوير، تحديد، تكبير. ليس نموذجاً ثلاثي الأبعاد.',
 'body.detail':'سجل العضلة','body.last':'آخر عمل مسجّل','body.never':'لم يُسجّل قط',
 'body.exercises':'التمارين المرتبطة','body.sets':'المجموعات الأخيرة','body.trend':'الاتجاه',
-'body.recovery':'التعافي المقدّر','body.factors':'العوامل','body.missing':'بيانات ناقصة','body.reco':'ملاحظة',
+'body.recovery':'التعافي المقدّر','rec.volume':'العمل المنجز','rec.intensity':'مستوى الجهد','rec.style':'أسلوب التدريب','rec.experience':'خبرة التدريب','rec.sleep':'النوم المسجّل','rec.sleep.none':'لا توجد بيانات','rec.sleep.under5':'أقل من 5 س','rec.sleep.under6':'أقل من 6 س','rec.sleep.under7':'أقل من 7 س','rec.sleep.over9':'أكثر من 9 س','rec.sleep.range':'7-9 س','rec.sleep.irregular':'أوقات غير منتظمة','rec.reported':'ما أبلغت عنه','rec.trend':'الأداء الأخير','rec.learned':'معدّل من سجلك','rec.learned.obs':'ملاحظات','body.factors':'العوامل','body.missing':'بيانات ناقصة','body.reco':'ملاحظة',
 'body.estimateNote':'مقدَّر من سجلّك. ليس قياساً للنسيج العضلي.',
 'body.tracked':'مجموعات متتبَّعة','body.left':'متبقٍّ','body.contribution':'المساهمة',
 'body.observations':'ملاحظات','body.close':'إغلاق','body.train':'تسجيل حصة',

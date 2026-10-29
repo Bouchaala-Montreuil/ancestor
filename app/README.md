@@ -25,18 +25,30 @@ meaningful accent. Monospace carries every unit, id and annotation.
 Typography: condensed display headings, large tabular performance numerals,
 monospace metadata. No web fonts, no icon font, no emoji.
 
-### Anatomy — and an honest note about 3D
+### Anatomy — a real mesh, and a flat figure projected from it
 
-The brief asked for interactive 3D anatomy. **This build ships high-fidelity
-2D interactive anatomy instead, and says so inside the app.**
+The brief asked for interactive 3D anatomy, and **this build ships it**: a real
+muscle atlas (221 meshes, 218 named muscles, 904 KB meshopt-compressed GLB,
+CC BY-SA 4.0) rendered by a tree-shaken three.js bundle, offline, in the
+single file. `BODY_MODE` defaults to `model`.
 
-Why: `three.js` is a 20 MB package (~600 KB minified at runtime) and no
-suitably licensed human-muscle mesh is available for offline bundling. A
-multi-MB GLB plus a 3D runtime would take the app from 366 KB to tens of
-megabytes, on mid-range Android, for a feature that must work offline. That is
-the wrong trade, so the documented fallback was taken.
+The earlier revision of this README said a suitably licensed mesh was
+unavailable and that the build shipped 2D instead. That was true when it was
+written; the licence research in `ANATOMY_MODEL_RESEARCH.md` found Z-Anatomy /
+BodyParts3D, and the mesh has shipped since. Corrected 2026-10-29.
 
-What you get instead, all genuinely interactive:
+The flat figure is **not drawn** — it is projected out of that same mesh.
+`tools/figure-project.html` renders each of the 26 muscle groups to its own
+depth buffer from front and back, traces the occlusion boundary with marching
+squares, simplifies it with Douglas-Peucker, and writes
+`tools/figure-projected.json`; `tools/build-figure.js` compiles that into the
+`/* <figure-geometry> */` block in `js/ui/components.js`. `npm run figure`
+regenerates it, and `--check` fails the build if the two drift apart. Both the
+projection and the block are Adapted Material and carry the same CC BY-SA 4.0
+terms — see `assets/ANATOMY-ATTRIBUTION.txt`.
+
+What the figure mode gives you, all genuinely interactive:
+
 - front and back views with a real rotation transition
 - tap-to-select on 15 muscle regions
 - zoom-to-selection (animated `viewBox`)

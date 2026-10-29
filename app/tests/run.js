@@ -369,8 +369,26 @@ group('4. Recovery engine — no fixed durations, bounded, explained');
 
   // every estimate is explainable
   const rr = R(`recoveryDays(STATE,'quads',${NOW})`);
-  chk('estimate breaks down into named factors', rr.parts.length >= 6 && rr.parts.every(p => p.label && typeof p.f === 'number'),
+  /* Factors carry translation KEYS, never English sentences. Before this,
+     `label:'Work performed'` was pushed straight to the screen, so the whole
+     factor list stayed English in six of seven languages. */
+  chk('estimate breaks down into named factors',
+      rr.parts.length >= 6 && rr.parts.every(p => /^rec\./.test(p.labelKey||'') && typeof p.f === 'number'),
       rr.parts.map(p=>p.k).join(','));
+  chk('no factor ships a sentence instead of a key',
+      rr.parts.every(p => p.label === undefined && p.note === undefined),
+      rr.parts.filter(p => p.label || p.note).map(p=>p.k).join(',') || 'keys only');
+  const FactorT = R('T');
+  const keySet = new Set();
+  const engineSrc = fs.readFileSync(path.join(ROOT,'js/engine/recovery.js'),'utf8');
+  (engineSrc.match(/'(rec\.[a-z0-9.]+)'/g) || []).forEach(k => keySet.add(k.slice(1,-1)));
+  const untranslated = [];
+  keySet.forEach(k => ['en','fr','es','de','it','nl','ar'].forEach(l => {
+    if(!(FactorT[l]||{})[k]) untranslated.push(l + ':' + k);
+  }));
+  chk('every factor key exists in all seven languages',
+      keySet.size >= 14 && untranslated.length === 0,
+      keySet.size + ' keys; missing: ' + (untranslated.slice(0,4).join(' ') || 'none'));
 
   // fresh user
   const fresh = mkState({});

@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-2F6UXEuPjMel324Ob3e+GvqFckNustgqynbFpBFE6TQ=' 'sha256-fwvoSBNbKFwUsNKVGFZ7ga611hq26sgqjXgkmK/c74k=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-PMNMY8FJKHOL2xsb63KKesw7aTR3/GSHq4m77pOeDRo=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-jN7pFy2+0veQrJN/VOSbnPjIwz2oaedLBCUfNSoDK1w=' 'sha256-rfNTNwXOeJn63nHCNDJlEwZsKB6OjWpIl9l91e9cY0o=' 'sha256-ZaqD5NHxUaLuPANO80lGbxq++4ANI7QVtv1p1s9qZ6U=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-uWz0vqvV/gpmWTJ88JR5b59iBFm3M0ATfAMHH8NDj2Y=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-bf81xoeuuAelZa74pYzp1kl0847vdwI2gQKWjDR75uc=' 'sha256-1Yc5ythOw1HaRv0h+QwCr9tW/bWQcw1NCNlRq21mDDk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-iQqMZT3isSVug8T7VC9SOkD74vNQitCLtsERcOdFZkY=' 'sha256-9o4sucycwSWplY51Dt/2BGoBocOHKeqNJ9lywWBCuAU=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-LOTAw1TJBV4NkWAgm97xnpOBysv7RLGo+FpCna4wIWU=' 'sha256-zFjUgQxOsjI/hr87I8DFTo81TDAlWFUsV9XERAURw90=' 'sha256-+J22KVaUtNVdhDBoXzOhA3HvXHJfI3uT/U8th55/HKE=' 'sha256-7VwoPmGSdLenrgH23fTNWUOJ8y7ckVxJ8qG2phZlZVw=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-hMPRUiwsVf7tAG5+68NxbJgJLQb78Nz+DA2+ChaGGiA=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-mx4Iz4YcqfBbtx3+6OrYHDIJ/sf6Xd54Pn7R8MQ3JtU=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-2F6UXEuPjMel324Ob3e+GvqFckNustgqynbFpBFE6TQ=' 'sha256-fwvoSBNbKFwUsNKVGFZ7ga611hq26sgqjXgkmK/c74k=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/q1+bYM+UWKWy0leLvtgXCt/3DrO86uqlZ1qUrd3SD8=' 'sha256-rfNTNwXOeJn63nHCNDJlEwZsKB6OjWpIl9l91e9cY0o=' 'sha256-ZaqD5NHxUaLuPANO80lGbxq++4ANI7QVtv1p1s9qZ6U=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-uWz0vqvV/gpmWTJ88JR5b59iBFm3M0ATfAMHH8NDj2Y=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-bf81xoeuuAelZa74pYzp1kl0847vdwI2gQKWjDR75uc=' 'sha256-s1NfJ47yItSGgZmqeSXDFknPVZkBFxlknhDYTkl5IgM=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-9o4sucycwSWplY51Dt/2BGoBocOHKeqNJ9lywWBCuAU=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-zFjUgQxOsjI/hr87I8DFTo81TDAlWFUsV9XERAURw90=' 'sha256-imL69OR8MC/+NoUcZKMBAp01D21F5F5xCx4BYgsWQDs=' 'sha256-7VwoPmGSdLenrgH23fTNWUOJ8y7ckVxJ8qG2phZlZVw=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-hMPRUiwsVf7tAG5+68NxbJgJLQb78Nz+DA2+ChaGGiA=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-mx4Iz4YcqfBbtx3+6OrYHDIJ/sf6Xd54Pn7R8MQ3JtU=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#20211F">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -4881,7 +4881,7 @@ TS.en = {
 'body.note2d':'2D interactive anatomy — front / back, rotation, selection, zoom. Not a 3D model.',
 'body.detail':'Muscle record','body.last':'Last recorded work','body.never':'Never recorded',
 'body.exercises':'Associated exercises','body.sets':'Recent sets','body.trend':'Trend',
-'body.recovery':'Estimated recovery','body.factors':'Factors','body.missing':'Missing data','body.reco':'Note',
+'body.recovery':'Estimated recovery','rec.volume':'Work performed','rec.intensity':'Effort level','rec.style':'Training style','rec.experience':'Training experience','rec.sleep':'Logged sleep','rec.sleep.none':'no data','rec.sleep.under5':'under 5h','rec.sleep.under6':'under 6h','rec.sleep.under7':'under 7h','rec.sleep.over9':'over 9h','rec.sleep.range':'7-9h','rec.sleep.irregular':'irregular timing','rec.reported':'What you reported','rec.trend':'Recent performance','rec.learned':'Adapted from your log','rec.learned.obs':'observations','body.factors':'Factors','body.missing':'Missing data','body.reco':'Note',
 'body.estimateNote':'Estimated from your log. Not a measurement of muscle tissue.',
 
 'progress.title':'Progress','progress.overview':'Overview','progress.detail':'Analysis','progress.unknownEx':'Records name exercises this version does not have. They are kept, and exported unchanged.',
@@ -4942,7 +4942,7 @@ TS.fr = {
 'body.note2d':'Anatomie interactive 2D — face / dos, rotation, sélection, zoom. Ce n\'est pas un modèle 3D.',
 'body.detail':'Fiche musculaire','body.last':'Dernier travail enregistré','body.never':'Jamais enregistré',
 'body.exercises':'Exercices associés','body.sets':'Séries récentes','body.trend':'Tendance',
-'body.recovery':'Récupération estimée','body.factors':'Facteurs','body.missing':'Données manquantes','body.reco':'Note',
+'body.recovery':'Récupération estimée','rec.volume':'Travail effectué','rec.intensity':'Niveau d\'effort','rec.style':'Style d\'entraînement','rec.experience':'Expérience d\'entraînement','rec.sleep':'Sommeil enregistré','rec.sleep.none':'aucune donnée','rec.sleep.under5':'moins de 5 h','rec.sleep.under6':'moins de 6 h','rec.sleep.under7':'moins de 7 h','rec.sleep.over9':'plus de 9 h','rec.sleep.range':'7-9 h','rec.sleep.irregular':'horaires irréguliers','rec.reported':'Ce que tu as signalé','rec.trend':'Performance récente','rec.learned':'Adapté depuis ton journal','rec.learned.obs':'observations','body.factors':'Facteurs','body.missing':'Données manquantes','body.reco':'Note',
 'body.estimateNote':'Estimé à partir de votre journal. Ce n\'est pas une mesure du tissu musculaire.',
 
 'progress.title':'Progression','progress.overview':'Synthèse','progress.detail':'Analyse','progress.unknownEx':'Certaines séances citent des exercices absents de cette version. Ils sont conservés et exportés tels quels.',
@@ -4997,7 +4997,7 @@ TS.es = {
 'body.note2d':'Anatomía interactiva 2D — frente / espalda, rotación, selección, zoom. No es un modelo 3D.',
 'body.detail':'Ficha muscular','body.last':'Último trabajo registrado','body.never':'Nunca registrado',
 'body.exercises':'Ejercicios asociados','body.sets':'Series recientes','body.trend':'Tendencia',
-'body.recovery':'Recuperación estimada','body.factors':'Factores','body.missing':'Datos faltantes','body.reco':'Nota',
+'body.recovery':'Recuperación estimada','rec.volume':'Trabajo realizado','rec.intensity':'Nivel de esfuerzo','rec.style':'Estilo de entrenamiento','rec.experience':'Experiencia de entrenamiento','rec.sleep':'Sueño registrado','rec.sleep.none':'sin datos','rec.sleep.under5':'menos de 5 h','rec.sleep.under6':'menos de 6 h','rec.sleep.under7':'menos de 7 h','rec.sleep.over9':'más de 9 h','rec.sleep.range':'7-9 h','rec.sleep.irregular':'horario irregular','rec.reported':'Lo que informaste','rec.trend':'Rendimiento reciente','rec.learned':'Adaptado desde tu registro','rec.learned.obs':'observaciones','body.factors':'Factores','body.missing':'Datos faltantes','body.reco':'Nota',
 'body.estimateNote':'Estimado a partir de tu registro. No es una medición del tejido muscular.',
 'progress.title':'Progreso','progress.overview':'Resumen','progress.detail':'Análisis','progress.unknownEx':'Algunos registros citan ejercicios que esta versión no incluye. Se conservan y se exportan tal cual.',
 'progress.exercise':'Ejercicio','progress.period':'Periodo','progress.p30':'30 días','progress.p90':'90 días','progress.pall':'Todo',
@@ -5046,7 +5046,7 @@ TS.de = {
 'body.note2d':'Interaktive 2D-Anatomie — vorne / hinten, Drehung, Auswahl, Zoom. Kein 3D-Modell.',
 'body.detail':'Muskelprotokoll','body.last':'Letzte erfasste Belastung','body.never':'Nie erfasst',
 'body.exercises':'Zugehörige Übungen','body.sets':'Letzte Sätze','body.trend':'Trend',
-'body.recovery':'Geschätzte Regeneration','body.factors':'Faktoren','body.missing':'Fehlende Daten','body.reco':'Hinweis',
+'body.recovery':'Geschätzte Regeneration','rec.volume':'Ausgeführte Arbeit','rec.intensity':'Anstrengungsniveau','rec.style':'Trainingsstil','rec.experience':'Trainingserfahrung','rec.sleep':'Erfasster Schlaf','rec.sleep.none':'keine Daten','rec.sleep.under5':'unter 5 Std.','rec.sleep.under6':'unter 6 Std.','rec.sleep.under7':'unter 7 Std.','rec.sleep.over9':'über 9 Std.','rec.sleep.range':'7-9 Std.','rec.sleep.irregular':'unregelmäßige Zeiten','rec.reported':'Was du gemeldet hast','rec.trend':'Letzte Leistung','rec.learned':'Aus deinem Protokoll angepasst','rec.learned.obs':'Beobachtungen','body.factors':'Faktoren','body.missing':'Fehlende Daten','body.reco':'Hinweis',
 'body.estimateNote':'Aus deinem Protokoll geschätzt. Keine Messung des Muskelgewebes.',
 'progress.title':'Fortschritt','progress.overview':'Überblick','progress.detail':'Analyse','progress.unknownEx':'Einige Einträge nennen Übungen, die diese Version nicht enthält. Sie bleiben erhalten und werden unverändert exportiert.',
 'progress.exercise':'Übung','progress.period':'Zeitraum','progress.p30':'30 Tage','progress.p90':'90 Tage','progress.pall':'Gesamt',
@@ -5095,7 +5095,7 @@ TS.it = {
 'body.note2d':'Anatomia interattiva 2D — fronte / retro, rotazione, selezione, zoom. Non è un modello 3D.',
 'body.detail':'Scheda muscolare','body.last':'Ultimo lavoro registrato','body.never':'Mai registrato',
 'body.exercises':'Esercizi associati','body.sets':'Serie recenti','body.trend':'Trend',
-'body.recovery':'Recupero stimato','body.factors':'Fattori','body.missing':'Dati mancanti','body.reco':'Nota',
+'body.recovery':'Recupero stimato','rec.volume':'Lavoro svolto','rec.intensity':'Livello di sforzo','rec.style':'Stile di allenamento','rec.experience':'Esperienza di allenamento','rec.sleep':'Sonno registrato','rec.sleep.none':'nessun dato','rec.sleep.under5':'meno di 5 h','rec.sleep.under6':'meno di 6 h','rec.sleep.under7':'meno di 7 h','rec.sleep.over9':'più di 9 h','rec.sleep.range':'7-9 h','rec.sleep.irregular':'orari irregolari','rec.reported':'Cosa hai segnalato','rec.trend':'Prestazione recente','rec.learned':'Adattato dal tuo registro','rec.learned.obs':'osservazioni','body.factors':'Fattori','body.missing':'Dati mancanti','body.reco':'Nota',
 'body.estimateNote':'Stimato dal tuo registro. Non è una misurazione del tessuto muscolare.',
 'progress.title':'Progressi','progress.overview':'Sintesi','progress.detail':'Analisi','progress.unknownEx':'Alcune voci citano esercizi assenti in questa versione. Restano conservate ed esportate così come sono.',
 'progress.exercise':'Esercizio','progress.period':'Periodo','progress.p30':'30 giorni','progress.p90':'90 giorni','progress.pall':'Totale',
@@ -5144,7 +5144,7 @@ TS.nl = {
 'body.note2d':'Interactieve 2D-anatomie — voor / achter, draaien, selectie, zoom. Geen 3D-model.',
 'body.detail':'Spierkaart','body.last':'Laatst geregistreerde werk','body.never':'Nooit geregistreerd',
 'body.exercises':'Bijbehorende oefeningen','body.sets':'Recente sets','body.trend':'Trend',
-'body.recovery':'Geschat herstel','body.factors':'Factoren','body.missing':'Ontbrekende gegevens','body.reco':'Noot',
+'body.recovery':'Geschat herstel','rec.volume':'Uitgevoerd werk','rec.intensity':'Inspanningsniveau','rec.style':'Trainingsstijl','rec.experience':'Trainingservaring','rec.sleep':'Geregistreerde slaap','rec.sleep.none':'geen gegevens','rec.sleep.under5':'minder dan 5 u','rec.sleep.under6':'minder dan 6 u','rec.sleep.under7':'minder dan 7 u','rec.sleep.over9':'meer dan 9 u','rec.sleep.range':'7-9 u','rec.sleep.irregular':'onregelmatige tijden','rec.reported':'Wat je meldde','rec.trend':'Recente prestatie','rec.learned':'Aangepast op je logboek','rec.learned.obs':'waarnemingen','body.factors':'Factoren','body.missing':'Ontbrekende gegevens','body.reco':'Noot',
 'body.estimateNote':'Geschat op basis van je logboek. Geen meting van spierweefsel.',
 'progress.title':'Voortgang','progress.overview':'Overzicht','progress.detail':'Analyse','progress.unknownEx':'Sommige registraties noemen oefeningen die deze versie niet heeft. Ze blijven bewaard en worden ongewijzigd geëxporteerd.',
 'progress.exercise':'Oefening','progress.period':'Periode','progress.p30':'30 dagen','progress.p90':'90 dagen','progress.pall':'Alles',
@@ -5567,7 +5567,7 @@ const TAR = {
 'body.note2d':'تشريح تفاعلي ثنائي الأبعاد — أمامي/خلفي، تدوير، تحديد، تكبير. ليس نموذجاً ثلاثي الأبعاد.',
 'body.detail':'سجل العضلة','body.last':'آخر عمل مسجّل','body.never':'لم يُسجّل قط',
 'body.exercises':'التمارين المرتبطة','body.sets':'المجموعات الأخيرة','body.trend':'الاتجاه',
-'body.recovery':'التعافي المقدّر','body.factors':'العوامل','body.missing':'بيانات ناقصة','body.reco':'ملاحظة',
+'body.recovery':'التعافي المقدّر','rec.volume':'العمل المنجز','rec.intensity':'مستوى الجهد','rec.style':'أسلوب التدريب','rec.experience':'خبرة التدريب','rec.sleep':'النوم المسجّل','rec.sleep.none':'لا توجد بيانات','rec.sleep.under5':'أقل من 5 س','rec.sleep.under6':'أقل من 6 س','rec.sleep.under7':'أقل من 7 س','rec.sleep.over9':'أكثر من 9 س','rec.sleep.range':'7-9 س','rec.sleep.irregular':'أوقات غير منتظمة','rec.reported':'ما أبلغت عنه','rec.trend':'الأداء الأخير','rec.learned':'معدّل من سجلك','rec.learned.obs':'ملاحظات','body.factors':'العوامل','body.missing':'بيانات ناقصة','body.reco':'ملاحظة',
 'body.estimateNote':'مقدَّر من سجلّك. ليس قياساً للنسيج العضلي.',
 'body.tracked':'مجموعات متتبَّعة','body.left':'متبقٍّ','body.contribution':'المساهمة',
 'body.observations':'ملاحظات','body.close':'إغلاق','body.train':'تسجيل حصة',
@@ -14868,7 +14868,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v31';
+const APP_BUILD = 'v32';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
@@ -15829,7 +15829,11 @@ function recoveryDays(state, muscle, now){
   }
   const stimF = 1 + clampNum((stim - REF_STIMULUS)/REF_STIMULUS * 0.30, -0.25, 0.60);
   factor *= stimF;
-  parts.push({ k:'volume', f:stimF, label:'Work performed' });
+  /* Every factor carries a KEY, never a sentence: this file has no business
+     knowing English. `labelKey` and `noteKey` are resolved by `t()` in the UI
+     (js/ui/screens.js) and in the why-engine (js/engine/why.js). An English
+     string here reached the screen untranslated in six of seven languages. */
+  parts.push({ k:'volume', f:stimF, labelKey:'rec.volume' });
 
   /* --- intensity: how close to failure --------------------------------- */
   const avgRir = recentRir(state, 21, now);
@@ -15839,32 +15843,32 @@ function recoveryDays(state, muscle, now){
     else if(avgRir >= 4) intF = 0.92;
   }
   factor *= intF;
-  parts.push({ k:'intensity', f:intF, label:'Effort level' });
+  parts.push({ k:'intensity', f:intF, labelKey:'rec.intensity' });
 
   /* --- style ----------------------------------------------------------- */
   const styleF = STYLE_FACTOR[p.style] !== undefined ? STYLE_FACTOR[p.style] : 1;
   factor *= styleF;
-  parts.push({ k:'style', f:styleF, label:'Training style' });
+  parts.push({ k:'style', f:styleF, labelKey:'rec.style' });
 
   /* --- experience ------------------------------------------------------ */
   const expF = EXP_FACTOR[p.experience] !== undefined ? EXP_FACTOR[p.experience] : 1;
   factor *= expF;
-  parts.push({ k:'experience', f:expF, label:'Training experience' });
+  parts.push({ k:'experience', f:expF, labelKey:'rec.experience' });
 
   /* --- sleep (logged, not assumed) ------------------------------------- */
   const ss = sleepStats(state.sleep, now, 7);
-  let sleepF = 1, sleepNote = 'no data';
+  let sleepF = 1, sleepKey = 'rec.sleep.none', irregular = false;
   if(ss.avg !== null && ss.avg !== undefined){
-    if(ss.avg < 5)      { sleepF = 1.30; sleepNote = 'under 5h'; }
-    else if(ss.avg < 6) { sleepF = 1.20; sleepNote = 'under 6h'; }
-    else if(ss.avg < 7) { sleepF = 1.08; sleepNote = 'under 7h'; }
-    else if(ss.avg > 9) { sleepF = 0.96; sleepNote = 'over 9h'; }
-    else                { sleepF = 1.00; sleepNote = '7-9h'; }
+    if(ss.avg < 5)      { sleepF = 1.30; sleepKey = 'rec.sleep.under5'; }
+    else if(ss.avg < 6) { sleepF = 1.20; sleepKey = 'rec.sleep.under6'; }
+    else if(ss.avg < 7) { sleepF = 1.08; sleepKey = 'rec.sleep.under7'; }
+    else if(ss.avg > 9) { sleepF = 0.96; sleepKey = 'rec.sleep.over9'; }
+    else                { sleepF = 1.00; sleepKey = 'rec.sleep.range'; }
     const varH = sleepStartVariability(state.sleep, now, 7);
-    if(varH !== null && varH > 4){ sleepF *= 1.08; sleepNote += ', irregular timing'; }
+    if(varH !== null && varH > 4){ sleepF *= 1.08; irregular = true; }
   }
   factor *= sleepF;
-  parts.push({ k:'sleep', f:sleepF, label:'Logged sleep', note: sleepNote });
+  parts.push({ k:'sleep', f:sleepF, labelKey:'rec.sleep', noteKey: sleepKey, noteIrregular: irregular });
 
   /* --- reported soreness / joint discomfort ---------------------------- */
   const feel = latestFeeling();
@@ -15875,7 +15879,7 @@ function recoveryDays(state, muscle, now){
     if(j >= 2) feelF *= 1.20; else if(j === 1) feelF *= 1.08;
   }
   factor *= feelF;
-  parts.push({ k:'reported', f:feelF, label:'What you reported' });
+  parts.push({ k:'reported', f:feelF, labelKey:'rec.reported' });
 
   /* --- performance trend as a fatigue proxy ---------------------------- */
   const tr = overallTrend(state, 21, now);
@@ -15883,14 +15887,14 @@ function recoveryDays(state, muscle, now){
   if(tr === 'down') trendF = 1.15;
   else if(tr === 'up') trendF = 0.96;
   factor *= trendF;
-  parts.push({ k:'trend', f:trendF, label:'Recent performance' });
+  parts.push({ k:'trend', f:trendF, labelKey:'rec.trend' });
 
   /* --- learned adaptation, bounded ------------------------------------- */
   const ad = state.adaptation && state.adaptation[muscle];
   const learned = ad ? ad.mult : 1;
   const obs = ad ? ad.obs : 0;
   factor *= learned;
-  parts.push({ k:'learned', f:learned, label:'Adapted from your log', note: obs + ' observation' + (obs===1?'':'s') });
+  parts.push({ k:'learned', f:learned, labelKey:'rec.learned', noteKey:'rec.learned.obs', noteN: obs });
 
   const days = clampNum(base * factor, 0.5, 14);
 
@@ -17111,9 +17115,14 @@ function explainRecovery(state, muscle, now){
     out.missing.push(t('why.missing.neverTrained'));
   }
   (r.parts||[]).forEach(p => {
+    const label = t(p.labelKey);
+    const note = p.noteKey
+      ? (p.noteN !== undefined ? p.noteN + ' ' + t(p.noteKey) : t(p.noteKey)) +
+        (p.noteIrregular ? ', ' + t('rec.sleep.irregular') : '')
+      : '';
     out.reasoning.push(stmt(RULE_KINDS.ALGORITHM,
-      t('why.rec.factor', { label: p.label, f: p.f.toFixed(2) })));
-    out.dataUsed.push(p.label + (p.note ? ' (' + p.note + ')' : ''));
+      t('why.rec.factor', { label: label, f: p.f.toFixed(2) })));
+    out.dataUsed.push(label + (note ? ' (' + note + ')' : ''));
   });
   out.reasoning.push(stmt(RULE_KINDS.PRINCIPLE, t('why.rec.principle'), 'recovery-model-note'));
   out.assumptions.push(t('why.assume.estimateNotMeasurement'));
@@ -19250,8 +19259,14 @@ Screens.body = function(){
     h += '<div class="sect mb-2 mt-4"><h2 class="sub">' +
          esc(t('body.factors')) + '</h2><span class="rule"></span></div><div class="factors bare">';
     r.parts.forEach(p => {
-      h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(p.label) +
-           (p.note ? ' <span class="meta">(' + esc(p.note) + ')</span>' : '') +
+      /* The engine hands over keys, not sentences — see js/engine/recovery.js.
+         A factor note is either a phrase key or a count plus a noun key. */
+      const note = p.noteKey
+        ? (p.noteN !== undefined ? p.noteN + ' ' + t(p.noteKey) : t(p.noteKey)) +
+          (p.noteIrregular ? ', ' + t('rec.sleep.irregular') : '')
+        : '';
+      h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(t(p.labelKey)) +
+           (note ? ' <span class="meta">(' + esc(note) + ')</span>' : '') +
            '</span><span class="w">' + esc(numExpr('×' + p.f.toFixed(2))) + '</span></div>';
     });
     h += '</div>';

@@ -1,5 +1,5 @@
 /* ANCESTOR — offline cache. Bump CACHE on every deploy. */
-const CACHE = 'ancestor-v31';  // v31: the flat figure is the projected model
+const CACHE = 'ancestor-v32';  // v32: factor labels are translated, not English
 const FILES = [
   './', './index.html', './css/app.css',
   './js/i18n/core.js', './js/i18n/ui.js', './js/i18n/exercises.js', './js/i18n/screens.js', './js/i18n/acc.js', './js/i18n/ar.js', './js/i18n/v2.js', './js/i18n/science.js', './js/i18n/science2.js', './js/i18n/ex_modes.js', './js/i18n/modes.js', './js/i18n/focus.js', './js/i18n/lesson_bodies_en.js', './js/i18n/lesson_bodies_fr.js', './js/i18n/lesson_bodies_es_de.js', './js/i18n/lesson_bodies_it_nl_ar.js', './js/i18n/print.js', './js/i18n/locale.js',

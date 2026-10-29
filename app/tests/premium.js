@@ -133,9 +133,27 @@ group('3. Navigation: persistent buttons and a shared indicator');
   chk('the active section is marked', !!active && active.getAttribute('data-nav') === 'progress');
   chk('the active section is announced to assistive tech',
       active.getAttribute('aria-current') === 'page');
+  /* The old check read the live element's transform after navigating and
+     compared it with itself, then OR'd with `true`: it asserted nothing. Two
+     things were also hidden behind it — jsdom reports every offsetTop as 0, and
+     the screen it navigated to ('body') is not a tab at all, so the indicator
+     was correctly hidden and could never have moved. Give the tabs real
+     offsets and walk between two that own a slot in the bar. */
+  const heads = Array.from(nav.querySelectorAll('button'));
+  heads.forEach((b, i) => Object.defineProperty(b, 'offsetTop', { get: () => i * 64, configurable: true }));
+  const idxOf = id => heads.findIndex(b => b.getAttribute('data-nav') === id);
+  const ind2 = nav.querySelector('.nav-ind');
+  w.go('home');
+  const atHome = ind2.style.transform;
+  w.go('profile');
+  chk('the indicator moves when the section changes',
+      atHome === 'translateY(0px)' && ind2.style.transform === 'translateY(' + (idxOf('profile') * 64) + 'px)',
+      atHome + ' → ' + ind2.style.transform);
+  /* A screen with no slot in the bar — Body, Science, a lesson — must not leave
+     the mark pointing at the tab you came from. */
   w.go('body');
-  const moved = nav.querySelector('.nav-ind').style.transform;
-  chk('the indicator moves when the section changes', moved !== ind.style.transform || true, moved);
+  chk('a screen outside the bar hides the indicator rather than lying', ind2.hidden === true,
+      'hidden=' + ind2.hidden);
   w.switchLang('fr');
   chk('the nav is rebuilt when the language changes',
       nav.querySelectorAll('button').length === 4 &&

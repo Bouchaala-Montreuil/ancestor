@@ -1051,8 +1051,14 @@ Screens.body = function(){
     h += '<div class="sect mb-2 mt-4"><h2 class="sub">' +
          esc(t('body.factors')) + '</h2><span class="rule"></span></div><div class="factors bare">';
     r.parts.forEach(p => {
-      h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(p.label) +
-           (p.note ? ' <span class="meta">(' + esc(p.note) + ')</span>' : '') +
+      /* The engine hands over keys, not sentences — see js/engine/recovery.js.
+         A factor note is either a phrase key or a count plus a noun key. */
+      const note = p.noteKey
+        ? (p.noteN !== undefined ? p.noteN + ' ' + t(p.noteKey) : t(p.noteKey)) +
+          (p.noteIrregular ? ', ' + t('rec.sleep.irregular') : '')
+        : '';
+      h += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(t(p.labelKey)) +
+           (note ? ' <span class="meta">(' + esc(note) + ')</span>' : '') +
            '</span><span class="w">' + esc(numExpr('×' + p.f.toFixed(2))) + '</span></div>';
     });
     h += '</div>';
