@@ -897,8 +897,8 @@ button.flag:hover{border-color:var(--ink)}
   padding-block-start:88px;text-align:center}
 .decision .readiness.has-ring .ring{position:absolute;inset-block-start:0;inset-inline-start:50%;
   translate:-50% 0;width:80px;height:80px;transform:rotate(-90deg);pointer-events:none}
-.decision .readiness.has-ring .ring .track{fill:none;stroke:var(--divider,#2B2B2B);stroke-width:2.5}
-.decision .readiness.has-ring .ring .arc{fill:none;stroke:var(--action);stroke-width:2.5}
+.decision .readiness.has-ring .ring .track{fill:none;stroke:rgba(247,245,240,.18);stroke-width:2.5}
+.decision .readiness.has-ring .ring .arc{fill:none;stroke:var(--burnt);stroke-width:2.5}
 .decision .readiness.has-ring .v{position:absolute;inset-block-start:0;inset-inline:0;height:80px;
   display:flex;align-items:center;justify-content:center;font-size:24px}
 .decision .readiness.has-ring .bar{display:none}
