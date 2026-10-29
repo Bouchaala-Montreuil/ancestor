@@ -1493,6 +1493,20 @@ group('8x. The licence says what it is, and what it cannot cover');
 
 /* ================================================================ */
 /* ================================================================ */
+group('2d. The verdict fits its card at every width (1024 collision, 768 bleed)');
+{
+  chk('the verdict card is its own size container',
+      /\.decision\{container-type:inline-size\}/.test(css));
+  chk('the verdict word is sized to the card, capped at its old maximum',
+      /\.dec-state\{font-size:clamp\(40px,15cqi,74px\)\}/.test(css));
+  const tablet = (/@media \(min-width:720px\) and \(max-width:1023px\)\{\s*\.decision\{([^}]*)\}/.exec(css) || [])[1] || '';
+  chk('between 720 and 1023 px the verdict is a card inside the margin, not full bleed',
+      /margin-inline:0/.test(tablet) && !/calc\(-1 \* var\(--s6\)\)/.test(tablet), tablet.trim());
+  chk('full bleed is still the single-column phone layout below 720 px',
+      /@media \(max-width:1023px\)\{\s*\.decision\{\s*margin-inline:calc\(-1 \* var\(--s5\)\)/.test(css));
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));

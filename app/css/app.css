@@ -883,6 +883,13 @@ button.flag:hover{border-color:var(--ink)}
   .decision .readiness .v{font-size:26px}
   .dec-state{font-size:clamp(38px,11.5vw,58px)}
 }
+/* The verdict word is sized to the CARD, not to the viewport. At 1024 px the
+   card is a column of a two-column layout (about 360 px of content), and the
+   viewport-sized word (74 px) ran under the availability figure. The card is
+   its own size container; the word takes 15% of it, capped at the old maximum.
+   Measured: ENTRAÎNER clears the figure at 390, 768, 1024 and 1440 px. */
+.decision{container-type:inline-size}
+.dec-state{font-size:clamp(40px,15cqi,74px)}
 .decision .readiness .v{
   font-family:var(--f-display);font-size:34px;line-height:.9;
   color:var(--ivory);font-variant-numeric:tabular-nums;
@@ -2974,10 +2981,15 @@ html[data-simple="on"] .chart-tip-readout{display:none}
     padding-inline-end:var(--s5);
   }
 }
+/* Tablet: the verdict is one column of a two-column page, so it is a card
+   inside the margin, not the page. Bleeding it to the screen edge here cut
+   the grid in half (measured at 768 px). Full bleed is for one column only. */
 @media (min-width:720px) and (max-width:1023px){
   .decision{
-    margin-inline:calc(-1 * var(--s6));
-    padding-inline-end:var(--s6);
+    margin-inline:0;
+    border-radius:var(--r-lg);
+    padding-inline:var(--s6);
+    padding-inline-start:calc(var(--s6) + 4px);
   }
 }
 
