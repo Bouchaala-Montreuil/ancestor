@@ -2629,12 +2629,23 @@ Screens.onb = function(){
   }
 
   if(step === 'avail'){
-    b = head + '<h1 class="display pre mb-4">' +
-      esc(t('onb.avail.t')) + '</h1><div class="chips mb-5">' +
-      [2,3,4,5,6].map(d => '<button class="chip ' + (p.daysPerWeek===d?'on':'') + '" data-act="setP" data-a1="daysPerWeek" data-a2="' + d + '" data-t2="l">' + d + '</button>').join('') + '</div>' +
-      '<p class="eyebrow mb-2">' + esc(t('onb.avail.len')) + '</p>' +
-      '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') + '" data-act="setP" data-a1="sessionMinutes" data-a2="' + m + '" data-t2="l">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
-      '</div><div class="onb-actions">' +
+    /* Two sliders, not chips. The days answer is a whole number from 2 to 6; the
+       session length snaps to the four durations the planner actually uses. Each
+       drag saves the answer and rewrites its readout in place: a re-render would
+       tear the slider out from under the finger. Same profile fields as before. */
+    const days = Math.max(2, Math.min(6, Math.round(+p.daysPerWeek) || 3));
+    const mins = [20, 35, 50, 70];
+    const mi = Math.max(0, mins.indexOf(+p.sessionMinutes));
+    const mIdx = mi < 0 ? 2 : mi;
+    b = head + '<h1 class="display pre mb-4">' + esc(t('onb.avail.t')) + '</h1>' +
+      '<output class="slide-num" id="obDaysV" aria-hidden="true">' + days + '</output>' +
+      '<input class="slide" id="obDays" type="range" min="2" max="6" step="1" value="' + days + '"' +
+      ' aria-label="' + esc(t('onb.avail.t')) + '" data-in="setOnbDays" data-t2="v">' +
+      '<p class="eyebrow mb-2 mt-5">' + esc(t('onb.avail.len')) + '</p>' +
+      '<output class="slide-num slide-num--sm" id="obMinV" aria-hidden="true">' + esc(t('onb.avail.len.' + mins[mIdx])) + '</output>' +
+      '<input class="slide" id="obMin" type="range" min="0" max="3" step="1" value="' + mIdx + '"' +
+      ' aria-label="' + esc(t('onb.avail.len')) + '" data-in="setOnbMinutes" data-t2="v">' +
+      '    <div class="onb-actions">' +
       '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -2767,6 +2778,18 @@ function setConsent(){ const s = getState(); s.consented = true; saveState(); on
    `goals` is what the engine reads, so writing `goal` alone used to be a dead
    end: the answer was stored and then ignored. profileSet() keeps them in
    step in both directions. */
+/* Onboarding sliders. Write the answer, then rewrite the readout in place. */
+function setOnbDays(v){
+  const n = Math.max(2, Math.min(6, Math.round(+v) || 3));
+  const st = getState(); profileSet(st.profile, 'daysPerWeek', n); saveState();
+  const o = document.getElementById('obDaysV'); if(o) o.textContent = String(n);
+}
+function setOnbMinutes(v){
+  const mins = [20, 35, 50, 70];
+  const i = Math.max(0, Math.min(3, Math.round(+v) || 0));
+  const st = getState(); profileSet(st.profile, 'sessionMinutes', mins[i]); saveState();
+  const o = document.getElementById('obMinV'); if(o) o.textContent = t('onb.avail.len.' + mins[i]);
+}
 function setP(k,v){ const s = getState(); profileSet(s.profile, k, v); saveState(); render(); }
 
 /* Training focus has two setters rather than one, because the two answers do

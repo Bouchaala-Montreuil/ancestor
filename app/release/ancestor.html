@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-v5Li+Ahn54lXERUCf8byua6XWIBc/0ifqgwCMMYnzL4=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-zFjUgQxOsjI/hr87I8DFTo81TDAlWFUsV9XERAURw90=' 'sha256-CHQbGPUEaCaQGGOZdNGP/lgStU0nFYGdxTJsXP7ScpU=' 'sha256-ThZ55OgZyUwrxJOLS2aNFK2ZcXaZvRBHICMOZ9TzHMA=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-KMdGNUY8dlPrC0iGspEyflPUc0xwp8KRCUaUIOZEdBo=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-zFjUgQxOsjI/hr87I8DFTo81TDAlWFUsV9XERAURw90=' 'sha256-ZcR+kuTrYf5BBSidXM8/BGrxIJcFCQ0gQwYm5WizeLQ=' 'sha256-ThZ55OgZyUwrxJOLS2aNFK2ZcXaZvRBHICMOZ9TzHMA=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -2693,13 +2693,20 @@ input[type=range]{
 input[type=range]::-webkit-slider-runnable-track{
   height:2px;background:var(--recess-2);
 }
+/* Onboarding sliders: one large numeral, one full-width track in the action
+   colour. The native control is kept (keyboard, screen reader, touch), so the
+   slider needs no script to be usable; the numeral is an aid, not the answer. */
+.slide{display:block;width:100%;min-height:44px;margin:var(--s3) 0 0;accent-color:var(--action);cursor:pointer}
+.slide-num{display:block;font-family:var(--f-display);font-size:clamp(72px,22vw,120px);line-height:.9;
+  font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;margin:var(--s4) 0 0}
+.slide-num--sm{font-size:clamp(40px,11vw,64px)}
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;width:22px;height:22px;margin-top:-10px;
-  background:var(--ink);border:0;border-radius:0;
+  background:var(--action);border:0;border-radius:0;
 }
 input[type=range]::-moz-range-track{height:2px;background:var(--recess-2)}
 input[type=range]::-moz-range-thumb{
-  width:22px;height:22px;background:var(--ink);border:0;border-radius:0;
+  width:22px;height:22px;background:var(--action);border:0;border-radius:0;
 }
 input[type=range]:focus-visible{outline:2px solid var(--burnt);outline-offset:6px}
 
@@ -3513,6 +3520,8 @@ ACT('setLabLayer',                  el => setLabLayer(arg(el, 1)));
 ACT('setLabRegion',                 el => setLabRegion(arg(el, 1)));
 ACT('setLimit',                     el => setLimit(arg(el, 1)));
 ACT('setP',                         el => setP(arg(el, 1), arg(el, 2)));
+ACT('setOnbDays',                   el => setOnbDays(arg(el, 2)));
+ACT('setOnbMinutes',                el => setOnbMinutes(arg(el, 2)));
 ACT('setPeriod',                    el => setPeriod(arg(el, 1)));
 ACT('setProgEx',                    el => setProgEx(arg(el, 1)));
 ACT('setProgMetric',                el => setProgMetric(arg(el, 1)));
@@ -21022,12 +21031,23 @@ Screens.onb = function(){
   }
 
   if(step === 'avail'){
-    b = head + '<h1 class="display pre mb-4">' +
-      esc(t('onb.avail.t')) + '</h1><div class="chips mb-5">' +
-      [2,3,4,5,6].map(d => '<button class="chip ' + (p.daysPerWeek===d?'on':'') + '" data-act="setP" data-a1="daysPerWeek" data-a2="' + d + '" data-t2="l">' + d + '</button>').join('') + '</div>' +
-      '<p class="eyebrow mb-2">' + esc(t('onb.avail.len')) + '</p>' +
-      '<div class="chips">' + [20,35,50,70].map(m => '<button class="chip ' + (p.sessionMinutes===m?'on':'') + '" data-act="setP" data-a1="sessionMinutes" data-a2="' + m + '" data-t2="l">' + esc(t('onb.avail.len.'+m)) + '</button>').join('') +
-      '</div><div class="onb-actions">' +
+    /* Two sliders, not chips. The days answer is a whole number from 2 to 6; the
+       session length snaps to the four durations the planner actually uses. Each
+       drag saves the answer and rewrites its readout in place: a re-render would
+       tear the slider out from under the finger. Same profile fields as before. */
+    const days = Math.max(2, Math.min(6, Math.round(+p.daysPerWeek) || 3));
+    const mins = [20, 35, 50, 70];
+    const mi = Math.max(0, mins.indexOf(+p.sessionMinutes));
+    const mIdx = mi < 0 ? 2 : mi;
+    b = head + '<h1 class="display pre mb-4">' + esc(t('onb.avail.t')) + '</h1>' +
+      '<output class="slide-num" id="obDaysV" aria-hidden="true">' + days + '</output>' +
+      '<input class="slide" id="obDays" type="range" min="2" max="6" step="1" value="' + days + '"' +
+      ' aria-label="' + esc(t('onb.avail.t')) + '" data-in="setOnbDays" data-t2="v">' +
+      '<p class="eyebrow mb-2 mt-5">' + esc(t('onb.avail.len')) + '</p>' +
+      '<output class="slide-num slide-num--sm" id="obMinV" aria-hidden="true">' + esc(t('onb.avail.len.' + mins[mIdx])) + '</output>' +
+      '<input class="slide" id="obMin" type="range" min="0" max="3" step="1" value="' + mIdx + '"' +
+      ' aria-label="' + esc(t('onb.avail.len')) + '" data-in="setOnbMinutes" data-t2="v">' +
+      '    <div class="onb-actions">' +
       '<button class="btn quiet" data-act="onbBack">' + esc(t('btn.back')) + '</button>' +
       '<button class="btn grow"  data-act="onbNext">' + esc(t('btn.next')) + '</button></div>';
   }
@@ -21160,6 +21180,18 @@ function setConsent(){ const s = getState(); s.consented = true; saveState(); on
    `goals` is what the engine reads, so writing `goal` alone used to be a dead
    end: the answer was stored and then ignored. profileSet() keeps them in
    step in both directions. */
+/* Onboarding sliders. Write the answer, then rewrite the readout in place. */
+function setOnbDays(v){
+  const n = Math.max(2, Math.min(6, Math.round(+v) || 3));
+  const st = getState(); profileSet(st.profile, 'daysPerWeek', n); saveState();
+  const o = document.getElementById('obDaysV'); if(o) o.textContent = String(n);
+}
+function setOnbMinutes(v){
+  const mins = [20, 35, 50, 70];
+  const i = Math.max(0, Math.min(3, Math.round(+v) || 0));
+  const st = getState(); profileSet(st.profile, 'sessionMinutes', mins[i]); saveState();
+  const o = document.getElementById('obMinV'); if(o) o.textContent = t('onb.avail.len.' + mins[i]);
+}
 function setP(k,v){ const s = getState(); profileSet(s.profile, k, v); saveState(); render(); }
 
 /* Training focus has two setters rather than one, because the two answers do

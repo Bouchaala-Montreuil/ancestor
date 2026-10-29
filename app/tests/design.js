@@ -1524,6 +1524,28 @@ group('2e. The cinematic masthead: photographic band, legible, paper-free');
 }
 
 /* ================================================================ */
+group('2f. Onboarding availability is two sliders, not chips');
+{
+  const scr = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
+  const acts = fs.readFileSync(path.join(ROOT,'js/core/acts.js'),'utf8');
+  const availStart = scr.indexOf("if(step === 'avail'){");
+  const availBody = scr.slice(availStart, scr.indexOf("<div class=\"onb-actions\">", availStart));
+  chk('the days answer is a range input from 2 to 6, not chips',
+      /id="obDays" type="range" min="2" max="6" step="1"/.test(availBody) && !/class=\"chip/.test(availBody));
+  chk('session length is a range over the four planner durations',
+      /id="obMin" type="range" min="0" max="3" step="1"/.test(availBody));
+  chk('both sliders write through the delegated input path and keep their readout live',
+      /data-in="setOnbDays"/.test(availBody) && /data-in="setOnbMinutes"/.test(availBody) &&
+      /setOnbDays\(v\)[\s\S]*getElementById\('obDaysV'\)/.test(scr));
+  chk('the two actions are registered, so the keyscan and action table stay honest',
+      /ACT\('setOnbDays'/.test(acts) && /ACT\('setOnbMinutes'/.test(acts));
+  chk('the slider numerals use tabular figures at display size',
+      /\.slide-num\{[^}]*font-variant-numeric:tabular-nums/.test(css) && /\.slide-num\{[^}]*font-size:clamp\(72px/.test(css));
+  chk('range thumbs are the action colour, not ink',
+      /input\[type=range\]::-webkit-slider-thumb\{[^}]*background:var\(--action\)/.test(css));
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));
