@@ -503,6 +503,12 @@ function barChart(opts){
   const max = sc.max || 1;
   const bw = (W-PL-PR)/rows.length;
   const u = opts.unit || '';
+  /* One highlighted series: the largest value, when the caller asks for it.
+     The rule is the data's own maximum, so nothing is chosen for effect. */
+  let hiIdx = -1;
+  if(opts.highlightMax){
+    rows.forEach((r,i) => { if(r.v > 0 && (hiIdx < 0 || r.v > rows[hiIdx].v)) hiIdx = i; });
+  }
   let g = '';
   sc.labels.forEach(v => {
     const yy = PT + (1 - v/max)*(H-PT-PB);
@@ -526,7 +532,7 @@ function barChart(opts){
          (zero
            ? '<rect class="chart-bar zero" x="' + bx.toFixed(1) + '" y="' + (H-PB-2) +
              '" width="' + bwid.toFixed(1) + '" height="2"/>'
-           : '<rect class="chart-bar" style="animation-delay:' + (i*45) + 'ms" x="' + bx.toFixed(1) +
+           : '<rect class="chart-bar' + (i === hiIdx ? ' hi' : '') + '" style="animation-delay:' + (i*45) + 'ms" x="' + bx.toFixed(1) +
              '" y="' + (H-PB-h).toFixed(1) + '" width="' + bwid.toFixed(1) +
              '" height="' + h.toFixed(1) + '"/>') +
          '<title>' + esc(tipTxt) + '</title>' +

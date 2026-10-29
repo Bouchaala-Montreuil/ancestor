@@ -1124,7 +1124,9 @@ button.flag:hover{border-color:var(--ink)}
    colour would be decoration. Earlier versions put var(--burnt) in a fill
    attribute, where tokens are not resolved, and then a stylesheet rule painted
    the bars charcoal. The stylesheet owns the paint now. */
-.chart-bar{fill:var(--burnt)}
+.chart-bar{fill:var(--ink-3)}
+/* One highlighted series: the largest volume is the only orange bar. */
+.chart-bar.hi{fill:var(--action)}
 .chart-bar.zero{fill:var(--line)}
 .chart-pt{fill:none;stroke:none}
 .chart-pt:focus-visible .dv-dot{stroke:var(--burnt);stroke-width:2}
@@ -1414,6 +1416,15 @@ button.flag:hover{border-color:var(--ink)}
 }
 .sheet-hd h2{margin:0;min-width:0}
 .sheet-hd .sheet-x{flex:none;min-height:var(--hit)}
+/* Picker grids for the bottom sheets (rest durations, rep counts). Every
+   target is a full 44 px; the chosen value is the only orange in the grid. */
+/* The reps suffix doubles as the picker: same row, no extra height. */
+.fld .u.u-btn{min-height:var(--hit);background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding-inline:var(--s2)}
+.pick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2)}
+.pick-grid--reps{grid-template-columns:repeat(6,minmax(0,1fr))}
+.pick{min-height:var(--hit);min-width:var(--hit);background:var(--recess-2);
+  color:var(--ink);border:var(--hair) solid var(--line);font:inherit;font-family:var(--f-mono);cursor:pointer}
+.pick.on,.pick[aria-pressed="true"]{background:var(--action);color:var(--on-action);border-color:var(--action)}
 @keyframes sheet-up{from{transform:translate3d(0,100%,0)}to{transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 .sheet h2,.sheet h3{margin-bottom:var(--s3)}

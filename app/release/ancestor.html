@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-KMdGNUY8dlPrC0iGspEyflPUc0xwp8KRCUaUIOZEdBo=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-EO5wvlDX2XZdWidPth3Bhp0t4NzyR15Kz7m7urkNoO0=' 'sha256-x+64s2yXBNWQTB3tr9+cYL8hgy/+ztiMn24FVsoapZA=' 'sha256-ThZ55OgZyUwrxJOLS2aNFK2ZcXaZvRBHICMOZ9TzHMA=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-EZ+/ilLZsAzzgHKl96h3cKSjczde8Kevl4of6ilrof4=' 'sha256-viBneUuNK9I51VdL7Amxizh/T+Sgm6A4M9Mf6f0ZH8w=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -1149,7 +1149,9 @@ button.flag:hover{border-color:var(--ink)}
    colour would be decoration. Earlier versions put var(--burnt) in a fill
    attribute, where tokens are not resolved, and then a stylesheet rule painted
    the bars charcoal. The stylesheet owns the paint now. */
-.chart-bar{fill:var(--burnt)}
+.chart-bar{fill:var(--ink-3)}
+/* One highlighted series: the largest volume is the only orange bar. */
+.chart-bar.hi{fill:var(--action)}
 .chart-bar.zero{fill:var(--line)}
 .chart-pt{fill:none;stroke:none}
 .chart-pt:focus-visible .dv-dot{stroke:var(--burnt);stroke-width:2}
@@ -1439,6 +1441,15 @@ button.flag:hover{border-color:var(--ink)}
 }
 .sheet-hd h2{margin:0;min-width:0}
 .sheet-hd .sheet-x{flex:none;min-height:var(--hit)}
+/* Picker grids for the bottom sheets (rest durations, rep counts). Every
+   target is a full 44 px; the chosen value is the only orange in the grid. */
+/* The reps suffix doubles as the picker: same row, no extra height. */
+.fld .u.u-btn{min-height:var(--hit);background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding-inline:var(--s2)}
+.pick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2)}
+.pick-grid--reps{grid-template-columns:repeat(6,minmax(0,1fr))}
+.pick{min-height:var(--hit);min-width:var(--hit);background:var(--recess-2);
+  color:var(--ink);border:var(--hair) solid var(--line);font:inherit;font-family:var(--f-mono);cursor:pointer}
+.pick.on,.pick[aria-pressed="true"]{background:var(--action);color:var(--on-action);border-color:var(--action)}
 @keyframes sheet-up{from{transform:translate3d(0,100%,0)}to{transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 .sheet h2,.sheet h3{margin-bottom:var(--s3)}
@@ -3574,7 +3585,10 @@ ACT('setLibEquip',                  el => setLibEquip(arg(el, 1)));
 ACT('setLibMode',                   el => setLibMode(arg(el, 1)));
 ACT('setLibMuscle',                 el => setLibMuscle(arg(el, 1)));
 ACT('setLibQuery',                  el => setLibQuery(arg(el, 1)));
-ACT('setPlanRest',                  el => setPlanRest(arg(el, 1)));
+ACT('openRestPicker',                el => openRestPicker());
+ACT('setPlanRestPick',               el => setPlanRestPick(arg(el, 1)));
+ACT('openRepPicker',                 el => openRepPicker(arg(el, 1), arg(el, 2), arg(el, 3)));
+ACT('pickRep',                       el => pickRep(arg(el, 1), arg(el, 2), arg(el, 3), arg(el, 4)));
 ACT('setSessionSub',                el => setSessionSub(arg(el, 1)));
 ACT('setSideVal',                   el => setSideVal(arg(el, 1), arg(el, 2), arg(el, 3), arg(el, 4), arg(el, 5)));
 ACT('setVal',                       el => setVal(arg(el, 1), arg(el, 2), arg(el, 3), arg(el, 4)));
@@ -17908,6 +17922,12 @@ function barChart(opts){
   const max = sc.max || 1;
   const bw = (W-PL-PR)/rows.length;
   const u = opts.unit || '';
+  /* One highlighted series: the largest value, when the caller asks for it.
+     The rule is the data's own maximum, so nothing is chosen for effect. */
+  let hiIdx = -1;
+  if(opts.highlightMax){
+    rows.forEach((r,i) => { if(r.v > 0 && (hiIdx < 0 || r.v > rows[hiIdx].v)) hiIdx = i; });
+  }
   let g = '';
   sc.labels.forEach(v => {
     const yy = PT + (1 - v/max)*(H-PT-PB);
@@ -17931,7 +17951,7 @@ function barChart(opts){
          (zero
            ? '<rect class="chart-bar zero" x="' + bx.toFixed(1) + '" y="' + (H-PB-2) +
              '" width="' + bwid.toFixed(1) + '" height="2"/>'
-           : '<rect class="chart-bar" style="animation-delay:' + (i*45) + 'ms" x="' + bx.toFixed(1) +
+           : '<rect class="chart-bar' + (i === hiIdx ? ' hi' : '') + '" style="animation-delay:' + (i*45) + 'ms" x="' + bx.toFixed(1) +
              '" y="' + (H-PB-h).toFixed(1) + '" width="' + bwid.toFixed(1) +
              '" height="' + h.toFixed(1) + '"/>') +
          '<title>' + esc(tipTxt) + '</title>' +
@@ -19899,7 +19919,7 @@ Screens.progress = function(){
                         .filter(r => r.v > 0);
   h += '<div class="panel mt-3">';
   if(volRows.length){
-    h += barChart({ title: t('progress.volume'), period: periodLabel, unit: unit() + '·reps', rows: volRows });
+    h += barChart({ title: t('progress.volume'), period: periodLabel, unit: unit() + '·reps', rows: volRows, highlightMax: true });
   } else {
     h += '<div class="uncertain"><b>' + esc(t('log.notApplicable')) + '</b> ' +
          esc(t('log.volumeNote')) + '</div>';
@@ -21568,9 +21588,8 @@ function renderWorkoutPlanner(){
   if(PLAN_EDIT){
     h += '<div class="row mt-3" style="padding-top:var(--s3);border-top:var(--hair) solid var(--line)">' +
          '<span class="eyebrow">' + esc(t('session.rest')) + ':</span>' +
-         [60, 90, 120, 180].map(sec =>
-           '<button type="button" class="chip sm ' + ((s.plan.restSec||120)===sec?'on':'') + '" data-act="setPlanRest" data-a1="' + sec + '" data-t1="l">' + sec + 's</button>'
-         ).join('') + '</div>';
+         '<button type="button" class="chip sm on" data-act="openRestPicker">' + (s.plan.restSec||120) + 's</button>' +
+         '</div>';
   }
   h += '</div>';
 
@@ -21662,6 +21681,33 @@ function renderWorkoutPlanner(){
 
 function selectPlanDay(id){ PLAN_DAY = id; render(); }
 function togglePlanEdit(){ PLAN_EDIT = !PLAN_EDIT; render(); }
+/* Bottom-sheet pickers. Rest durations and rep counts open the sheet the app
+   already uses. Each choice goes through the function the inline control used
+   (setPlanRest, setVal), so the stored data path is unchanged. */
+function openRestPicker(){
+  const cur = (getState().plan || {}).restSec || 120;
+  const body = '<div class="pick-grid">' + [60, 90, 120, 180].map(sec =>
+    '<button type="button" class="pick' + (sec === cur ? ' on' : '') + '" aria-pressed="' + (sec === cur) +
+    '" data-act="setPlanRestPick" data-a1="' + sec + '" data-t1="l">' + sec + 's</button>').join('') + '</div>';
+  sheet(t('session.rest'), body);
+}
+function setPlanRestPick(sec){ setPlanRest(sec); closeSheet(); }
+function openRepPicker(ei, si, attr){
+  const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
+  let g = '';
+  for(let n = 1; n <= 30; n++){
+    g += '<button type="button" class="pick" data-act="pickRep" data-a1="' + ei + '" data-t1="l" data-a2="' + si +
+         '" data-t2="l" data-a3="' + attr + '" data-t3="l" data-a4="' + n + '" data-t4="l">' + n + '</button>';
+  }
+  sheet(t('session.reps'), '<div class="pick-grid pick-grid--reps">' + g + '</div>');
+}
+function pickRep(ei, si, attr, n){
+  setVal(ei, si, attr, String(n));
+  const el = document.getElementById('sf_' + ei + '_' + si + '_reps');
+  if(el) el.value = String(n);
+  closeSheet();
+}
+
 function setPlanRest(sec){
   const s = getState();
   if(!s.plan) return;
@@ -22129,7 +22175,10 @@ function fieldHtml(f, ei, si, set, ex, range, u, nSets){
          '<span class="sr-only">, ' + esc(t('session.setOf')) + ' ' + numExpr((si+1) + ' / ' + nSets) + '</span></label>' +
          '<input id="' + fid + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' + esc(val) + '" ' +
          'data-in="setVal" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + f.attr + '" data-t4="v">' +
-         '<span class="u">' + esc(suffix) + '</span></div>';
+         (f.key === 'reps'
+           ? '<button type="button" class="u u-btn" aria-haspopup="dialog" data-act="openRepPicker" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + f.attr + '" data-t3="l">' + esc(suffix) + '</button>'
+           : '<span class="u">' + esc(suffix) + '</span>') +
+         '</div>';
 }
 
 function sideFieldsHtml(f, ei, si, set, range){

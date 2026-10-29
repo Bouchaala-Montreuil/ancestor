@@ -1481,7 +1481,7 @@ Screens.progress = function(){
                         .filter(r => r.v > 0);
   h += '<div class="panel mt-3">';
   if(volRows.length){
-    h += barChart({ title: t('progress.volume'), period: periodLabel, unit: unit() + '·reps', rows: volRows });
+    h += barChart({ title: t('progress.volume'), period: periodLabel, unit: unit() + '·reps', rows: volRows, highlightMax: true });
   } else {
     h += '<div class="uncertain"><b>' + esc(t('log.notApplicable')) + '</b> ' +
          esc(t('log.volumeNote')) + '</div>';

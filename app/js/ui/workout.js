@@ -262,9 +262,8 @@ function renderWorkoutPlanner(){
   if(PLAN_EDIT){
     h += '<div class="row mt-3" style="padding-top:var(--s3);border-top:var(--hair) solid var(--line)">' +
          '<span class="eyebrow">' + esc(t('session.rest')) + ':</span>' +
-         [60, 90, 120, 180].map(sec =>
-           '<button type="button" class="chip sm ' + ((s.plan.restSec||120)===sec?'on':'') + '" data-act="setPlanRest" data-a1="' + sec + '" data-t1="l">' + sec + 's</button>'
-         ).join('') + '</div>';
+         '<button type="button" class="chip sm on" data-act="openRestPicker">' + (s.plan.restSec||120) + 's</button>' +
+         '</div>';
   }
   h += '</div>';
 
@@ -356,6 +355,33 @@ function renderWorkoutPlanner(){
 
 function selectPlanDay(id){ PLAN_DAY = id; render(); }
 function togglePlanEdit(){ PLAN_EDIT = !PLAN_EDIT; render(); }
+/* Bottom-sheet pickers. Rest durations and rep counts open the sheet the app
+   already uses. Each choice goes through the function the inline control used
+   (setPlanRest, setVal), so the stored data path is unchanged. */
+function openRestPicker(){
+  const cur = (getState().plan || {}).restSec || 120;
+  const body = '<div class="pick-grid">' + [60, 90, 120, 180].map(sec =>
+    '<button type="button" class="pick' + (sec === cur ? ' on' : '') + '" aria-pressed="' + (sec === cur) +
+    '" data-act="setPlanRestPick" data-a1="' + sec + '" data-t1="l">' + sec + 's</button>').join('') + '</div>';
+  sheet(t('session.rest'), body);
+}
+function setPlanRestPick(sec){ setPlanRest(sec); closeSheet(); }
+function openRepPicker(ei, si, attr){
+  const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
+  let g = '';
+  for(let n = 1; n <= 30; n++){
+    g += '<button type="button" class="pick" data-act="pickRep" data-a1="' + ei + '" data-t1="l" data-a2="' + si +
+         '" data-t2="l" data-a3="' + attr + '" data-t3="l" data-a4="' + n + '" data-t4="l">' + n + '</button>';
+  }
+  sheet(t('session.reps'), '<div class="pick-grid pick-grid--reps">' + g + '</div>');
+}
+function pickRep(ei, si, attr, n){
+  setVal(ei, si, attr, String(n));
+  const el = document.getElementById('sf_' + ei + '_' + si + '_reps');
+  if(el) el.value = String(n);
+  closeSheet();
+}
+
 function setPlanRest(sec){
   const s = getState();
   if(!s.plan) return;
@@ -823,7 +849,10 @@ function fieldHtml(f, ei, si, set, ex, range, u, nSets){
          '<span class="sr-only">, ' + esc(t('session.setOf')) + ' ' + numExpr((si+1) + ' / ' + nSets) + '</span></label>' +
          '<input id="' + fid + '" type="number" inputmode="decimal" step="' + f.step + '" placeholder="—" value="' + esc(val) + '" ' +
          'data-in="setVal" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + f.attr + '" data-t4="v">' +
-         '<span class="u">' + esc(suffix) + '</span></div>';
+         (f.key === 'reps'
+           ? '<button type="button" class="u u-btn" aria-haspopup="dialog" data-act="openRepPicker" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-a3="' + f.attr + '" data-t3="l">' + esc(suffix) + '</button>'
+           : '<span class="u">' + esc(suffix) + '</span>') +
+         '</div>';
 }
 
 function sideFieldsHtml(f, ei, si, set, range){

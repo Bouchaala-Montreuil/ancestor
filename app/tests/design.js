@@ -1564,6 +1564,35 @@ group('2g. Readiness ring on Today: same number, decorative, static');
 }
 
 /* ================================================================ */
+group('2h. Progress highlight and bottom-sheet pickers');
+{
+  const comp = fs.readFileSync(path.join(ROOT,'js/ui/components.js'),'utf8');
+  const scr = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
+  const wk = fs.readFileSync(path.join(ROOT,'js/ui/workout.js'),'utf8');
+  const acts = fs.readFileSync(path.join(ROOT,'js/core/acts.js'),'utf8');
+  chk('Progress volume chart asks for one highlighted series (largest value)',
+      /barChart\(\{[^}]*highlightMax: true/.test(scr) && /opts\.highlightMax/.test(comp));
+  chk('only one bar gets the highlight class; the rest stay neutral',
+      /chart-bar' \+ \(i === hiIdx \? ' hi' : ''\)/.test(comp) && /\.chart-bar\{fill:var\(--ink-3\)\}/.test(css) &&
+      /\.chart-bar\.hi\{fill:var\(--action\)\}/.test(css));
+  chk('the highlight is the data maximum, not a fixed or hand-picked series',
+      /r\.v > rows\[hiIdx\]\.v/.test(comp));
+  chk('rest durations open a bottom sheet of the four planner values',
+      /function openRestPicker[\s\S]*\[60, 90, 120, 180\]/.test(wk) && /ACT\('openRestPicker'/.test(acts));
+  chk('the rest picker reuses setPlanRest, so the stored data path is unchanged',
+      /function setPlanRestPick\(sec\)\{ setPlanRest\(sec\); closeSheet\(\); \}/.test(wk));
+  chk('rep counts open a sheet of 1 to 30 that writes through setVal',
+      /for\(let n = 1; n <= 30; n\+\+\)/.test(wk) && /function pickRep[\s\S]*setVal\(ei, si, attr, String\(n\)\)/.test(wk));
+  chk('the reps range suffix is the picker button, so the field row keeps its height',
+      /f\.key === 'reps'\s*\?\s*'<button type="button" class="u u-btn"[^']*data-act="openRepPicker"/.test(wk) &&
+      /data-in="setVal"/.test(wk));
+  chk('the picker grid cells are at least the 44 px target size',
+      /\.pick\{min-height:var\(--hit\);min-width:var\(--hit\)/.test(css));
+  chk('the selected picker value is shown by colour and aria-pressed, not colour alone',
+      /aria-pressed="' \+ \(sec === cur\)/.test(wk) && /\.pick\.on,\.pick\[aria-pressed="true"\]/.test(css));
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));

@@ -57,15 +57,29 @@ Rules that follow from the palette, and that the tests hold:
 - **Type.** Primary actions are Barlow Condensed 17 px bold (was 11 px tracked
   monospace). Tab labels are 13 px display (was 9.5 px). Monospace stays for
   units, identifiers and figures.
-- **No photography.** No licensed or verifiable imagery is bundled, and the
-  project rule forbids unlicensed assets, so the dark theme is typographic and
-  tonal. The one drawn figure (the anatomy plate) is the app's own geometry.
+- **Imagery is abstract and people-free.** Two generated textures (`img/hero-today.jpg`,
+  `img/hero-body.jpg`) sit behind the Today and Body mastheads. They are inlined
+  as data URIs in the single file. They contain no people and no text. Paper
+  removes them. The anatomy plate remains the app's own geometry.
+- **Measured contrast (WCAG 2.x), dark canvas `#090909`, surface `#141414`:**
+  `--ink` 18.3:1; `--ink-2` 7.9:1; `--ink-3` 6.0:1; `--action` 7.4:1; `--on-action`
+  on `--action` 7.4:1; `--ok` 9.5:1; `--warn` 10.5:1; `--alert` 7.8:1. The brief's
+  muted `#73716D` is 4.1:1, so it is decorative only.
+- **One highlighted series.** Progress's volume-by-muscle chart draws every bar in
+  `--ink-3`, and only the largest value in `--action`. The highlight is the data's
+  own maximum, not a chosen series. Ties and zero rows are not highlighted.
+- **Pickers are bottom sheets, 44 px cells.** Rest durations (60/90/120/180 s) and
+  rep counts (1–30) open the existing sheet. The selected value is shown by fill
+  and by `aria-pressed`, not colour alone.
+- **Readiness ring.** On Today, the existing rounded readiness percentage is also
+  drawn as a static arc. It is decorative (`aria-hidden`); the figure is the value.
 - **The browser colour follows the theme.** `theme-color`, the manifest's
   `background_color` and `theme_color` are `#090909` in the dark default.
 
 Tests: `tests/design.js` groups 1–2 hold the paper palette, 2b the dark default,
-2c the preference and the browser colour, and the wash-contrast group runs
-both themes. `tools/pwa_audit.js` checks the manifest against the palette.
+2c the preference and the browser colour, 2e the mastheads, 2f the availability
+sliders, 2g the readiness ring, 2h the highlight and pickers, and the wash-contrast
+group runs both themes. `tools/pwa_audit.js` checks the manifest against the palette.
 
 ## 1. What the audit found
 
