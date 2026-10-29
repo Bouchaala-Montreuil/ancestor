@@ -138,7 +138,7 @@ to paint its own label, and no token declared without a reader — which is how
 `--ease-spring`, `--line-hair`, `--nodata-tint` and `--burnt-deep` were found
 dead in a file that had been through five audits.
 
-The whole suite is 1,527 checks over ten files; `python3 build.py` plus
+The whole suite is 1,539 checks over ten files; `python3 build.py` plus
 `tools/smoke_dist.js` boots the built single file and repeats the walk there.
 
 ## What is not verified, and what this matrix cannot say

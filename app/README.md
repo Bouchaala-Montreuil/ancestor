@@ -195,7 +195,7 @@ Or a la carte, which is how the suites are named when one of them breaks:
 npm test                           # the ten headless suites, in order
 npm run test:browser               # the one that needs a real Chrome (source tools/chromium.sh)
 
-node tests/design.js               # 279 design system, states, targets, disclosures
+node tests/design.js               # 291 design system, states, targets, disclosures
 node tests/premium.js              # 217 motion, dashboard, charts, states, boundaries
 node tests/ui.js                   # 322 end-to-end DOM tests
 node tests/run.js                  # 146 engine / i18n tests
@@ -444,20 +444,16 @@ windows are labelled estimates throughout; when data is missing the screen says
 
 ---
 
-## Privacy
-
-Everything lives in `localStorage` on the device. No account, no email, no
-analytics, no advertising, no third-party requests — a test asserts zero
-external references in the shipped HTML. Full JSON export and complete erasure
-are both in Profile → Your data, and both are tested.
-
----
-
 ## Known limitations
 
-- **Anatomy is 2D**, not 3D. Disclosed in-app. See above for the reasoning.
-- **Not tested on real Android hardware** — jsdom only. Expect small layout
-  fixes on a physical phone.
+- **The 3D atlas needs WebGL.** Where it cannot mount, the app says so in a
+  strip that stays until a model loads and offers a retry, and falls back to the
+  flat figure projected from the same mesh — the same data, without the model.
+- **Not tested on a physical phone or tablet.** The browser suite is headless
+  Chromium at seven widths; expect small fixes on real hardware, and nothing at
+  all has been checked on iOS Safari.
+- **The flat figure is derived from a CC BY-SA 4.0 mesh**, so it carries that
+  licence. See [LICENSE](../LICENSE).
 - No sync between devices; one browser profile only.
 - Recovery defaults converge only after several weeks of logged sessions.
 - Timed holds (planks, hangs) are approximated in seconds rather than modelled
@@ -466,8 +462,17 @@ are both in Profile → Your data, and both are tested.
 
 ---
 
-## Free, and it stays free
+## Licence
+
+Proprietary, all rights reserved — see **[../LICENSE](../LICENSE)**: read it and
+run it, do not copy, modify, redistribute or reuse it outside this repository
+without written permission. Two pieces inside it are not proprietary: Barlow
+Condensed (SIL OFL 1.1, `app/fonts/OFL.txt`) and the anatomy mesh
+(CC BY-SA 4.0, share-alike, `app/assets/`), whose terms travel with the work.
+
+## Free to use, and it stays that way
 
 Program generation, logging, progression, recovery estimates, scheduling,
 history, analytics and the training decision are all free and always will be.
-No ads, no paywall, no account.
+No ads, no paywall, no account. That is a promise about the product, not about
+the source code, which is proprietary.

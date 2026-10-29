@@ -1401,6 +1401,52 @@ group('8w. The loading veil cannot sit there forever');
 }
 
 /* ================================================================ */
+group('8x. The licence says what it is, and what it cannot cover');
+{
+  /* A proprietary project that bundles two openly licensed pieces has one
+     obligation it can fail silently: to say so. The font and the mesh keep
+     their licences no matter what the root LICENSE claims, so the root has to
+     name them, and the files it names have to exist. */
+  const read = p => { try { return fs.readFileSync(path.join(ROOT, p), 'utf8'); } catch (e) { return ''; } };
+  const lic = read('../LICENSE');
+  const readme = read('README.md');
+
+  chk('the root LICENSE exists and is a licence, not a placeholder',
+      lic.length > 1000, lic.length + ' chars');
+  chk('it names a holder and a year, so it is someone\'s',
+      /Copyright ©?\s*\d{4}/.test(lic) && /Bouchaala-Montreuil/.test(lic),
+      (lic.match(/Copyright[^\n]*/) || [''])[0].slice(0, 46));
+  chk('it reserves the rights rather than granting them',
+      /All rights reserved/i.test(lic) && /No licence is granted/i.test(lic));
+  chk('it permits what a collaborator must be able to do — read, run, work on it',
+      /read the source/i.test(lic) && /run it/i.test(lic) && /collaborator/i.test(lic));
+
+  const fontLic = /font/i.test(lic) && /SIL Open Font License/i.test(lic) && /app\/fonts\/OFL\.txt/.test(lic);
+  const meshLic = /CC BY-SA 4\.0/.test(lic) && /ANATOMY-LICENSE-CC-BY-SA-4\.0\.txt/.test(lic) &&
+                  /ANATOMY-ATTRIBUTION\.txt/.test(lic);
+  chk('it names the font licence and the file that carries it', fontLic);
+  chk('it names the mesh licence, the attribution, and the share-alike', meshLic);
+  chk('every third-party file it names is actually in the build',
+      fs.existsSync(path.join(ROOT, 'fonts/OFL.txt')) &&
+      fs.existsSync(path.join(ROOT, 'assets/ANATOMY-LICENSE-CC-BY-SA-4.0.txt')) &&
+      fs.existsSync(path.join(ROOT, 'assets/ANATOMY-ATTRIBUTION.txt')));
+  chk('it says the share-alike reaches the figure derived from the mesh, which is the part people miss',
+      /projected from it/.test(lic) || /adaptation of it/.test(lic));
+  chk('it is explicit that a third-party licence wins over this one',
+      /cannot override/i.test(lic));
+  chk('it disclaims warranty and says it is not medical advice, not one or the other',
+      /without warranty/i.test(lic) && /not medical advice/i.test(lic));
+
+  /* Discoverability: a developer who opens the app README must find it, and a
+     "free" claim there must not read as "free source". */
+  chk('the app README points at the root licence',
+      /\.\.\/LICENSE/.test(readme), (readme.match(/\[.*LICENSE.*\]/) || [''])[0].slice(0, 40));
+  chk('and its promise of free use is a promise about the product, not the source',
+      /promise about the product, not about\s*\n?\s*the source/i.test(readme) ||
+      /source code, which is proprietary/i.test(readme));
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' DESIGN TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed'); failures.forEach(f => console.log('   - ' + f)); }

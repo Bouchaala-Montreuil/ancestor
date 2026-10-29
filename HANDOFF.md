@@ -48,7 +48,7 @@ npm run verify       # ~3 minutes, exits non-zero on any failure
 
 | Gate | Command | Now |
 |---|---|---|
-| Ten headless suites (jsdom) | `npm test` | **1,527** |
+| Ten headless suites (jsdom) | `npm test` | **1,539** |
 | Real Chromium: WebGL, overflow at 7 widths, offline reload, failure strips in German and Arabic | `node tests/browser.js` | **93/93** |
 | Install audit: manifest, icons, installability, shortcuts, 2 negative controls | `node tools/pwa_audit.js` | **30/30** |
 | Accessibility tree: six screens, ambiguous names, dialog focus, Arabic | `node tools/ax_audit.js` | **75/75** |
@@ -173,9 +173,14 @@ sandbox:
   at `app/assets/ANATOMY-ATTRIBUTION.txt` and `…-LICENSE-CC-BY-SA-4.0.txt`, and
   the app credits it in all seven languages. **Share-alike:** a derivative of the
   mesh (including the projected flat figure) has to be licensed alike.
-- **The repository has no root `LICENSE`.** Ownership and the terms for reuse
-  are undeclared — that is a decision for the owner, not for me, and it should
-  be settled before this is published or handed to anyone else.
+- **The work itself is proprietary.** `LICENSE` at the root is all rights
+  reserved: read it and run it, do not copy, modify, redistribute or reuse it
+  outside this repository without written permission. Working on it as a named
+  collaborator is covered. Note the consequence for a designer: work you do here
+  on these terms belongs to this work, so agree anything else in writing first.
+- **Two third-party pieces keep their own licences** and cannot be overridden by
+  the above: the font (OFL 1.1) and the anatomy mesh (CC BY-SA 4.0, share-alike,
+  including the figure projected from it).
 
 ---
 
