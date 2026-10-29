@@ -21,6 +21,52 @@ motion, and thumb reach. §8 states it precisely.
 
 ---
 
+## 0. Theme and tokens — dark cinematic (2026-10-29)
+
+**Default: dark.** Near-black canvas, warm white type, one burnt-orange signal.
+**Optional: paper.** The original ivory clinic palette, selected in Profile →
+Display → *Paper theme*, stored as `display.theme` (`'dark'` | `'paper'`) and
+applied as `<html data-theme="paper">`. Both themes are tested.
+
+Components never name a colour. They name a role, and a theme is one block of
+values in `css/app.css`:
+
+| role | dark | paper | used for |
+|---|---|---|---|
+| `--paper` | `#090909` | `#F1EBDD` | the canvas |
+| `--surface` / `--recess` | `#141414` / `#1C1C1C` | `#FCF9F2` / `#E7E0CF` | elevated and secondary surfaces |
+| `--line` / `--rule-strong` | `#2B2B2B` / `#2B2B2B` | `#C8C0B2` / `#20211F` | dividers; heavy section rules |
+| `--ink` / `--ink-2` / `--ink-3` | `#F7F5F0` / `#A5A39E` / `#8F8D86` | `#20211F` / `#3F4139` / `#5B5D54` | primary, secondary, meta text |
+| `--burnt` / `--burnt-text` | `#FF7417` | `#D66A3A` / `#A8461F` | signal: active tab, progress, focus |
+| `--action` / `--on-action` | `#FF7417` / `#090909` | `#20211F` / `#F1EBDD` | primary buttons, selected chip, active set |
+| `--block` / `--on-block` | `#141414` / `#F7F5F0` | `#20211F` / `#F1EBDD` | the one solid block on a screen |
+| `--cta-bg` / `--cta-ink` | `#FF7417` / `#090909` | `#F1EBDD` / `#20211F` | the verdict's action button |
+| `--ok` `--warn` `--alert` | `#7CC47F` `#E9B44C` `#FF7A66` | `#46603F` `#8A5E12` `#963F28` | states, each with an on-colour token |
+| `--wash` / `--scrim` | `rgba(247,245,240,.06)` / `rgba(0,0,0,.62)` | `rgba(32,33,31,.05)` / `rgba(32,33,31,.5)` | hover tint; backdrops |
+
+Rules that follow from the palette, and that the tests hold:
+
+- **Orange is a signal, not a fill for everything.** It marks the primary
+  action, the selected choice, the active set, the active tab, and the session
+  progress. Data bars stay white-on-black so a chart is not a wall of orange.
+- **Muted text is measured.** `#73716D` is 4.1:1 on the canvas, so it is not used
+  for text that carries meaning. `--ink-3` (`#8F8D86`, 6.0:1) is.
+- **Every state label has its own on-colour** (`--on-ok`, `--on-warn`,
+  `--on-alert`). A light word on a light state was the first contrast failure the
+  dark palette produced; the toast and the strip now carry their own ink.
+- **Type.** Primary actions are Barlow Condensed 17 px bold (was 11 px tracked
+  monospace). Tab labels are 13 px display (was 9.5 px). Monospace stays for
+  units, identifiers and figures.
+- **No photography.** No licensed or verifiable imagery is bundled, and the
+  project rule forbids unlicensed assets, so the dark theme is typographic and
+  tonal. The one drawn figure (the anatomy plate) is the app's own geometry.
+- **The browser colour follows the theme.** `theme-color`, the manifest's
+  `background_color` and `theme_color` are `#090909` in the dark default.
+
+Tests: `tests/design.js` groups 1–2 hold the paper palette, 2b the dark default,
+2c the preference and the browser colour, and the wash-contrast group runs
+both themes. `tools/pwa_audit.js` checks the manifest against the palette.
+
 ## 1. What the audit found
 
 Nine surfaces were crawled with a seeded profile (onboarding complete, six

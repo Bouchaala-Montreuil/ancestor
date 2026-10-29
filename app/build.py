@@ -55,8 +55,8 @@ manifest = {
     "short_name": "Ancestor",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#F1EBDD",
-    "theme_color": "#20211F",
+    "background_color": "#090909",
+    "theme_color": "#090909",
     "icons": [
         {"src": icon192, "sizes": "192x192", "type": "image/png", "purpose": "any"},
         {"src": icon512, "sizes": "512x512", "type": "image/png", "purpose": "any"},

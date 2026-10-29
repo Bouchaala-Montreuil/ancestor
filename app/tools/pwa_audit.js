@@ -172,7 +172,7 @@ function serve() {
       String(m.id) === '/',
       'id=' + String(m.id) + ' scope=' + String(m.scope));
   chk('background and theme colours are the app palette',
-      m.background_color === '#F1EBDD' && m.theme_color === '#20211F',
+      m.background_color === '#090909' && m.theme_color === '#090909',
       m.background_color + ' / ' + m.theme_color);
   const metaTheme = await page.evaluate(() => {
     const meta = document.querySelector('meta[name="theme-color"]');

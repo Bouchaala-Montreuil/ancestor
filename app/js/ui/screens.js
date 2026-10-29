@@ -2072,6 +2072,9 @@ Screens.profile = function(){
        [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') + '" data-act="setDisplay" data-a1="textScale" data-a2="' + v + '" data-t2="l">' + Math.round(v*100) + '%</button>').join('') +
        '</div><p class="hint mt-1">' + esc(t('a11y.textSizeHint')) + '</p></div>';
   h += '<div class="tiles">' +
+    '<button class="tile ' + (p.display.theme === 'paper' ? 'on' : '') + '" data-act="setDisplay" data-a1="theme" data-a2="' + (p.display.theme === 'paper' ? 'dark' : 'paper') +
+      '" data-t2="l" role="switch" aria-checked="' + (p.display.theme === 'paper' ? 'true' : 'false') + '"><span class="box"></span>' +
+      '<span><span class="t">' + esc(t('a11y.theme')) + '</span><span class="d">' + esc(t('a11y.themeHint')) + '</span></span></button>' +
     '<button class="tile ' + (p.display.highContrast ? 'on' : '') + '" data-act="setDisplay" data-a1="highContrast" data-a2="' + (p.display.highContrast ? 'false' : 'true') +
       '" data-t2="l" role="switch" aria-checked="' + (p.display.highContrast ? 'true' : 'false') + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('a11y.contrast')) + '</span><span class="d">' + esc(t('a11y.contrastHint')) + '</span></span></button>' +

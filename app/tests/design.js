@@ -21,8 +21,16 @@ const group = t => console.log('\n\x1b[1m' + t + '\x1b[0m');
 const css = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
 
 /* ------------------------------------------------------------------ tokens */
+/* Two themes, one vocabulary. Dark is the default (the first :root block);
+   paper is the explicit :root[data-theme="paper"] block. token() reads the
+   theme the current group is checking, so every check says which palette
+   it is judging. */
+let CUR_THEME = 'dark';
+const DARK_BLOCK  = (/:root\{([^}]*)\}/.exec(css) || [])[1] || '';
+const PAPER_BLOCK = (/:root\[data-theme="paper"\]\{([^}]*)\}/.exec(css) || [])[1] || '';
 function token(name){
-  const m = new RegExp('--' + name + '\\s*:\\s*([^;]+);').exec(css);
+  const src = CUR_THEME === 'paper' ? PAPER_BLOCK : DARK_BLOCK;
+  const m = new RegExp('--' + name + '\\s*:\\s*([^;]+);').exec(src);
   return m ? m[1].trim() : null;
 }
 function hex(v){
@@ -51,7 +59,8 @@ function contrast(a,b){
 }
 
 /* ================================================================ */
-group('1. Mandatory palette is present and exact');
+group('1. Mandatory palette is present and exact (paper theme)');
+CUR_THEME = 'paper';
 {
   const required = {
     'charcoal':'#20211f', 'ivory':'#f1ebdd', 'burnt':'#d66a3a',
@@ -65,6 +74,7 @@ group('1. Mandatory palette is present and exact');
 
 /* ================================================================ */
 group('2. Ivory dominates (light mode)');
+CUR_THEME = 'paper';
 {
   const paper = hex(token('paper'));
   chk('page background is ivory', paper === '#f1ebdd', paper);
@@ -75,6 +85,35 @@ group('2. Ivory dominates (light mode)');
   chk('body text is charcoal', ink === '#20211f', ink);
   chk('text/background contrast is very high', contrast(ink, paper) > 7,
       contrast(ink, paper).toFixed(1) + ':1');
+}
+
+/* ================================================================ */
+group('2b. Dark is the default: cinematic canvas, warm white type, orange signal');
+CUR_THEME = 'dark';
+{
+  const bg = hex(token('paper'));
+  chk('dark page background is near-black #090909', bg === '#090909', bg);
+  chk('dark body text is the warm white #F7F5F0', hex(token('ink')) === '#f7f5f0', hex(token('ink')));
+  chk('dark primary text clears 15:1', contrast(hex(token('ink')), bg) > 15,
+      contrast(hex(token('ink')), bg).toFixed(1) + ':1');
+  chk('dark secondary text clears AA on the canvas and the block',
+      contrast(hex(token('ink-2')), bg) >= 4.5 && contrast(hex(token('ink-2')), hex(token('block'))) >= 4.5,
+      contrast(hex(token('ink-2')), bg).toFixed(2) + ' / ' + contrast(hex(token('ink-2')), hex(token('block'))).toFixed(2));
+  chk('dark tertiary (meta) text clears AA',
+      contrast(hex(token('ink-3')), bg) >= 4.5 && contrast(hex(token('tech-ink')), bg) >= 4.5,
+      contrast(hex(token('ink-3')), bg).toFixed(2));
+  chk('dark signal orange is text-safe on the canvas', contrast(hex(token('burnt-text')), bg) >= 4.5,
+      contrast(hex(token('burnt-text')), bg).toFixed(2) + ':1');
+  chk('primary action is orange, with dark ink on it (AA)',
+      hex(token('action')) === '#ff7417' && contrast(hex(token('on-action')), hex(token('action'))) >= 4.5,
+      contrast(hex(token('on-action')), hex(token('action'))).toFixed(2) + ':1');
+  chk('the verdict CTA is orange with dark ink (AA)',
+      contrast(hex(token('cta-ink')), hex(token('cta-bg'))) >= 4.5,
+      contrast(hex(token('cta-ink')), hex(token('cta-bg'))).toFixed(2) + ':1');
+  chk('the one solid block is elevated above the canvas, not a hole in it',
+      hex(token('block')) !== bg && lum(hex(token('block'))) > lum(bg), hex(token('block')));
+  chk('the dark theme declares its own grain blend (screen, not multiply)',
+      token('grain-blend') === 'screen', token('grain-blend'));
 }
 
 /* ================================================================ */
@@ -510,8 +549,8 @@ group('8d. Onboarding is designed, not inherited');
       /\.onb-frame \.tile\{[^}]*min-height:6\dpx/s.test(css));
   chk('the question is the largest thing on the screen',
       /\.onb-frame h1[^{]*\{[^}]*font-size:clamp\(38px/s.test(css));
-  chk('the completed part of the bar is inked, the present one burnt',
-      /\.onb-bar i\.on\{background:var\(--ink\)\}/.test(css) &&
+  chk('the completed part of the bar is the action colour, the present one burnt',
+      /\.onb-bar i\.on\{background:var\(--action\)\}/.test(css) &&
       /\.onb-bar i\.on:last-of-type\{background:var\(--burnt\)\}/.test(css));
   chk('range inputs are styled at last',
       /input\[type=range\]::-webkit-slider-thumb/.test(css));
@@ -1002,42 +1041,48 @@ group('8o. Disclosures are one component, not four improvisations');
 
 group('8m. Text on a wash is measured, not assumed');
 {
-  /* Contrast against paper is not the whole story: half the state vocabulary is a
-     word on a tint. Compositing the wash first is the only way to know. */
-  const tint = name => {
-    const v = token(name) || '';
-    const m = /rgba?\(([^)]+)\)/.exec(v);
-    if(!m) return null;
-    const p = m[1].split(',').map(x => parseFloat(x));
-    return { hex:'#' + p.slice(0,3).map(n => Math.round(n).toString(16).padStart(2,'0')).join(''),
-             a: p.length > 3 ? p[3] : 1 };
-  };
-  const over = (t, base) => {
-    const f = rgb(t.hex), b = rgb(base);
-    return '#' + f.map((c,i) => Math.round(c*t.a + b[i]*(1-t.a))
-      .toString(16).padStart(2,'0')).join('');
-  };
-  const paper = hex(token('paper'));
-  const wash = n => over(tint(n), paper);
+  for (const TH of ['paper','dark']) {
+    CUR_THEME = TH;
+    /* Contrast against paper is not the whole story: half the state vocabulary is a
+       word on a tint. Compositing the wash first is the only way to know. */
+    const tint = name => {
+      const v = token(name) || '';
+      const m = /rgba?\(([^)]+)\)/.exec(v);
+      if(!m) return null;
+      const p = m[1].split(',').map(x => parseFloat(x));
+      return { hex:'#' + p.slice(0,3).map(n => Math.round(n).toString(16).padStart(2,'0')).join(''),
+               a: p.length > 3 ? p[3] : 1 };
+    };
+    const over = (t, base) => {
+      const f = rgb(t.hex), b = rgb(base);
+      return '#' + f.map((c,i) => Math.round(c*t.a + b[i]*(1-t.a))
+        .toString(16).padStart(2,'0')).join('');
+    };
+    const paper = hex(token('paper'));
+    const wash = n => over(tint(n), paper);
 
-  const pairs = [
-    ['a warn flag',        hex(token('ink')),   wash('warn-tint')],
-    ['a new flag',         hex(token('ink')),   wash('burnt-tint')],
-    ['an ok flag',         hex(token('ink')),   wash('ok-tint')],
-    ['an alert flag',      hex(token('ink')),   wash('alert-tint')],
-    ['a banner sentence',  hex(token('ink-2')), wash('alert-tint')],
-    ['the strip sentence', hex(token('ink-2')), wash('alert-tint')],
-    ['the strip title',    hex(token('alert')), wash('alert-tint')],
-    ['the strip mark',     hex(token('ivory')), hex(token('alert'))],
-    ['a saved toast',      hex(token('ivory')), hex(token('ok'))],
-    ['a failed toast',     hex(token('ivory')), hex(token('alert'))]
-  ];
-  const bad = pairs.filter(([,f,b]) => contrast(f,b) < 4.5);
-  chk('every state label clears AA on the wash it actually sits on',
-      bad.length === 0,
-      bad.map(([n,f,b]) => n + ' ' + contrast(f,b).toFixed(2)).join(', ') ||
-      pairs.map(([,f,b]) => contrast(f,b).toFixed(1)).join(' '));
+    const pairs = [
+      ['a warn flag',        hex(token('ink')),   wash('warn-tint')],
+      ['a new flag',         hex(token('ink')),   wash('burnt-tint')],
+      ['an ok flag',         hex(token('ink')),   wash('ok-tint')],
+      ['an alert flag',      hex(token('ink')),   wash('alert-tint')],
+      ['a banner sentence',  hex(token('ink-2')), wash('alert-tint')],
+      ['the strip sentence', hex(token('ink-2')), wash('alert-tint')],
+      ['the strip title',    hex(token('alert')), wash('alert-tint')],
+      ['the strip mark',     hex(token('on-alert')), hex(token('alert'))],
+      ['a saved toast',      hex(token('on-ok')), hex(token('ok'))],
+      ['a failed toast',     hex(token('on-alert')), hex(token('alert'))],
+      ['a warning toast',    hex(token('on-warn')), hex(token('warn'))]
+    ];
+    const bad = pairs.filter(([,f,b]) => contrast(f,b) < 4.5);
+    chk('every state label clears AA on the wash it actually sits on ('+CUR_THEME+')',
+        bad.length === 0,
+        bad.map(([n,f,b]) => n + ' ' + contrast(f,b).toFixed(2)).join(', ') ||
+        pairs.map(([,f,b]) => contrast(f,b).toFixed(1)).join(' '));
 
+
+  }
+  CUR_THEME = 'dark';
   /* The wash is decoration; the word is ink. So no state flag may colour its own
      text, which is how two of them came to sit at 4.00:1 and 3.98:1. */
   const flagRules = (css.match(/\.flag\.(?:ok|warn|alert|new)[^{]*\{[^}]*\}/g) || []);
@@ -1447,6 +1492,26 @@ group('8x. The licence says what it is, and what it cannot cover');
 }
 
 /* ================================================================ */
+/* ================================================================ */
+group('2c. Theme preference: dark by default, paper on request');
+{
+  const prof = require(path.join(ROOT, 'js/core/profile.js'));
+  chk('the default display theme is dark', prof.DISPLAY_DEFAULTS.theme === 'dark', String(prof.DISPLAY_DEFAULTS.theme));
+  const meta = { c: '', setAttribute(k, v){ if(k === 'content') this.c = v; } };
+  global.document = { documentElement: { dataset: {} }, querySelector: () => meta };
+  global.window = { matchMedia: () => ({ matches: false }) };
+  prof.applyDisplay({ display: { theme: 'paper' } });
+  chk('a paper preference sets data-theme=paper', document.documentElement.dataset.theme === 'paper');
+  chk('and the browser theme colour follows the paper canvas', meta.c === '#F1EBDD', meta.c);
+  prof.applyDisplay({ display: {} });
+  chk('no preference means dark: no data-theme attribute', document.documentElement.dataset.theme === undefined);
+  chk('and the browser theme colour is the near-black canvas', meta.c === '#090909', meta.c);
+  prof.applyDisplay({ display: { theme: 'paper' } });
+  prof.applyDisplay({ display: { theme: 'dark' } });
+  chk('switching back to dark removes the paper attribute', document.documentElement.dataset.theme === undefined);
+  delete global.document; delete global.window;
+}
+
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' DESIGN TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed'); failures.forEach(f => console.log('   - ' + f)); }

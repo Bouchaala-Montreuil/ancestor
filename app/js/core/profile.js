@@ -100,7 +100,8 @@ const DISPLAY_DEFAULTS = {
   highContrast: false,
   reducedMotion: 'auto', // 'auto' respects the OS setting
   simpleUI: false,
-  captions: true         // written instructions always accompany media
+  captions: true,        // written instructions always accompany media
+  theme: 'dark'          // 'dark' (cinematic default) | 'paper' (the ivory palette)
 };
 
 function defaultV2Profile(){
@@ -227,6 +228,10 @@ function applyDisplay(profile){
   r.dataset.text     = String(d.textScale);
   r.dataset.contrast = d.highContrast ? 'high' : 'normal';
   r.dataset.simple   = d.simpleUI ? 'on' : 'off';
+  /* Dark is the default and the stylesheet's :root. Paper is an explicit choice. */
+  if (d.theme === 'paper') r.dataset.theme = 'paper'; else delete r.dataset.theme;
+  const tc = document.querySelector('meta[name="theme-color"]');
+  if (tc) tc.setAttribute('content', d.theme === 'paper' ? '#F1EBDD' : '#090909');
   const motion = d.reducedMotion === 'auto'
     ? (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'on' : 'off')
     : (d.reducedMotion === 'on' ? 'on' : 'off');

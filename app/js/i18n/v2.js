@@ -8,7 +8,7 @@ const TV = {};
 TV.en = {
 'profile.environment':'Training environment',
 'a11y.title':'Accessibility','a11y.textSize':'Text size','a11y.textSizeHint':'Applies across the whole interface',
-'a11y.contrast':'High contrast','a11y.contrastHint':'Stronger borders and text for easier reading',
+'a11y.theme':'Paper theme','a11y.themeHint':'Light ivory surfaces instead of the dark default','a11y.contrast':'High contrast','a11y.contrastHint':'Stronger borders and text for easier reading',
 'a11y.motion':'Reduce motion','a11y.motionHint':'Stops non-essential transitions',
 'a11y.simple':'Simplified interface','a11y.simpleHint':'Shorter labels, secondary detail hidden',
 'a11y.needs':'Exercise adaptations','a11y.needsTitle':'Which exercises suit you?',
@@ -45,7 +45,7 @@ TV.en = {
 TV.fr = {
 'profile.environment':'Environnement d\'entraînement',
 'a11y.title':'Accessibilité','a11y.textSize':'Taille du texte','a11y.textSizeHint':'S\'applique à toute l\'interface',
-'a11y.contrast':'Contraste élevé','a11y.contrastHint':'Bordures et texte renforcés pour une lecture plus facile',
+'a11y.theme':'Thème papier','a11y.themeHint':'Surfaces ivoire claires à la place du thème sombre par défaut','a11y.contrast':'Contraste élevé','a11y.contrastHint':'Bordures et texte renforcés pour une lecture plus facile',
 'a11y.motion':'Réduire les animations','a11y.motionHint':'Arrête les transitions non essentielles',
 'a11y.simple':'Interface simplifiée','a11y.simpleHint':'Libellés plus courts, détails secondaires masqués',
 'a11y.needs':'Adaptations d\'exercices','a11y.needsTitle':'Quels exercices vous conviennent ?',
@@ -82,7 +82,7 @@ TV.fr = {
 TV.es = {
 'profile.environment':'Entorno de entrenamiento',
 'a11y.title':'Accesibilidad','a11y.textSize':'Tamaño del texto','a11y.textSizeHint':'Se aplica a toda la interfaz',
-'a11y.contrast':'Alto contraste','a11y.contrastHint':'Bordes y texto más marcados para leer mejor',
+'a11y.theme':'Tema papel','a11y.themeHint':'Superficies de marfil claras en lugar del tema oscuro predeterminado','a11y.contrast':'Alto contraste','a11y.contrastHint':'Bordes y texto más marcados para leer mejor',
 'a11y.motion':'Reducir movimiento','a11y.motionHint':'Detiene las transiciones no esenciales',
 'a11y.simple':'Interfaz simplificada','a11y.simpleHint':'Etiquetas más cortas, detalles secundarios ocultos',
 'a11y.needs':'Adaptaciones de ejercicios','a11y.needsTitle':'¿Qué ejercicios te convienen?',
@@ -119,7 +119,7 @@ TV.es = {
 TV.de = {
 'profile.environment':'Trainingsumgebung',
 'a11y.title':'Barrierefreiheit','a11y.textSize':'Textgröße','a11y.textSizeHint':'Gilt für die gesamte Oberfläche',
-'a11y.contrast':'Hoher Kontrast','a11y.contrastHint':'Stärkere Ränder und Schrift für leichteres Lesen',
+'a11y.theme':'Papier-Design','a11y.themeHint':'Helle Elfenbein-Flächen statt des dunklen Standards','a11y.contrast':'Hoher Kontrast','a11y.contrastHint':'Stärkere Ränder und Schrift für leichteres Lesen',
 'a11y.motion':'Bewegung reduzieren','a11y.motionHint':'Stoppt nicht notwendige Übergänge',
 'a11y.simple':'Vereinfachte Oberfläche','a11y.simpleHint':'Kürzere Beschriftungen, sekundäre Details ausgeblendet',
 'a11y.needs':'Übungsanpassungen','a11y.needsTitle':'Welche Übungen passen zu dir?',
@@ -156,7 +156,7 @@ TV.de = {
 TV.it = {
 'profile.environment':'Ambiente di allenamento',
 'a11y.title':'Accessibilità','a11y.textSize':'Dimensione testo','a11y.textSizeHint':'Si applica a tutta l\'interfaccia',
-'a11y.contrast':'Alto contrasto','a11y.contrastHint':'Bordi e testo più marcati per una lettura più facile',
+'a11y.theme':'Tema carta','a11y.themeHint':'Superfici avorio chiare al posto del tema scuro predefinito','a11y.contrast':'Alto contrasto','a11y.contrastHint':'Bordi e testo più marcati per una lettura più facile',
 'a11y.motion':'Riduci movimento','a11y.motionHint':'Blocca le transizioni non essenziali',
 'a11y.simple':'Interfaccia semplificata','a11y.simpleHint':'Etichette più brevi, dettagli secondari nascosti',
 'a11y.needs':'Adattamenti degli esercizi','a11y.needsTitle':'Quali esercizi fanno per te?',
@@ -193,7 +193,7 @@ TV.it = {
 TV.nl = {
 'profile.environment':'Trainingsomgeving',
 'a11y.title':'Toegankelijkheid','a11y.textSize':'Tekstgrootte','a11y.textSizeHint':'Geldt voor de hele interface',
-'a11y.contrast':'Hoog contrast','a11y.contrastHint':'Sterkere randen en tekst voor makkelijker lezen',
+'a11y.theme':'Papierthema','a11y.themeHint':'Lichte ivoorkleurige vlakken in plaats van het standaard donkere thema','a11y.contrast':'Hoog contrast','a11y.contrastHint':'Sterkere randen en tekst voor makkelijker lezen',
 'a11y.motion':'Beweging verminderen','a11y.motionHint':'Stopt niet-essentiële overgangen',
 'a11y.simple':'Vereenvoudigde interface','a11y.simpleHint':'Kortere labels, secundaire details verborgen',
 'a11y.needs':'Oefenaanpassingen','a11y.needsTitle':'Welke oefeningen passen bij jou?',

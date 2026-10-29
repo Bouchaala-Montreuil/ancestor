@@ -85,7 +85,7 @@ function defaultState(){
       environment: 'gym',
       positions: [],
       needs: {},
-      display: { textScale:1, highContrast:false, reducedMotion:'auto', simpleUI:false, captions:true },
+      display: { textScale:1, highContrast:false, reducedMotion:'auto', simpleUI:false, captions:true, theme:'dark' },
       /* --- schema v3, additive ---
          Optional. Only ever used to report total system load for bodyweight
          movements. Null means "not recorded", and the app then reports
