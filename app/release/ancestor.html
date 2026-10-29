@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-EZ+/ilLZsAzzgHKl96h3cKSjczde8Kevl4of6ilrof4=' 'sha256-viBneUuNK9I51VdL7Amxizh/T+Sgm6A4M9Mf6f0ZH8w=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-scvAHM0FMUT3IcpObwkDMUQvjrXwN1E71ye9HIAbQy8=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-zMjPDLS5kf9OUJpvgQfFsB3PPUtVdicHLqmf85qidnQ=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-EZ+/ilLZsAzzgHKl96h3cKSjczde8Kevl4of6ilrof4=' 'sha256-W0pHf6u5q9A/49tKNqjNAVR5OlTru8v7XbQKsqPna7M=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -1742,7 +1742,11 @@ table.data tbody tr:last-child td{border-bottom:0}
 /* --------------------------------------------------------------- SESSION */
 /* The module's Retour chip must read as one word at 320 px. Scoped to that chip only:
    a header-wide rule pushed the German bodyweight chip past the screen edge. */
-.chip.chip-keep{white-space:nowrap;flex:none}
+.chip.chip-keep{white-space:nowrap;flex:none;padding-inline:8px;letter-spacing:.04em}
+.sect .rule{min-width:0}
+/* A header whose action chip cannot shrink lets the chip drop to its own line. */
+.sect.sect-wrap{flex-wrap:wrap}
+.sect.sect-wrap > .aside{margin-inline-start:auto}
 .session-progress{
   /* The add-exercise button wraps onto its own line above this caption; it needs air. */
   margin-top:var(--s3);
@@ -9870,7 +9874,7 @@ const TPLAN = {
     "plan.customName": "Custom session",
     "plan.emptyDay": "No exercises in this day",
     "plan.emptyDayBody": "Add an exercise from the library or rebuild your programme.",
-    "plan.searchEx": "Search by movement, muscle or equipment…",
+    "plan.searchEx": "Search movement or muscle…",
     "plan.liveBadge": "Live session in progress",
     "plan.inPool": "In pool",
     "plan.excluded": "Excluded",
@@ -9895,7 +9899,7 @@ const TPLAN = {
     "plan.customName": "Séance libre",
     "plan.emptyDay": "Aucun exercice dans ce jour",
     "plan.emptyDayBody": "Ajoutez un exercice depuis la bibliothèque ou reconstruisez votre programme.",
-    "plan.searchEx": "Rechercher par mouvement, muscle ou matériel…",
+    "plan.searchEx": "Rechercher mouvement ou muscle…",
     "plan.liveBadge": "Séance en direct",
     "plan.inPool": "Inclus",
     "plan.excluded": "Exclu",
@@ -9920,7 +9924,7 @@ const TPLAN = {
     "plan.customName": "Sesión libre",
     "plan.emptyDay": "Sin ejercicios en este día",
     "plan.emptyDayBody": "Añade un ejercicio de la biblioteca o reconstruye tu programa.",
-    "plan.searchEx": "Buscar por movimiento, músculo o equipo…",
+    "plan.searchEx": "Buscar movimiento o músculo…",
     "plan.liveBadge": "Sesión en curso",
     "plan.inPool": "Incluido",
     "plan.excluded": "Excluido",
@@ -9945,7 +9949,7 @@ const TPLAN = {
     "plan.customName": "Freie Einheit",
     "plan.emptyDay": "Keine Übungen an diesem Tag",
     "plan.emptyDayBody": "Füge eine Übung aus der Bibliothek hinzu oder erstelle deinen Plan neu.",
-    "plan.searchEx": "Nach Bewegung, Muskel oder Gerät suchen…",
+    "plan.searchEx": "Bewegung oder Muskel suchen…",
     "plan.liveBadge": "Laufende Einheit",
     "plan.inPool": "Aktiv",
     "plan.excluded": "Ausgeschlossen",
@@ -9970,7 +9974,7 @@ const TPLAN = {
     "plan.customName": "Sessione libera",
     "plan.emptyDay": "Nessun esercizio in questo giorno",
     "plan.emptyDayBody": "Aggiungi un esercizio dalla libreria o ricostruisci il programma.",
-    "plan.searchEx": "Cerca per movimento, muscolo o attrezzo…",
+    "plan.searchEx": "Cerca movimento o muscolo…",
     "plan.liveBadge": "Sessione dal vivo",
     "plan.inPool": "Incluso",
     "plan.excluded": "Escluso",
@@ -9995,7 +9999,7 @@ const TPLAN = {
     "plan.customName": "Vrije sessie",
     "plan.emptyDay": "Geen oefeningen op deze dag",
     "plan.emptyDayBody": "Voeg een oefening toe uit de bibliotheek of bouw je schema opnieuw op.",
-    "plan.searchEx": "Zoek op beweging, spier of materiaal…",
+    "plan.searchEx": "Zoek beweging of spier…",
     "plan.liveBadge": "Actieve sessie bezig",
     "plan.inPool": "Actief",
     "plan.excluded": "Uitgesloten",
@@ -10020,7 +10024,7 @@ const TPLAN = {
     "plan.customName": "حصة حرة",
     "plan.emptyDay": "لا تمارين في هذا اليوم",
     "plan.emptyDayBody": "أضف تمريناً من المكتبة أو أعد بناء برنامجك.",
-    "plan.searchEx": "ابحث بالحركة أو العضلة أو الأداة…",
+    "plan.searchEx": "ابحث بالحركة أو العضلة…",
     "plan.liveBadge": "حصة مباشرة قيد التنفيذ",
     "plan.inPool": "مُدرج",
     "plan.excluded": "مُستبعد",
@@ -20297,7 +20301,7 @@ Screens.profile = function(){
   const valProgramme = [styleName, p.daysPerWeek + 'd',
                         t('onb.avail.len.' + (p.sessionMinutes || 50)),
                         t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym'))),
-                        unit()].join(' · ');
+                        unit()].join(' · ').replace(/ · (\S+)$/, '\u00a0·\u00a0$1');  /* the unit never wraps alone */
   const valBody = [t('onb.shift.' + ({none:'no', night:'night', rotating:'rot'}[p.shiftType] || 'no')),
                    p.sleepHours + ' ' + t('onb.sleep.h'),
                    needCount ? needCount + ' ' + t('a11y.needsTitle') : ''].filter(Boolean).join(' · ');
@@ -24259,7 +24263,7 @@ Screens.module = function(){
 
   /* A lesson replaces the screen rather than sitting inside one, so its title
      is the screen's h1 — the science hub's masthead is not on this page. */
-  let h = '<div class="sect"><h1 class="title">' + esc(t(m.titleKey)) +
+  let h = '<div class="sect sect-wrap"><h1 class="title">' + esc(t(m.titleKey)) +
           '</h1><span class="rule"></span>' +
           '<span class="aside"><button class="chip sm chip-keep" data-act="closeModule">' +
           esc(t('sci.backToHub')) + '</button></span></div>';

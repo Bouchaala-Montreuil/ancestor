@@ -53,7 +53,7 @@ Screens.module = function(){
 
   /* A lesson replaces the screen rather than sitting inside one, so its title
      is the screen's h1 — the science hub's masthead is not on this page. */
-  let h = '<div class="sect"><h1 class="title">' + esc(t(m.titleKey)) +
+  let h = '<div class="sect sect-wrap"><h1 class="title">' + esc(t(m.titleKey)) +
           '</h1><span class="rule"></span>' +
           '<span class="aside"><button class="chip sm chip-keep" data-act="closeModule">' +
           esc(t('sci.backToHub')) + '</button></span></div>';

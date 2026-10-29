@@ -1717,7 +1717,11 @@ table.data tbody tr:last-child td{border-bottom:0}
 /* --------------------------------------------------------------- SESSION */
 /* The module's Retour chip must read as one word at 320 px. Scoped to that chip only:
    a header-wide rule pushed the German bodyweight chip past the screen edge. */
-.chip.chip-keep{white-space:nowrap;flex:none}
+.chip.chip-keep{white-space:nowrap;flex:none;padding-inline:8px;letter-spacing:.04em}
+.sect .rule{min-width:0}
+/* A header whose action chip cannot shrink lets the chip drop to its own line. */
+.sect.sect-wrap{flex-wrap:wrap}
+.sect.sect-wrap > .aside{margin-inline-start:auto}
 .session-progress{
   /* The add-exercise button wraps onto its own line above this caption; it needs air. */
   margin-top:var(--s3);

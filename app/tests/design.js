@@ -1602,6 +1602,22 @@ group('2i. Recovery diagram label on the orange box, and the Retour chip');
 }
 
 /* ================================================================ */
+group('2j. Layout fixes: Retour wraps, search placeholder fits, unit never wraps alone');
+{
+  const scr2 = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
+  const mod2 = fs.readFileSync(path.join(ROOT,'js/ui/modules.js'),'utf8');
+  const modes = fs.readFileSync(path.join(ROOT,'js/i18n/modes.js'),'utf8');
+  chk('the module header may wrap, so the Retour chip drops to its own line instead of overflowing',
+      /sect sect-wrap/.test(mod2) && /\.sect\.sect-wrap\{flex-wrap:wrap}/.test(css) && /\.sect\.sect-wrap > \.aside\{margin-inline-start:auto\}/.test(css));
+  const frLine = (modes.match(/"plan\.searchEx": "Rechercher [^"]*"/g) || []).find(x => x.indexOf('Rechercher') >= 0);
+  const frLen = frLine ? frLine.length : 999;
+  chk('the French library placeholder is short enough to show whole in the field at 390 px',
+      !!frLine && frLen < 60);
+  chk('the Programme summary joins its unit with non-breaking spaces',
+      scr2.indexOf('the unit never wraps alone') > 0 && scr2.indexOf('u00a0') > 0);
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));

@@ -1850,7 +1850,7 @@ Screens.profile = function(){
   const valProgramme = [styleName, p.daysPerWeek + 'd',
                         t('onb.avail.len.' + (p.sessionMinutes || 50)),
                         t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym'))),
-                        unit()].join(' · ');
+                        unit()].join(' · ').replace(/ · (\S+)$/, '\u00a0·\u00a0$1');  /* the unit never wraps alone */
   const valBody = [t('onb.shift.' + ({none:'no', night:'night', rotating:'rot'}[p.shiftType] || 'no')),
                    p.sleepHours + ' ' + t('onb.sleep.h'),
                    needCount ? needCount + ' ' + t('a11y.needsTitle') : ''].filter(Boolean).join(' · ');
