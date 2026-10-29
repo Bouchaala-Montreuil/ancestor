@@ -338,6 +338,69 @@ group('8t. The anatomy licence names what actually ships');
 }
 
 /* ================================================================ */
+group('8u. One owner per global — the boundaries are checked, not hoped for');
+{
+  /* S13 in ARCHITECTURE.md says "no module boundaries, 589 globals". ES modules
+     are not an option: index.html has to open from the file system, and
+     file:// blocks them. What is checkable is ownership — every top-level name
+     declared once, every file loaded, and a per-file count that cannot grow
+     without the manifest being updated in the same commit. Before this, two
+     names were owned twice and the loser was dead code that looked alive. */
+  const { execFileSync } = require('child_process');
+  const files = [];
+  (function walk(dir){
+    for(const e of fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true })){
+      const rel = dir + '/' + e.name;
+      if(e.isDirectory()){ if(e.name !== 'vendor') walk(rel); }
+      else if(e.name.endsWith('.js')) files.push(rel);
+    }
+  })('js');
+  const appFiles = files.filter(f => f !== 'js/sw.js');
+  const DECL = /^(?:async\s+)?(?:function\*?|const|let|var|class)\s+([A-Za-z_$][\w$]*)/;
+  const owners = new Map(), counts = new Map();
+  appFiles.forEach(f => {
+    const names = new Set();
+    fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').forEach(l => {
+      const d = DECL.exec(l); if(d) names.add(d[1]);
+    });
+    counts.set(f, names.size);
+    names.forEach(n => owners.set(n, (owners.get(n) || []).concat(f)));
+  });
+  const clashes = [...owners].filter(([, fs2]) => fs2.length > 1);
+  chk('every top-level name has exactly one owner',
+      clashes.length === 0,
+      clashes.map(([n, fs2]) => n + ' in ' + fs2.join('+')).join(', ') || owners.size + ' names');
+  chk('the two historical collisions are gone, not renamed',
+      !/^function round1/m.test(fs.readFileSync(path.join(ROOT,'js/engine/readiness.js'),'utf8')) &&
+      !/^function langLabel/m.test(fs.readFileSync(path.join(ROOT,'js/i18n/core.js'),'utf8')));
+
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const loaded = (html.match(/<script src="(js\/[^"]+\.js)"><\/script>/g) || [])
+    .map(t => t.replace(/.*src="|"><\/script>/g, ''));
+  chk('every file in js/ is loaded by index.html',
+      appFiles.every(f => loaded.includes(f)),
+      appFiles.filter(f => !loaded.includes(f)).join(', ') || appFiles.length + ' files');
+  chk('nothing is loaded that is not on disk',
+      loaded.every(f => fs.existsSync(path.join(ROOT, f))));
+
+  /* the ratchet: the manifest records the counts, and the tool fails on drift
+     in either direction — a global added or removed has to be an edit here */
+  const manifest = fs.readFileSync(path.join(ROOT, 'js/MODULES.md'), 'utf8');
+  chk('the manifest records a count for every file',
+      appFiles.every(f => new RegExp('\\| \\d+ \\| `' + f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '` \\| (\\d+) \\|').test(manifest)),
+      appFiles.length + ' rows');
+  const stale = appFiles.filter(f => {
+    const row = new RegExp('`' + f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '` \\| (\\d+) \\|').exec(manifest);
+    return !row || Number(row[1]) !== counts.get(f);
+  });
+  chk('the recorded counts still match the code', stale.length === 0, stale.join(', ') || 'no drift');
+  let checkRan = true, checkOut = '';
+  try { checkOut = execFileSync(process.execPath, [path.join(ROOT,'tools/modules.js'), '--check'], { encoding:'utf8' }); }
+  catch(e){ checkRan = false; checkOut = (e.stdout || '') + (e.stderr || ''); }
+  chk('the manifest regenerates to itself', checkRan, checkOut.trim().split('\n').pop());
+}
+
+/* ================================================================ */
 group('8b. Preference hooks are real, not aspirational');
 {
   const cssText = css;

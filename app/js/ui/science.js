@@ -107,8 +107,11 @@ function sciModules(){
 
 function sciLessons(){
   let h = '';
+  /* The placeholder used to repeat the label verbatim — "RECHERCHER" set over
+     "Rechercher" in the same box, which reads as a rendering fault. The label
+     names the field; the placeholder says what to type. */
   h += '<div class="field"><label for="sciSearchInput">' + esc(t('sci.search')) + '</label>' +
-       '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" data-in="setSciQuery" data-t1="v" placeholder="' + esc(t('sci.search')) + '"></div>';
+       '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" data-in="setSciQuery" data-t1="v" placeholder="' + esc(t('sci.searchHint')) + '"></div>';
   /* Eleven categories. Wrapped, they were five rows of buttons before the first
      lesson; as one rail they are one row that scrolls. */
   h += '<div class="chips rail mb-4" role="group" aria-label="' + esc(t('sci.catLabel')) + '">' +

@@ -193,6 +193,7 @@ ACT('saveShift',                    el => saveShift());
 ACT('saveSleep',                    el => saveSleep());
 ACT('selectMuscle',                 el => selectMuscle(arg(el, 1)));
 ACT('setBodyMode',                  el => setBodyMode(arg(el, 1)));
+ACT('retryLab',                     el => retryLab());
 ACT('setBodyweight',                el => setBodyweight(arg(el, 1)));
 ACT('setConsent',                   el => setConsent());
 ACT('setDisplay',                   el => setDisplay(arg(el, 1), arg(el, 2)));

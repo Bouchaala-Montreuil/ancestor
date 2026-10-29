@@ -29,7 +29,8 @@ function setLang(l){
 try {
   if(typeof applyLocale === 'function') applyLocale(CURRENT_LANG);
 } catch(e){}
-function langLabel(l){ return LANG_LABEL[l] || l.toUpperCase(); }
+/* langLabel lives in locale.js, which owns the locale tables and the RTL rule.
+   A second, shorter copy here was shadowed by it and quietly did nothing. */
 
 /* Interpolate {n} placeholders */
 function tf(key, vars){

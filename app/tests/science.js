@@ -403,6 +403,45 @@ group('7c. Placeholder rendering (regression)');
 }
 
 /* ==================================================================== */
+group('7d. The search field names itself once');
+{
+  /* It used to set the same string as the field's <label> and as its
+     placeholder — "RECHERCHER" in mono over "Rechercher" in 28 px, in the same
+     box. Two labels and no instruction read as a rendering fault. */
+  const { w, d } = boot();
+  onboardAs(w, d);
+  w.go('science');
+  const input = d.querySelector('#sciSearchInput');
+  chk('the search field is on the hub', !!input);
+  const label = d.querySelector('label[for="sciSearchInput"]');
+  const placeholder = input.getAttribute('placeholder') || '';
+  chk('its label and its placeholder are different sentences',
+      placeholder.length > 0 && placeholder !== (label ? label.textContent.trim() : ''),
+      label.textContent.trim() + ' / ' + placeholder);
+  const langs = ['en', 'fr', 'es', 'de', 'it', 'nl', 'ar'];
+  const T = w.eval('T');
+  const same = langs.filter(l => {
+    const bag = T[l] || {};
+    return !bag['sci.searchHint'] || bag['sci.searchHint'] === bag['sci.search'];
+  });
+  chk('the hint is a real translation in all seven languages, not a repeat',
+      same.length === 0, same.join(',') || 'seven distinct hints');
+  /* and the rail says it scrolls, instead of just cutting a chip in half */
+  const css = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+  const rail = /\.chips\.rail\{([^}]*)\}/g;
+  const masks = [];
+  let mm;
+  while((mm = rail.exec(css))) if(/mask-image/.test(mm[1])) masks.push(mm[1]);
+  chk('the scrolling filter rail fades at its edges instead of just cutting a chip',
+      masks.length > 0 && masks.every(b => /linear-gradient\(to right/.test(b)),
+      masks.length + ' masked block(s)');
+  /* and it does so without a second direction-specific rule: 8f allows exactly
+     one, and a fade is not worth spending it on */
+  chk('the fade needs no RTL patch — the rail mirrors itself',
+      !/\[dir="rtl"\][^{]*\.chips\.rail/.test(css));
+}
+
+/* ==================================================================== */
 group('8. Entry points from existing screens');
 {
   const { w, d } = boot();

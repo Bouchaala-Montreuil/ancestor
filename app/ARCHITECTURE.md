@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,488 headless checks and
+Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,508 headless checks and
 93 real-browser checks.
 
 ---
@@ -29,19 +29,28 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,488 checks — plus `tests/browser.js` (93 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,508 checks — plus `tests/browser.js` (93 real-Chromium checks),
 which needs a real Chrome and covers what jsdom cannot: WebGL, layout overflow at
 320/360/768/1280, a service-worker reload with the network severed, and the two
 failure strips — a refused write and a damaged record — on a 320 px phone in
 German and in Arabic, where they are longest and read right to left.
 
-**A note on that second suite.** It needs a Chromium binary, and the one used for
-the last green run lived outside the repository, so it does not survive a fresh
-checkout. Everything below was verified with it on 2026-10-28 (93/93). The
-changes of 2026-10-29 — 1,488 headless checks, all green — were not re-run
-through it, because no Chromium was reachable in that environment and its CDN is
-not on the allowlist. Treat the browser suite as green-as-of-that-run, not as
-green-as-of-HEAD, until `npm run test:browser` is run on a machine with Chrome.
+**Getting a browser for that second suite.** The obvious route,
+`npx puppeteer browsers install chrome`, pulls from Google's CDN, which is not
+reachable from every environment this project has been worked in — and the
+Chromium used for the first green run lived outside the repository, so it did not
+survive a fresh checkout. `tools/chromium.sh` fixes both: it fetches
+`@sparticuz/chromium` from the npm registry (which is reachable), decompresses the
+browser and the Amazon Linux libraries it links against, and exports
+`PUPPETEER_EXECUTABLE_PATH` and `LD_LIBRARY_PATH`:
+
+```
+source tools/chromium.sh && node tests/browser.js
+```
+
+Verified cold, from an empty `/tmp`, on 2026-10-29: **93/93**. The suite runs
+headless with SwiftShader, so the WebGL checks mean what they claim without a
+GPU.
 
 **Delivery.** `release/ancestor.html`, 2.5 MB, everything inlined including the
 woff2 and the three.js runtime. A service worker caches the file list, cache-first.
@@ -56,7 +65,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,488 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
+| S5 | Medium | Nothing ran the suites. 1,508 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
@@ -64,12 +73,14 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S10 | Medium | `body{overflow-x:hidden}` hides layout bugs instead of fixing them. | `css/app.css:168` | **fixed, removed 2026-10-28.** The rule is gone. Nothing needed it: 176 layouts (8 views × 7 languages × 320–1440 px) are clean without it, and so are the four surfaces that were never in that loop — a sheet, the planner mid-edit, a lesson and a toast, at 320 and 390 px, LTR and RTL. `tests/browser.js` now fails if any of them starts needing it. QA suite: 0 issues. |
 | S11 | Medium | 50 MB of split `.rar` delivery archives were tracked in git, for a product that is 2.5 MB. `*.rar` is in `.gitignore` but the files predate it. | `git ls-files \| grep rar` → 6 files | **fixed** — `git rm --cached` on all six; they stay on disk and ignored, and the index no longer carries them. The history still does: rewriting 52 MB of history to reclaim space is an owner decision, not a code one. |
 | S12 | Low | No CSP. Generated markup uses inline `onclick` in ~hundreds of places, so a CSP would need `unsafe-inline` — which is to say, there is no injection backstop if escaping ever slips. | `index.html` had no policy; 259 inline handlers | **fixed 2026-10-28.** The handlers are gone: markup names an action (`data-act="openSheet" data-a1="sleep"`) and one delegated listener per event kind calls it, through a table of 135 actions in `js/core/acts.js`. Nothing is parsed as code any more, so `index.html` can ship `script-src 'self' 'wasm-unsafe-eval'` with no `'unsafe-inline'` — and the bundle, which inlines its forty-three blocks, adds a `sha256` for each one plus one for the three.js runtime it materialises lazily. `'wasm-unsafe-eval'` is the narrow permission: it lets three.js build its decoders and still forbids `eval`. Tests: an injected `<script>` does not run, an injected `on*` attribute does not run, no source file carries a handler attribute, every action named in the markup is registered, and no registered action is dead. |
-| S13 | Low | No module boundaries. 589 globals, implicit load order. Not a correctness bug today; it is the ceiling on how big this can get. | — | **open, by choice** |
+| S13 | Low | No module boundaries. 759 top-level names, implicit load order. Not a correctness bug today; it is the ceiling on how far this codebase can be changed safely. | 43 scripts, one scope | **bounded 2026-10-29.** ES modules are not available — `index.html` must open from `file://`, and modules are blocked by CORS there — so the boundary is a contract instead of a syntax: `tools/modules.js` generates `js/MODULES.md` and `--check` fails on any name owned twice, any file not loaded, any loaded file missing, or any drift between the manifest and the code. It immediately found two names owned twice (`round1` in two engine files, `langLabel` in two i18n files); both were silent shadowing and both are now single-owner. To add a global you must now regenerate the manifest in the same commit. **Still open, by choice:** the 759 names themselves. Turning them into namespaces is a mechanical rewrite of every call site, it buys nothing the manifest does not already give, and it would have to be done without a test that can see the difference. |
 | S14 | Low | After a deploy, a tab can run yesterday's JS against this morning's cache: the service worker calls `skipWaiting()` and `clients.claim()`, and nothing tells the user to reload. | `sw.js` | **fixed 2026-10-28.** A `controllerchange` listener raises a strip in the header offering one action, Reload. A first install is not an update and is not announced; nothing reloads by itself, because a tab can be mid-session. The tab also asks `registration.update()` when it becomes visible again, which is the case that matters — a phone left open overnight. |
 | S15 | Low | No crash reporting and no build identity on screen. `LAST_UNCAUGHT` is kept in memory and dies with the tab. | `app.js` | **fixed 2026-10-28.** `APP_BUILD` is a visible constant, shown in Profile, and `sw.js` carries the same number inside its cache name — a test fails if the two disagree, so a deploy cannot half-happen. The last uncaught error is written to `ancestor.lastcrash.v1` with its build and time, shown in Profile behind a disclosure, and clearable. Still not sent anywhere: there is no server, and a crash report that phones home would be the one feature this product refuses. |
 | S16 | **High** | The recovery model handed the screen its factor labels as English sentences (`label:'Work performed'`), so the per-muscle estimate showed an English list inside French, Spanish, German, Italian, Dutch and Arabic. The interface was 7/7 translated; the number the user is asked to trust was not. | `js/engine/recovery.js` × 8 pushes | **fixed** — the engine emits `labelKey`/`noteKey` only (`rec.*`), and `screens.js` and `why.js` resolve them through `t()`. 16 new keys × 7 languages; `tests/run.js` fails if a part ever ships a sentence again or a key is missing a language, `tests/ui.js` renders the record in French and demands the English be gone. |
 | S17 | Medium | Four assertions could not fail. `x \|\| true` appeared three times (`design.js` built a variable with it and never read it; `premium.js` compared the live element with itself; `ui.js` OR'd the whole condition) and `qa_audit.js` contained a bare statement whose value was discarded. A green suite that contains checks which cannot go red is worse than a smaller suite. | `grep -n "\|\| true" tests/ tools/` | **fixed** — all four rewritten to assert something real. The nav-indicator check had also hidden a second fact: `go('body')` correctly hides the indicator, because Body owns no tab. Now asserted as intent, separately. |
 | S18 | Medium | The public landing page said "a suitably licensed human mesh costs more megabytes than the whole app" and never named the licence — while the app ships a 904 KB licensed mesh and embeds it in the single file. The attribution notice in `assets/` named four files that exist only in the upstream atlas and said nothing about the projection derived from the mesh, which ShareAlike also covers. | `site/template.html`, `assets/ANATOMY-ATTRIBUTION.txt` | **fixed** — the page's limitation is now "a training atlas, not a clinical model", the footer credits Z-Anatomy / BodyParts3D CC BY-SA 4.0, and `site/check.py` (4 new checks) fails if the credit disappears. The notice names what this repository actually ships and declares `figure-projected.json` and the generated figure block as Adapted Material; design group **8t** fails if any path it names is missing. |
+| S19 | Medium | A failure state that expired. When the 3D model could not mount, the app fell back to the flat figure correctly and then said why in a toast: four seconds later the user was in a representation they had not chosen, with no explanation and no way back that they would find. | `js/ui/screens.js` `onFail` | **fixed** — the reason is a state (`BODY_FALLBACK`), the strip sits above the figure it explains, and `retryLab` survives until a model actually mounts. Covered in `tests/ui.js` (jsdom has no WebGL, so the real failure path is the default one there) and photographed at 390 px in French. |
+| S20 | Medium | Two smaller things the screenshots caught. The Science search field set the same string as its `<label>` and as its `placeholder` — two labels, no instruction. And the filter rail announced that it scrolls only by slicing a chip in half at the viewport edge, which reads as a layout fault. | `js/ui/science.js`, `css/app.css` | **fixed** — `sci.searchHint` in seven languages for the placeholder, and a 14 px `mask-image` at both ends of the rail so what continues fades instead of breaking. The mask is direction-neutral on purpose: 8f allows exactly one `[dir="rtl"]` rule and this is not worth spending it on. `tests/science.js` group 7d holds both. |
 
 ---
 
@@ -142,7 +153,7 @@ now in CI.
   sessions — a century at three a week. Quota exhaustion is not the risk it looks
   like; the real cost is that every action re-serialises the whole blob (≈0.5 MB
   at 1,600 sessions), which is fine on a tap and would not be inside a loop.
-- **1,772 translation keys × 7 languages**, scanned green by `keyscan` across six
+- **1,775 translation keys × 7 languages**, scanned green by `keyscan` across six
   screens, every sheet, the exercise library and three learning modules.
 - **542 content keys, complete in all seven.** Measured, not claimed: the
   interface and the lessons are counted separately, and every language now

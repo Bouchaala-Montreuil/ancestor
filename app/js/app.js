@@ -393,6 +393,7 @@ window.ANC = {
   get bodySel(){ return BODY_SEL; },
   get bodySide(){ return BODY_SIDE; },
   get bodyMode(){ return BODY_MODE; },
+  get bodyFallback(){ return BODY_FALLBACK; },
   get labStruct(){ return LAB_STRUCT; },
   go: go,
   render: render

@@ -1775,6 +1775,35 @@ group('31. Every action named in the app resolves to a registered one');
 }
 
 /* ================================================================ */
+group('The 3D failure is a state with a way out, not a message that expires');
+{
+  /* In jsdom there is no WebGL, so mounting the model fails for real and the
+     app takes its documented fallback path: flat figure + a note saying why.
+     The note used to be a toast — gone in four seconds, leaving the user in a
+     mode they never chose and could not explain. */
+  w.switchLang('en');
+  w.go('body');
+  chk('mounting the model in a browser without WebGL falls back, not blanks',
+      w.ANC.bodyMode === 'flat' && w.ANC.bodyFallback !== null,
+      'mode=' + w.ANC.bodyMode + ' reason=' + w.ANC.bodyFallback);
+  const strip = $('.fig-fallback');
+  chk('the fallback is stated where the figure now is', !!strip && strip.getAttribute('role') === 'status');
+  chk('and it is not a raw key', !!strip && !/^lab3d\./.test(strip.textContent.trim()));
+  const retry = strip && strip.querySelector('button[data-act="retryLab"]');
+  chk('it carries the one action that could change the outcome', !!retry,
+      retry ? retry.textContent.trim() : 'no retry');
+  chk('the retry action is registered, not just drawn', !!w.ACTS.retryLab);
+  retry.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  chk('retrying asks for the model again', w.ANC.bodyMode === 'model' || w.ANC.bodyFallback !== null,
+      'mode=' + w.ANC.bodyMode);
+  /* choosing the flat figure on purpose is not a failure, so the note must go */
+  w.setBodyMode('flat');
+  chk('choosing the flat figure clears the failure note',
+      !!$('.fig-fallback') === false && w.ANC.bodyFallback === null);
+  w.setBodyMode('model');   // leaves the app in its default mode for later checks
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' UI TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed');

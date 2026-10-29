@@ -404,8 +404,15 @@ group('8. Anatomy Lab: lazy loading and honest fallback');
   chk('without WebGL the app falls back to the flat figure', w.ANC.bodyMode === 'flat',
       w.ANC.bodyMode);
   chk('the flat figure is actually rendered', d.querySelectorAll('.seg').length >= 12);
-  chk('the fallback reason is surfaced', /3D is not available/i.test(d.querySelector('#toast').textContent),
-      d.querySelector('#toast').textContent);
+  /* This used to be a toast, which is gone before the user has read it and
+     leaves them in a mode they did not choose. It is a state with an action
+     now, sitting above the figure it explains. */
+  const strip = d.querySelector('.fig-fallback');
+  chk('the fallback reason is surfaced where the figure is',
+      !!strip && /did not load/i.test(strip.textContent),
+      strip ? strip.textContent.trim().slice(0, 60) : 'no fallback strip');
+  chk('and it can be acted on rather than only read',
+      !!strip && !!strip.querySelector('button[data-act="retryLab"]'));
   chk('selection still works in the fallback',
       (w.selectMuscle('chest'), w.ANC.bodySel === 'chest'));
   chk('rotation still works in the fallback',

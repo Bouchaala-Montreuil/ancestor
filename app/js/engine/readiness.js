@@ -202,7 +202,8 @@ function stateClass(key){
 }
 
 function dedupe(arr){ const s = {}; const o = []; arr.forEach(x => { if(!s[x]){ s[x]=1; o.push(x); } }); return o; }
-function round1(v){ return Math.round(v*10)/10; }
+/* round1 lives in recovery.js, which loads first: it is the engine layer's
+   numeric helper, and a second copy here was silently shadowing it. */
 function round2(v){ return Math.round(v*100)/100; }
 
 if (typeof module !== 'undefined' && module.exports) {

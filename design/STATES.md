@@ -138,7 +138,7 @@ to paint its own label, and no token declared without a reader — which is how
 `--ease-spring`, `--line-hair`, `--nodata-tint` and `--burnt-deep` were found
 dead in a file that had been through five audits.
 
-The whole suite is 1,488 checks over ten files; `python3 build.py` plus
+The whole suite is 1,508 checks over ten files; `python3 build.py` plus
 `tools/smoke_dist.js` boots the built single file and repeats the walk there.
 
 ## What is not verified, and what this matrix cannot say
@@ -169,3 +169,15 @@ The whole suite is 1,488 checks over ten files; `python3 build.py` plus
   not built.
 - **RTL.** Arabic is a shipping language and the states above are laid out with
   logical properties, but no one has looked at the failure state in Arabic.
+
+---
+
+## The 3D model that will not mount (2026-10-29)
+
+| | |
+|---|---|
+| **Producer** | `noteLabFallback(reason)` — called from the lab's `onFail` with the reason (`no-webgl`, `download`, `runtime`, `render`, `no-host`). |
+| **What the user sees** | The flat figure, and a strip directly above it: the model did not load, this is the same data, one button: try again. |
+| **Way out** | `retryLab` asks for the model again; choosing "Figure plate" clears the note because that is a choice, not a failure. Success (`onReady`) clears it too. |
+| **Why it is not a toast** | It was one until today. A toast is gone in four seconds; the state it announced — you are in a representation you did not pick — is not. |
+| **Test** | `tests/ui.js`: the state exists in jsdom (no WebGL there), the strip carries a bound `retryLab`, and switching to the flat figure deliberately removes it. `tests/premium.js` asserts the reason is surfaced where the figure is. |

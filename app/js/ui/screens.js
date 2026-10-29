@@ -10,6 +10,12 @@ let BODY_SIDE = 'front';
 let BODY_SEL = null;      // selected muscle group
 let BODY_ZOOM = false;
 let BODY_MODE = 'model';  // 'model' = real 3D anatomy, 'flat' = 2D figure
+/* Set when the 3D model could not be mounted at all (no WebGL, download failed,
+   runtime missing). It is a STATE, not an event: the flat figure takes over, and
+   this keeps a visible, dismissable-by-fixing note until a model actually
+   mounts. It used to be a toast, which meant the explanation was gone four
+   seconds later and the user was left in flat mode with no idea why. */
+let BODY_FALLBACK = null;
 let BODY_LAYER = 'all';   // 'all' | 'superficial' | 'deep'
 let BODY_REGION = 'all';  // 'all' | model region key
 let LAB_STRUCT = null;    // the individual mesh selected in 3D, if any
@@ -899,6 +905,14 @@ Screens.body = function(){
        '<button class="chip sm ' + (BODY_SIDE==='front'?'on':'') + '" data-act="setSide" data-a1="front">' + esc(t('body.front')) + '</button>' +
        '<button class="chip sm ' + (BODY_SIDE==='back'?'on':'') + '" data-act="setSide" data-a1="back">' + esc(t('body.back')) + '</button></div>' +
        '</div>';
+  /* The reason the 3D view is missing belongs above the figure, not 600 px
+     below it: this is the first thing the eye reaches after the chips that
+     just failed to do anything. */
+  if(BODY_MODE === 'flat' && BODY_FALLBACK){
+    h += '<div class="fig-fallback" role="status">' +
+         '<span>' + esc(t('lab3d.fallback')) + '</span>' +
+         '<button class="btn quiet sm" data-act="retryLab">' + esc(t('lab3d.retry')) + '</button></div>';
+  }
   /* the 3D viewer mounts here, and owns its own loading / error states */
   h += '<div class="fig-wrap lab-host" id="labHost"' + (BODY_MODE==='model' ? '' : ' hidden') + '></div>';
   /* the flat figure stays mounted so selection, zoom and reset keep working
@@ -1128,7 +1142,21 @@ function labStructPanel(info){
 function setBodyMode(m){
   BODY_MODE = (m === 'flat') ? 'flat' : 'model';
   if(BODY_MODE === 'flat') destroyAnatomyLab();
+  /* Choosing the flat figure on purpose is not a failure, so the note goes. */
+  if(BODY_MODE === 'flat') BODY_FALLBACK = null;
   render();
+}
+/* The single producer of the fallback state. Kept as a function so the state
+   can be reached from a test without a browser that refuses WebGL for real. */
+function noteLabFallback(reason){
+  BODY_FALLBACK = reason || 'render';
+  BODY_MODE = 'flat';
+  destroyAnatomyLab();
+  render();
+}
+function retryLab(){
+  BODY_MODE = 'model';
+  render();               // the note survives until onReady proves the retry worked
 }
 function setSide(x){
   BODY_SIDE = x;
@@ -1223,6 +1251,7 @@ function bindAnatomyLab(){
   mountAnatomyLab(host, {
     onSelect: onLabStruct,
     onReady: () => {
+      BODY_FALLBACK = null;   // a real model mounted: the note has done its job
       labSetView(BODY_SIDE);
       labLayerFilter(BODY_LAYER);
       labRegionFilter(BODY_REGION);
@@ -1231,10 +1260,9 @@ function bindAnatomyLab(){
       if(n) toast(t('lab3d.ready', { n: n }), 'ok');
     },
     onFail: reason => {
-      /* Fall back to the flat figure rather than leaving an empty box. */
-      BODY_MODE = 'flat';
-      render();
-      toast(t('lab3d.error.' + reason) || t('lab3d.error.render'));
+      /* Fall back to the flat figure rather than leaving an empty box — and say
+         so where the figure now is, with the one action that could change it. */
+      noteLabFallback(reason);
     }
   });
 }

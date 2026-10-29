@@ -1396,6 +1396,17 @@ table.data tbody tr:last-child td{border-bottom:0}
   text-transform:uppercase;color:var(--tech-ink);line-height:1.6;
 }
 .fig-note{margin-top:var(--s3);border-top:var(--hair) solid var(--line-soft);padding-top:var(--s2)}
+/* The state the 3D model falls back from. It sits directly under the figure it
+   explains, at copy size rather than display size, and carries the retry: the
+   earlier version was a full-width black slab over the anatomy with no action,
+   for as long as it took the toast to expire. */
+.fig-fallback{
+  margin:0 0 var(--s2);display:flex;align-items:center;gap:var(--s3);
+  justify-content:space-between;flex-wrap:wrap;
+  border-inline-start:3px solid var(--warn);padding:var(--s2) var(--s3);
+  background:var(--recess);font-size:var(--fs-sm);color:var(--ink-2);
+}
+.fig-fallback .btn{flex:none}
 .fig-hint{
   margin-top:var(--s2);
   display:flex;align-items:center;justify-content:center;gap:5px;
@@ -1871,6 +1882,23 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .chips.rail::-webkit-scrollbar{display:none}
 .chips.rail .chip{flex:none}
+/* A chip cut in half by the viewport edge was the only signal that the rail
+   scrolls, and on its own it reads as a layout fault rather than as "there is
+   more". Masking BOTH ends is the affordance: it fades wherever the rail
+   continues, needs no direction-specific rule — 8f's "one exception, not a
+   patch list" still holds — and costs no markup. The first chip's leading edge
+   softens by 14 px, which is the price of that neutrality and is not visible
+   at rest on a 390 px phone. */
+.chips.rail{
+  /* the faded strips have to fall on empty space, not on the first chip: 14 px
+     of padding swallowed back by an equal negative margin keeps the rail's
+     edges where they were and leaves the mask covering nothing but itself */
+  padding-inline:14px;margin-inline:-14px;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 14px,
+                                     #000 calc(100% - 14px), transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0, #000 14px,
+                             #000 calc(100% - 14px), transparent 100%);
+}
 .mod-grid{display:grid;grid-template-columns:1fr;gap:var(--s3)}
 .mod-card{
   border:var(--hair) solid var(--line);padding:var(--s4) var(--s3);

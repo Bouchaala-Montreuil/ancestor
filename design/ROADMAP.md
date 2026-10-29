@@ -23,7 +23,7 @@ Everything below was verified against the code today, not remembered.
 | ~~**B2**~~ | ~~**Styling lives in JavaScript.**~~ **First pass done.** 358 inline attributes down to 59: margins, flex, text alignment, spacers and the repeating patterns now live in a closed utility layer in `app.css`. What is left is 30 pieces of geometry (a percentage width, a plotted top — data, not style) and ~29 single-use type sizes and colours, which belong to the typography pass, not to a sweep. | The CSS is the source of truth for layout again. | 0.5 d |
 | ~~**B3**~~ | ~~**The drawings use a hardcoded old palette.**~~ **Resolved.** State colours and the anatomy figure read the stylesheet through `token()`, and a sweep of the whole of `js/` finds **six** hex literals left in it — every one of them a *fallback* passed to `token()` (`token('ink', '#20211F')`), which is what the bridge is for, not a bypass. The 47 literal strokes were redrawn with the illustrations. `css/app.css` holds no hex at all inside the science, lesson or lab rules. | 0 ✅ |
 | ~~**B4**~~ | ~~**RTL is incomplete.**~~ **Resolved.** Zero physical `margin/padding/border-left|right` and zero `text-align:left|right` remain: all layout is logical (`inline-start/end`) and the two remaining `left:` values are `left:50%` centrings that are direction-neutral by construction. The language screen — now the first thing anyone sees — sets `dir` per row, so an Arabic name reads right-to-left inside an LTR page. | 0 ✅ |
-| **B5** | **The science and lab surfaces are under-designed, not undesigned.** Re-read today against the code (634 + 454 + 766 lines): none of the three has a hex literal or an inline style, all three draw from the token layer, and each has been photographed on screen. What is still true is that they are the least art-directed part of the product — their components were inherited rather than drawn (`DESIGN.md` §3.20–3.24 covers the parts that have been through a pass, not the whole). | It is a craft debt now, not a correctness one. | 2–3 d |
+| **B5** | **The science and lab surfaces are under-designed, not undesigned.** Re-read today against the code (634 + 454 + 766 lines): none of the three has a hex literal or an inline style, all three draw from the token layer, and each has been photographed on screen. What is still true is that they are the least art-directed part of the product — their components were inherited rather than drawn (`DESIGN.md` §3.20–3.24 covers the parts that have been through a pass, not the whole). | It is a craft debt now, not a correctness one. **Part paid 2026-10-29:** three defects found by photographing the surfaces at 390 px, not by re-reading them — a search field that set the same sentence as its label and its placeholder, a filter rail that announced itself only by cutting a chip in half at the viewport edge, and a 3D failure that was a toast (see §0.12). The remaining debt is taste, not breakage: which is why it is still 2–3 d and still needs a direction. | 2–3 d |
 | ~~**B6**~~ | ~~**Nothing has been seen.**~~ **Resolved.** A Chromium binary was reachable the whole time; every screen has now been rendered and inspected at 320–1440 px in all seven languages, plus print emulation for the sheet. It found what markup cannot: the readiness caption breaking mid-word in German at 320 px, the Arabic percentage reading `%44` (a bidi artefact — the number is now isolated), the printed block numbers black on black, and the sheet itself pinned to the bottom of a paginated page as a fixed 88 vh box. | 0 ✅ |
 
 *Fixed this pass:* two of my own accessibility rules were **dead code** — they were
@@ -657,3 +657,43 @@ page itself was not** — there was no browser when this was written, so `site/i
 structurally, numerically and by measurement of the real font metrics, and nobody
 has seen it composed. And `CASE_STUDY.md` says the same things the roadmap does,
 in one place, for a reader who is not going to open the repository.
+
+---
+
+## §0.12 What photographing the surfaces found (2026-10-29)
+
+B5 has been called "under-designed" for two passes without anyone naming a
+defect in it. So the screens were photographed at 390 px in French and Arabic —
+Science, the Body screen, Today, Progress, Profile — and the pictures were read
+rather than the code. Three things came out, all of them breakage rather than
+taste:
+
+1. **A field that named itself twice.** `sci.search` was set as the `<label>` and
+   again as the `placeholder`, so the hub printed `RECHERCHER` in 9 px mono, then
+   `Rechercher` in 28 px, in the same box. The placeholder is now a hint
+   (`sci.searchHint`, seven languages): "titre, mot-clé, exercice".
+
+2. **A rail that only said "scroll" by cutting a word.** The category filters are
+   one scrolling rail by design. A chip sliced in half at the viewport edge is
+   the only affordance, and on its own it reads as a layout fault. Both ends of
+   the rail are now masked (`mask-image`, 14 px) so whatever continues fades
+   instead of breaking. Deliberately *not* a `[dir="rtl"]` patch: 8f allows the
+   stylesheet exactly one of those, and a fade is not worth spending it on — the
+   mask is direction-neutral.
+
+3. **A failure state that expired.** When the 3D model could not mount — no
+   WebGL, failed download, missing runtime — the app fell back to the flat figure
+   correctly, then said why in a toast, which is gone in four seconds. What was
+   left was a mode the user never chose, with no explanation and no way back
+   except noticing a chip. It is now a state: a strip above the figure saying the
+   model did not load and that this is the same data, with one action,
+   `retryLab`, that survives until a model actually mounts. Choosing the flat
+   figure on purpose clears it, because that is not a failure.
+
+Two things were suspected and **not** fixed, because measuring them showed they
+were fine: the two heavy rules above the "Aujourd'hui" band are 24 px apart on
+purpose, and the "et 4 de plus" summary sits beside its pill with 5 px of clear
+space, not on top of it. That is the difference between looking at a screenshot
+and measuring one, and it is why the rest of B5 is still a taste question rather
+than a bug list: what remains is direction, spacing rhythm and illustration
+quality on three surfaces, and those need a person's eye, not a probe.
