@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- The policy is a backstop, not the defence: escaping is. It exists so
+     that one missed `esc()` cannot become script execution. `script-src`
+     has no unsafe-inline, which is why every handler in this app is a
+     delegated action (js/core/acts.js) rather than an onclick attribute.
+     'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
+     and still forbids eval() and new Function() in JavaScript.
+     build.py appends the sha256 of each inlined block. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>ANCESTOR — Recovery Engine</title>
+<meta name="theme-color" content="#20211F">
+<meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ancestor">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="img/favicon-32.png" sizes="32x32">
+<link rel="icon" href="img/ancestor-mark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<a class="skip-link" href="#screenBody">Skip to main content</a>
+
+<div class="app-boot" id="appBoot" role="status" aria-live="polite" aria-label="Loading ANCESTOR">
+  <div class="app-boot-in">
+    <p class="app-boot-k" id="bootKicker">RECOVERY ENGINE</p>
+    <strong class="app-boot-w">ANCESTOR</strong>
+    <!-- The mark draws itself: four strokes, then the fifth that closes the
+         set. That is the load. No spinner, no percentage. -->
+    <svg class="app-boot-mark" viewBox="0 0 24 24" aria-hidden="true">
+      <g fill="currentColor">
+        <rect class="bs bs1" x="3.2" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs2" x="8.267" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs3" x="13.333" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs4" x="18.4" y="4.2" width="2.4" height="15.6"/>
+        <rect class="bs bs5" x="2.30" y="10.8" width="19.4" height="2.4"
+              transform="rotate(-16 12 12)"/>
+      </g>
+    </svg>
+    <p class="app-boot-note" id="bootNote">Your log never leaves this device</p>
+    <!-- Two ways this veil can become a lie, both of them real: the browser
+         has scripts switched off, or the scripts are never delivered (an
+         offline cache miss, a proxy that serves the document and drops every
+         sub-resource). Either way no JavaScript can run to explain itself, so
+         the explanation is HTML and CSS. Neither line exists for the working
+         case: the noscript block is inert when scripting is on, and the slow line is
+         invisible until ten seconds have passed. -->
+    <noscript>
+      <p class="app-boot-fail">ANCESTOR needs JavaScript. Turn it on and reload.</p>
+    </noscript>
+    <p class="app-boot-slow">Still loading? Reload the page.</p>
+  </div>
+</div>
+
+<header>
+  <div class="hd">
+    <div class="wordmark">
+      <span class="mark" aria-hidden="true"></span>
+      <b id="wordmark">ANCESTOR</b>
+      <span id="ver"></span>
+    </div>
+    <div class="hd-right">
+      <span class="flag sm plain" id="netFlag" hidden></span>
+    </div>
+  </div>
+  <div class="store-flag" id="storeFlag" role="status" aria-live="polite" hidden>
+    <span class="sf-k" aria-hidden="true">!</span>
+    <span class="sf-t"></span>
+    <span class="sf-b"></span>
+    <button class="btn quiet sm sf-x" data-act="doExport"></button>
+  </div>
+  <!-- A deploy replaced the files under a tab that is still running the old
+       ones. Not an alarm: nothing is lost, but the two versions should not be
+       left mixed, so the offer to reload is made once and stays until taken. -->
+  <div class="update-flag" id="updateFlag" role="status" aria-live="polite" hidden>
+    <span class="uf-k" aria-hidden="true">↑</span>
+    <span class="uf-t"></span>
+    <span class="uf-b"></span>
+    <button class="btn quiet sm uf-x" data-act="reloadApp"></button>
+  </div>
+</header>
+
+<main class="shell" id="main" role="main" aria-label="Main content">
+  <div class="screens" id="screenBody"></div>
+</main>
+
+<div id="restHost"></div>
+<div id="sheetHost"></div>
+<div id="printRoot"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<nav id="nav" class="tabbar" role="navigation" aria-label="Primary"></nav>
+
+<script src="js/core/acts.js"></script>
+<script src="js/i18n/core.js"></script>
+<script src="js/i18n/ui.js"></script>
+<script src="js/i18n/exercises.js"></script>
+<script src="js/i18n/screens.js"></script>
+<script src="js/i18n/acc.js"></script>
+<script src="js/i18n/ar.js"></script>
+<script src="js/i18n/v2.js"></script>
+<script src="js/i18n/science.js"></script>
+<script src="js/i18n/science2.js"></script>
+<script src="js/i18n/ex_modes.js"></script>
+<script src="js/i18n/modes.js"></script>
+<script src="js/i18n/lesson_bodies_en.js"></script>
+<script src="js/i18n/lesson_bodies_fr.js"></script>
+<script src="js/i18n/lesson_bodies_es_de.js"></script>
+<script src="js/i18n/lesson_bodies_it_nl_ar.js"></script>
+<script src="js/i18n/print.js"></script>
+<script src="js/i18n/focus.js"></script>
+<script src="js/i18n/locale.js"></script>
+<script src="js/data/exercises.js"></script>
+<script src="js/data/ex_meta.js"></script>
+<script src="js/data/ex_logging.js"></script>
+<script src="js/data/anatomy_map.js"></script>
+<script src="js/data/modules.js"></script>
+<script src="js/data/evidence.js"></script>
+<script src="js/data/lessons.js"></script>
+<script src="js/core/time.js"></script>
+<script src="js/core/profile.js"></script>
+<script src="js/core/store.js"></script>
+<script src="js/engine/progression.js"></script>
+<script src="js/engine/recovery.js"></script>
+<script src="js/engine/readiness.js"></script>
+<script src="js/engine/program.js"></script>
+<script src="js/engine/why.js"></script>
+<script src="js/ui/components.js"></script>
+<script src="js/ui/screens.js"></script>
+<script src="js/ui/workout.js"></script>
+<script src="js/ui/printsheet.js"></script>
+<script src="js/ui/science.js"></script>
+<script src="js/ui/motion.js"></script>
+<script src="js/ui/modules.js"></script>
+<script src="js/ui/anatomy3d.js"></script>
+<!-- Lazy payloads. type="text/plain" so the browser never parses or executes
+     them on load; the Anatomy Lab materialises them on first open. -->
+<script type="text/plain" id="three-runtime" src="js/vendor/three-bundle.js"></script>
+<script type="text/plain" id="anatomy-glb" src="assets/anatomy-male-mobile.glb"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

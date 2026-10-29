@@ -1,0 +1,40 @@
+{
+  "packageId": "app.ancestor.training",
+  "host": "ancestor.app",
+  "name": "ANCESTOR",
+  "launcherName": "Ancestor",
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#20211F",
+  "themeColorDark": "#20211F",
+  "navigationColor": "#20211F",
+  "navigationColorDark": "#20211F",
+  "navigationDividerColor": "#C8C0B2",
+  "navigationDividerColorDark": "#20211F",
+  "backgroundColor": "#F1EBDD",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://ancestor.app/img/icon-512.png",
+  "maskableIconUrl": "https://ancestor.app/img/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0",
+  "appVersionCode": 1,
+  "shortcuts": [
+    { "name": "Log sleep", "short_name": "Sleep", "url": "/#sleep", "chosenIconUrl": "https://ancestor.app/img/icon-192.png" },
+    { "name": "Start session", "short_name": "Train", "url": "/#train", "chosenIconUrl": "https://ancestor.app/img/icon-192.png" }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://ancestor.app/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": { "enabled": false },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://ancestor.app/",
+  "orientationLock": false
+}

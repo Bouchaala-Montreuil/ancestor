@@ -1,0 +1,10 @@
+# dependencies + build output
+app/node_modules/
+app/dist/
+# the split archive the app was delivered in
+*.rar
+
+# python bytecode from the site checker
+__pycache__/
+*.pyc
+app/package-lock.json

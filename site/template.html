@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANCESTOR — a training record, not a slot machine</title>
+<meta name="description" content="Ancestor is a free, offline training record. It decides what to do today from what you actually lifted, and shows you its working. No account, no cloud.">
+<meta name="theme-color" content="#F1EBDD">
+<style>
+/* ============================================================================
+   ANCESTOR — landing page
+   Same language as the app: ivory paper, charcoal structure, one burnt accent,
+   condensed display over monospace annotation. No images, no requests. The
+   figures are the app's own drawings, copied out of the running DOM.
+
+   Type: Barlow Condensed 500/700, inlined (OFL 1.1, 24 KB). Cap height .700 em,
+   hence the .84 line-height on display sizes.
+   ========================================================================== */
+
+@font-face{
+  font-family:"Barlow Condensed";
+  font-style:normal;font-weight:500;font-display:swap;
+  src:url("data:font/woff2;base64,@FONT500@") format("woff2");
+}
+@font-face{
+  font-family:"Barlow Condensed";
+  font-style:normal;font-weight:700;font-display:swap;
+  src:url("data:font/woff2;base64,@FONT700@") format("woff2");
+}
+
+:root{
+  --charcoal:#20211F; --ivory:#F1EBDD; --burnt:#D66A3A; --tech:#77796F; --line:#C8C0B2;
+  --surface:#FCF9F2; --recess:#E7E0CF;
+  --ink:#20211F; --ink-2:#3F4139; --ink-3:#5B5D54; --tech-ink:#636559;
+  --burnt-text:#A8461F; --burnt-tint:rgba(214,106,58,.12); --burnt-tint-2:rgba(214,106,58,.24);
+  --ok:#46603F; --warn:#8A5E12; --alert:#963F28;
+
+  --f-display:"Barlow Condensed","Arial Narrow","Helvetica Neue Condensed",system-ui,sans-serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+
+  --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px; --s9:96px;
+  --shell:1160px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ivory);color:var(--ink);
+  font-family:var(--f-body);font-size:16px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+/* the paper grain, the same 3 % multiply pass the app carries */
+body::after{
+  content:"";position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.03;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>")
+}
+a{color:var(--burnt-text);text-decoration:none;border-bottom:1px solid var(--burnt-tint-2)}
+a:hover{border-bottom-color:var(--burnt-text)}
+p{margin:0 0 var(--s3)}
+strong{font-weight:600}
+::selection{background:var(--burnt-tint-2)}
+
+.wrap{max-width:var(--shell);margin:0 auto;padding:0 var(--s5)}
+@media (min-width:900px){.wrap{padding:0 var(--s6)}}
+
+.mono{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tech-ink);
+}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------------------------------------------------------------- MASTHEAD */
+.top{
+  position:sticky;top:0;z-index:50;background:var(--ivory);
+  border-bottom:2px solid var(--ink);
+}
+.top .wrap{display:flex;align-items:center;gap:var(--s5);min-height:64px}
+.brand{display:inline-flex;align-items:center;gap:10px;border:0;color:var(--ink)}
+.brand svg{width:22px;height:22px;display:block}
+.brand b{
+  font-family:var(--f-display);font-weight:700;font-size:20px;
+  letter-spacing:.14em;line-height:1;
+}
+.top nav{margin-inline-start:auto;display:none;gap:var(--s4);white-space:nowrap}
+@media (min-width:1000px){.top nav{display:flex}}
+.top .btn{margin-inline-start:auto}
+@media (min-width:1000px){.top .btn{margin-inline-start:0}}
+.top nav a{
+  border:0;color:var(--ink-3);font-family:var(--f-mono);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;padding:6px 0;
+}
+.top nav a:hover{color:var(--ink);box-shadow:inset 0 -2px 0 var(--burnt-text)}
+
+/* ------------------------------------------------------------------ BUTTON */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:48px;padding:0 var(--s5);border:2px solid var(--ink);border-radius:0;
+  background:transparent;color:var(--ink);cursor:pointer;
+  font-family:var(--f-display);font-weight:700;font-size:15px;
+  letter-spacing:.1em;text-transform:uppercase;line-height:1;
+  transition:background 120ms var(--ease),color 120ms var(--ease),border-color 120ms var(--ease);
+}
+.btn:hover{background:var(--ink);color:var(--ivory)}
+.btn.primary{background:var(--ink);color:var(--ivory)}
+.btn.primary:hover{background:var(--burnt);border-color:var(--burnt);color:#1A0E08}
+/* 4.96:1 on paper — a focus ring nobody can see is not a focus ring */
+.btn:focus-visible{outline:2px solid var(--burnt-text);outline-offset:3px}
+.btn.sm{min-height:40px;font-size:13px;padding:0 var(--s4)}
+
+/* -------------------------------------------------------------------- HERO */
+.hero-kicker{margin:0}
+.hero{padding:var(--s8) 0 var(--s7);position:relative;overflow:hidden}
+@media (min-width:900px){.hero{padding:var(--s9) 0 var(--s8)}}
+.hero .grid{display:grid;gap:var(--s7);align-items:end}
+@media (min-width:900px){
+  .hero .grid{grid-template-columns:1.2fr .8fr;gap:var(--s8)}
+}
+h1{
+  font-family:var(--f-display);font-weight:700;
+  /* Measured, not guessed: "encouragement." sets 5.93x its size in Barlow
+     Condensed 700, so the clamp is capped where the longest word still clears
+     the hero column (see site/measure_type.py). */
+  font-size:clamp(42px,8.4vw,100px);line-height:.86;letter-spacing:-.015em;
+  margin:var(--s4) 0 var(--s4);text-wrap:balance;
+}
+h1 em{font-style:normal;color:var(--burnt-text)}
+.deck{
+  font-size:clamp(17px,1.4vw,20px);line-height:1.55;color:var(--ink-2);
+  max-width:52ch;margin:0 0 var(--s5);
+}
+.acts{display:flex;flex-wrap:wrap;gap:var(--s3);margin-bottom:var(--s5)}
+.meta{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s5);border-top:1px solid var(--line);padding-top:var(--s3)}
+.meta span{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--tech-ink)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* a plate: the frame everything drawn lives in */
+.plate{margin:0;background:var(--surface);border:1px solid var(--line);padding:var(--s5)}
+.plate.gap{margin-top:var(--s6)}
+.plate svg{display:block;width:100%;height:auto;overflow:visible}
+.plate figcaption{
+  margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--line);
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tech-ink);display:flex;justify-content:space-between;gap:var(--s4);
+}
+.hero-fig .plate{padding:var(--s6) var(--s5)}
+
+/* ---------------------------------------------------------------- SECTIONS */
+section{scroll-margin-top:80px}
+.sect{padding:var(--s8) 0}
+.sect-h{
+  border-top:2px solid var(--ink);padding-top:var(--s4);
+  display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap;
+  margin-bottom:var(--s6);
+}
+.sect-h .n{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;
+  color:var(--burnt-text);font-weight:600;
+}
+.sect-h h2{
+  font-family:var(--f-display);font-weight:700;font-size:clamp(30px,4.4vw,54px);
+  line-height:.92;letter-spacing:-.01em;margin:0;
+}
+.sect-h p{
+  margin:0 0 0 auto;max-width:44ch;font-size:15px;color:var(--ink-3);line-height:1.5;
+}
+@media (max-width:899px){.sect-h p{margin-left:0;max-width:none}}
+
+/* --------------------------------------------------------------- INK BAND */
+.band{background:var(--ink);color:var(--ivory);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.band .sect-h{border-top-color:var(--ivory)}
+.band .sect-h h2{color:var(--ivory)}
+.band .sect-h .n{color:var(--burnt)}
+.band .sect-h p{color:#C9C3B4}
+.band a{color:var(--ivory);border-bottom-color:rgba(241,235,221,.35)}
+.band a:hover{border-bottom-color:var(--burnt)}
+.band .mono{color:#A9A395}
+.band .plate{background:#1A1B19;border-color:#3A3B36}
+.band .plate figcaption{border-top-color:#3A3B36;color:#A9A395}
+
+.claims{display:grid;gap:var(--s6);margin:0}
+@media (min-width:900px){.claims{grid-template-columns:repeat(3,1fr);gap:var(--s6)}}
+.claim{border-top:1px solid #4A4B44;padding-top:var(--s4)}
+.claim .k{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;
+  color:var(--burnt);text-transform:uppercase;display:block;margin-bottom:var(--s3);
+}
+.claim h3{
+  font-family:var(--f-display);font-weight:700;font-size:clamp(22px,2.4vw,28px);
+  line-height:1.02;margin:0 0 var(--s3);color:var(--ivory);
+}
+.claim p{margin:0;color:#C9C3B4;font-size:15px;line-height:1.6}
+
+/* ------------------------------------------------------------------- ROWS */
+.rows{display:grid;gap:0;border-top:1px solid var(--line)}
+.row{
+  display:grid;gap:var(--s4);padding:var(--s5) 0;border-bottom:1px solid var(--line);
+  align-items:start;
+}
+@media (min-width:900px){
+  .row{grid-template-columns:120px 1fr 280px;gap:var(--s6);align-items:center}
+}
+.row .tab{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tech-ink);
+}
+.row h3{
+  font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1;
+  margin:0 0 6px;letter-spacing:.01em;text-transform:uppercase;
+}
+.row p{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2);max-width:60ch}
+.row .fig{border:1px solid var(--line);background:var(--surface);padding:var(--s4)}
+/* a wide row puts its plate under the text at full measure, so a chart is read
+   at a size where its axis means something */
+@media (min-width:900px){
+  .row.wide{grid-template-columns:120px 1fr;align-items:start}
+  .row.wide .fig{grid-column:2;margin-top:var(--s4)}
+}
+.row .fig.tall{display:flex;align-items:center;justify-content:center;min-height:170px}
+.row .fig.tall svg{height:170px;width:auto;max-width:100%}
+.row .fig svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* -------------------------------------------------------------- SPECIMENS */
+.spec{display:grid;gap:var(--s6)}
+@media (min-width:820px){.spec{grid-template-columns:1fr 1fr}}
+.spec .plate{display:flex;flex-direction:column;gap:var(--s4)}
+.spec h3{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tech-ink);margin:0;
+}
+
+.aa{display:flex;align-items:baseline;gap:var(--s4)}
+.aa b{font-family:var(--f-display);font-weight:700;font-size:clamp(64px,7vw,104px);line-height:.8;letter-spacing:-.02em}
+.aa i{font-family:var(--f-display);font-style:normal;font-weight:500;font-size:clamp(52px,6vw,84px);line-height:.8;color:var(--ink-3)}
+.notes{display:grid;gap:6px;margin-top:var(--s3)}
+.notes div{display:flex;justify-content:space-between;gap:var(--s4);border-top:1px solid var(--line);padding-top:6px}
+.notes span:first-child{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--tech-ink)}
+.notes span:last-child{font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+
+.swatches{display:grid;gap:0;border-top:1px solid var(--line)}
+.sw{display:grid;grid-template-columns:44px 1fr auto;gap:var(--s4);align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.sw i{display:block;height:34px;width:44px;border:1px solid rgba(32,33,31,.14)}
+.sw b{font-family:var(--f-display);font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.04em}
+.sw span{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;color:var(--tech-ink);text-transform:uppercase}
+
+/* measured text: one class, five measures */
+.lede{font-size:15px;line-height:1.6;color:var(--ink-2);margin:0;max-width:46ch}
+.lede.big{font-size:17px;line-height:1.55;max-width:54ch}
+.lede.w36{max-width:36ch}.lede.w44{max-width:44ch}.lede.w70{max-width:70ch;margin-top:var(--s4)}
+.lede + .lede{margin-top:var(--s3)}
+
+/* marks at two sizes, and the row that holds one beside its note */
+.mark-lg{width:96px;color:var(--ink)}
+.mark-lg svg{width:100%;height:auto;display:block}
+.mark-sm{width:24px;color:var(--ink)}
+.mark-sm svg{width:24px;height:24px;display:block}
+.mark-row{display:flex;align-items:center;gap:var(--s5);flex-wrap:wrap}
+
+.plate-k{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tech-ink);margin:0 0 var(--s4);font-weight:400;
+}
+.chart-wrap{display:grid;gap:var(--s6)}
+.paper{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.push{margin-inline-start:auto}
+.mono.tight{letter-spacing:.06em;text-transform:none;color:var(--ink-2)}
+.col-h{margin-bottom:var(--s3)}
+
+/* a schematic of the A4 record: rules and blocks, no screenshot */
+.mock{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mock span{display:block}
+.mock .m-head{grid-column:1/-1;height:10px;background:var(--ink)}
+.mock .m-block{height:74px;border:1px solid var(--line)}
+.mock .m-line{grid-column:1/-1;height:6px;background:var(--line)}
+.mock .w72{width:72%} .mock .w84{width:84%} .mock .w56{width:56%}
+.mock .w64{width:64%} .mock .w78{width:78%}
+.mock .m-note{grid-column:1/-1;height:44px;border:1px solid var(--line);border-left:3px solid var(--burnt)}
+
+/* the diagrams on a sheet */
+.sheet{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s5)}
+.sheet figure{margin:0}
+.sheet svg{display:block;width:100%;height:auto}
+.sheet figcaption{
+  margin-top:var(--s2);font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--tech-ink);border-top:1px solid var(--line);padding-top:6px;
+}
+
+/* kinematic + chart grammar (lifted from the app) */
+.k-i{fill:var(--ink);stroke:var(--ink)}
+.k-b{fill:var(--burnt);stroke:var(--burnt)}
+.k-r{stroke:var(--line);fill:none}
+.band .k-i{fill:var(--ivory);stroke:var(--ivory)}
+.band .k-r{stroke:#4A4B44}
+.dv-axis{stroke:var(--ink);stroke-width:2;fill:none}
+.dv-grid{stroke:rgba(200,192,178,.55);stroke-width:1;fill:none}
+.dv-ytick,.dv-xtick{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.04em;fill:var(--tech-ink)}
+.dv-xtick{font-size:9px;letter-spacing:.08em}
+.dv-dot{fill:var(--ink);stroke:none}
+.dv-dot.best{fill:var(--burnt);stroke:var(--surface);stroke-width:2}
+.chart-path{fill:none;stroke:var(--burnt);stroke-width:2;stroke-linejoin:miter;stroke-linecap:butt}
+.chart-bar{fill:var(--burnt)}
+.dv-value{font-family:var(--f-mono);font-size:9px;fill:var(--ink-2)}
+.chart-pt{fill:none;stroke:none}
+.band .dv-axis{stroke:var(--ivory)}
+.band .dv-dot{fill:var(--ivory)}
+.band .dv-dot.best{fill:var(--burnt);stroke:#1A1B19}
+
+/* --------------------------------------------------------------- THE LIST */
+.limits{counter-reset:l;display:grid;gap:0;border-top:1px solid var(--line);margin:0;padding:0;list-style:none}
+.limits li{
+  counter-increment:l;display:grid;grid-template-columns:auto 1fr;gap:var(--s4);
+  padding:var(--s4) 0;border-bottom:1px solid var(--line);
+}
+.limits li::before{
+  content:counter(l,decimal-leading-zero);
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--burnt-text);
+  padding-top:4px;
+}
+.limits b{display:block;font-family:var(--f-display);font-weight:700;font-size:19px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:2px}
+.limits p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.55;max-width:72ch}
+
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s5);margin:0}
+@media (min-width:760px){.facts{grid-template-columns:repeat(4,1fr)}}
+.fact b{
+  display:block;font-family:var(--f-display);font-weight:700;
+  font-size:clamp(38px,5vw,58px);line-height:.9;letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+}
+.fact span{display:block;margin-top:6px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink)}
+.band .fact b{color:var(--ivory)}
+.band .fact span{color:#A9A395}
+
+/* ------------------------------------------------------------------ FOOTER */
+footer{border-top:2px solid var(--ink);padding:var(--s7) 0 var(--s8);background:var(--recess)}
+footer .top-line{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s5)}
+footer .top-line .mark-sm svg{width:24px;height:24px;display:block}
+footer .top-line b{font-family:var(--f-display);font-weight:700;font-size:24px;letter-spacing:.12em}
+footer .cols{display:grid;gap:var(--s5)}
+@media (min-width:820px){footer .cols{grid-template-columns:repeat(3,1fr)}}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+footer ul a{border:0;font-size:14px;color:var(--ink-2)}
+footer ul a:hover{color:var(--burnt-text)}
+footer .fine{
+  margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line);
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;color:var(--tech-ink);
+  display:flex;flex-wrap:wrap;gap:var(--s3) var(--s5);justify-content:space-between;
+}
+footer .fine a{border:0;color:var(--tech-ink);text-decoration:underline;text-decoration-color:var(--line)}
+footer .fine a:hover{color:var(--burnt-text)}
+
+/* skip link */
+.skip{
+  position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--ivory);
+  padding:12px 16px;z-index:200;
+}
+.skip:focus{left:var(--s4);top:var(--s4)}
+
+/* ------------------------------------------------------------------ MOTION */
+@media (prefers-reduced-motion:no-preference){
+  .hero .reveal{animation:rise 520ms var(--ease) both}
+  .hero .reveal:nth-child(2){animation-delay:70ms}
+  @keyframes rise{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+  .chart-path{stroke-dasharray:1000;animation:draw 900ms var(--ease) both}
+  @keyframes draw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+}
+@media print{
+  body::after{display:none}
+  .top{position:static}
+  a{color:var(--ink)}
+  .band{background:#fff;color:#20211F}
+  .band .sect-h p,.band .claim p,.band .fact span,.band .mono{color:#3F4139}
+  .band .sect-h{border-top-color:#20211F}
+  .band .sect-h h2,.band .fact b,.band .claim h3{color:#20211F}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Ancestor, top of page">
+      @MARK@<b>ANCESTOR</b>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#argument">Argument</a>
+      <a href="#app">The app</a>
+      <a href="#system">System</a>
+      <a href="#record">Record</a>
+      <a href="#limits">Limits</a>
+    </nav>
+    <a class="btn sm primary" href="../app/index.html">Open the app</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============================================================== HERO -->
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <p class="mono reveal hero-kicker">Free · offline · no account · no cloud</p>
+          <h1 class="reveal">Evidence,<br>not <em>encouragement</em>.</h1>
+          <p class="deck reveal">
+            Ancestor is a training record for people whose week does not start on
+            Monday. It decides what to do today from what you actually lifted,
+            then shows you the working — the sets, the effort, the recovery
+            estimate, and the assumptions inside it.
+          </p>
+          <div class="acts reveal">
+            <a class="btn primary" href="../app/index.html">Open the app</a>
+            <a class="btn" href="../app/release/ancestor.html">The single file</a>
+          </div>
+          <div class="meta">
+            <span><b>2.5 MB</b> single file</span>
+            <span><b>68</b> exercises</span>
+            <span><b>7</b> languages, one RTL</span>
+            <span><b>0</b> network requests</span>
+          </div>
+        </div>
+        <div class="hero-fig">
+          <figure class="plate">
+            @FIG_PUSH@
+            <figcaption><span>Fig. 01 — horizontal push</span><span>140 × 94</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================== ARGUMENT -->
+  <section class="band sect" id="argument">
+    <div class="wrap">
+      <div class="sect-h">
+        <span class="n">01</span>
+        <h2>The argument</h2>
+        <p>Most training apps are slot machines. They measure the wrong thing, in public, with someone else's data.</p>
+      </div>
+      <div class="claims">
+        <div class="claim">
+          <span class="k">Streaks</span>
+          <h3>A streak measures compliance, not adaptation.</h3>
+          <p>Seven days in a row says you opened an app. It does not say you
+             recovered, and it cannot tell you that a fourth heavy squat session
+             this week is a mistake.</p>
+        </div>
+        <div class="claim">
+          <span class="k">Decisions</span>
+          <h3>A plan that cannot say why is a guess.</h3>
+          <p>Today is <b>TRAIN</b>, <b>MODIFY</b> or <b>REST</b>, with the
+             reasons listed: last session's effort, the muscle's recovery
+             estimate, your declared sleep, your limitations.</p>
+        </div>
+        <div class="claim">
+          <span class="k">Ownership</span>
+          <h3>Your record should outlive the server.</h3>
+          <p>No account, no sync, no telemetry. The log is a file on your phone
+             that you can export, print on A4, and still read in ten years.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================== APP -->
+  <section class="sect" id="app">
+    <div class="wrap">
+      <div class="sect-h">
+        <span class="n">02</span>
+        <h2>Six tabs, one job each</h2>
+        <p>No home feed, no recommendations, no social layer. Every tab answers
+           one question and then stops.</p>
+      </div>
+
+      <div class="rows">
+        <div class="row">
+          <span class="tab">Today</span>
+          <div>
+            <h3>What do I do today?</h3>
+            <p>A decision, not a prompt. Training readiness from the log: the
+               muscle groups still recovering, the load you have actually been
+               handling, and the sessions you have missed. Then, if the answer is
+               <em>train</em>, the session it recommends.</p>
+          </div>
+          <div class="fig">@FIG_SQUAT@</div>
+        </div>
+
+        <div class="row">
+          <span class="tab">Session</span>
+          <div>
+            <h3>Log it in one action per set.</h3>
+            <p>Weight, reps, effort — one press each, large targets, a rest timer
+               that keeps running when the phone locks. A draft survives an
+               interruption, because a session logged in a gym basement is a
+               session logged without signal.</p>
+          </div>
+          <div class="fig">@FIG_BENCH@</div>
+        </div>
+
+        <div class="row">
+          <span class="tab">Body</span>
+          <div>
+            <h3>The muscle is the unit of recovery.</h3>
+            <p>Front and back views, twelve muscle groups, tap to select. Each
+               one carries its last recorded work, the exercises that contribute
+               to it, and a recovery estimate with every factor and multiplier
+               written out.</p>
+          </div>
+          <div class="fig tall">@FIG_BODY@</div>
+        </div>
+
+        <div class="row wide">
+          <span class="tab">Progress</span>
+          <div>
+            <h3>The chart has an axis you can read.</h3>
+            <p>Estimated 1RM and volume over time, plus a personal-record board.
+               Every plotted value is one you can trace back to a set you
+               logged.</p>
+          </div>
+          <div class="fig">@FIG_LINE@</div>
+        </div>
+
+        <div class="row">
+          <span class="tab">Science</span>
+          <div>
+            <h3>Eleven lessons, and the references.</h3>
+            <p>Effort, proximity to failure, volume, frequency, progression,
+               protein. Written to be read once, with citations you can check,
+               and an explicit statement of what the evidence cannot settle.</p>
+          </div>
+          <div class="fig">@FIG_PULL@</div>
+        </div>
+
+        <div class="row wide">
+          <span class="tab">Profile</span>
+          <div>
+            <h3>Yours to leave with.</h3>
+            <p>Goal, equipment, limitations, units, language. Export the whole
+               record as JSON, import it on a new phone, or erase it — one
+               button, no confirmation theatre, no copy retained anywhere,
+               because there is nowhere to retain it.</p>
+          </div>
+          <div class="fig">@FIG_BARS@</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ SYSTEM -->
+  <section class="sect" id="system">
+    <div class="wrap">
+      <div class="sect-h">
+        <span class="n">03</span>
+        <h2>The system</h2>
+        <p>One direction, five tokens, two typefaces, and a drawing grammar that
+           every diagram and chart obeys. It is documented, not remembered.</p>
+      </div>
+
+      <div class="spec">
+        <figure class="plate">
+          <h3>Type</h3>
+          <div class="aa"><b>Aa</b><i>Aa</i></div>
+          <p class="lede w44">
+            Display is <strong>Barlow Condensed</strong> 500 and 700 — 24 KB of
+            woff2, inlined, OFL. Cap height 0.700 em, so display sets at 0.84
+            line-height and still breathes. Body is the system face: no second
+            download. Every number, unit, id and annotation is monospace.
+          </p>
+          <div class="notes">
+            <div><span>Display</span><span>Barlow Condensed 700 · 0.84 lh</span></div>
+            <div><span>Annotation</span><span>Mono · 10 px · 0.16 em</span></div>
+            <div><span>Figures</span><span>Tabular · same width per digit</span></div>
+          </div>
+          <figcaption><span>Fig. 02 — two faces, one voice</span><span>OFL 1.1</span></figcaption>
+        </figure>
+
+        <figure class="plate">
+          <h3>Colour</h3>
+          <div class="swatches">
+            <div class="sw"><i style="background:#20211F"></i><b>Charcoal</b><span>#20211F · structure</span></div>
+            <div class="sw"><i style="background:#F1EBDD"></i><b>Ivory</b><span>#F1EBDD · page</span></div>
+            <div class="sw"><i style="background:#D66A3A"></i><b>Burnt</b><span>#D66A3A · accent</span></div>
+            <div class="sw"><i style="background:#77796F"></i><b>Technical</b><span>#77796F · annotation</span></div>
+            <div class="sw"><i style="background:#C8C0B2"></i><b>Line</b><span>#C8C0B2 · hairline</span></div>
+          </div>
+          <p class="lede w44">
+            Burnt orange is never decoration. It is the primary action, the
+            selected state, the one data series, and the arrow that says where
+            the force goes. If two things on a screen are burnt, one of them is
+            wrong.
+          </p>
+          <figcaption><span>Fig. 03 — five values, no tints beyond these</span><span>WCAG AA+</span></figcaption>
+        </figure>
+
+        <figure class="plate">
+          <h3>The mark</h3>
+          <div class="mark-row">
+            <div class="mark-lg">@MARK_LARGE@</div>
+            <p class="lede w36">
+              A tally: four strokes of recorded work, and the fifth that closes
+              the set. Drawn from six numbers on a 24 grid — margin 3.2, stroke
+              2.4, gap 2.667, verticals 4.2→19.8, slash 19.4 at −16°.
+            </p>
+          </div>
+          <div class="notes">
+            <div><span>Mark</span><span>Six numbers, every size</span></div>
+            <div><span>Outputs</span><span>16 px favicon → 512 px icon</span></div>
+            <div><span>States</span><span>Inked · blank · broken</span></div>
+          </div>
+          <figcaption><span>Fig. 04 — the only illustration of itself</span><span>24 grid</span></figcaption>
+        </figure>
+
+        <figure class="plate">
+          <h3>Drawings</h3>
+          <div class="sheet">
+            <figure>@KIN_SQUAT@<figcaption>Squat</figcaption></figure>
+            <figure>@KIN_HINGE@<figcaption>Hinge</figcaption></figure>
+            <figure>@KIN_PULL@<figcaption>Vertical pull</figcaption></figure>
+          </div>
+          <p class="lede">
+            Eleven movement patterns from one grammar: body 3.2 with square
+            caps, joint 3.2 square, head 11 square, one burnt force arrow with a
+            drawn head, one dashed range arc. Curves appear only in the arc.
+          </p>
+          <figcaption><span>Fig. 05 — one grammar, eleven patterns</span><span>140 × 94</span></figcaption>
+        </figure>
+      </div>
+
+      <figure class="plate gap">
+        <h3 class="plate-k">Charts</h3>
+        <div class="chart-wrap">
+          @FIG_LINE_BIG@
+        </div>
+        <p class="lede w70">
+          A scale rounded at both ends — <span class="mono tight">40 45 50 55</span>,
+          never <span class="mono tight">36 52 68 84 100</span>. Grid at 1 px, baseline at 2 px,
+          one accent for the series, solid dots, and the value printed on the mark
+          rather than in a second row of labels.
+        </p>
+        <figcaption><span>Fig. 06 — the same chart as the app</span><span>niceScale(4)</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================================================ RECORD -->
+  <section class="sect paper" id="record">
+    <div class="wrap">
+      <div class="sect-h">
+        <span class="n">04</span>
+        <h2>The record leaves the phone</h2>
+        <p>An app that only exists on a screen is a rental. Ancestor prints an
+           A4 training record from its own engine.</p>
+      </div>
+      <div class="spec">
+        <div>
+          <p class="lede big">
+            The sheet is generated by the same functions that draw the screen —
+            no screenshot, no second layout. Session log, load and volume,
+            personal records, the recovery reasoning, and a footer that says
+            what the page cannot prove.
+          </p>
+          <p class="lede big">
+            It is also how the app is tested: if the printed record and the
+            screen disagree, one of them is lying, and the tests say which.
+          </p>
+          <p><a href="../design/print-sheet-live.html">See the A4 record as the app renders it →</a></p>
+        </div>
+        <figure class="plate">
+          <div class="mock" aria-hidden="true">
+            <span class="m-head"></span>
+            <span class="m-block"></span><span class="m-block"></span>
+            <span class="m-line"></span>
+            <span class="m-line w72"></span>
+            <span class="m-line w84"></span>
+            <span class="m-line w56"></span>
+            <span class="m-note"></span>
+            <span class="m-line w64"></span>
+            <span class="m-line w78"></span>
+          </div>
+          <figcaption><span>Fig. 07 — A4, 210 × 297 mm</span><span>Print stylesheet</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= FACTS -->
+  <section class="band sect" id="facts">
+    <div class="wrap">
+      <div class="sect-h">
+        <span class="n">05</span>
+        <h2>What is verified</h2>
+        <p>Every claim on this page has a test behind it, and the tests are in
+           the repository.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><b>1,466</b><span>checks across 10 suites</span></div>
+        <div class="fact"><b>14</b><span>evidence records, with limitations</span></div>
+        <div class="fact"><b>11</b><span>lessons, written once</span></div>
+        <div class="fact"><b>0</b><span>external requests at runtime</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ LIMITS -->
+  <section class="sect" id="limits">
+    <div class="wrap">
+      <div class="sect-h">
+        <span class="n">06</span>
+        <h2>What it does not do</h2>
+        <p>The honest list. It is shorter than most, and it is inside the
+           product as well as on this page.</p>
+      </div>
+      <ol class="limits">
+        <li>
+          <div>
+            <b>A training atlas, not a clinical model</b>
+            <p>The anatomy is a real, licensed mesh — 221 meshes, 218 named
+               muscles, 904 KB, CC BY-SA 4.0 — rotatable in the app, and
+               projected into the flat figure when you want to tap a region
+               instead of spin a body. What it is not: a medical model. It has
+               no tissue detail, no pathology, no individual variation, and its
+               colours are training estimates, never measured activation.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <b>An installable PWA, not a store app</b>
+            <p>It installs from the browser and runs offline. There is no signed
+               build in a store; that is a distribution decision, not a design
+               one, and it is stated in the About screen.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <b>No cloud, so no sync</b>
+            <p>One phone, one file. Export and import are the whole of the
+               migration story. The UI never says “synced”, because nothing is.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <b>Recovery is an estimate, not a measurement</b>
+            <p>It is computed from logged work and declared sleep, and every
+               factor is printed next to the number. There is no wearable and no
+               claim to one.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <b>It has not been photographed on a device yet</b>
+            <p>Every screen here was drawn from markup and verified by rendering
+               the real DOM. Type overflow at 320 px is checked; how it feels in
+               a gym is not.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="top-line">
+      <span class="mark-sm">@MARK@</span>
+      <b>ANCESTOR</b>
+      <span class="mono push">Performance Lab · v1.0</span>
+    </div>
+    <div class="cols">
+      <div>
+        <p class="mono col-h">The product</p>
+        <ul>
+          <li><a href="../app/index.html">Open the app</a></li>
+          <li><a href="../app/release/ancestor.html">The single file (2.5 MB)</a></li>
+          <li><a href="../app/README.md">Read the README</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="mono col-h">The design</p>
+        <ul>
+          <li><a href="../design/CLINIC.md">The direction</a></li>
+          <li><a href="../design/CASE_STUDY.md">The case study</a></li>
+          <li><a href="../design/DATAVIZ.md">The chart grammar</a></li>
+          <li><a href="../design/STATES.md">The states, audited</a></li>
+          <li><a href="../design/icons/PATTERNS.md">The drawing grammar</a></li>
+          <li><a href="../design/ROADMAP.md">What is still missing</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="mono col-h">The rules</p>
+        <ul>
+          <li>Free. No account, no ads, no tracking.</li>
+          <li>Offline by construction: no CDN, no remote font.</li>
+          <li>Type: Barlow Condensed, SIL OFL 1.1.</li>
+          <li>Anatomy: Z-Anatomy / BodyParts3D, CC BY-SA 4.0.</li>
+          <li>Everything drawn from the app's own functions.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine">
+      <span>Designed and built offline. Ivory, charcoal, one burnt accent.</span>
+      <span><a href="#top">Back to the top</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
