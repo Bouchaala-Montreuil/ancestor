@@ -32,7 +32,7 @@ Three ways to look at the app, in order of convenience:
 | | |
 |---|---|
 | `npm run preview` | the modular source, live-reloadable by hand, port 8000 |
-| `open ../app/release/ancestor.html` | the shipped single file, 2.55 MB, zero requests |
+| `open ../app/release/ancestor.html` | the shipped single file, 2.8 MB, zero requests |
 | `xdg-open dist/ancestor.html` | the same file after `python3 build.py`; `dist/` is **not** in git |
 
 There is no build step for development and no bundler in the loop: `index.html`

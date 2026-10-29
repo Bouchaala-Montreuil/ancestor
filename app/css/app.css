@@ -473,6 +473,30 @@ h1.title,h2.title,h2.sub,h3.sub{
   border-bottom:2px solid var(--rule-strong);
 }
 .masthead > div{display:block}
+/* Cinematic masthead — Today and Body only. A dark photographic texture sits
+   behind the screen's opening statement. The gradient is a legibility layer,
+   not decoration: it fades the image to the canvas under the headline, so no
+   type ever sits on the photograph itself. In the paper theme the band is
+   removed; paper stays a flat ivory page. */
+.masthead-today,.masthead-body{
+  position:relative;isolation:isolate;overflow:hidden;
+  /* full bleed: cancel the shell gutter (24 px phone, 32 px from 720 px) */
+  margin-inline:calc(-1 * var(--s5));padding-inline:var(--s5);
+  padding-block:var(--s7) var(--s6);
+}
+@media (min-width:720px){
+  .masthead-today,.masthead-body{margin-inline:calc(-1 * var(--s6));padding-inline:var(--s6)}
+}
+.masthead-today{background:url("../img/hero-today.jpg") 62% 40%/cover no-repeat}
+.masthead-body{background:url("../img/hero-body.jpg") 80% 30%/cover no-repeat}
+.masthead-today::before,.masthead-body::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(90deg,var(--paper) 0%,var(--paper) 22%,rgba(9,9,9,.72) 60%,rgba(9,9,9,.35) 100%);
+}
+:root[data-theme="paper"] .masthead-today,
+:root[data-theme="paper"] .masthead-body{background:none;padding-block:revert}
+:root[data-theme="paper"] .masthead-today::before,
+:root[data-theme="paper"] .masthead-body::before{content:none}
 
 .layout{
   display:grid;grid-template-columns:1fr;gap:var(--s5);

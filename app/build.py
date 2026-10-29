@@ -72,6 +72,10 @@ manifest_b64 = base64.b64encode(json.dumps(manifest).encode()).decode()
 html = read("index.html")
 
 # stylesheet
+# Photographic bands are referenced from the stylesheet as ../img/*.jpg. The
+# single file has no asset folder, so each one is inlined as a data URI here.
+css = re.sub(r'url\("\.\./img/([\w.-]+\.jpg)"\)',
+             lambda m: 'url("' + data_uri("img/" + m.group(1), "image/jpeg") + '")', css)
 html = html.replace('<link rel="stylesheet" href="css/app.css">',
                     "<style>\n" + css + "\n</style>")
 

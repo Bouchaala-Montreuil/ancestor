@@ -1507,6 +1507,23 @@ group('2d. The verdict fits its card at every width (1024 collision, 768 bleed)'
 }
 
 /* ================================================================ */
+group('2e. The cinematic masthead: photographic band, legible, paper-free');
+{
+  chk('Today and Body carry the photographic masthead modifier',
+      /\.masthead-today\{background:url\("\.\.\/img\/hero-today\.jpg"\)/.test(css) &&
+      /\.masthead-body\{background:url\("\.\.\/img\/hero-body\.jpg"\)/.test(css));
+  chk('the images exist in the repository',
+      fs.existsSync(path.join(ROOT,'img/hero-today.jpg')) && fs.existsSync(path.join(ROOT,'img/hero-body.jpg')));
+  chk('a legibility overlay sits over the photograph, so no type is on the image itself',
+      /\.masthead-today::before,\.masthead-body::before\{[^}]*linear-gradient\(90deg,var\(--paper\)/.test(css));
+  chk('the paper theme removes the photograph and its overlay',
+      /:root\[data-theme="paper"\] \.masthead-today,\s*:root\[data-theme="paper"\] \.masthead-body\{background:none/.test(css));
+  const buildPy = fs.readFileSync(path.join(ROOT,'build.py'),'utf8');
+   chk('the build inlines ../img/*.jpg as data URIs, so the single file has no asset folder',
+      buildPy.includes('../img/') && buildPy.includes('data_uri("img/" + m.group(1)') && buildPy.includes('.jpg'));
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));

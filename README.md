@@ -14,7 +14,7 @@ site/      the landing page (one file; figures copied from the app)
 
 | | |
 |---|---|
-| the app | `app/index.html`, or the built single file `app/release/ancestor.html` (2.1 MB, works from `file://`) |
+| the app | `app/index.html`, or the built single file `app/release/ancestor.html` (2.8 MB, works from `file://`) |
 | the landing page | `site/index.html` |
 | the direction | `design/CLINIC.md` |
 | the case study | `design/CASE_STUDY.md` |

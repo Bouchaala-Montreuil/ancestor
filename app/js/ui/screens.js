@@ -153,7 +153,7 @@ Screens.home = function(){
   let h = '';
 
   /* 1. Architectural Masthead */
-  h += '<div class="masthead"><div>' +
+  h += '<div class="masthead masthead-today"><div>' +
        '<p class="masthead-idx">' + esc(greetingFor(now)) + (p.name ? ' · ' + esc(p.name) : '') +
        ' · ' + esc(dateLabel(now)) + '</p>' +
        '<h1 class="masthead-title">' + esc(heroLine(s, d, shown, next, now)) + '</h1>' +
@@ -887,7 +887,7 @@ Screens.body = function(){
   const rec = allRecovery(s, now);
 
   const trackedCount = MUSCLES.filter(m => rec[m] && rec[m].since !== null).length;
-  let h = '<div class="masthead"><div>' +
+  let h = '<div class="masthead masthead-body"><div>' +
           '<p class="masthead-idx">' + numExpr(trackedCount + ' / ' + MUSCLES.length) + ' ' + esc(t('body.tracked')) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('body.title')) + '</h1>' +
           '<p class="masthead-sub">' + esc(BODY_MODE === 'model' ? t('lab3d.atlasTag') : t('body.note2d')) + '</p>' +
