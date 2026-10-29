@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-zMjPDLS5kf9OUJpvgQfFsB3PPUtVdicHLqmf85qidnQ=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-EZ+/ilLZsAzzgHKl96h3cKSjczde8Kevl4of6ilrof4=' 'sha256-W0pHf6u5q9A/49tKNqjNAVR5OlTru8v7XbQKsqPna7M=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-zMjPDLS5kf9OUJpvgQfFsB3PPUtVdicHLqmf85qidnQ=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-H1AYSo/X1KFCC5WhSgiOqBl3ROjHzZ+UBvF5BSiKkFA=' 'sha256-W0pHf6u5q9A/49tKNqjNAVR5OlTru8v7XbQKsqPna7M=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -17935,6 +17935,9 @@ function barChart(opts){
   const max = sc.max || 1;
   const bw = (W-PL-PR)/rows.length;
   const u = opts.unit || '';
+  /* One number format for every label in the chart: whole numbers from 100 up
+     (volume totals), one decimal below. 2640 and 2620.8 both read 2640 / 2621. */
+  const fmtV = v => v >= 100 ? String(Math.round(v)) : String(Math.round(v*10)/10);
   /* One highlighted series: the largest value, when the caller asks for it.
      The rule is the data's own maximum, so nothing is chosen for effect. */
   let hiIdx = -1;
@@ -17952,7 +17955,7 @@ function barChart(opts){
   rows.forEach((r,i) => {
     const h = (r.v/max)*(H-PT-PB);
     const bx = PL + i*bw + bw*0.16, bwid = bw*0.68;
-    const tipTxt = (r.name || r.short) + ' — ' + Math.round(r.v*10)/10 + (u ? ' ' + u : '');
+    const tipTxt = (r.name || r.short) + ' — ' + fmtV(r.v) + (u ? ' ' + u : '');
     const jsTip = tipTxt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     /* A zero is a zero: a 2 px stub on the axis, never a 1 px sliver that
        pretends to be a very small value. */
@@ -17970,18 +17973,18 @@ function barChart(opts){
          '<title>' + esc(tipTxt) + '</title>' +
          (zero ? '' :
            '<text class="dv-value" x="' + (bx+bwid/2).toFixed(1) + '" y="' + Math.max(PT + 8, H-PB-h-7).toFixed(1) +
-           '" text-anchor="middle">' + (Math.round(r.v*10)/10) + '</text>') +
+           '" text-anchor="middle">' + fmtV(r.v) + '</text>') +
          '<text class="dv-xtick" x="' + (bx+bwid/2).toFixed(1) + '" y="' + (H-14) +
          '" text-anchor="middle">' + esc(r.short) + '</text></g>';
   });
-  const srList = rows.map(r => (r.name || r.short) + ' ' + Math.round(r.v*10)/10).join(', ');
+  const srList = rows.map(r => (r.name || r.short) + ' ' + fmtV(r.v)).join(', ');
   return '<div class="chart-hd"><span class="t">' + esc(opts.title) + '</span><span class="p">' +
     esc(opts.period) + ' · ' + esc(t('chart.unit')) + ': ' + esc(u) + '</span></div>' +
     '<svg class="chart chart-anim" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.title) + '">' +
     '<g role="list">' + g + '</g>' +
     '<line class="dv-axis" x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) + '"/></svg>' +
     '<div class="chart-legend"><span class="chart-tip-readout mono" id="' + tipId + '" aria-live="polite">' +
-    esc(rows[0] ? ((rows[0].name || rows[0].short) + ' — ' + Math.round(rows[0].v*10)/10 + (u ? ' ' + u : '')) : '') +
+    esc(rows[0] ? ((rows[0].name || rows[0].short) + ' — ' + fmtV(rows[0].v) + (u ? ' ' + u : '')) : '') +
     '</span></div>' +
     '<p class="sr-only">' + esc(opts.title + ': ' + srList) + '</p>';
 }

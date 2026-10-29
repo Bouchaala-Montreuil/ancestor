@@ -503,6 +503,9 @@ function barChart(opts){
   const max = sc.max || 1;
   const bw = (W-PL-PR)/rows.length;
   const u = opts.unit || '';
+  /* One number format for every label in the chart: whole numbers from 100 up
+     (volume totals), one decimal below. 2640 and 2620.8 both read 2640 / 2621. */
+  const fmtV = v => v >= 100 ? String(Math.round(v)) : String(Math.round(v*10)/10);
   /* One highlighted series: the largest value, when the caller asks for it.
      The rule is the data's own maximum, so nothing is chosen for effect. */
   let hiIdx = -1;
@@ -520,7 +523,7 @@ function barChart(opts){
   rows.forEach((r,i) => {
     const h = (r.v/max)*(H-PT-PB);
     const bx = PL + i*bw + bw*0.16, bwid = bw*0.68;
-    const tipTxt = (r.name || r.short) + ' — ' + Math.round(r.v*10)/10 + (u ? ' ' + u : '');
+    const tipTxt = (r.name || r.short) + ' — ' + fmtV(r.v) + (u ? ' ' + u : '');
     const jsTip = tipTxt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     /* A zero is a zero: a 2 px stub on the axis, never a 1 px sliver that
        pretends to be a very small value. */
@@ -538,18 +541,18 @@ function barChart(opts){
          '<title>' + esc(tipTxt) + '</title>' +
          (zero ? '' :
            '<text class="dv-value" x="' + (bx+bwid/2).toFixed(1) + '" y="' + Math.max(PT + 8, H-PB-h-7).toFixed(1) +
-           '" text-anchor="middle">' + (Math.round(r.v*10)/10) + '</text>') +
+           '" text-anchor="middle">' + fmtV(r.v) + '</text>') +
          '<text class="dv-xtick" x="' + (bx+bwid/2).toFixed(1) + '" y="' + (H-14) +
          '" text-anchor="middle">' + esc(r.short) + '</text></g>';
   });
-  const srList = rows.map(r => (r.name || r.short) + ' ' + Math.round(r.v*10)/10).join(', ');
+  const srList = rows.map(r => (r.name || r.short) + ' ' + fmtV(r.v)).join(', ');
   return '<div class="chart-hd"><span class="t">' + esc(opts.title) + '</span><span class="p">' +
     esc(opts.period) + ' · ' + esc(t('chart.unit')) + ': ' + esc(u) + '</span></div>' +
     '<svg class="chart chart-anim" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.title) + '">' +
     '<g role="list">' + g + '</g>' +
     '<line class="dv-axis" x1="' + PL + '" y1="' + (H-PB) + '" x2="' + (W-PR) + '" y2="' + (H-PB) + '"/></svg>' +
     '<div class="chart-legend"><span class="chart-tip-readout mono" id="' + tipId + '" aria-live="polite">' +
-    esc(rows[0] ? ((rows[0].name || rows[0].short) + ' — ' + Math.round(rows[0].v*10)/10 + (u ? ' ' + u : '')) : '') +
+    esc(rows[0] ? ((rows[0].name || rows[0].short) + ' — ' + fmtV(rows[0].v) + (u ? ' ' + u : '')) : '') +
     '</span></div>' +
     '<p class="sr-only">' + esc(opts.title + ': ' + srList) + '</p>';
 }

@@ -1618,6 +1618,16 @@ group('2j. Layout fixes: Retour wraps, search placeholder fits, unit never wraps
 }
 
 /* ================================================================ */
+group('2k. Chart labels: one number format');
+{
+  const cmp = fs.readFileSync(path.join(ROOT,'js/ui/components.js'),'utf8');
+  const bcStart = cmp.indexOf('function barChart('); const bcBody = cmp.slice(bcStart, cmp.indexOf('\n}\n', bcStart));
+  chk('bar labels, tooltips and the screen-reader list all use the one formatter',
+      bcBody.indexOf('const fmtV = v => v >= 100') > 0 && (bcBody.match(/fmtV\(rows\[0\]\.v\)|fmtV\(r\.v\)/g) || []).length === 4 &&
+      bcBody.indexOf('Math.round(r.v*10)/10') < 0);
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));
