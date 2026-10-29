@@ -29,7 +29,7 @@ python3 build.py && node tools/smoke_dist.js     # self-contained, BUNDLE OK
 python3 site/build.py && python3 site/check.py   # 66 site checks
 ```
 
-Current: **1,527 checks over ten headless suites**, all green —
+Current: **1,539 checks over ten headless suites**, all green —
 design 268, premium 217, ui 322, run 146, inclusive 70, personas 73, science 130,
 logic 138, anatomy 64, print 88 — plus **93 real-browser checks** in
 `tests/browser.js`, run in headless Chromium with WebGL — green on 2026-10-29,

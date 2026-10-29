@@ -33,6 +33,15 @@ Both corrected, and `tests/design.js` now fails if a preference hook is orphaned
 
 ---
 
+> **Sections 1–3 are the original audit, kept as written.** They describe the app
+> as it was before any of this work started, and several rows in them have since
+> shipped — the Science hub, the lesson reader, onboarding, the session screens,
+> the print sheet, the icon and illustration systems, the data-viz and motion
+> specs, and the state primitives all exist now. The record of what actually
+> landed, and what each pass changed, is in **§0.1–§0.12 below**; read those
+> first, then come back here for the parts that are still open. For the current
+> state in one page, see [`../HANDOFF.md`](../HANDOFF.md).
+
 ## 1. Screens that do not exist as designs yet
 
 | Screen | What it needs | Effort |

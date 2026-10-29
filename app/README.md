@@ -82,7 +82,8 @@ and no two regions overlap beyond tolerance.
 There is no Android SDK or Gradle toolchain in this environment, so no signed
 APK is produced here. What ships:
 
-- `dist/ancestor.html` — one 366 KB file, zero external references, works offline
+- `release/ancestor.html` — one 2.55 MB file, zero external references, works
+  offline; rebuilt byte-identically from source by `python3 build.py` (`dist/` is the same file, git-ignored)
 - A full PWA (manifest, service worker, icons) that installs from Chrome on
   Android → **Install app**
 - `android/` — a ready TWA config plus the exact steps to a Play Store APK in
@@ -157,49 +158,73 @@ is verified, and what is not.
 ## Run it
 
 ```bash
-# open the single-file build directly
-xdg-open dist/ancestor.html
+# the shipped single file: one 2.55 MB document, zero external requests
+xdg-open release/ancestor.html
 
-How the software is put together, and what it was missing — two tabs overwriting
-each other, an unreadable record erased by the next save, a throw that killed a
-button instead of a screen — is in **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+# or the modular source, with the preview server
+npm install
+npm run preview            # → http://0.0.0.0:8000
+```
 
-An audit of the whole application's logic — what was illogical, why, and what
-changed — is in **[LOGIC_AUDIT.md](LOGIC_AUDIT.md)**.
+`npm install` pulls a Chrome for the browser suite, which fails on a network that
+blocks Google's CDN. If that is your network:
+
+```bash
+PUPPETEER_SKIP_DOWNLOAD=1 npm install
+source tools/chromium.sh   # Chromium from the npm registry instead
+```
+
+Everything else is regenerated, never hand-edited:
+
+```bash
+python3 build.py                              # rebuild the single file → dist/ and release/
+node tools/vendor_three.js                    # rebuild js/vendor/three-bundle.js (build-time only)
+node tools/compress_glb.mjs in.glb out.glb    # re-compress the anatomy model
+```
+
+One command is the whole gate — it builds, tests, audits and exits non-zero on
+any failure:
+
+```bash
+npm run verify                             # ~3 minutes
+```
+
+Or a la carte, which is how the suites are named when one of them breaks:
+
+```bash
+npm test                           # the ten headless suites, in order
+npm run test:browser               # the one that needs a real Chrome (source tools/chromium.sh)
+
+node tests/design.js               # 291 design system, states, targets, disclosures
+node tests/premium.js              # 217 motion, dashboard, charts, states, boundaries
+node tests/ui.js                   # 322 end-to-end DOM tests
+node tests/run.js                  # 146 engine / i18n tests
+node tests/inclusive.js            #  70 migration / a11y / locale tests
+node tests/personas.js             #  73 persona journey checks
+node tests/science.js              # 130 Science Hub / evidence / transparency tests
+node tests/logic.js                # 138 exercise-aware logging regression tests
+node tests/anatomy.js              #  64 real 3D asset and selection tests
+node tests/print.js                #  88 the A4 sheet
+node tests/browser.js              #  93 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
+node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
+node tools/ax_audit.js             #  75 Chrome's accessibility tree
+node tools/qa_audit.js             # scripted user-journey audit
+node tools/smoke_dist.js           # shipped-bundle smoke test
+node tools/keyscan.js              # no i18n key ever reaches the screen verbatim
+node tools/gallery.js ../design/current   # photograph every screen for a designer
+```
+
+Three documents worth reading before changing anything:
+**[ARCHITECTURE.md](ARCHITECTURE.md)** — how the software is put together and every
+risk that was found (S1–S24); **[LOGIC_AUDIT.md](LOGIC_AUDIT.md)** — what was
+illogical in the earlier build and why; and **[../HANDOFF.md](../HANDOFF.md)** —
+the design state, what is missing, and what the tests will defend.
 
 The Anatomy Lab renders a **real anatomical model**: 218 named muscle meshes,
 128,917 triangles, CC BY-SA 4.0. Candidates, licences and the reasons for the
 selection are in **[ANATOMY_MODEL_RESEARCH.md](ANATOMY_MODEL_RESEARCH.md)**.
 
-```
-node tools/vendor_three.js     # rebuild js/vendor/three-bundle.js (build-time only)
-node tools/compress_glb.mjs in.glb out.glb    # re-compress the anatomy model
-```
-
-# or serve the modular source
-python3 -m http.server 8000        # → http://localhost:8000
-
-python3 build.py                   # rebuild dist/ancestor.html
-
-npm test                           # the ten headless suites, in order
-npm run test:browser               # the one that needs a real Chrome
-
-node tests/design.js               # 210 design system, states, targets, disclosures
-node tests/premium.js              # 213 motion, dashboard, charts, states, boundaries
-node tests/ui.js                   # 230 end-to-end DOM tests
-node tests/run.js                  # 142 engine / i18n tests
-node tests/inclusive.js            #  65 migration / a11y / locale tests
-node tests/personas.js             #  66 persona journey checks
-node tests/science.js              # 124 Science Hub / evidence / transparency tests
-node tests/logic.js                # 117 exercise-aware logging regression tests
-node tests/anatomy.js              #  64 real 3D asset and selection tests
-node tests/print.js                #  44 the A4 sheet
-node tests/browser.js              #  25 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
-node tools/qa_audit.js             # scripted user-journey audit
-node tools/smoke_dist.js           # shipped-bundle smoke test
-node tools/keyscan.js              # no i18n key ever reaches the screen verbatim
-python3 tools/fig_check.py         # anatomy geometry validation
-```
+---
 
 ## The engine
 
@@ -419,20 +444,16 @@ windows are labelled estimates throughout; when data is missing the screen says
 
 ---
 
-## Privacy
-
-Everything lives in `localStorage` on the device. No account, no email, no
-analytics, no advertising, no third-party requests — a test asserts zero
-external references in the shipped HTML. Full JSON export and complete erasure
-are both in Profile → Your data, and both are tested.
-
----
-
 ## Known limitations
 
-- **Anatomy is 2D**, not 3D. Disclosed in-app. See above for the reasoning.
-- **Not tested on real Android hardware** — jsdom only. Expect small layout
-  fixes on a physical phone.
+- **The 3D atlas needs WebGL.** Where it cannot mount, the app says so in a
+  strip that stays until a model loads and offers a retry, and falls back to the
+  flat figure projected from the same mesh — the same data, without the model.
+- **Not tested on a physical phone or tablet.** The browser suite is headless
+  Chromium at seven widths; expect small fixes on real hardware, and nothing at
+  all has been checked on iOS Safari.
+- **The flat figure is derived from a CC BY-SA 4.0 mesh**, so it carries that
+  licence. See [LICENSE](../LICENSE).
 - No sync between devices; one browser profile only.
 - Recovery defaults converge only after several weeks of logged sessions.
 - Timed holds (planks, hangs) are approximated in seconds rather than modelled
@@ -441,8 +462,17 @@ are both in Profile → Your data, and both are tested.
 
 ---
 
-## Free, and it stays free
+## Licence
+
+Proprietary, all rights reserved — see **[../LICENSE](../LICENSE)**: read it and
+run it, do not copy, modify, redistribute or reuse it outside this repository
+without written permission. Two pieces inside it are not proprietary: Barlow
+Condensed (SIL OFL 1.1, `app/fonts/OFL.txt`) and the anatomy mesh
+(CC BY-SA 4.0, share-alike, `app/assets/`), whose terms travel with the work.
+
+## Free to use, and it stays that way
 
 Program generation, logging, progression, recovery estimates, scheduling,
 history, analytics and the training decision are all free and always will be.
-No ads, no paywall, no account.
+No ads, no paywall, no account. That is a promise about the product, not about
+the source code, which is proprietary.

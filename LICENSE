@@ -1,0 +1,67 @@
+ANCESTOR — Recovery Engine
+Copyright © 2026 Bouchaala-Montreuil. All rights reserved.
+
+
+This repository and everything in it — the source code, stylesheets, markup,
+data and lesson text, the illustrations, charts and exercise drawings, the tally
+mark and the identity, the screenshots, and the built single-file release — is
+proprietary. No licence is granted except as written below.
+
+
+WHAT YOU MAY DO
+
+  - read the source;
+  - run it locally to evaluate it;
+  - work on it if the copyright holder has asked you to (for example as a
+    collaborator on this repository). Changes you make in that capacity become
+    part of this work and are covered by these same terms, unless agreed
+    otherwise in writing.
+
+
+WHAT YOU MAY NOT DO
+
+Without prior written permission from the copyright holder, you may not:
+
+  - copy, reproduce or republish any part of it;
+  - modify it, or create derivative works from it;
+  - distribute, sublicense, sell, rent or otherwise make it available to anyone
+    else;
+  - use it, in whole or in part, in another product, service or portfolio,
+    commercial or not;
+  - remove or alter this notice or any attribution it contains.
+
+
+THIRD-PARTY MATERIAL
+
+These files carry their own licences, which this notice cannot override and
+which travel with the work:
+
+  1. Barlow Condensed, by Jeremy Tribby — SIL Open Font License 1.1.
+     The font files may be used, modified and redistributed under the terms of
+     that licence, which are reproduced at app/fonts/OFL.txt.
+
+  2. The anatomy mesh, derived from Z-Anatomy, itself derived from BodyParts3D
+     (Database Center for Life Science) — Creative Commons Attribution-ShareAlike
+     4.0. The licence is reproduced at app/assets/ANATOMY-LICENSE-CC-BY-SA-4.0.txt
+     and the attribution at app/assets/ANATOMY-ATTRIBUTION.txt.
+
+     CC BY-SA 4.0 is share-alike. That mesh, and any adaptation of it — which
+     includes the flat figure projected from it by this project's own tools —
+     stays under CC BY-SA 4.0 with its attribution, whoever distributes it. The
+     app credits it in all seven languages for that reason. Distributing this
+     work therefore distributes that material under CC BY-SA 4.0 whatever the
+     rest of this notice says; how far the share-alike obligation reaches into
+     the surrounding work is a legal question, not one answered here.
+
+
+NO WARRANTY
+
+This software is provided as is, without warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability, fitness
+for a particular purpose and non-infringement. In no event shall the copyright
+holder be liable for any claim, damages or other liability arising from, out of
+or in connection with the software or its use.
+
+
+It is a training and recovery aid, not medical advice. It estimates; it does not
+diagnose or treat.
