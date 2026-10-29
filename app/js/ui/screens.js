@@ -1847,10 +1847,9 @@ Screens.profile = function(){
      them reads the summary first, so the unit in use is one of the four facts
      it states. Data states when it was last exported for the same reason —
      "Export" was the one setting with no sign it existed until you opened it. */
-  const valProgramme = [styleName, p.daysPerWeek + 'd',
-                        t('onb.avail.len.' + (p.sessionMinutes || 50)),
-                        t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym'))),
-                        unit()].join(' · ').replace(/ · (\S+)$/, '\u00a0·\u00a0$1');  /* the unit never wraps alone */
+  /* Equipment and unit are one unit of text: the unit never wraps alone. */
+  const valProgramme = [styleName, p.daysPerWeek + 'd', t('onb.avail.len.' + (p.sessionMinutes || 50))].join(' · ') + ' · ' +
+                       [t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym'))).replace(/ /g, '\u00a0'), unit()].join('\u00a0·\u00a0');
   const valBody = [t('onb.shift.' + ({none:'no', night:'night', rotating:'rot'}[p.shiftType] || 'no')),
                    p.sleepHours + ' ' + t('onb.sleep.h'),
                    needCount ? needCount + ' ' + t('a11y.needsTitle') : ''].filter(Boolean).join(' · ');

@@ -1609,7 +1609,7 @@ group('2j. Layout fixes: Retour wraps, search placeholder fits, unit never wraps
   const modes = fs.readFileSync(path.join(ROOT,'js/i18n/modes.js'),'utf8');
   chk('the module header may wrap, so the Retour chip drops to its own line instead of overflowing',
       /sect sect-wrap/.test(mod2) && /\.sect\.sect-wrap\{flex-wrap:wrap}/.test(css) && /\.sect\.sect-wrap > \.aside\{margin-inline-start:auto\}/.test(css));
-  const frLine = (modes.match(/"plan\.searchEx": "Rechercher [^"]*"/g) || []).find(x => x.indexOf('Rechercher') >= 0);
+  const frLine = (modes.match(/"plan\.searchEx": "[^"]*"/g) || [])[1];  /* en, then fr */
   const frLen = frLine ? frLine.length : 999;
   chk('the French library placeholder is short enough to show whole in the field at 390 px',
       !!frLine && frLen < 60);
@@ -1652,6 +1652,16 @@ group('2n. Hero bands sit inside the content column at desktop width');
   const seg = i >= 0 ? css.slice(i, css.indexOf('}', css.indexOf('}', i) + 1) + 1) : '';
   chk('at 1024 px and up the masthead bands drop the full-bleed negative margin',
       i >= 0 && /masthead-today,\.masthead-body\{margin-inline:0/.test(seg));
+}
+
+group('2o. Three visible fixes: programme summary wrap, chart decimals, placeholder source');
+{
+  const scr4 = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  chk('the programme summary binds equipment and unit with non-breaking spaces',
+      scr4.indexOf(".replace(/ /g, '\\u00a0')") > 0 && scr4.indexOf("join('\\u00a0·\\u00a0')") > 0);
+  const comp = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
+  chk('bar labels under 100 share one decimal rule across the chart',
+      comp.indexOf('const oneDp = rows.some') > 0 && comp.indexOf('oneDp ? (Math.round(v*10)/10).toFixed(1)') > 0);
 }
 
 /* ================================================================ */

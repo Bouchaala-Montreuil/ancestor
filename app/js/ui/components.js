@@ -505,7 +505,8 @@ function barChart(opts){
   const u = opts.unit || '';
   /* One number format for every label in the chart: whole numbers from 100 up
      (volume totals), one decimal below. 2640 and 2620.8 both read 2640 / 2621. */
-  const fmtV = v => v >= 100 ? String(Math.round(v)) : String(Math.round(v*10)/10);
+  const oneDp = rows.some(r => r.v < 100 && Math.abs(r.v - Math.round(r.v)) >= 0.05);
+  const fmtV = v => v >= 100 ? String(Math.round(v)) : oneDp ? (Math.round(v*10)/10).toFixed(1) : String(Math.round(v));
   /* One highlighted series: the largest value, when the caller asks for it.
      The rule is the data's own maximum, so nothing is chosen for effect. */
   let hiIdx = -1;
