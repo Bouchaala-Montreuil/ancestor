@@ -118,7 +118,7 @@ stylesheet".
 | iOS Safari + Android Chrome, installed and in-browser | 0.5 d *(needs a device)* |
 | ~~Contrast audit of the new palette against WCAG AA in every state~~ | done — `STATES.md` |
 | ~~Touch-target audit (44 px minimum)~~ | done — §0.10 |
-| Screen-reader pass (VoiceOver + TalkBack) | 1 d |
+| ~~Screen-reader pass~~ — **the tree, audited; the ears, still yours** | `tools/ax_audit.js` (`npm run ax`, 75 checks) reads Chrome's own accessibility tree: every control named, headings in order, landmarks present, nothing focusable while invisible or aria-hidden, no name doing two jobs, the dialog modal with a focus trap and focus restoration, Arabic announced as Arabic. It found two real defects, both fixed. What it cannot hear: whether a name makes sense spoken in French at speed, or whether the reading order matches the visual one on a phone. That half is still 1 d and still needs you. |
 | Printed sheet on real paper, both sides on a cheap printer | 0.5 d |
 | ~~Lighthouse / PWA install audit~~ | done — `npm run pwa`, 30 checks. Chrome's own `Page.getInstallabilityErrors` turned out to be stubbed in this build (it returns an empty list for a manifest with no icons), so the criteria are applied by hand and a deliberately broken manifest is run through them as a control. |
 

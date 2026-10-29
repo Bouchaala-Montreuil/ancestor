@@ -341,7 +341,11 @@ function renderWorkoutPlanner(){
     h += '<div class="row mt-2">' +
          '<button type="button" class="btn quiet sm" data-act="openWhy" data-a1="progression" data-a2="' + e.id + '">' +
            esc(t('sci.whyOpen')) + '</button>' +
-         '<button type="button" class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '">' +
+         /* Six of these on one screen, all reading "Détails de l'exercice".
+            In a screen reader's button list that is six identical controls:
+            the name has to say which exercise. */
+         '<button type="button" class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '" ' +
+           'aria-label="' + esc(t('exd.open') + ' — ' + t('ex.' + e.id)) + '">' +
            esc(t('exd.open')) + '</button></div>';
     h += '</div>';
   });
@@ -713,7 +717,8 @@ function renderLive(){
     h += '<button class="btn quiet sm" data-act="skipSet" data-a1="' + ei + '" data-t1="l">' + esc(t('session.skipset')) + '</button>';
     h += '<button class="btn quiet sm" data-act="skipExercise" data-a1="' + ei + '" data-t1="l">' + esc(t('log.skipEx')) + '</button>';
     h += '<button class="btn quiet sm" data-act="openSub" data-a1="' + ei + '" data-t1="l">' + esc(t('session.sub')) + '</button>';
-    h += '<button class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '">' + esc(t('exd.open')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '" ' +
+         'aria-label="' + esc(t('exd.open') + ' — ' + t('ex.' + e.id)) + '">' + esc(t('exd.open')) + '</button>';
     h += '</div></details>';
 
     h += '<p class="hint mb-1 mt-2">' +

@@ -39,15 +39,16 @@ Which is the same as, one at a time:
 ```bash
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do
   node tests/$t.js
-done                                        # 1,508 checks over 10 suites
+done                                        # 1,516 checks over 10 suites
 node tools/keyscan.js                       # no untranslated key reaches a screen
 node tools/qa_audit.js                      # structural audit, gated on its own findings
 python3 build.py && node tools/smoke_dist.js   # the single file, booted and used
 python3 ../site/build.py && python3 ../site/check.py
 
-# the two that need a real browser (source tools/chromium.sh first)
+# the three that need a real browser (source tools/chromium.sh first)
 node tests/browser.js                       # 93 checks: WebGL, overflow, offline reload
 node tools/pwa_audit.js                     # 30 checks: manifest, icons, install, shortcuts
+node tools/ax_audit.js                      # 75 checks: Chrome's accessibility tree
 ```
 
 The browser suite is separate because it needs a Chrome binary:

@@ -401,6 +401,48 @@ group('8u. One owner per global — the boundaries are checked, not hoped for');
 }
 
 /* ================================================================ */
+group('8v. A control says which one it is, not just what it does');
+{
+  /* Two defects found by the accessibility-tree audit (tools/ax_audit.js):
+     six "Détails de l'exercice" buttons on the session screen, all identical
+     in a screen reader's button list, and "Tout"/"Dos" appearing in two filter
+     groups on the anatomy screen with nothing to tell them apart. A control
+     whose own text is generic now carries the name of what it acts on; one
+     whose text already names the exercise does not need a second label. */
+  const workout = fs.readFileSync(path.join(ROOT, 'js/ui/workout.js'), 'utf8');
+  const screens = fs.readFileSync(path.join(ROOT, 'js/ui/screens.js'), 'utf8');
+  const modes = fs.readFileSync(path.join(ROOT, 'js/i18n/modes.js'), 'utf8');
+
+  /* every openExerciseDetail button either shows the exercise name as its
+     text, or names it in aria-label */
+  const buttons = workout.split('data-act="openExerciseDetail"').slice(1);
+  const generic = buttons.filter(chunk => /esc\(t\('exd\.open'\)\)/.test(chunk.slice(0, 400)));
+  const labelled = generic.filter(chunk => /aria-label=/.test(chunk.slice(0, 400)));
+  chk('no exercise-detail button shows only the generic label',
+      generic.length === labelled.length,
+      generic.length + ' generic, ' + labelled.length + ' labelled');
+  chk('the ones that were generic now name their exercise',
+      generic.every(chunk => /t\('exd\.open'\) \+ ' — ' \+ t\('ex\./.test(chunk.slice(0, 400))),
+      generic.length + ' checked');
+  chk('the progress header names its exercise too',
+      /t\('exd\.open'\) \+ ' — ' \+ t\('ex\.' \+ PROG_EX\)/.test(screens));
+
+  /* filter chips: the group name appears twice per collection — once on the
+     container, once in each chip's label */
+  const count = (src, key) => (src.split("t('" + key + "')").length - 1);
+  chk('the side chips say which group they belong to', count(screens, 'lab3d.filterSide') >= 3,
+      count(screens, 'lab3d.filterSide') + ' mentions');
+  chk('the layer chips do the same', count(screens, 'lab3d.filterLayer') >= 2,
+      count(screens, 'lab3d.filterLayer') + ' mentions');
+  chk('the region chips do the same', count(screens, 'lab3d.filterRegion') >= 2,
+      count(screens, 'lab3d.filterRegion') + ' mentions');
+  chk('and the group label exists in all seven languages',
+      (modes.match(/'lab3d\.filterSide'/g) || []).length === 7);
+  chk('the audit that found them ships with the repo',
+      fs.existsSync(path.join(ROOT, 'tools/ax_audit.js')));
+}
+
+/* ================================================================ */
 group('8b. Preference hooks are real, not aspirational');
 {
   const cssText = css;

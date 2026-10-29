@@ -252,7 +252,7 @@ There was no browser and no network in this environment when this section was
 written. That was a hard limit, not a preference, so the verification had to be
 invented:
 
-- **Ten test suites, 1,508 checks.** `design` executes the chart scale as a
+- **Ten test suites, 1,516 checks.** `design` executes the chart scale as a
   function rather than describing it; `ui`, `run`, `premium`, `inclusive`,
   `personas`, `science`, `logic`, `anatomy`, `print` cover behaviour, RTL, contrast,
   the printed sheet and the bundle.
@@ -279,7 +279,7 @@ arithmetically, not seen.
 | | |
 |---|---|
 | Bundle | 2.5 MB, one file, 43 scripts, zero requests |
-| Checks | 1,498 across 10 suites, all green |
+| Checks | 1,506 across 10 suites, all green |
 | Content | 68 exercises, 11 movement patterns, 11 lessons, 14 evidence records |
 | Languages | 7, including Arabic RTL and the printed sheet |
 | Artefacts | the app, the A4 training record, the identity sheet, the pattern sheet, the chart grammar, this page |

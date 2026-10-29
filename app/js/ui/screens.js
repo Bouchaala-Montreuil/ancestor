@@ -901,9 +901,15 @@ Screens.body = function(){
        ' aria-pressed="' + (BODY_MODE==='model'?'true':'false') + '">' + esc(t('lab3d.mode3d')) + '</button>' +
        '<button class="chip sm ' + (BODY_MODE==='flat'?'on':'') + '" data-act="setBodyMode" data-a1="flat"' +
        ' aria-pressed="' + (BODY_MODE==='flat'?'true':'false') + '">' + esc(t('lab3d.modeFlat')) + '</button></div>' +
-       '<div class="chips">' +
-       '<button class="chip sm ' + (BODY_SIDE==='front'?'on':'') + '" data-act="setSide" data-a1="front">' + esc(t('body.front')) + '</button>' +
-       '<button class="chip sm ' + (BODY_SIDE==='back'?'on':'') + '" data-act="setSide" data-a1="back">' + esc(t('body.back')) + '</button></div>' +
+       /* Two groups of chips sit on this row, and "Tout" and "Dos" appear in
+          both. Sighted users have the group label above each row; a screen
+          reader reading a button list does not, so the group goes into the
+          accessible name and the visible text stays short. */
+       '<div class="chips" role="group" aria-label="' + esc(t('lab3d.filterSide')) + '">' +
+       '<button class="chip sm ' + (BODY_SIDE==='front'?'on':'') + '" data-act="setSide" data-a1="front" ' +
+       'aria-label="' + esc(t('lab3d.filterSide') + ' — ' + t('body.front')) + '">' + esc(t('body.front')) + '</button>' +
+       '<button class="chip sm ' + (BODY_SIDE==='back'?'on':'') + '" data-act="setSide" data-a1="back" ' +
+       'aria-label="' + esc(t('lab3d.filterSide') + ' — ' + t('body.back')) + '">' + esc(t('body.back')) + '</button></div>' +
        '</div>';
   /* The reason the 3D view is missing belongs above the figure, not 600 px
      below it: this is the first thing the eye reaches after the chips that
@@ -944,14 +950,16 @@ Screens.body = function(){
          '<span class="anat-filter-lbl">' + esc(t('lab3d.filterLayer')) + '</span><div class="chips">' +
          ['all','superficial','deep'].map(ly =>
            '<button class="chip sm ' + (BODY_LAYER===ly?'on':'') + '" data-act="setLabLayer" data-a1="' + ly + '" ' +
-           'aria-pressed="' + (BODY_LAYER===ly?'true':'false') + '">' +
+           'aria-pressed="' + (BODY_LAYER===ly?'true':'false') + '" ' +
+           'aria-label="' + esc(t('lab3d.filterLayer') + ' — ' + (ly==='all' ? t('sci.all') : t('lab3d.layer.'+ly))) + '">' +
            esc(ly==='all' ? t('sci.all') : t('lab3d.layer.'+ly)) + '</button>'
          ).join('') + '</div></div>' +
          '<div class="anat-filter-row" role="group" aria-label="' + esc(t('lab3d.filterRegion')) + '">' +
          '<span class="anat-filter-lbl">' + esc(t('lab3d.filterRegion')) + '</span><div class="chips">' +
          ['all','chest','back','shoulder','arms','forearms','core','hips','thigh','calves','neck'].map(rg =>
            '<button class="chip sm ' + (BODY_REGION===rg?'on':'') + '" data-act="setLabRegion" data-a1="' + rg + '" ' +
-           'aria-pressed="' + (BODY_REGION===rg?'true':'false') + '">' +
+           'aria-pressed="' + (BODY_REGION===rg?'true':'false') + '" ' +
+           'aria-label="' + esc(t('lab3d.filterRegion') + ' — ' + (rg==='all' ? t('sci.all') : t('lab3d.reg.'+rg))) + '">' +
            esc(rg==='all' ? t('sci.all') : t('lab3d.reg.'+rg)) + '</button>'
          ).join('') + '</div></div></div>';
   }
@@ -1524,7 +1532,8 @@ Screens.progress = function(){
          '<button class="chip sm ' + (activeMetric===m.id?'on':'') + '" data-act="setProgMetric" data-a1="' + m.id + '">' +
          esc(m.label) + '</button>'
        ).join('') +
-       '<button class="btn quiet sm push" data-act="openExerciseDetail" data-a1="' + PROG_EX + '">' +
+       '<button class="btn quiet sm push" data-act="openExerciseDetail" data-a1="' + PROG_EX + '" ' +
+       'aria-label="' + esc(t('exd.open') + ' — ' + t('ex.' + PROG_EX)) + '">' +
        esc(t('exd.open')) + '</button></div>';
 
   if(activeMetric === 'e1rm'){

@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,508 headless checks and
+Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,516 headless checks and
 93 real-browser checks.
 
 ---
@@ -29,7 +29,7 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,508 checks — plus `tests/browser.js` (93 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,516 checks — plus `tests/browser.js` (93 real-Chromium checks),
 which needs a real Chrome and covers what jsdom cannot: WebGL, layout overflow at
 320/360/768/1280, a service-worker reload with the network severed, and the two
 failure strips — a refused write and a damaged record — on a 320 px phone in
@@ -51,6 +51,20 @@ source tools/chromium.sh && node tests/browser.js
 Verified cold, from an empty `/tmp`, on 2026-10-29: **93/93**. The suite runs
 headless with SwiftShader, so the WebGL checks mean what they claim without a
 GPU.
+
+**The accessibility tree, read rather than guessed at.** `tools/ax_audit.js`
+(`npm run ax`, 75 checks) reads Chrome's own accessibility tree through CDP —
+the same tree a screen reader consumes — rather than pattern-matching markup.
+Seven checks are demonstrated on a page built to fail them before any of them is
+trusted on the app. It found two real defects: six "Détails de l'exercice"
+buttons on the session screen, identical in a screen reader's button list, now
+naming their exercise; and "Tout" / "Dos" appearing in two filter groups on the
+anatomy screen with nothing to tell them apart, now carrying their group in the
+accessible name. Three more failures it reported were its own fault and are
+recorded here because that is the pattern: a card caught mid-stagger is
+genuinely invisible, `el.click()` does not move focus, and a `position:fixed`
+sheet has no `offsetParent`. The audit measures settled screens and asks the
+browser about focus.
 
 **And the install audit, which needed the same browser.** `tools/pwa_audit.js`
 (`npm run pwa`, 30 checks) serves the app over HTTP so a service worker may
@@ -79,7 +93,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,508 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
+| S5 | Medium | Nothing ran the suites. 1,516 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
@@ -96,6 +110,8 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S19 | Medium | A failure state that expired. When the 3D model could not mount, the app fell back to the flat figure correctly and then said why in a toast: four seconds later the user was in a representation they had not chosen, with no explanation and no way back that they would find. | `js/ui/screens.js` `onFail` | **fixed** — the reason is a state (`BODY_FALLBACK`), the strip sits above the figure it explains, and `retryLab` survives until a model actually mounts. Covered in `tests/ui.js` (jsdom has no WebGL, so the real failure path is the default one there) and photographed at 390 px in French. |
 | S20 | Medium | Two smaller things the screenshots caught. The Science search field set the same string as its `<label>` and as its `placeholder` — two labels, no instruction. And the filter rail announced that it scrolls only by slicing a chip in half at the viewport edge, which reads as a layout fault. | `js/ui/science.js`, `css/app.css` | **fixed** — `sci.searchHint` in seven languages for the placeholder, and a 14 px `mask-image` at both ends of the rail so what continues fades instead of breaking. The mask is direction-neutral on purpose: 8f allows exactly one `[dir="rtl"]` rule and this is not worth spending it on. `tests/science.js` group 7d holds both. |
 | S21 | Low | The roadmap's own tables were stale in one direction that mattered: §1 listed "Print from history" as a screen that does not exist, and it has shipped for weeks (`openPrintRecord`, reachable from the history list and from the completion sheet). §6 listed the install audit as never done, which was true only because no browser was reachable. | `design/ROADMAP.md` §1, §6 | **fixed** — §6's two rows are done and dated (`tools/pwa_audit.js`, 30 checks); the print row is checked against the code before being trusted again. |
+| S22 | **High** | Six controls with the same accessible name and six different jobs: every row on the session screen ended in a button reading "Détails de l'exercice". On screen the row supplies the context; in a screen reader's button list, a rotor, or voice control ("click Détails de l'exercice" — which one?) it does not exist. Two filter groups on the anatomy screen had the same shape: "Tout" appeared as both the layer filter and the region filter, "Dos" as both the side toggle and a region. | found by `tools/ax_audit.js` | **fixed** — the generic controls carry the name of what they act on (`exd.open — Développé couché`), and the anatomy chips carry their group (`Vue — Dos`), via a new `lab3d.filterSide` key in all seven languages. Design group 8v holds it without needing a browser. |
+| S23 | Medium | The audit's own blind spots, worth recording because three of its first four failures were its fault: a card mid-stagger is at opacity 0 and genuinely focusable, `el.click()` does not move focus so "focus restoration" was tested against `<body>`, a `position:fixed` sheet has no `offsetParent` so a working sheet looked broken, and the key handler lives on the panel — a synthetic keydown on `document` never reached it. | `tools/ax_audit.js` | **fixed** — it waits for animations, asks the browser whether an element can take focus instead of reading `tabIndex`, focuses the opener before clicking it, and dispatches keys to the focused element. Seven checks are demonstrated on a deliberately broken page before any runs against the app. |
 
 ---
 
@@ -168,7 +184,7 @@ now in CI.
   sessions — a century at three a week. Quota exhaustion is not the risk it looks
   like; the real cost is that every action re-serialises the whole blob (≈0.5 MB
   at 1,600 sessions), which is fine on a tap and would not be inside a loop.
-- **1,775 translation keys × 7 languages**, scanned green by `keyscan` across six
+- **1,776 translation keys × 7 languages**, scanned green by `keyscan` across six
   screens, every sheet, the exercise library and three learning modules.
 - **542 content keys, complete in all seven.** Measured, not claimed: the
   interface and the lessons are counted separately, and every language now
