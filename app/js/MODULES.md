@@ -8,7 +8,7 @@ way: `index.html` must open from the file system, and `file://` blocks ES
 modules. So the boundary is a contract rather than a syntax — one owner per
 name, no unloaded files, and a count per file that cannot grow by accident.
 
-**43 files, 768 top-level names.** Each name has exactly one
+**43 files, 769 top-level names.** Each name has exactly one
 owner; `provides` is what a file creates, `reaches for` is what it mentions
 from another file (a token scan, so it over-reports — it is a reading list,
 not a dependency graph).
@@ -54,7 +54,7 @@ not a dependency graph).
 | 37 | `js/ui/workout.js` | 81 | 78 |
 | 38 | `js/ui/printsheet.js` | 13 | 30 |
 | 39 | `js/ui/science.js` | 41 | 51 |
-| 40 | `js/ui/motion.js` | 19 | 3 |
+| 40 | `js/ui/motion.js` | 20 | 3 |
 | 41 | `js/ui/modules.js` | 17 | 19 |
 | 42 | `js/ui/anatomy3d.js` | 40 | 15 |
 | 43 | `js/app.js` | 32 | 46 |
@@ -103,7 +103,7 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/ui/workout.js`** — 81: `SESSION_SUB` `PLAN_DAY` `PLAN_EDIT` `LIB_QUERY` `LIB_MUSCLE` `LIB_EQUIP` `LIB_MODE` `LIVE_CLOCK` `LAST_LOGGED_SET` `ENTERING_FIELDS` `setSessionSub` `openExerciseLibrary` `activeElapsedMs` `togglePauseWorkout` `syncLiveClock` `formatElapsed` `sessionSubnavHtml` `renderSessionMasthead` `dayRecoveryRatio` `renderWorkoutPlanner` `selectPlanDay` `togglePlanEdit` `openRestPicker` `setPlanRestPick` `openRepPicker` `pickRep` `setPlanRest` `adjustPlanSets` `movePlanExercise` `removePlanExercise` `openPlanSub` `applyPlanSub` `openAddExerciseSheet` `filterAddExSheet` `addExerciseToPlan` `addExerciseToActive` `startCustomSession` `targetRangeText` `recommendationText` `recommendationTextPlain` `plannedSet` `newActiveExercise` `previousExerciseNote` `setExNote` `EX_OPEN` `EX_WAS_CURRENT` `exOpen` `skipExercise` `renderLive` `setRowHtml` `fieldHtml` `sideFieldsHtml` `toggleLrSplit` `setSideVal` `emptyHintFor` `startSession` `setVal` `paintSetActions` `copyPrevToExercise` `toggleSet` `logSet` `skipSet` `unskipSet` `toggleWarmup` `addSet` `removeSet` `openSub` `applySub` `discardSession` `FINISHING` `finishSession` `showCompletion` `closeCompletion` `emptySessionMessage` `normaliseLoggedSet` `setLibQuery` `setLibMuscle` `setLibEquip` `setLibMode` `resetLibFilters` `renderExerciseLibrary`
 - **`js/ui/printsheet.js`** — 13: `PRINT_MARK` `printTallyPaths` `printTally` `printTallyEmpty` `printLastDone` `printSleepFor` `printShiftFor` `printSheet` `printTargetFor` `recordOutcome` `openPrintCard` `openPrintRecord` `printDocument`
 - **`js/ui/science.js`** — 41: `SCI_VIEW` `SCI_CAT` `SCI_QUERY` `LESSON_ID` `QUIZ_STATE` `EXPLORER` `SIM` `MECH_EX` `sciProgress` `sciSave` `sciRead` `isRead` `sciAchievements` `setSciView` `sciModules` `sciLessons` `setSciCat` `setSciQuery` `openLesson` `backToScience` `markRead` `answerQuiz` `finishQuiz` `retryQuiz` `personalBlock` `sciExplorers` `openExplorer` `explorerMuscle` `explorerMetabolism` `explorerMechanics` `setMechEx` `explorerTimeline` `explorerSim` `setSim` `sciEvidence` `evidenceCard` `openEvidence` `openWhy` `whyPanel` `acceptWhy` `rejectWhy`
-- **`js/ui/motion.js`** — 19: `MOTION` `EASE` `PREV_NUMBERS` `PREV_RINGS` `PREV_SUBNAV` `REVEAL_IO` `isJsdom` `reducedMotion` `dur` `dismissAppBoot` `transitionView` `staggerIn` `animateNumber` `animateRing` `hydrateMotion` `animateSubnavs` `observeReveals` `pressFeedback` `moveIndicator`
+- **`js/ui/motion.js`** — 20: `MOTION` `EASE` `PREV_NUMBERS` `PREV_RINGS` `PREV_SUBNAV` `REVEAL_IO` `isJsdom` `reducedMotion` `dur` `BOOT_MIN_MS` `dismissAppBoot` `transitionView` `staggerIn` `animateNumber` `animateRing` `hydrateMotion` `animateSubnavs` `observeReveals` `pressFeedback` `moveIndicator`
 - **`js/ui/modules.js`** — 17: `MOD_ID` `MOD_STEP` `ENERGY` `REC_SIM` `openModule` `closeModule` `setModStep` `setEnergy` `setRecSim` `bindModuleView` `modulePersonalNote` `diagramFor` `energyDiagram` `paintEnergyReadout` `computeRecSimDays` `recoverySimDiagram` `paintRecSimReadout`
 - **`js/ui/anatomy3d.js`** — 40: `LAB_RUNTIME_SRC` `LAB_MODEL_SRC` `LAB` `LAB_MOUNTING` `LAB_DETACHED_STAGE` `LAB_RUNTIME_PROMISE` `LAB_MODEL_BYTES` `labWebGLAvailable` `labInlineText` `labInlineEnc` `b64ToBytes` `decompressGzipBytes` `labLoadScript` `evalRuntimeSource` `labLoadRuntime` `labLoadModelBytes` `mountAnatomyLab` `labControlsHtml` `LAB_ICONS` `createViewer` `labDetachStage` `labReattach` `labSetView` `labResetView` `labZoom` `labToggleIsolate` `labToggleContext` `labIsMounted` `labIsLoaded` `labSelectGroup` `labClearSelection` `labLayerFilter` `labRegionFilter` `labCurrentLayer` `labCurrentRegion` `labMuscleCount` `labGroups` `labSamplePixels` `labPickScreen` `destroyAnatomyLab`
 - **`js/app.js`** — 32: `T_ICON` `_bar` `_frame` `NAV` `NAV_MARK` `VIEW` `go` `switchLang` `saveLangChosen` `NAV_SIG` `renderNav` `paintStoreFlag` `UPDATE_SHOWN` `showUpdateReady` `reloadApp` `watchForDeploy` `keepDamagedRecord` `storeRetryTimer` `retryStore` `cancelStoreRetry` `scheduleStoreRetry` `LAST_UNCAUGHT` `UPDATE_REG` `reportUncaught` `render` `bindFigure` `toast` `toastTimer` `savedToast` `handleHashShortcut` `bootCopy` `boot`

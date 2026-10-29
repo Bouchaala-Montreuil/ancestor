@@ -63,30 +63,41 @@ function reducedMotion(){
 function dur(ms){ return reducedMotion() ? 0 : ms; }
 
 /* ----------------------------------------------------- initial app boot
-   Branded loading veil in index.html transitions out as soon as boot() has
-   rendered the real screen — zero artificial splash delay, never stuck. */
+   The veil in index.html stays up until the mark has finished drawing (about
+   740 ms), then lifts; the first screen rises into place under it. Under reduced
+   motion nothing waits: the veil is removed at once and the screen is static. */
+const BOOT_MIN_MS = 900;
 function dismissAppBoot(){
   const el = typeof document !== 'undefined' && document.getElementById('appBoot');
   if(!el || el.dataset.done === '1') return;
   el.dataset.done = '1';
+  const remove = () => { el.hidden = true; if(el.parentNode) el.parentNode.removeChild(el); };
   if(reducedMotion() || isJsdom() || typeof el.animate !== 'function'){
-    el.hidden = true;
-    if(el.parentNode) el.parentNode.removeChild(el);
+    remove();
     return;
   }
-  try{
-    const anim = el.animate(
-      [{ opacity: 1, transform: 'none' },
-       { opacity: 0, transform: 'translate3d(0,-6px,0)' }],
-      { duration: MOTION.base, easing: EASE.out, fill: 'forwards' }
-    );
-    const finish = () => { el.hidden = true; if(el.parentNode) el.parentNode.removeChild(el); };
-    anim.onfinish = finish;
-    setTimeout(finish, MOTION.slow + 40);
-  }catch(e){
-    el.hidden = true;
-    if(el.parentNode) el.parentNode.removeChild(el);
-  }
+  const elapsed = (typeof performance !== 'undefined' && performance.now) ? performance.now() : BOOT_MIN_MS;
+  const wait = Math.max(0, BOOT_MIN_MS - elapsed);
+  setTimeout(() => {
+    try{
+      const body = document.getElementById('screenBody');
+      if(body && typeof body.animate === 'function'){
+        body.animate(
+          [{ opacity: 0, transform: 'translate3d(0,8px,0)' }, { opacity: 1, transform: 'none' }],
+          { duration: MOTION.base, easing: EASE.out }
+        );
+      }
+      const anim = el.animate(
+        [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translate3d(0,-6px,0)' }],
+        { duration: MOTION.base, easing: EASE.out, fill: 'forwards' }
+      );
+      const finish = () => remove();
+      anim.onfinish = finish;
+      setTimeout(finish, MOTION.slow + 40);
+    }catch(e){
+      remove();
+    }
+  }, wait);
 }
 
 /* --------------------------------------------------------- page transitions

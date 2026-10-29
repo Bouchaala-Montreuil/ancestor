@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-IR+owa42Na2pYcfry24E5a90oykxrCqe3YrAvTijQ/g=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-Fixg0yM12+uDQmHHNyPNW/PssVNv8qztDjqbprhG9eg=' 'sha256-xSrF3DT1+pHeWsj3/wfbbHsetipxOU0s64iYDTou2Wg=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-sslyUUVVOSB7X45ZPXF0y6p7CKiAof5PGLf7uTR0/80=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/O6mSIz71lvtdni4AOSTMrllSa6ahuiin8j/8ROe4rQ=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-IR+owa42Na2pYcfry24E5a90oykxrCqe3YrAvTijQ/g=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-U22WMACK6mQUBjEJzhiAsj0iWWPZhpNar6VG//8DpOk=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-Fixg0yM12+uDQmHHNyPNW/PssVNv8qztDjqbprhG9eg=' 'sha256-xSrF3DT1+pHeWsj3/wfbbHsetipxOU0s64iYDTou2Wg=' 'sha256-W2nfCLJypGOJ1tYBXjVcszhO2ckvNBEJVcFM7RitXNs=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-pX9UN+YXcXXBkd7catnlPgHBPodYhra5IzmBW75KFI0=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -566,13 +566,20 @@ h1.title,h2.title,h2.sub,h3.sub{
 .app-boot-mark{
   display:block;width:56px;height:56px;margin:var(--s5) auto 0;color:var(--ink);
 }
-.app-boot-mark .bs{opacity:0;animation:tally-draw 160ms var(--ease) forwards}
+/* Each stroke draws from its left edge (scaleX), one after another; the fifth,
+   in the accent colour, closes the set last. Timed to finish inside the veil's
+   minimum display time set in motion.js. */
+.app-boot-mark .bs{transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);animation:bs-draw 240ms var(--ease) forwards}
 .app-boot-mark .bs1{animation-delay:0ms}
-.app-boot-mark .bs2{animation-delay:90ms}
-.app-boot-mark .bs3{animation-delay:180ms}
-.app-boot-mark .bs4{animation-delay:270ms}
-.app-boot-mark .bs5{animation-delay:400ms;fill:var(--burnt)}
-@keyframes tally-draw{from{opacity:0}to{opacity:1}}
+.app-boot-mark .bs2{animation-delay:120ms}
+.app-boot-mark .bs3{animation-delay:240ms}
+.app-boot-mark .bs4{animation-delay:360ms}
+.app-boot-mark .bs5{animation-delay:500ms;fill:var(--burnt)}
+@keyframes bs-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.app-boot-k,.app-boot-w,.app-boot-note{animation:boot-rise 280ms var(--ease) both}
+.app-boot-w{animation-delay:80ms}
+.app-boot-note{animation-delay:600ms}
+@keyframes boot-rise{from{opacity:0;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
 .app-boot-note{
   margin:var(--s4) 0 0;font-family:var(--f-mono);font-size:8px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink);
@@ -594,9 +601,11 @@ h1.title,h2.title,h2.sub,h3.sub{
 }
 .app-boot.out{opacity:0;pointer-events:none;transition:opacity var(--t-slow) var(--ease)}
 /* Reduced motion: the mark is simply there. */
-html[data-motion="on"] .app-boot-mark .bs{opacity:1;animation:none}
+html[data-motion="on"] .app-boot-mark .bs{transform:none;animation:none}
+html[data-motion="on"] .app-boot-k,html[data-motion="on"] .app-boot-w,html[data-motion="on"] .app-boot-note{animation:none}
 @media (prefers-reduced-motion: reduce){
-  .app-boot-mark .bs{opacity:1;animation:none}
+  .app-boot-mark .bs{transform:none;animation:none}
+  .app-boot-k,.app-boot-w,.app-boot-note{animation:none}
 }
 /* The old mark was a background image with the wordmark baked in; this one is
    drawn from the same numbers, so it can animate and recolour. */
@@ -3300,8 +3309,7 @@ html[lang="ar"] .mono{
         <rect class="bs bs2" x="8.267" y="4.2" width="2.4" height="15.6"/>
         <rect class="bs bs3" x="13.333" y="4.2" width="2.4" height="15.6"/>
         <rect class="bs bs4" x="18.4" y="4.2" width="2.4" height="15.6"/>
-        <rect class="bs bs5" x="2.30" y="10.8" width="19.4" height="2.4"
-              transform="rotate(-16 12 12)"/>
+        <g transform="rotate(-16 12 12)"><rect class="bs bs5" x="2.30" y="10.8" width="19.4" height="2.4"/></g>
       </g>
     </svg>
     <p class="app-boot-note" id="bootNote">Your log never leaves this device</p>
@@ -23967,30 +23975,41 @@ function reducedMotion(){
 function dur(ms){ return reducedMotion() ? 0 : ms; }
 
 /* ----------------------------------------------------- initial app boot
-   Branded loading veil in index.html transitions out as soon as boot() has
-   rendered the real screen — zero artificial splash delay, never stuck. */
+   The veil in index.html stays up until the mark has finished drawing (about
+   740 ms), then lifts; the first screen rises into place under it. Under reduced
+   motion nothing waits: the veil is removed at once and the screen is static. */
+const BOOT_MIN_MS = 900;
 function dismissAppBoot(){
   const el = typeof document !== 'undefined' && document.getElementById('appBoot');
   if(!el || el.dataset.done === '1') return;
   el.dataset.done = '1';
+  const remove = () => { el.hidden = true; if(el.parentNode) el.parentNode.removeChild(el); };
   if(reducedMotion() || isJsdom() || typeof el.animate !== 'function'){
-    el.hidden = true;
-    if(el.parentNode) el.parentNode.removeChild(el);
+    remove();
     return;
   }
-  try{
-    const anim = el.animate(
-      [{ opacity: 1, transform: 'none' },
-       { opacity: 0, transform: 'translate3d(0,-6px,0)' }],
-      { duration: MOTION.base, easing: EASE.out, fill: 'forwards' }
-    );
-    const finish = () => { el.hidden = true; if(el.parentNode) el.parentNode.removeChild(el); };
-    anim.onfinish = finish;
-    setTimeout(finish, MOTION.slow + 40);
-  }catch(e){
-    el.hidden = true;
-    if(el.parentNode) el.parentNode.removeChild(el);
-  }
+  const elapsed = (typeof performance !== 'undefined' && performance.now) ? performance.now() : BOOT_MIN_MS;
+  const wait = Math.max(0, BOOT_MIN_MS - elapsed);
+  setTimeout(() => {
+    try{
+      const body = document.getElementById('screenBody');
+      if(body && typeof body.animate === 'function'){
+        body.animate(
+          [{ opacity: 0, transform: 'translate3d(0,8px,0)' }, { opacity: 1, transform: 'none' }],
+          { duration: MOTION.base, easing: EASE.out }
+        );
+      }
+      const anim = el.animate(
+        [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translate3d(0,-6px,0)' }],
+        { duration: MOTION.base, easing: EASE.out, fill: 'forwards' }
+      );
+      const finish = () => remove();
+      anim.onfinish = finish;
+      setTimeout(finish, MOTION.slow + 40);
+    }catch(e){
+      remove();
+    }
+  }, wait);
 }
 
 /* --------------------------------------------------------- page transitions

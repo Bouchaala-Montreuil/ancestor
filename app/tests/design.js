@@ -1664,6 +1664,18 @@ group('2o. Three visible fixes: programme summary wrap, chart decimals, placehol
       comp.indexOf('const oneDp = rows.some') > 0 && comp.indexOf('oneDp ? (Math.round(v*10)/10).toFixed(1)') > 0);
 }
 
+group('2p. Loading veil: the mark draws, and stays long enough to be seen');
+{
+  const cssB = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+  const mot = fs.readFileSync(path.join(ROOT, 'js/ui/motion.js'), 'utf8');
+  chk('each boot stroke draws by scaling from its left edge, not by fading',
+      /\.app-boot-mark \.bs\{[^}]*transform:scaleX\(0\)[^}]*bs-draw/.test(cssB) && !/tally-draw/.test(cssB));
+  chk('the closing stroke keeps its rotation on a wrapping group, not a transform attribute',
+      /<g transform="rotate\(-16 12 12\)"><rect class="bs bs5"/.test(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')));
+  chk('the veil waits for the mark before it lifts (minimum 900 ms on the page clock)',
+      /const BOOT_MIN_MS = 900;/.test(mot) && mot.indexOf('BOOT_MIN_MS - elapsed') > 0);
+}
+
 /* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {

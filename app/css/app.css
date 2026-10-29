@@ -541,13 +541,20 @@ h1.title,h2.title,h2.sub,h3.sub{
 .app-boot-mark{
   display:block;width:56px;height:56px;margin:var(--s5) auto 0;color:var(--ink);
 }
-.app-boot-mark .bs{opacity:0;animation:tally-draw 160ms var(--ease) forwards}
+/* Each stroke draws from its left edge (scaleX), one after another; the fifth,
+   in the accent colour, closes the set last. Timed to finish inside the veil's
+   minimum display time set in motion.js. */
+.app-boot-mark .bs{transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);animation:bs-draw 240ms var(--ease) forwards}
 .app-boot-mark .bs1{animation-delay:0ms}
-.app-boot-mark .bs2{animation-delay:90ms}
-.app-boot-mark .bs3{animation-delay:180ms}
-.app-boot-mark .bs4{animation-delay:270ms}
-.app-boot-mark .bs5{animation-delay:400ms;fill:var(--burnt)}
-@keyframes tally-draw{from{opacity:0}to{opacity:1}}
+.app-boot-mark .bs2{animation-delay:120ms}
+.app-boot-mark .bs3{animation-delay:240ms}
+.app-boot-mark .bs4{animation-delay:360ms}
+.app-boot-mark .bs5{animation-delay:500ms;fill:var(--burnt)}
+@keyframes bs-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.app-boot-k,.app-boot-w,.app-boot-note{animation:boot-rise 280ms var(--ease) both}
+.app-boot-w{animation-delay:80ms}
+.app-boot-note{animation-delay:600ms}
+@keyframes boot-rise{from{opacity:0;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
 .app-boot-note{
   margin:var(--s4) 0 0;font-family:var(--f-mono);font-size:8px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink);
@@ -569,9 +576,11 @@ h1.title,h2.title,h2.sub,h3.sub{
 }
 .app-boot.out{opacity:0;pointer-events:none;transition:opacity var(--t-slow) var(--ease)}
 /* Reduced motion: the mark is simply there. */
-html[data-motion="on"] .app-boot-mark .bs{opacity:1;animation:none}
+html[data-motion="on"] .app-boot-mark .bs{transform:none;animation:none}
+html[data-motion="on"] .app-boot-k,html[data-motion="on"] .app-boot-w,html[data-motion="on"] .app-boot-note{animation:none}
 @media (prefers-reduced-motion: reduce){
-  .app-boot-mark .bs{opacity:1;animation:none}
+  .app-boot-mark .bs{transform:none;animation:none}
+  .app-boot-k,.app-boot-w,.app-boot-note{animation:none}
 }
 /* The old mark was a background image with the wordmark baked in; this one is
    drawn from the same numbers, so it can animate and recolour. */
