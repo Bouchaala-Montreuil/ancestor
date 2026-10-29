@@ -1646,6 +1646,14 @@ group('2m. Sheet focus: pickers start on their value; text sheets never auto-foc
       sb.indexOf('input') < 0 && sb.indexOf('textarea') < 0);
 }
 
+group('2n. Hero bands sit inside the content column at desktop width');
+{
+  const i = css.indexOf('@media (min-width:1024px)', css.indexOf('.masthead-body'));
+  const seg = i >= 0 ? css.slice(i, css.indexOf('}', css.indexOf('}', i) + 1) + 1) : '';
+  chk('at 1024 px and up the masthead bands drop the full-bleed negative margin',
+      i >= 0 && /masthead-today,\.masthead-body\{margin-inline:0/.test(seg));
+}
+
 /* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {

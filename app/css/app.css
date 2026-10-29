@@ -487,6 +487,12 @@ h1.title,h2.title,h2.sub,h3.sub{
 @media (min-width:720px){
   .masthead-today,.masthead-body{margin-inline:calc(-1 * var(--s6));padding-inline:var(--s6)}
 }
+/* With the sidebar (1024 px and up) the shell's gutters are asymmetric, so a full-bleed
+   band overran the sidebar on one side and stopped short on the other. The band takes
+   the content column instead, and its text keeps the same inset. */
+@media (min-width:1024px){
+  .masthead-today,.masthead-body{margin-inline:0;padding-inline:var(--s6)}
+}
 .masthead-today{background:url("../img/hero-today.jpg") 62% 40%/cover no-repeat}
 .masthead-body{background:url("../img/hero-body.jpg") 80% 30%/cover no-repeat}
 .masthead-today::before,.masthead-body::before{
