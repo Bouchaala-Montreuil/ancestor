@@ -1636,6 +1636,17 @@ group('2l. Metric text values break between words, not inside them');
 }
 
 /* ================================================================ */
+group('2m. Sheet focus: pickers start on their value; text sheets never auto-focus a field');
+{
+  const scr3 = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
+  const si = scr3.indexOf('function sheet(title, bodyHtml)'); const sb = scr3.slice(si, scr3.indexOf('\n}\n', si));
+  chk('a picker sheet focuses its selected option, falling back to the first',
+      sb.indexOf("querySelector('.pick.on')") > 0 && sb.indexOf("querySelector('.pick')") > 0);
+  chk('the sheet never focuses a text field on open (no unrequested keyboard)',
+      sb.indexOf('input') < 0 && sb.indexOf('textarea') < 0);
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));

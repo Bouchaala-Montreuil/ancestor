@@ -2313,7 +2313,11 @@ function sheet(title, bodyHtml){
   const panel = host.querySelector('.panel');
   if(panel){
     panel.addEventListener('keydown', sheetKeyHandler);
-    setTimeout(() => panel.focus(), 0);
+    /* A picker starts on its current value (or its first option), so one Tab
+       or arrow is enough to choose. Other sheets keep the panel as the target:
+       focusing a text field there would open a keyboard unasked. */
+    const firstPick = panel.querySelector('.pick.on') || panel.querySelector('.pick');
+    setTimeout(() => (firstPick || panel).focus(), 0);
   }
 }
 
