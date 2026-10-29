@@ -39,7 +39,7 @@ Which is the same as, one at a time:
 ```bash
 cd app && for t in design premium ui run inclusive personas science logic anatomy print; do
   node tests/$t.js
-done                                        # 1,516 checks over 10 suites
+done                                        # 1,527 checks over 10 suites
 node tools/keyscan.js                       # no untranslated key reaches a screen
 node tools/qa_audit.js                      # structural audit, gated on its own findings
 python3 build.py && node tools/smoke_dist.js   # the single file, booted and used
@@ -52,7 +52,24 @@ node tools/ax_audit.js                      # 75 checks: Chrome's accessibility 
 ```
 
 The browser suite is separate because it needs a Chrome binary:
-`npm run test:browser` (76 checks, and the only one that measures layout).
+`npm run test:browser` (93 checks, and the only one that measures layout).
+
+## Look at it
+
+```bash
+cd app && npm run preview        # http://0.0.0.0:8000, HTTP/1.1 with keep-alive
+```
+
+`tools/preview.js` exists instead of `python3 -m http.server` for two reasons
+that both showed up as real bugs: Python answers HTTP/1.0 and closes the
+connection after every response, which through an HTTPS proxy can leave the
+browser waiting on a page it never finishes; and it logs a line per request but
+no Host or User-Agent, so when a preview was inert the only evidence was that
+`GET /` had arrived once and no sub-resource ever had. The Node server answers
+HTTP/1.1 with an exact `Content-Length`, `Cache-Control: no-store`, the right
+type for `.webmanifest` and `.glb`, and one log line per request carrying the
+host and user agent. If the panel is ever inert again, read that log first: a
+document with no sub-resources is a delivery problem, not an app bug.
 
 ## The rules it is held to
 

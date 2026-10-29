@@ -435,6 +435,21 @@ h1.title,h2.title,h2.sub,h3.sub{
   margin:var(--s4) 0 0;font-family:var(--f-mono);font-size:8px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink);
 }
+/* The veil cannot stay silent forever. If boot() never runs — scripts blocked,
+   or served the document and nothing else — this line appears on its own,
+   because it is CSS and needs no script to reveal it. It stays invisible for
+   the fifteen seconds a cold start is allowed to take, so the working case
+   never sees it; it does not dismiss the veil, it stops it lying. */
+.app-boot-slow{
+  margin:var(--s5) 0 0;font-family:var(--f-mono);font-size:9px;line-height:1.7;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+  visibility:hidden;animation:boot-slow 0s 15s forwards;
+}
+@keyframes boot-slow{to{visibility:visible}}
+.app-boot-fail{
+  margin:var(--s5) 0 0;font-family:var(--f-mono);font-size:9px;line-height:1.7;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+}
 .app-boot.out{opacity:0;pointer-events:none;transition:opacity var(--t-slow) var(--ease)}
 /* Reduced motion: the mark is simply there. */
 html[data-motion="on"] .app-boot-mark .bs{opacity:1;animation:none}

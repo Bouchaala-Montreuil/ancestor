@@ -14,6 +14,7 @@
     "figure": "node tools/build-figure.js",
     "modules": "node tools/modules.js",
     "smoke": "node tools/smoke_dist.js",
+    "preview": "node tools/preview.js 8000",
     "test:print": "node tests/print.js",
     "test:all": "npm test && node tests/browser.js && node tools/pwa_audit.js",
     "pwa": "node tools/pwa_audit.js",

@@ -4,7 +4,7 @@ A review of the software, not the design. `design/STATES.md` covers what the
 screens do when something goes wrong; this covers what the *system* does, what it
 cannot do, and where the assumptions were hiding.
 
-Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,516 headless checks and
+Read on 2026-10-28 against `037789e`, and re-measured the same day at 1,527 headless checks and
 93 real-browser checks.
 
 ---
@@ -29,7 +29,7 @@ IndexedDB mirror is written on every save and read only when `localStorage` is
 empty. Export/import is the only backup the user controls, and the app treats "five
 sessions without a recent export" as a thing to say out loud.
 
-**Tests.** Ten headless suites (jsdom) — 1,516 checks — plus `tests/browser.js` (93 real-Chromium checks),
+**Tests.** Ten headless suites (jsdom) — 1,527 checks — plus `tests/browser.js` (93 real-Chromium checks),
 which needs a real Chrome and covers what jsdom cannot: WebGL, layout overflow at
 320/360/768/1280, a service-worker reload with the network severed, and the two
 failure strips — a refused write and a damaged record — on a 320 px phone in
@@ -93,7 +93,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S2 | **High** | A throw inside an event handler killed the button, not the screen. `render()` has had a designed failure state for months; the handler path never reached it. | no `window.onerror`, no `unhandledrejection` | **fixed** |
 | S3 | **High** | A record from a *newer* build was silently downgraded: `migrate()` stamped it with this build's version, and the next save dropped the fields it did not know. | `out.version = SCHEMA_VERSION` unconditionally | **fixed** |
 | S4 | **High** | An unreadable record was overwritten by the next save — the log deleted itself, silently. | `loadState()` fell through to a clean state | fixed in `bc46139` |
-| S5 | Medium | Nothing ran the suites. 1,516 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
+| S5 | Medium | Nothing ran the suites. 1,527 checks that only execute when a person remembers. | no `.github/` | **written, still off.** Pushing it was attempted on 2026-10-28 and GitHub refused: *"refusing to allow a GitHub App to create or update workflow `.github/workflows/checks.yml` without `workflows` permission"*. It is a permission on the token, not a bug in the file — the file is complete at `app/ci/checks.yml`, and the two ways to switch it on are written at the top of it. Until then `npm run verify` is the whole gate in one command. |
 | S6 | Medium | `npm test` could not pass on a machine without Chrome — it ended in `tests/browser.js`. The gate that everyone runs was red by construction. | `package.json` | **fixed** |
 | S7 | Medium | Escaping is by convention: 441 `esc()` calls, one helper, no test that markup cannot reach the DOM. It held; nothing proved it. | `js/ui/screens.js:25` | **fixed** |
 | S8 | Medium | `tools/qa_audit.js` held a stricter standard than the app (`--hit` says 44, the tool wanted 46/52) and flagged `.fig-controls` as an overlay when it is a sibling row in normal flow. | two High findings that were wrong | **fixed** |
@@ -112,6 +112,7 @@ woff2 and the three.js runtime. A service worker caches the file list, cache-fir
 | S21 | Low | The roadmap's own tables were stale in one direction that mattered: §1 listed "Print from history" as a screen that does not exist, and it has shipped for weeks (`openPrintRecord`, reachable from the history list and from the completion sheet). §6 listed the install audit as never done, which was true only because no browser was reachable. | `design/ROADMAP.md` §1, §6 | **fixed** — §6's two rows are done and dated (`tools/pwa_audit.js`, 30 checks); the print row is checked against the code before being trusted again. |
 | S22 | **High** | Six controls with the same accessible name and six different jobs: every row on the session screen ended in a button reading "Détails de l'exercice". On screen the row supplies the context; in a screen reader's button list, a rotor, or voice control ("click Détails de l'exercice" — which one?) it does not exist. Two filter groups on the anatomy screen had the same shape: "Tout" appeared as both the layer filter and the region filter, "Dos" as both the side toggle and a region. | found by `tools/ax_audit.js` | **fixed** — the generic controls carry the name of what they act on (`exd.open — Développé couché`), and the anatomy chips carry their group (`Vue — Dos`), via a new `lab3d.filterSide` key in all seven languages. Design group 8v holds it without needing a browser. |
 | S23 | Medium | The audit's own blind spots, worth recording because three of its first four failures were its fault: a card mid-stagger is at opacity 0 and genuinely focusable, `el.click()` does not move focus so "focus restoration" was tested against `<body>`, a `position:fixed` sheet has no `offsetParent` so a working sheet looked broken, and the key handler lives on the panel — a synthetic keydown on `document` never reached it. | `tools/ax_audit.js` | **fixed** — it waits for animations, asks the browser whether an element can take focus instead of reading `tabIndex`, focuses the opener before clicking it, and dispatches keys to the focused element. Seven checks are demonstrated on a deliberately broken page before any runs against the app. |
+| S24 | Medium | The loading veil could outlive its own explanation. It is dismissed by `dismissAppBoot()` in `boot()`, which is the right design — no artificial splash — but it means a page whose scripts never arrive shows the drawn mark indefinitely and says nothing. That happened in a live preview: the server logged one `GET /` and not one sub-resource, and the panel was inert with no way to tell why. Two answers now exist in HTML and CSS only, because JavaScript is exactly what is missing: a `noscript` line that names the problem and the fix, and a line inside the veil that stays `visibility:hidden` for fifteen seconds and then appears, so a slow phone that works never sees it. Neither dismisses the veil — a dead app must not look alive. `tests/design.js` group 8w checks both are present, script-free, delayed, and inside the veil; verified in Chromium with sub-resources blocked (invisible at 7.7 s, visible at 15.7 s) and with JavaScript disabled. |
 
 ---
 

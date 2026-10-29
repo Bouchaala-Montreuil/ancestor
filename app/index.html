@@ -45,6 +45,17 @@
       </g>
     </svg>
     <p class="app-boot-note" id="bootNote">Your log never leaves this device</p>
+    <!-- Two ways this veil can become a lie, both of them real: the browser
+         has scripts switched off, or the scripts are never delivered (an
+         offline cache miss, a proxy that serves the document and drops every
+         sub-resource). Either way no JavaScript can run to explain itself, so
+         the explanation is HTML and CSS. Neither line exists for the working
+         case: the noscript block is inert when scripting is on, and the slow line is
+         invisible until ten seconds have passed. -->
+    <noscript>
+      <p class="app-boot-fail">ANCESTOR needs JavaScript. Turn it on and reload.</p>
+    </noscript>
+    <p class="app-boot-slow">Still loading? Reload the page.</p>
   </div>
 </div>
 

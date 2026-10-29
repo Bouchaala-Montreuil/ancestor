@@ -1355,6 +1355,52 @@ group('8r. The masthead asks nothing; the first screen asks one thing');
 }
 
 /* ================================================================ */
+group('8w. The loading veil cannot sit there forever');
+{
+  /* The failure this catches is the one seen in the live preview: the document
+     arrives, nothing else does, and the branded mark stays on screen with no
+     explanation. No script can run to apologise for that, so both escape
+     hatches have to be image-free, script-free, and inside the veil itself. */
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const css  = fs.readFileSync(path.join(ROOT, 'css/app.css'), 'utf8');
+  const app  = fs.readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+
+  const boot = (html.match(/<div class="app-boot" id="appBoot"[\s\S]*?<\/div>\s*<\/div>/) || [''])[0];
+  chk('the veil is one block and it is in the static document', boot.length > 0);
+
+  const ns = html.match(/<noscript>[\s\S]*?<\/noscript>/g) || [];
+  chk('there is exactly one <noscript>, so the no-script case is answered once',
+      ns.length === 1, ns.length + ' found');
+  chk('it says what is wrong and what to do, not just that something is wrong',
+      ns.length === 1 && /JavaScript/i.test(ns[0]) && /reload/i.test(ns[0]),
+      (ns[0] || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 56));
+  chk('it needs nothing to work: no action, no inline handler inside it',
+      ns.length === 1 && !/data-act=/.test(ns[0]) && !/\son[a-z]+=/.test(ns[0]));
+
+  const slow = (html.match(/<p class="app-boot-slow">([\s\S]*?)<\/p>/) || []);
+  chk('a second line covers the quieter failure: script on, script never delivered',
+      slow.length === 2 && /reload/i.test(slow[1]), (slow[1] || '').trim().slice(0, 48));
+  chk('it is inside the veil, so the working path removes it with the veil',
+      boot.indexOf('app-boot-slow') > 0 && boot.indexOf('app-boot-fail') > 0);
+
+  const rule = (css.match(/\.app-boot-slow\{[\s\S]*?\n\}/) || [''])[0];
+  chk('it starts invisible rather than being painted at load',
+      /visibility:hidden/.test(rule), rule.replace(/\s+/g, ' ').slice(0, 46));
+  const delay = Number((rule.match(/animation:boot-slow 0s (\d+)s/) || [])[1]);
+  chk('and it waits longer than a cold start, so it is not shown to a slow phone that works',
+      delay >= 10, delay ? delay + 's' : 'no delay');
+  chk('the reveal is a keyframe, not a transition, so it fires with no interaction',
+      /@keyframes boot-slow/.test(css) && /to\{visibility:visible\}/.test(css));
+  chk('it does not dismiss the veil itself: a dead app must not look alive',
+      !/app-boot-slow/.test(app) && !/\.app-boot-slow[^{]*\{[^}]*(display:none|opacity:0)/.test(css));
+
+  chk('the veil is still removed by boot(), and only after the first render',
+      /dismissAppBoot\(\);/.test(app) &&
+      (app.match(/dismissAppBoot\(\)/g) || []).length === 1,
+      (app.match(/dismissAppBoot\(\)/g) || []).length + ' call sites');
+}
+
+/* ================================================================ */
 console.log('\n' + '='.repeat(64));
 if(fail === 0) console.log('\x1b[32m\x1b[1m  ALL ' + pass + ' DESIGN TESTS PASSED\x1b[0m');
 else { console.log('\x1b[31m\x1b[1m  ' + fail + ' FAILED\x1b[0m, ' + pass + ' passed'); failures.forEach(f => console.log('   - ' + f)); }

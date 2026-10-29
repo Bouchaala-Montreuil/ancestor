@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-v5Li+Ahn54lXERUCf8byua6XWIBc/0ifqgwCMMYnzL4=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/q1+bYM+UWKWy0leLvtgXCt/3DrO86uqlZ1qUrd3SD8=' 'sha256-rfNTNwXOeJn63nHCNDJlEwZsKB6OjWpIl9l91e9cY0o=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-bf81xoeuuAelZa74pYzp1kl0847vdwI2gQKWjDR75uc=' 'sha256-3yj+hnBVQAP1A0F5Orns0yavhCt3zvMyGGuSh/HIUd4=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-zFjUgQxOsjI/hr87I8DFTo81TDAlWFUsV9XERAURw90=' 'sha256-OpIhvtF9aAH3cX+PAvuY3BM1DqL8Fhh3NMcsJCRU0Z0=' 'sha256-ThZ55OgZyUwrxJOLS2aNFK2ZcXaZvRBHICMOZ9TzHMA=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-v5Li+Ahn54lXERUCf8byua6XWIBc/0ifqgwCMMYnzL4=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-WjiMDldM9ywVDjuhR7OxYbF8cqylSlVzLz30vUk3ZJk=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-/q1+bYM+UWKWy0leLvtgXCt/3DrO86uqlZ1qUrd3SD8=' 'sha256-rfNTNwXOeJn63nHCNDJlEwZsKB6OjWpIl9l91e9cY0o=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-1FplDPA2fBRwPYe9HmEathZ8Re3yispymK1cFD85Mho=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-bf81xoeuuAelZa74pYzp1kl0847vdwI2gQKWjDR75uc=' 'sha256-QnLz/Ka4WbxRbeyR783YHYMw1wrg/DIjQyO28ZNiqR8=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-zFjUgQxOsjI/hr87I8DFTo81TDAlWFUsV9XERAURw90=' 'sha256-OpIhvtF9aAH3cX+PAvuY3BM1DqL8Fhh3NMcsJCRU0Z0=' 'sha256-ThZ55OgZyUwrxJOLS2aNFK2ZcXaZvRBHICMOZ9TzHMA=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-jYxXtcPvjtKYNAYruD5NMgIwVuTr/LP6nEuwoU39RGU=' 'sha256-Ff4+Mmh2txVgu/CrJj4V+xFlb6IEpfHpccq+SkYuzoA=' 'sha256-IynqjdnYXCQZdlaGUEs8y/5GhL0JtOPVbAFJxqNK6DA=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-DHK2XdIBkIsd1KrUgLnwKZjIRhSzMerwcB+7CCabbmk=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#20211F">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -459,6 +459,21 @@ h1.title,h2.title,h2.sub,h3.sub{
 .app-boot-note{
   margin:var(--s4) 0 0;font-family:var(--f-mono);font-size:8px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--tech-ink);
+}
+/* The veil cannot stay silent forever. If boot() never runs — scripts blocked,
+   or served the document and nothing else — this line appears on its own,
+   because it is CSS and needs no script to reveal it. It stays invisible for
+   the fifteen seconds a cold start is allowed to take, so the working case
+   never sees it; it does not dismiss the veil, it stops it lying. */
+.app-boot-slow{
+  margin:var(--s5) 0 0;font-family:var(--f-mono);font-size:9px;line-height:1.7;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+  visibility:hidden;animation:boot-slow 0s 15s forwards;
+}
+@keyframes boot-slow{to{visibility:visible}}
+.app-boot-fail{
+  margin:var(--s5) 0 0;font-family:var(--f-mono);font-size:9px;line-height:1.7;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
 }
 .app-boot.out{opacity:0;pointer-events:none;transition:opacity var(--t-slow) var(--ease)}
 /* Reduced motion: the mark is simply there. */
@@ -3116,6 +3131,17 @@ html[lang="ar"] .mono{
       </g>
     </svg>
     <p class="app-boot-note" id="bootNote">Your log never leaves this device</p>
+    <!-- Two ways this veil can become a lie, both of them real: the browser
+         has scripts switched off, or the scripts are never delivered (an
+         offline cache miss, a proxy that serves the document and drops every
+         sub-resource). Either way no JavaScript can run to explain itself, so
+         the explanation is HTML and CSS. Neither line exists for the working
+         case: the noscript block is inert when scripting is on, and the slow line is
+         invisible until ten seconds have passed. -->
+    <noscript>
+      <p class="app-boot-fail">ANCESTOR needs JavaScript. Turn it on and reload.</p>
+    </noscript>
+    <p class="app-boot-slow">Still loading? Reload the page.</p>
   </div>
 </div>
 
@@ -14898,7 +14924,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v34';
+const APP_BUILD = 'v35';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
