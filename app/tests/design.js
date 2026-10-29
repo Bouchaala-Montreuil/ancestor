@@ -1546,6 +1546,24 @@ group('2f. Onboarding availability is two sliders, not chips');
 }
 
 /* ================================================================ */
+group('2g. Readiness ring on Today: same number, decorative, static');
+{
+  const comp = fs.readFileSync(path.join(ROOT,'js/ui/components.js'),'utf8');
+  const scr = fs.readFileSync(path.join(ROOT,'js/ui/screens.js'),'utf8');
+  chk('Today passes ring:true to the existing readinessMeter (no new score)',
+      /readinessMeter\(ids\.length \? d\.ratio : null, null, \{showDef:false, ring:true\}\)/.test(scr));
+  chk('the ring draws the same rounded pct as the figure',
+      /stroke-dasharray="' \+ pct \+ ' 100"/.test(comp));
+  chk('the ring is aria-hidden so the figure is the only value announced',
+      /class="ring" viewBox="0 0 36 36" aria-hidden="true"/.test(comp));
+  chk('the ring has no animation or transition rule',
+      !/\.ring[^{]*\{[^}]*(animation|transition)/.test(css));
+  chk('no-ring meter (null value) never draws a ring',
+      /if\(value === null \|\| value === undefined\)\{[\s\S]*?return/.test(comp) &&
+      comp.indexOf('const ring = o.ring') > comp.indexOf('if(value === null'));
+}
+
+/* ================================================================ */
 group('2c. Theme preference: dark by default, paper on request');
 {
   const prof = require(path.join(ROOT, 'js/core/profile.js'));

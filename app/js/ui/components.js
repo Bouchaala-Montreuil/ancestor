@@ -311,7 +311,12 @@ function readinessMeter(value, stateKey, opts){
   }
   const rounded = Math.round(value*100/5)*5;
   const pct = Math.max(0, value < 1 ? Math.min(95, rounded) : Math.min(100, rounded));
-  return '<div class="readiness">' +
+  /* The ring is the same rounded number drawn as an arc: no new score, no
+     animation. It is decorative (aria-hidden); the figure is the value. */
+  const ring = o.ring ? '<svg class="ring" viewBox="0 0 36 36" aria-hidden="true" focusable="false">' +
+    '<circle class="track" cx="18" cy="18" r="15.9" pathLength="100"/>' +
+    '<circle class="arc" cx="18" cy="18" r="15.9" pathLength="100" stroke-dasharray="' + pct + ' 100"/></svg>' : '';
+  return '<div class="readiness' + (o.ring ? ' has-ring' : '') + '">' + ring +
     '<div class="v">' + pct + '<small>%</small></div>' +
     '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
     '<div class="cap">' + esc(t('readiness.label')) + '</div>' +

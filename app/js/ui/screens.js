@@ -173,7 +173,7 @@ Screens.home = function(){
   h += '<p class="eyebrow">' + esc(t('decision.label')) + '</p>';
   h += '<div class="dec-state">' + esc(t('decision.' + shown)) + '</div>';
   h += '</div>';
-  h += readinessMeter(ids.length ? d.ratio : null, null, {showDef:false});
+  h += readinessMeter(ids.length ? d.ratio : null, null, {showDef:false, ring:true});
   h += '</div>';
   /* The caveat that makes the number honest: an estimate of elapsed time, not a
      measurement of tissue. It stays on the screen, one tap down, instead of
