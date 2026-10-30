@@ -1332,7 +1332,10 @@ function groupAnatomicalAction(m){
     quads:'thigh|Quadriceps', hamstrings:'thigh|Hamstrings', glutes:'hips|Glutes',
     calves:'calves|Calves', abs:'core|Abdominals', lowerback:'back|Spinal extensors'
   };
-  return (typeof MESH_GROUP_ACTION === 'object' && MESH_GROUP_ACTION[KEY_BY_GROUP[m]]) || '';
+  const fallback = (typeof MESH_GROUP_ACTION === 'object' && MESH_GROUP_ACTION[KEY_BY_GROUP[m]]) || '';
+  if(!fallback || CURRENT_LANG === 'en') return fallback;
+  const key = 'anatomy.action.' + m;
+  return (T[CURRENT_LANG] && T[CURRENT_LANG][key]) || fallback;
 }
 function openMobileMuscleSheet(){
   const det = document.getElementById('bodyDetail');
@@ -1431,13 +1434,11 @@ function openExerciseDetail(exId){
     (spec.unilateral ? '<span class="flag plain">' + esc(t('log.unilateral')) + '</span>' : '') +
     '</div>';
 
-  /* Dual-panel anatomical highlight + movement-pattern force-vector plate */
+  /* The same exercise-specific guide is used by the mechanics explorer. */
   if(typeof exerciseVisualSvg === 'function'){
     h += exerciseVisualSvg(ex);
   }
 
-  h += '<p class="body-sm mb-3"><b>' + esc(t('session.cue')) + ':</b> ' +
-       esc(t('cue.' + ex.id)) + '</p>';
   if(action){
     h += '<p class="body-sm mb-3"><b>' + esc(t('lab3d.action')) +
          ' (' + esc(t('mg.' + prime)) + '):</b> ' + esc(action) + '</p>';

@@ -431,7 +431,6 @@ function explorerMechanics(){
       '<span class="flag accent">' + esc(t('lab.primary')) + ': ' + esc(t('mg.'+ex.m[0][0])) + '</span>' +
       ex.m.slice(1).map(([m,w]) => '<span class="flag plain">' + esc(t('mg.'+m)) + ' ' + Math.round(w*100) + '%</span>').join('') +
       '</div>';
-    h += '<p class="body-sm">' + esc(t('cue.'+exId)) + '</p>';
     h += '<p class="hint mt-2">' + esc(t('takeaway.mm.2')) + '</p>';
     h += '<div class="mt-3"><button class="btn quiet sm" data-act="openMuscle" data-a1="' + ex.m[0][0] + '">' +
          esc(t('home.mapCta')) + '</button></div>';

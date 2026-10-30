@@ -41,7 +41,7 @@ langs.forEach(l=>{
 console.log('keys with no translation in ANY language:', missing.length);
 if(missing.length) console.log(' ', missing.slice(0,20).join(', '));
 // now scan rendered screens for verbatim keys
-const RAW_RE = /\b(?:app|nav|btn|home|decision|readiness|state|body|progress|session|profile|you|mg|mst|onb|sleep|shift|feel|chart|tl|about|unc|dlg|err|goal|env|need|a11y|log|hist|pat|equip|lab3d|done|tip|mod|modA|modB|modC|mile|bw|exd|sci|why|ev|sim|lab|les|cat|rule)\.[a-z][A-Za-z0-9_.]*\b/g;
+const RAW_RE = /\b(?:app|nav|btn|home|decision|readiness|state|body|progress|session|profile|you|mg|mst|onb|sleep|shift|feel|chart|tl|about|unc|dlg|err|goal|env|need|a11y|log|hist|pat|equip|lab3d|done|tip|mod|modA|modB|modC|mile|bw|exd|sci|why|ev|sim|lab|les|cat|rule|movement)\.[a-z][A-Za-z0-9_.]*\b/g;
 function scanText(lang, txt){
   Object.keys(all).forEach(k=>{ if(txt.indexOf(k)>=0) found[lang+' :: '+k]=1; });
   (txt.match(RAW_RE)||[]).forEach(m=>{ found[lang+' :: '+m]=1; });
@@ -66,12 +66,12 @@ langs.forEach(lang=>{
     scanText(lang, txt);
   });
   w.openExerciseLibrary(); scanText(lang, d.querySelector('#screenBody').textContent);
-  w.openExerciseDetail('bb-bench');
-  {
+  ['bb-bench','db-fly','leg-press','plank','bird-dog','bike-erg'].forEach(id=>{
+    w.openExerciseDetail(id);
     const stxt = d.querySelector('#sheetHost') ? d.querySelector('#sheetHost').textContent : '';
     scanText(lang, stxt);
-  }
-  w.closeSheet && w.closeSheet();
+    w.closeSheet && w.closeSheet();
+  });
   ['muscle-growth','energy-balance','adaptation-recovery'].forEach(mid=>{
     w.openModule(mid);
     for(let si=0;si<5;si++){
@@ -102,7 +102,13 @@ const OPTIONAL = { 'prog.full': 'falls back to English when a language has no te
 const undef = Object.keys(usedKeys).filter(k => {
   if(OPTIONAL[k]) return false;
   const esc = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return !new RegExp('["\']' + esc + '["\']\\s*:').test(dictSrc);
+  // Generated dictionaries may register a prefixed key at runtime rather than
+  // spelling the full key as a source literal. Require it in ALL locales.
+  const registeredEverywhere = langs.every(l => {
+    const entry = w.eval('T')[l] && w.eval('T')[l][k];
+    return typeof entry === 'string' && entry.trim().length > 0;
+  });
+  return !new RegExp('["\']' + esc + '["\']\\s*:').test(dictSrc) && !registeredEverywhere;
 });
 undef.forEach(k => { found['undefined :: ' + k] = 1; });
 

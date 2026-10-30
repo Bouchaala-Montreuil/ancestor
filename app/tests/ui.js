@@ -1744,6 +1744,7 @@ group('31. Every action named in the app resolves to a registered one');
   w.go('science'); w.openLesson('muscle-growth'); scan(); w.backToScience();
   w.openModule('stimulus'); scan(); w.closeModule();
   w.go('session'); w.openExerciseLibrary(); scan();
+  w.openExerciseDetail('bb-bench'); scan(); w.closeSheet();
   if(w.SCREENS && typeof w.go === 'function'){ w.go('home'); }
   w.go('home'); w.openWhy('decision'); scan(); w.closeSheet();
 

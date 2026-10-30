@@ -590,10 +590,13 @@ group('11. Onboarding step guard, split workout planner, live exercise addition 
   chk('exercise library cards render anatomical prime-mover thumbnails',
       d.querySelectorAll('.ex-card .ex-thumb svg').length === 88);
 
-  /* Exercise detail dual-panel biomechanical diagram + unweighted formatSet + readiness cap */
+  /* A specific movement guide and the labelled anatomy remain available. */
   w.openExerciseDetail('bb-bench');
-  chk('exercise detail renders dual-panel Front/Back anatomy + kinematic vector SVG',
-      !!d.querySelector('#sheetHost .ex-vis') && d.querySelectorAll('#sheetHost .ex-vis svg').length === 3);
+  chk('exercise detail renders bench-specific positions, tips and both anatomy views',
+      !!d.querySelector('#sheetHost .movement-guide[data-exercise="bb-bench"]') &&
+      d.querySelectorAll('#sheetHost .movement-figure > g').length === 2 &&
+      d.querySelectorAll('#sheetHost .move-copy p').length === 3 &&
+      d.querySelectorAll('#sheetHost .movement-anatomy .ex-vis-figs svg').length === 2);
   w.closeSheet();
   chk('branded initial boot veil is dismissed cleanly after boot', !d.getElementById('appBoot'));
   chk('unweighted bodyweight set never formats as +0 kg',

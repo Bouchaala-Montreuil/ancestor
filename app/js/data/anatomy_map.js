@@ -103,11 +103,11 @@ const MESH_GROUP_ACTION = {
   'hips|Hip rotators':      'Externally rotate the hip and help steady the head of the femur in the socket.',
 
   'thigh|Quadriceps':       'Extend the knee. Rectus femoris crosses the hip too, so it also flexes the hip.',
-  'thigh|Hamstrings':       'Flex the knee and extend the hip. Two of the four cross the hip, so they are worked by both movements.',
+  'thigh|Hamstrings':       'Flex the knee; the muscles that cross the hip also help extend it.',
   'thigh|Adductors':        'Bring the leg towards the midline and assist hip flexion and extension depending on position.',
   'thigh|Sartorius':        'Flexes, abducts and externally rotates the hip and flexes the knee — the longest muscle in the body.',
 
-  'calves|Calves':          'Gastrocnemius and soleus plantarflex the ankle, pointing the foot down and pushing the body up. Soleus works mostly with a bent knee.',
+  'calves|Calves':          'Gastrocnemius and soleus plantarflex the ankle, pointing the foot down and pushing the body up. Soleus also works when the knee is bent.',
   'calves|Lower legs':      'Peroneals evert the foot; the deep toe flexors and extensors move the toes and support the arch.',
 
   'neck|Neck':              'Sternocleidomastoid turns and flexes the head; scalenes elevate the upper ribs; splenius extends and rotates the head and neck.'

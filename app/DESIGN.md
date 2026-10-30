@@ -50,6 +50,32 @@ cover the routes, active-workout return, disclosure persistence, search focus,
 seven-language narrow navigation and reduced motion. Real-device and
 cross-browser usability testing is still needed.
 
+## 0b. Exercise guides — positions and control (2026-10-30)
+
+Exercise detail and the Science mechanics explorer share an explicit mapping
+for all 88 exercises. Equipment, posture and phases are selected for the actual
+exercise rather than guessed from a broad movement pattern. An unsupported
+future exercise gets its existing text cue, never an unrelated illustration.
+
+The user approved **faceless instructional mannequins** for the exercise guides;
+the cinematic hero photographs remain people-free. These original SVGs are
+schematic teaching aids, not photographs, motion capture or individualized
+advice. Each repetition has labelled start and end-of-range positions, setup and
+execution instructions, an existing exercise-specific form tip, and guidance
+for a controlled return. Holds have a single position and breathing/stop advice;
+walking and conditioning use alternating-position and rhythm guidance. Seated,
+unilateral, assisted and equipment variants are mapped separately where needed.
+
+Playback is an explicit, one-cycle action and can be paused, resumed or replayed;
+it never autoplays. Reduced motion removes playback but keeps both static
+positions and the full instructions. Diagrams are hidden from the accessibility
+tree because the adjacent text supplies the instructions; the optional anatomy
+views retain their labelled legend. Arabic reverses the visual stage order to
+match its labels. Equipment uses the theme's contrast-safe signal colour against
+both dark and paper. All seven languages, offline builds, 320–1440 px layouts
+and the shared Science entry point have automated coverage. These checks are
+headless Chromium, not a claim of physical-device or screen-reader testing.
+
 ## 0. Theme and tokens — dark cinematic (2026-10-29)
 
 **Default: dark.** Near-black canvas, warm white type, one burnt-orange signal.
@@ -86,7 +112,7 @@ Rules that follow from the palette, and that the tests hold:
 - **Type.** Primary actions are Barlow Condensed 17 px bold (was 11 px tracked
   monospace). Tab labels use 11–12 px condensed display. Monospace stays for
   units, identifiers and figures.
-- **Imagery is abstract and people-free.** Five training textures sit behind
+- **Hero imagery is abstract and people-free.** Five training textures sit behind
   the primary mastheads and the Body masthead. They are inlined as data URIs in
   the single file and cached offline. Paper retains the dark, legible band; the
   paper palette continues below it. The anatomy plate remains the app's own

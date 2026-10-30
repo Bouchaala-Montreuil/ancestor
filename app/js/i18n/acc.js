@@ -8,7 +8,7 @@ const TA = {};
 TA.en = {
 'ex.band-row-seated':'Seated Band Row','cue.band-row-seated':'Anchor the band at chest height. Pull the elbows back and squeeze the shoulder blades.',
 'ex.band-press-seated':'Seated Band Chest Press','cue.band-press-seated':'Band behind the back. Press forward under control, ribs down.',
-'ex.wall-pushup':'Wall Push-Up','cue.wall-pushup':'Hands on the wall at chest height. Body straight. Easier the further back your feet are.',
+'ex.wall-pushup':'Wall Push-Up','cue.wall-pushup':"Hands on the wall at chest height. Keep your body straight. Stand closer to make it easier.",
 'ex.chair-stand':'Sit-to-Stand','cue.chair-stand':'From a chair, stand up without using your hands if you can. Control the way down.',
 'ex.seated-leg-ext':'Seated Leg Extension','cue.seated-leg-ext':'Sit tall. Straighten one knee, hold a moment, lower slowly.',
 'ex.seated-march':'Seated Marching','cue.seated-march':'Sit tall. Lift alternate knees. Arms move with the legs if comfortable.',
@@ -27,7 +27,7 @@ TA.en = {
 TA.fr = {
 'ex.band-row-seated':'Tirage élastique assis','cue.band-row-seated':'Fixe l\'élastique à hauteur de poitrine. Tire les coudes en arrière et serre les omoplates.',
 'ex.band-press-seated':'Développé élastique assis','cue.band-press-seated':'Élastique dans le dos. Pousse vers l\'avant en contrôlant, côtes basses.',
-'ex.wall-pushup':'Pompes au mur','cue.wall-pushup':'Mains au mur à hauteur de poitrine. Corps aligné. Plus les pieds sont loin, plus c\'est facile.',
+'ex.wall-pushup':'Pompes au mur','cue.wall-pushup':"Mains au mur à hauteur de poitrine, corps aligné. Rapprochez les pieds pour faciliter.",
 'ex.chair-stand':'Assis-debout','cue.chair-stand':'Depuis une chaise, lève-toi sans les mains si possible. Contrôle la descente.',
 'ex.seated-leg-ext':'Extension de jambe assise','cue.seated-leg-ext':'Assis droit. Tends un genou, marque un temps, redescends lentement.',
 'ex.seated-march':'Marche assise','cue.seated-march':'Assis droit. Lève les genoux alternativement. Les bras accompagnent si c\'est confortable.',
@@ -46,7 +46,7 @@ TA.fr = {
 TA.es = {
 'ex.band-row-seated':'Remo con banda sentado','cue.band-row-seated':'Fija la banda a la altura del pecho. Lleva los codos atrás y junta las escápulas.',
 'ex.band-press-seated':'Press de pecho con banda sentado','cue.band-press-seated':'Banda por detrás de la espalda. Empuja hacia delante con control.',
-'ex.wall-pushup':'Flexiones en la pared','cue.wall-pushup':'Manos en la pared a la altura del pecho. Cuerpo alineado.',
+'ex.wall-pushup':'Flexiones en la pared','cue.wall-pushup':"Manos en la pared a la altura del pecho, cuerpo recto. Acerca los pies para facilitarlo.",
 'ex.chair-stand':'Sentarse y levantarse','cue.chair-stand':'Desde una silla, ponte de pie sin usar las manos si puedes. Controla la bajada.',
 'ex.seated-leg-ext':'Extensión de pierna sentado','cue.seated-leg-ext':'Siéntate recto. Estira una rodilla, mantén y baja despacio.',
 'ex.seated-march':'Marcha sentada','cue.seated-march':'Siéntate recto. Levanta rodillas alternas. Los brazos acompañan si es cómodo.',
@@ -65,7 +65,7 @@ TA.es = {
 TA.de = {
 'ex.band-row-seated':'Rudern mit Band im Sitzen','cue.band-row-seated':'Band auf Brusthöhe befestigen. Ellbogen nach hinten, Schulterblätter zusammendrücken.',
 'ex.band-press-seated':'Brustdrücken mit Band im Sitzen','cue.band-press-seated':'Band hinter dem Rücken. Kontrolliert nach vorn drücken, Rippen unten.',
-'ex.wall-pushup':'Liegestütz an der Wand','cue.wall-pushup':'Hände auf Brusthöhe an die Wand. Körper in einer Linie.',
+'ex.wall-pushup':'Liegestütz an der Wand','cue.wall-pushup':"Hände auf Brusthöhe an der Wand, Körper gerade. Stelle die Füße näher an die Wand, um es zu erleichtern.",
 'ex.chair-stand':'Aufstehen vom Stuhl','cue.chair-stand':'Vom Stuhl aufstehen, wenn möglich ohne die Hände. Kontrolliert wieder setzen.',
 'ex.seated-leg-ext':'Beinstrecken im Sitzen','cue.seated-leg-ext':'Aufrecht sitzen. Ein Knie strecken, kurz halten, langsam senken.',
 'ex.seated-march':'Marschieren im Sitzen','cue.seated-march':'Aufrecht sitzen. Abwechselnd die Knie heben. Arme bewegen mit, wenn angenehm.',
@@ -84,7 +84,7 @@ TA.de = {
 TA.it = {
 'ex.band-row-seated':'Remata con banda da seduto','cue.band-row-seated':'Fissa la banda all\'altezza del petto. Porta i gomiti indietro e stringi le scapole.',
 'ex.band-press-seated':'Pressa petto con banda da seduto','cue.band-press-seated':'Banda dietro la schiena. Spingi in avanti con controllo, coste giù.',
-'ex.wall-pushup':'Piegamenti al muro','cue.wall-pushup':'Mani al muro all\'altezza del petto. Corpo allineato.',
+'ex.wall-pushup':'Piegamenti al muro','cue.wall-pushup':"Mani al muro all’altezza del petto, corpo allineato. Avvicina i piedi per facilitare.",
 'ex.chair-stand':'Alzarsi dalla sedia','cue.chair-stand':'Dalla sedia alzati senza usare le mani se puoi. Controlla la discesa.',
 'ex.seated-leg-ext':'Estensione gambe da seduto','cue.seated-leg-ext':'Siedi eretto. Estendi un ginocchio, mantieni, scendi lentamente.',
 'ex.seated-march':'Marcia da seduto','cue.seated-march':'Siedi eretto. Solleva le ginocchia alternate. Le braccia accompagnano se comodo.',
@@ -103,7 +103,7 @@ TA.it = {
 TA.nl = {
 'ex.band-row-seated':'Roeien met band zittend','cue.band-row-seated':'Bevestig de band op borsthoogte. Trek de elleboog naar achteren en knijp de schouderbladen.',
 'ex.band-press-seated':'Borstdrukken met band zittend','cue.band-press-seated':'Band achter de rug. Duw gecontroleerd naar voren, ribben laag.',
-'ex.wall-pushup':'Push-up tegen de muur','cue.wall-pushup':'Handen op borsthoogte tegen de muur. Lichaam in één lijn.',
+'ex.wall-pushup':'Push-up tegen de muur','cue.wall-pushup':"Handen op borsthoogte tegen de muur, lichaam recht. Zet je voeten dichterbij om het makkelijker te maken.",
 'ex.chair-stand':'Opstaan uit een stoel','cue.chair-stand':'Ga uit de stoel omhoog zonder handen als dat lukt. Beheers het zakken.',
 'ex.seated-leg-ext':'Beenspreek zittend','cue.seated-leg-ext':'Zit recht. Strek één knie, houd even vast, laat langzaam zakken.',
 'ex.seated-march':'Marcheren zittend','cue.seated-march':'Zit recht. Til afwisselend de knieën. Armen bewegen mee als dat prettig is.',
@@ -122,7 +122,7 @@ TA.nl = {
 TA.ar = {
 'ex.band-row-seated':'سحب الشريط المطاطي جالساً','cue.band-row-seated':'ثبّت الشريط عند مستوى الصدر. اسحب المرفقين للخلف واضغط لوحَي الكتف.',
 'ex.band-press-seated':'ضغط الصدر بالشريط جالساً','cue.band-press-seated':'الشريط خلف الظهر. ادفع للأمام ببطء مع إبقاء الأضلاع للأسفل.',
-'ex.wall-pushup':'تمارين الضغط على الحائط','cue.wall-pushup':'اليدان على الحائط عند مستوى الصدر. الجسم مستقيم. كلما ابتعدت القدمان كان أسهل.',
+'ex.wall-pushup':'تمارين الضغط على الحائط','cue.wall-pushup':"اليدان على الحائط عند مستوى الصدر والجسم مستقيم. قرّب القدمين لتسهيل التمرين.",
 'ex.chair-stand':'الوقوف من الكرسي','cue.chair-stand':'من وضع الجلوس، قِف دون استخدام اليدين إن أمكن. انزل ببطء.',
 'ex.seated-leg-ext':'مدّ الساق جالساً','cue.seated-leg-ext':'اجلس معتدلاً. امدد ركبة واحدة، توقف لحظة، ثم أنزل ببطء.',
 'ex.seated-march':'المشي في وضع الجلوس','cue.seated-march':'اجلس معتدلاً. ارفع الركبتين بالتناوب. حرّك الذراعين إن كان مريحاً.',

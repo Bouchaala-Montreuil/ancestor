@@ -731,34 +731,39 @@ group('8i. The navigation marks are drawn, not borrowed');
 }
 
 /* ================================================================ */
-group('8j. The exercise drawings obey one rule');
+group('8j. Exercise teaching is specific, legible and accessible');
 {
   const comp = fs.readFileSync(path.join(ROOT, 'js/ui/components.js'), 'utf8');
-  const i0 = comp.indexOf('Movement patterns, drawn once');
-  const i1 = comp.indexOf('function exerciseVisualSvg');
-  const kin = comp.slice(i0, i1);
-
-  chk('all eleven movement patterns are drawn', (kin.match(/^\s*KIN\.\w+ =/gm) || []).length >= 11,
-      (kin.match(/^\s*KIN\.\w+ =/gm) || []).length + ' patterns');
-
-  /* 47 hardcoded hexes were baked into these strings; no theme could reach them. */
-  chk('the drawings carry no colour of their own', !/#[0-9a-fA-F]{3,6}/.test(kin));
-  chk('colour comes from classes the stylesheet defines',
-      /\.k-i\{fill:var\(--ink\)/.test(css) && /\.k-b\{fill:var\(--burnt\)/.test(css) &&
-      /\.k-r\{stroke:var\(--line\)/.test(css));
-
-  chk('one body weight, not four', /seg[\s\S]{0,80}stroke-width="3\.2"/.test(kin) &&
-      !/stroke-width="1\.8"/.test(kin) && !/stroke-width="2\.6"/.test(kin));
-  chk('a head is mass, not a circle', !/<circle[^>]*head/.test(kin) &&
-      /const head = \(x, y\) =>/.test(kin) && /width="11" height="11"/.test(kin));
-  chk('a joint is a 3.2 square, so it cannot be read as a head',
-      /s = s \|\| 3\.2/.test(kin));
-  chk('the arrowhead is drawn, not a <marker> with a baked fill',
-      !/<marker/.test(kin) && !/marker-end/.test(kin));
-  chk('square caps everywhere, so nothing reads as a pen stroke',
-      /stroke-linecap:square/.test(css));
-
-  /* Still true from the token pass, now for the drawings too. */
+  const movement = fs.readFileSync(path.join(ROOT, 'js/ui/movement.js'), 'utf8');
+  const lang = fs.readFileSync(path.join(ROOT, 'js/i18n/movement.js'), 'utf8');
+  const worker = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  chk('the misleading pattern-only KIN diagrams and bench fallback are gone',
+      !/const KIN|patternKinematicSvg/.test(comp) && !/KIN\[/.test(movement));
+  chk('every known exercise selects an explicit scene, equipment and guide',
+      /const MOVEMENT_GUIDES = \{/.test(movement) && /const MOVEMENT_SCENES = \{/.test(movement) &&
+      /MOVEMENT_GUIDES\[ex\.id\]/.test(movement));
+  chk('an unknown exercise gets text, not a made-up exercise diagram',
+      /if\(!guide\) return/.test(movement) && !/MOVEMENT_GUIDES\[[^\]]+\]\s*\|\|\s*MOVEMENT_GUIDES/.test(movement));
+  chk('the diagrams show two distinct positions or a single static hold',
+      /data-moving/.test(movement) && /mode==='hold'/.test(movement) && /movementPose/.test(movement));
+  chk('instructional silhouettes and equipment use theme tokens, not baked colours',
+      !/#[0-9a-fA-F]{3,6}/.test(movement) && /\.mov-torso,\.movement-figure \.mov-head\{fill:var\(--ink\)/.test(css) &&
+      /\.mov-load,\.movement-figure \.mov-band\{fill:none;stroke:var\(--burnt-text\)/.test(css));
+  chk('figures are faceless, and their complete instructions are readable text',
+      /class="mov-head"/.test(movement) && /aria-hidden="true"/.test(movement) &&
+      /movement\.guide\./.test(movement) && /movement\.controlLabel/.test(movement));
+  chk('guides include dedicated translations for all seven languages',
+      /MOVEMENT_LANGS/.test(lang) && ['en','fr','es','de','it','nl','ar'].every(l =>
+        new RegExp('\\b'+l+':\\{').test(lang)));
+  chk('motion is opt-in, pausable, and reduced-motion retains static positions',
+      /movement\.play/.test(movement) && /cancelAnimationFrame/.test(movement) && /movementReduced\(\)/.test(movement) &&
+      /:root\[data-motion="on"\] \.movement-play\{display:none\}/.test(css));
+  chk('stage order follows document direction', /document\.documentElement\.dir==='rtl'/.test(movement) &&
+      /rtl\?160:0/.test(movement));
+  chk('movement and translation modules are in the offline cache',
+      /js\/ui\/movement\.js/.test(worker) && /js\/i18n\/movement\.js/.test(worker));
+  chk('anatomy remains a labelled disclosure with a two-colour legend',
+      /movement-anatomy/.test(comp) && /lab\.primary/.test(comp) && /vol\.indirect/.test(comp));
   chk('no literal stroke colour survives anywhere in components.js',
       !/stroke="#[0-9a-fA-F]{3,6}"/.test(comp));
 }

@@ -87,6 +87,22 @@ are optional, enabled from the timer's information button or Me. They can only
 fire when the page is running; a suspended or closed tab cannot guarantee an
 on-time notification.
 
+### Exercise movement guides
+
+Each of the 88 exercises has its own equipment and position mapping, with
+setup, movement, a specific form tip and controlled-return guidance in all seven
+languages. Unilateral movements, assisted or weighted variants, seated options,
+holds and continuous conditioning have their own treatments. The same guide is
+used in exercise details and the Science mechanics explorer.
+
+Original, faceless instructional mannequins show key positions; they are
+schematic teaching aids, not recordings, and do not replace individualized
+coaching. Repetition and continuous movements have an optional one-cycle
+Play/Pause/Resume control. Holds show one position without a fake repetition.
+With reduced motion, the static positions and all text remain available without
+playback. The muscle illustration and its legend remain in a disclosure. The
+training-texture hero photographs remain people-free. All guides work offline.
+
 ---
 
 ## Honest scope
@@ -206,10 +222,10 @@ npm run verify                             # ~3 minutes
 Or a la carte, which is how the suites are named when one of them breaks:
 
 ```bash
-npm test                           # the ten headless suites, in order
+npm test                           # the eleven headless suites, in order
 npm run test:browser               # the one that needs a real Chrome (source tools/chromium.sh)
 
-node tests/design.js               # 353 design system, states, targets, disclosures
+node tests/design.js               # 356 design system, states, targets, disclosures
 node tests/premium.js              # 217 motion, dashboard, charts, states, boundaries
 node tests/ui.js                   # 323 end-to-end DOM tests
 node tests/run.js                  # 146 engine / i18n tests
@@ -219,10 +235,12 @@ node tests/science.js              # 130 Science Hub / evidence / transparency t
 node tests/logic.js                # 156 exercise-aware logging and workout-safety checks
 node tests/anatomy.js              #  64 real 3D asset and selection tests
 node tests/print.js                #  88 the A4 sheet
+node tests/movement.js             # 166 exercise mappings, guidance, localization and safety checks
 node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tests/journey.js              #  39 navigation and disclosure checks in Chromium
 node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
 node tests/rest_timer.js           #  73 timer, alerts, interruption and layout checks in Chromium
+node tests/movement_browser.js     #  38 guide, playback, RTL, theme, layout and offline checks in Chromium
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
 node tools/qa_audit.js             # scripted user-journey audit
@@ -403,8 +421,9 @@ words, and figure regions carry `<title>` for assistive technology.
 ```
 index.html
 css/app.css                 design system (tokens → components)
-js/i18n/                    core · ui (470 keys × 6) · exercises (59 × 6) · screens
-js/data/exercises.js        59 exercises: muscle weights, equipment, RIR, contraindications, cues
+js/i18n/                    seven-language interface, exercise cues and movement guides
+js/data/exercises.js        exercise data: muscle weights, equipment, RIR and contraindications
+js/data/ex_meta.js          adaptive, timed and conditioning exercise extensions (88 total)
 js/core/time.js             local-time shifts, sleep, biological day
 js/core/store.js            versioned persistence, export/import/erase
 js/engine/progression.js    double progression          ← no AI
@@ -412,6 +431,7 @@ js/engine/recovery.js       per-muscle estimate          ← no AI
 js/engine/readiness.js      the refusal engine           ← no AI
 js/engine/program.js        plan generation, substitutions
 js/ui/components.js         anatomy, charts, tables, states, timeline
+js/ui/movement.js           exercise-specific instructional positions and playback
 js/ui/screens.js            today · session · body · progress · profile · onboarding
 js/app.js                   router, boot, debug surface (window.ANC)
 tools/fig_check.py          numeric validation of the anatomy geometry
@@ -448,6 +468,8 @@ windows are labelled estimates throughout; when data is missing the screen says
 - **Not tested on a physical phone or tablet.** The browser suite is headless
   Chromium at seven widths; expect small fixes on real hardware, and nothing at
   all has been checked on iOS Safari.
+- **Movement figures are schematic, not video or individualized form advice.**
+  Equipment setup and comfortable range vary between people and machines.
 - **The flat figure is derived from a CC BY-SA 4.0 mesh**, so it carries that
   licence. See [LICENSE](../LICENSE).
 - No sync between devices; one browser profile only.

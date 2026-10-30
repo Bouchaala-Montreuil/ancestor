@@ -1705,7 +1705,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 }
 .ex-thumb svg{width:100%;height:100%}
 .ex-vis{display:grid;grid-template-columns:1fr;gap:var(--s3);margin:var(--s3) 0}
-.ex-vis-figs,.ex-vis-kin{background:var(--surface);border:var(--hair) solid var(--line);padding:var(--s2)}
+.ex-vis-figs{background:var(--surface);border:var(--hair) solid var(--line);padding:var(--s2)}
 /* Front and back are a pair, not a column. As two stacked full-width figures
    they were ~760 px tall each on a 390 px phone, so the exercise sheet opened
    on two posters of a body and put its own record 1 600 px down. Side by side,
@@ -1713,7 +1713,6 @@ table.data tbody tr:last-child td{border-bottom:0}
 .ex-vis-figs{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2);align-items:end}
 .ex-vis-figs > div{min-width:0;text-align:center}
 .ex-vis-figs svg{display:block;width:auto;max-width:100%;height:auto;max-height:230px;margin-inline:auto}
-.ex-vis-kin svg{display:block;width:100%;height:auto}
 .ex-note-wrap{margin-top:var(--s3)}
 /* Muscle contribution, one 3px bar. The three <i> carried width percentages
    and nothing else: no height, no paint, so the data visual rendered as three
@@ -2921,23 +2920,6 @@ html[data-motion="on"] .onb-bar i{transition:none}
 .meta-b{font-weight:700;color:var(--burnt-text)}
 /* Empty state inside a table, where there is no row to style. */
 .td-empty{text-align:center;color:var(--tech-ink);padding:var(--s5)}
-/* ============================================================ KINEMATIC
-   The eleven movement-pattern drawings. One grammar, and it is the mark's:
-   3.2 body, 3.2 joint squares, an 11 head square, a bar with two plates, one
-   burnt arrow for the force and a dashed burnt arc for the range. Stroke caps
-   are square, curves appear only in the range arc. Colours come from tokens —
-   before this, 47 hexes were baked into the markup and no theme could reach
-   them. */
-
-.k-i{fill:var(--ink);stroke:var(--ink);stroke-linecap:square;stroke-linejoin:miter}
-.k-i[stroke-width]{fill:none}
-.k-b{fill:var(--burnt);stroke:var(--burnt);stroke-linecap:square}
-.k-b[stroke-dasharray]{fill:none}
-.k-r{stroke:var(--line);fill:none;stroke-linecap:square}
-/* The arrowhead used to be a <marker> with a hex fill; it is a drawn path now,
-   for the same reason. */
-.ex-vis-kin svg{color:var(--ink)}
-
 /* A factor list: one line per reason, a dot, a value at the end. It was styled
    only inside .decision and .onb-frame, so the lesson takeaways — the third
    place it is used — rendered as loose text with a stray empty dot. This is the
@@ -3336,3 +3318,36 @@ html[lang="ar"] .mono{
 .prof-group > summary h2{grid-column:1;min-width:0}
 .prof-group > summary .prof-val{grid-column:1;min-width:0;margin:0;white-space:normal;text-align:start}
 .prof-group > summary::after{grid-column:2;grid-row:1 / span 2;margin:0;align-self:center}
+
+/* Exercise-specific positions and their readable, non-animated text alternative. */
+.movement-guide{border:1px solid var(--line);background:var(--surface);padding:var(--s3)}
+.move-heading{font:700 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-bottom:var(--s3)}
+.movement-view{margin:0 0 var(--s2);font-size:var(--fs-sm);color:var(--ink-2)}
+.move-labels{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2);text-align:center;color:var(--tech-ink);font:700 11px var(--f-mono);letter-spacing:.035em}
+.move-labels.is-hold{grid-template-columns:1fr}
+.movement-figure{display:block;width:100%;height:auto;max-height:240px;margin:var(--s2) auto var(--s3)}
+.movement-figure.is-hold{width:min(100%,220px)}
+.movement-figure .mov-floor{fill:none;stroke:var(--line);stroke-width:2}
+.movement-figure .mov-prop{fill:none;stroke:var(--ink-3);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.movement-figure .mov-pad{fill:var(--ink-3)}
+.movement-figure .mov-load,.movement-figure .mov-band{fill:none;stroke:var(--burnt-text);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.movement-figure .mov-band{stroke-width:3;stroke-dasharray:5 3}
+.movement-figure .mov-cable{fill:none;stroke:var(--burnt-text);stroke-width:2}
+.movement-figure .mov-wheel{fill:var(--surface);stroke:var(--burnt-text);stroke-width:4}
+.movement-figure .mov-leg,.movement-figure .mov-arm,.movement-figure .mov-neck,.movement-figure .mov-cat{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
+.movement-figure .mov-leg{stroke-width:12}.movement-figure .mov-arm{stroke-width:9}
+.movement-figure .mov-neck{stroke-width:7}.movement-figure .mov-cat{stroke-width:17}
+.movement-figure .rear{stroke:var(--ink-3)}
+.movement-figure .mov-torso,.movement-figure .mov-head{fill:var(--ink)}
+.movement-play{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border:1px solid var(--line);background:transparent;color:var(--ink);font:700 12px var(--f-mono);cursor:pointer}
+.movement-play:hover{border-color:var(--action);color:var(--action)}
+.movement-play:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+.move-copy{font-size:var(--fs-sm);line-height:1.55;color:var(--ink-2)}
+.move-copy p{margin:var(--s3) 0 0}
+.move-copy b{color:var(--ink)}
+:root[data-motion="on"] .movement-play{display:none}
+.movement-anatomy{border:1px solid var(--line)}
+.movement-anatomy summary{cursor:pointer;padding:var(--s3);font-weight:700}
+.movement-anatomy .ex-vis-figs{border:0;border-top:1px solid var(--line)}
+.movement-legend{gap:8px;padding:0 var(--s3)}
+.movement-diagram-note{margin:var(--s2) var(--s3) var(--s3)}
