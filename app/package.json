@@ -8,7 +8,7 @@
     "pretest": "npm run build",
     "test": "node tests/design.js && node tests/premium.js && node tests/ui.js && node tests/run.js && node tests/inclusive.js && node tests/personas.js && node tests/science.js && node tests/logic.js && node tests/anatomy.js && node tests/print.js",
     "test:logic": "node tests/logic.js",
-    "test:browser": "node tests/browser.js && node tests/journey.js && node tests/workout_safety.js",
+    "test:browser": "node tests/browser.js && node tests/journey.js && node tests/workout_safety.js && node tests/rest_timer.js",
     "keys": "node tools/keyscan.js",
     "qa": "node tools/qa_audit.js",
     "figure": "node tools/build-figure.js",

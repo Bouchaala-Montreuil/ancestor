@@ -253,6 +253,8 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;
+  /* Bottom clearance is functional, not an animated layout change. */
+  transition-property:none;
   /* The bar is 64 px of button plus its 1 px rule: without the rule in the sum,
      the last line of a long screen sits exactly one pixel under the bar. */
   padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--hair));
@@ -691,9 +693,11 @@ nav.tabbar{
   padding:var(--s2) var(--s3);
   border-top:var(--hair) solid var(--line);
 }
-/* A running rest timer outranks it: when the timer is on screen the sticky
-   action sits above the strip rather than under it. */
-body.typing:has(.restbar) .setcard:focus-within .set-actions{bottom:76px}
+/* Reserve the timer's measured height, including when a translation wraps.
+   A focused set action and a toast must sit above it, not behind it. */
+body.resting{padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--rest-height, 0px) + var(--s3))}
+body.typing.resting .setcard:focus-within .set-actions{bottom:var(--rest-height, 0px)}
+body.resting .toast{bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--rest-height, 0px) + var(--s3))}
 .tabbar .inner{
   position:relative;display:flex;align-items:stretch;
   max-width:var(--shell-max);margin:0 auto;
@@ -1875,24 +1879,39 @@ table.data tbody tr:last-child td{border-bottom:0}
   margin-top:var(--s3);padding-top:var(--s2);
 }
 
-/* rest timer — anchored above the tab bar, ink slab */
+/* Rest is one compact instrument above the nav, not a wrapping run of buttons. */
 .restbar{
   position:fixed;inset-inline:0;bottom:calc(var(--tabbar-h) + var(--safe-b));
   z-index:70;background:var(--block);color:var(--on-block);
-  padding:var(--s3) var(--s4);
-  display:flex;align-items:center;gap:var(--s3);
-  box-shadow:var(--shadow-2);
+  padding:var(--s2) var(--s4);box-shadow:var(--shadow-2);
 }
-.restbar .eyebrow{color:rgba(241,235,221,.6)}
+@media (max-width:1023px){
+  body.typing .restbar{bottom:0;padding-bottom:calc(var(--s2) + var(--safe-b))}
+}
+.restbar-inner{max-width:var(--shell-max);margin:auto;display:grid;gap:var(--s1)}
+.restbar-top{display:flex;align-items:center;gap:var(--s2);min-width:0}
+.restbar .eyebrow{color:var(--accent-on-ink);letter-spacing:.06em}
 .restbar .t{
-  font-family:var(--f-display);font-size:32px;line-height:1;
+  font-family:var(--f-display);font-size:30px;line-height:1;
   font-variant-numeric:tabular-nums;flex:none;letter-spacing:.02em;
 }
-.restbar .btn{
-  background:transparent;border-color:rgba(241,235,221,.35);color:var(--ivory);
-  min-height:40px;
+.restbar .track{flex:1;min-width:16px;height:3px;background:rgba(241,235,221,.24);overflow:hidden}
+.restbar .track i{display:block;height:100%;background:var(--burnt)}
+.rest-info{
+  flex:none;width:44px;height:44px;border:var(--hair) solid rgba(241,235,221,.35);
+  background:transparent;color:var(--ivory);font:700 15px var(--f-mono);cursor:pointer;
 }
-.restbar .btn:hover{background:rgba(241,235,221,.1);border-color:var(--ivory)}
+.rest-info:hover{background:rgba(241,235,221,.1);border-color:var(--ivory)}
+.restbar-actions{display:flex;gap:2px}
+.restbar-actions .btn.sm{
+  flex:1 1 auto;min-width:44px;min-height:44px;padding:0 4px;line-height:1.15;
+  font-size:11px;letter-spacing:.01em;white-space:nowrap;
+  background:transparent;border-color:rgba(241,235,221,.35);color:var(--ivory);
+}
+.restbar-actions .btn:hover{background:rgba(241,235,221,.1);border-color:var(--ivory)}
+@media (min-width:600px){
+  .restbar-inner{grid-template-columns:minmax(0,1fr) minmax(280px,420px);align-items:center;gap:var(--s4)}
+}
 
 /* session complete */
 .done-overlay{
@@ -1993,6 +2012,9 @@ table.data tbody tr:last-child td{border-bottom:0}
    the name and how much of it is done — so a folded block still answers
    "where am I?" without being opened. */
 .ex-block{padding:0;overflow:hidden}
+/* The focused set's sticky action needs the viewport as its scrollport. */
+.ex-block:focus-within{overflow:visible}
+@supports (overflow:clip){.ex-block{overflow:clip}}
 .ex-block.is-current{border-color:var(--burnt);box-shadow:var(--shadow-2)}
 .ex-block > .ex-block-sum{
   display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
@@ -2515,7 +2537,7 @@ table.data tbody tr:last-child td{border-bottom:0}
   margin-top:4px;max-width:52ch;
 }
 .tile .box{
-  width:18px;height:18px;flex:none;margin:0;
+  width:18px;height:18px;flex:none;margin:0;background:transparent;
   border:var(--hair) solid var(--ink);position:relative;
 }
 .tile.on .box,.tile[aria-checked="true"] .box{background:var(--action)}
@@ -3151,6 +3173,8 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   .masthead-title{font-size:clamp(48px,5.4vw,84px)}
   body{padding-bottom:var(--s6)}
   .restbar{inset-inline-start:200px;bottom:0}
+  body.resting{padding-bottom:calc(var(--rest-height, 0px) + var(--s6))}
+  body.resting .toast{bottom:calc(var(--rest-height, 0px) + var(--s3))}
   .body-mob-bar{inset-inline-start:200px;bottom:0}
   .toast{bottom:var(--s5);inset-inline-start:calc(50% + 100px)}
   .cols{column-count:2}

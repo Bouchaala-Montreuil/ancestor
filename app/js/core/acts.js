@@ -159,6 +159,7 @@ ACT('setSim',                       el => setSim(arg(el, 1), arg(el, 2)));
 
 /* screens and onboarding */
 ACT('addRest',                      el => addRest(arg(el, 1)));
+ACT('openRestInfo',                 () => openRestInfo());
 ACT('addShiftFromOnb',              el => addShiftFromOnb());
 ACT('clearMuscle',                  el => clearMuscle());
 ACT('closeSessionEditor',           el => closeSessionEditor());
@@ -275,7 +276,8 @@ ACT('unskipSet',                    el => unskipSet(arg(el, 1), arg(el, 2)));
 /* Composites: the sites that made two calls, looked at the event, or read
    the click-time state of the app rather than the render-time one. */
 ACT('chooseCurrentLang',            (el) => { chooseLang(CURRENT_LANG); });
-ACT('closeRest',                    (el) => { stopRest(); render(); });
+ACT('closeRest',                    (el) => { stopRest(); render(); focusAfterRest(); });
+ACT('setRestNotifyFromRest',        () => { closeSheet(); setRestNotify(); });
 ACT('closeSheetBackdrop',           (el, ev) => { if(ev.target === el) closeSheet(); });
 ACT('forgetCrashShown',             (el) => { forgetCrash(); render(); });
 ACT('onbBack',                      (el) => { onbGo(onbIdx - 1); });

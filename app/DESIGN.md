@@ -583,8 +583,9 @@ exists for stays reachable**:
 Measured after: Log button y 377–413, tab bar top 427 (off screen), the field
 visible, the button still the top element at its own centre
 (`elementFromPoint` returns `logbtn_0_0`), and the bar back at 355 the moment
-focus is released. With a rest timer running the action row sits at 368–421 and
-the strip at 272–356: no overlap.
+focus is released. Those measurements predate the timer-continuity pass: it found
+that an exercise block's clipping could prevent the action from sticking while a
+timer was open. The current measured-height solution is described in §11.
 
 Guarded by five real-browser checks (group 3b in `tests/browser.js`), five
 behavioural checks in `tests/ui.js` group 26, and three static assertions in
@@ -718,9 +719,9 @@ What a page can honestly do about that, in order of what it can promise:
 | a notification when the tab is closed | **no** |
 | waking the phone | **no**, and nothing claims to |
 
-So: an **opt-in switch in Profile** (`restNotify`, off by default), permission
-requested from that switch and nowhere else — never on boot — and
-`notifyRestDone()` posting through the service worker **only** when
+So: an **opt-in switch in Me and in the timer's information sheet** (`restNotify`,
+off by default), permission requested only when the user enables it — never on
+boot — and `notifyRestDone()` posting through the service worker **only** when
 `document.hidden && Notification.permission === 'granted'`. With the screen on,
 the toast is enough and no notification is posted; with the tab suspended,
 nothing is claimed. The hint under the switch says exactly that in all seven
@@ -1080,10 +1081,11 @@ number from an earlier state of the product, and four of them were wrong.
 - **Discoverability was not tested.** Collapsing a settings page is a bet that
   the summary line is enough to make someone open it. Nobody has watched a real
   user look for "units".
-- **The rest timer stops when the device sleeps.** It is computed from an
-  absolute end time, so it is correct the moment the tab resumes — but nothing
-  fires while the screen is off, and there is no OS notification. "Survives a
-  locked screen" means the arithmetic survives, not that it can interrupt you.
+- **A suspended or closed page cannot guarantee a rest alert.** An opted-in
+  background page can post a system notification when its timer fires, but a
+  sleeping browser can delay it and a closed page cannot fire it. On return the
+  running countdown is reconciled against its saved deadline; this is not a
+  promise that the phone will wake or interrupt the user.
 - ~~**The atlas and the profile were measured, not seen.**~~ **Seen since.** Both
   were photographed at 320–1440 px in all seven languages in the browser passes
   (§3.23, §3.24), and the atlas grid was the thing the photographs broke.
@@ -1098,9 +1100,9 @@ number from an earlier state of the product, and four of them were wrong.
   already lost the argument with the code.
 - **Offline persistence is now verified for real** (service worker populated,
   network severed, page reloaded: the app boots with all 218 muscles), and the
-  shipped single-file bundle renders offline too. The rest timer and the print
-  layout were still not re-verified in this pass; their suites are green, which
-  is not the same as inspected.
+  shipped single-file bundle renders offline too. The rest timer was later
+  inspected and exercised in Chromium (§11); that remains different from a
+  physical-device review.
 
 ---
 
@@ -1156,3 +1158,35 @@ not new training features.
 Chromium, including simulated storage refusal, reload, seven languages at
 320 px, both themes and reduced motion. This is not a physical-device, Safari,
 Firefox or assistive-technology test.
+
+---
+
+## 11. Rest timer: preserve intent through interruptions
+
+A Chromium walk found three failures in a live workout: adding 15 seconds after
+rest had been paused for a minute could *shorten* it; resuming the workout also
+resumed a rest the user had paused separately; and refreshing restored the
+workout but not its rest. The compact strip also wrapped controls unevenly in
+translated languages and could cover a toast or the set action.
+
+The active draft now carries a validated timer snapshot. A running rest uses its
+original absolute deadline; a paused rest stores its frozen remainder. Only
+state changes write the snapshot, using the existing draft warning and retry.
+An expired running rest is completed when the page next runs, not restarted.
+Finishing, discarding or closing the timer removes its snapshot. Resuming a
+workout resumes a rest only if the workout paused it; manually paused rests stay
+paused. Reset returns to the programmed duration without changing pause state.
+
+The strip has a visible progress track, one row of named 44 px controls, and a
+contextual alert-information sheet. Its actual height reserves room for content,
+toasts and the focused set action. On a phone-sized typing viewport the strip
+moves to the bottom as the navigation steps aside, and exercise blocks no longer
+create a false sticky scrollport. Timer controls retain keyboard focus on state
+changes; closing or expiry returns it to the workout when appropriate.
+
+`tests/rest_timer.js` covers these paths, simulated draft-write refusal and
+notification permission, seven languages and RTL at 320 px, both themes, enlarged
+text, reduced motion, keyboard-height geometry, and 360–1440 px layouts in
+headless Chromium. Notification delivery still depends on the page actually
+running (§3.20): neither a suspended nor a closed tab is a reliable alarm.
+These checks are not physical-device, Safari, Firefox or screen-reader testing.

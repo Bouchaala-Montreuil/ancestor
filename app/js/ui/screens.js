@@ -688,74 +688,108 @@ function openAnalysis(){
    the remaining time, it can be reset to the full rest, and it can be
    skipped. Pausing stores the remaining milliseconds, so resuming continues
    from where it stopped rather than restarting. */
+/* Store only a snapshot, never the interval handle, alongside the workout draft.
+   A running timer is represented by its deadline; a paused timer by the frozen
+   remaining time. Changes, not every tick, write to the same guarded draft. */
+function saveRestToDraft(){
+  if(!ACTIVE) return;
+  if(REST){
+    ACTIVE.restTimer = { total:REST.total, added:REST.added || 0,
+      endsAt:REST.endsAt, leftMs:REST.paused ? REST.leftMs : Math.max(0, REST.endsAt - Date.now()),
+      paused:!!REST.paused, pausedByWorkout:!!REST.pausedByWorkout };
+  } else delete ACTIVE.restTimer;
+  saveDraft();
+}
+function restoreRestFromDraft(){
+  const r = ACTIVE && ACTIVE.restTimer;
+  if(!r || typeof r.paused !== 'boolean' || !Number.isFinite(r.total) || r.total <= 0 ||
+     !Number.isFinite(r.added) || r.added < 0 || !Number.isFinite(r.endsAt) ||
+     !Number.isFinite(r.leftMs) || r.leftMs < 0) return false;
+  REST = { total:r.total, added:r.added, endsAt:r.endsAt, leftMs:r.leftMs,
+    paused:r.paused, pausedByWorkout:!!(r.paused && r.pausedByWorkout) };
+  if(!REST.paused) runRestTimer();
+  return true;
+}
 function startRest(sec){
-  stopRest();
-  REST = { endsAt: Date.now() + sec*1000, total: sec, added: 0, leftMs: sec*1000, paused: false };
-  runRestTimer();
-  paintRestHost();
+  sec = Number(sec);
+  if(!Number.isFinite(sec) || sec <= 0) return;
+  if(REST && REST.timer) clearInterval(REST.timer);
+  const paused = !!(ACTIVE && ACTIVE.paused);
+  REST = { endsAt:Date.now() + sec*1000, total:sec, added:0, leftMs:sec*1000,
+    paused:paused, pausedByWorkout:paused };
+  if(!paused) runRestTimer();
+  saveRestToDraft(); paintRestHost();
+}
+function tickRest(){
+  if(!REST || REST.paused) return;
+  const left = REST.endsAt - Date.now();
+  if(left <= 0){
+    const host = document.getElementById('restHost');
+    const hadFocus = host && host.contains(document.activeElement);
+    REST.leftMs = 0;
+    stopRest(); render();
+    if(hadFocus) focusAfterRest();
+    /* A notification is possible only while this page is actually running. */
+    notifyRestDone(); toast(t('session.restDone'), 'ok');
+    try{ pressFeedback(null); }catch(e){}
+    return;
+  }
+  REST.leftMs = left;
+  paintRest();
 }
 function runRestTimer(){
-  if(!REST || REST.timer) return;
-  REST.timer = setInterval(() => {
-    if(!REST || REST.paused) return;
-    const left = REST.endsAt - Date.now();
-    if(left <= 0){
-      REST.leftMs = 0;
-      stopRest(); render();
-      /* A toast is only seen by someone looking at the tab. If they are not,
-         and they asked to be told, the service worker says it instead. */
-      notifyRestDone();
-      toast(t('session.restDone'), 'ok');
-      try{ pressFeedback(null); }catch(e){}
-      return;
-    }
-    REST.leftMs = left;
-    paintRest();
-  }, 250);
+  if(!REST || REST.timer || REST.paused) return;
+  REST.timer = setInterval(tickRest, 250);
   if(REST.timer && typeof REST.timer.unref === 'function') REST.timer.unref();
 }
-function pauseRest(){
+function pauseRest(byWorkout){
   if(!REST || REST.paused) return;
+  if(REST.endsAt <= Date.now()){ tickRest(); return; }
   REST.paused = true;
+  REST.pausedByWorkout = byWorkout === true;
   REST.leftMs = Math.max(0, REST.endsAt - Date.now());
   if(REST.timer){ clearInterval(REST.timer); REST.timer = null; }
-  paintRestHost();
+  saveRestToDraft(); paintRestHost();
   restSay(t('session.restPaused'));
 }
 function resumeRest(){
   if(!REST || !REST.paused) return;
   REST.paused = false;
+  REST.pausedByWorkout = false;
   REST.endsAt = Date.now() + REST.leftMs;
   runRestTimer();
-  paintRestHost();
+  saveRestToDraft(); paintRestHost();
   restSay(t('session.rest'));
 }
 function toggleRest(){ if(REST) REST.paused ? resumeRest() : pauseRest(); }
 function resetRest(){
   if(!REST) return;
-  REST.paused = false;
   REST.added = 0;
   REST.leftMs = REST.total * 1000;
   REST.endsAt = Date.now() + REST.leftMs;
-  runRestTimer();
-  paintRestHost();
-  restSay(t('session.rest'));
+  if(!REST.paused) runRestTimer();
+  saveRestToDraft(); paintRestHost();
+  restSay(REST.paused ? t('session.restPaused') : t('session.rest'));
 }
 function addRest(sec){
-  if(!REST) return;
-  /* Extra time is tracked separately from the rest you programmed: the bar's
-     maximum has to grow with it (or the elapsed value runs past its own
-     maximum), but Reset must still return to the rest you actually set. */
+  sec = Number(sec);
+  if(!REST || !Number.isFinite(sec) || sec <= 0) return;
   REST.added = (REST.added || 0) + sec;
-  REST.endsAt += sec*1000;
-  REST.leftMs = Math.max(0, REST.endsAt - Date.now());
-  paintRestHost();
-  restSay(t('session.rest') + ' +' + sec + 's');
+  /* A paused timer has no moving deadline. Add to its frozen time instead. */
+  if(REST.paused) REST.leftMs += sec*1000;
+  else { REST.endsAt += sec*1000; REST.leftMs = Math.max(0, REST.endsAt - Date.now()); }
+  saveRestToDraft(); paintRestHost();
+  restSay((REST.paused ? t('session.restPaused') : t('session.rest')) + ' +' + sec + 's');
 }
 function stopRest(){
   if(REST && REST.timer) clearInterval(REST.timer);
   REST = null;
-  paintRestHost();
+  saveRestToDraft(); paintRestHost();
+}
+function focusAfterRest(){
+  const target = document.querySelector('#screenBody [data-act="startRest"]') ||
+                 document.querySelector('#nav [aria-current="page"]');
+  if(target && target.focus) target.focus({preventScroll:true});
 }
 function paintRest(){
   const el = $('#restT'); if(!el || !REST) return;
@@ -781,39 +815,66 @@ function fmtClock(sec){
   if(s < 60) return s + 's';
   return Math.floor(s/60) + ':' + String(s % 60).padStart(2, '0');
 }
+function syncRestHeight(){
+  const bar = document.querySelector('#restHost .restbar');
+  if(bar) document.documentElement.style.setProperty('--rest-height', Math.ceil(bar.getBoundingClientRect().height) + 'px');
+  else document.documentElement.style.removeProperty('--rest-height');
+}
 function paintRestHost(){
   const c = $('#restHost'); if(!c) return;
-  if(!REST){ c.innerHTML = ''; c.classList.remove('on'); return; }
+  const focusAction = c.contains(document.activeElement) && document.activeElement.getAttribute('data-act');
+  if(!REST){
+    c.innerHTML = ''; c.classList.remove('on'); document.body.classList.remove('resting');
+    syncRestHeight(); return;
+  }
   const left = Math.max(0, (REST.paused ? REST.leftMs : REST.endsAt - Date.now()) / 1000);
   const spanSec0 = Math.max(1, REST.total + (REST.added || 0));
   const pct = Math.max(0, Math.min(100, (1 - left / spanSec0) * 100));
   const label = REST.paused ? t('session.restPaused') : t('session.rest');
   const span = Math.max(1, Math.round(REST.total + (REST.added || 0)));
-  /* The clock repaints four times a second, so it is hidden from assistive
-     technology: announcing a countdown at 4 Hz is not information, it is an
-     interruption. The countdown is a labelled progressbar (which a screen reader
-     can query whenever the user wants the number) and one polite status line
-     that speaks only when the state changes. Rest ending was already announced,
-     through the toast; rest *starting* said nothing at all. */
-  c.classList.add('on');
+  /* The visual clock is silent; a queryable progressbar and a single polite
+     status announce state changes without speaking four times a second. */
+  c.classList.add('on'); document.body.classList.add('resting');
   c.innerHTML = '<div class="restbar" role="region" aria-label="' + esc(t('session.rest')) + '">' +
-    '<div class="in">' +
-    '<span class="eyebrow" style="color:var(--accent-on-ink)">' + esc(label) + '</span>' +
+    '<div class="restbar-inner"><div class="restbar-top">' +
+    '<span class="eyebrow">' + esc(label) + '</span>' +
+    '<span class="t" id="restT" aria-hidden="true">' + fmtClock(left) + '</span>' +
     '<div class="track" id="restTrack" role="progressbar" aria-label="' + esc(t('session.rest')) + '" ' +
       'aria-valuemin="0" aria-valuemax="' + span + '" aria-valuenow="' +
-      Math.max(0, Math.min(span, Math.round(span - left))) + '" aria-valuetext="' +
-      esc(fmtClock(left)) + '">' +
+      Math.max(0, Math.min(span, Math.round(span - left))) + '" aria-valuetext="' + esc(fmtClock(left)) + '">' +
       '<i id="restBar" style="width:' + pct.toFixed(1) + '%"></i></div>' +
-    '<span class="t" id="restT" aria-hidden="true">' + fmtClock(left) + '</span>' +
     '<span class="sr-only" id="restSay" role="status" aria-live="polite">' +
       esc(label + ' · ' + fmtClock(left)) + '</span>' +
-    '<button class="btn quiet sm" data-act="toggleRest">' +
+    '<button type="button" class="rest-info" data-act="openRestInfo" aria-haspopup="dialog" aria-label="' +
+      esc(t('rest.notifyT')) + '">?</button></div>' +
+    '<div class="restbar-actions">' +
+    '<button type="button" class="btn quiet sm" data-act="toggleRest">' +
       esc(REST.paused ? t('session.restResume') : t('session.restPause')) + '</button>' +
-    '<button class="btn quiet sm" data-act="resetRest">' + esc(t('session.restReset')) + '</button>' +
-    '<button class="btn quiet sm" data-act="addRest" data-a1="15" data-t1="n">+' + 15 + 's</button>' +
-    '<button class="btn quiet sm" data-act="closeRest">' + esc(t('btn.close')) + '</button>' +
-    '</div></div>';
-  paintRest();
+    '<button type="button" class="btn quiet sm" data-act="resetRest">' + esc(t('session.restReset')) + '</button>' +
+    '<button type="button" class="btn quiet sm" data-act="addRest" data-a1="15" data-t1="n"><bdi>+15s</bdi></button>' +
+    '<button type="button" class="btn quiet sm" data-act="closeRest">' + esc(t('btn.close')) + '</button>' +
+    '</div></div></div>';
+  paintRest(); syncRestHeight();
+  /* A pause, reset, or +15 repaints the controls; keep keyboard focus on it. */
+  if(focusAction){
+    const next = c.querySelector('[data-act="' + focusAction + '"]');
+    if(next && next.focus) next.focus({preventScroll:true});
+  }
+}
+
+/* Explain the limits where the timer is used, and make the existing optional
+   alert reachable without leaving the workout. No permission is asked on open. */
+function openRestInfo(){
+  const on = !!(getState().profile && getState().profile.restNotify);
+  const unavailable = !restAlertSupported();
+  const blocked = !unavailable && on && Notification.permission !== 'granted';
+  sheet(t('rest.notifyT'), '<div data-rest-info><p class="body-sm">' + esc(t('rest.timerHint')) + '</p>' +
+    '<p class="body-sm">' + esc(t('rest.notifyHint')) + '</p>' +
+    '<button type="button" class="tile ' + (on ? 'on' : '') + '" role="switch" aria-checked="' + (on ? 'true' : 'false') +
+    '" data-act="setRestNotifyFromRest"><span class="box"></span><span><span class="t">' + esc(t('rest.notifyLbl')) +
+    '</span><span class="d">' + esc(on ? t('rest.notifyStateOn') : t('rest.notifyStateOff')) + '</span></span></button>' +
+    (unavailable ? '<p class="hint mt-2">' + esc(t('rest.notifyUnsupported')) + '</p>' :
+     (blocked ? '<p class="hint mt-2">' + esc(t('rest.notifyBlocked')) + '</p>' : '')) + '</div>');
 }
 
 /* ---------- rest alert ----------
@@ -842,7 +903,7 @@ function notifyRestDone(){
   try{
     navigator.serviceWorker.ready.then(reg => {
       if(!reg || typeof reg.showNotification !== 'function') return;
-      reg.showNotification(t('rest.notifyTitle'), {
+      return reg.showNotification(t('rest.notifyTitle'), {
         body: t('rest.notifyBody'),
         tag: 'ancestor-rest',        /* a second rest replaces the first */
         renotify: true,
@@ -2328,7 +2389,7 @@ function doImport(btn){
 function doErase(){
   if(!confirm(t('you.erase.warn'))) return;
   if(!confirm(t('dlg.confirm'))) return;
-  eraseAll(); ACTIVE = null; clearDraft(); BODY_SEL = null;
+  eraseAll(); ACTIVE = null; clearDraft(); stopRest(); syncLiveClock(); BODY_SEL = null;
   onbIdx = 0; go('onb');
 }
 
@@ -2383,8 +2444,14 @@ function sheet(title, bodyHtml){
 function closeSheet(){
   const host = $('#sheetHost');
   if(!host) return;
+  const restInfo = !!host.querySelector('[data-rest-info]');
   host.innerHTML = '';
-  if(LAST_FOCUS && LAST_FOCUS.focus) { try { LAST_FOCUS.focus(); } catch(e){} }
+  if(LAST_FOCUS && LAST_FOCUS.isConnected && LAST_FOCUS.focus){
+    try { LAST_FOCUS.focus(); } catch(e){}
+  } else if(restInfo){
+    /* The timer may have ended while its information sheet was open. */
+    focusAfterRest();
+  }
   LAST_FOCUS = null;
 }
 

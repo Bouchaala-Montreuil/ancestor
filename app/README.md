@@ -81,6 +81,12 @@ fails, the app warns and offers a retry; an export contains the log, **not** an
 active workout. A failed draft write can leave the stored draft older than what
 is on screen, so keep the tab open until it is saved.
 
+The rest timer is saved with that draft: a running rest catches up to its original
+deadline after reopening, while a paused rest keeps its remaining time. Alerts
+are optional, enabled from the timer's information button or Me. They can only
+fire when the page is running; a suspended or closed tab cannot guarantee an
+on-time notification.
+
 ---
 
 ## Honest scope
@@ -203,9 +209,9 @@ Or a la carte, which is how the suites are named when one of them breaks:
 npm test                           # the ten headless suites, in order
 npm run test:browser               # the one that needs a real Chrome (source tools/chromium.sh)
 
-node tests/design.js               # 291 design system, states, targets, disclosures
+node tests/design.js               # 353 design system, states, targets, disclosures
 node tests/premium.js              # 217 motion, dashboard, charts, states, boundaries
-node tests/ui.js                   # 322 end-to-end DOM tests
+node tests/ui.js                   # 323 end-to-end DOM tests
 node tests/run.js                  # 146 engine / i18n tests
 node tests/inclusive.js            #  70 migration / a11y / locale tests
 node tests/personas.js             #  73 persona journey checks
@@ -216,6 +222,7 @@ node tests/print.js                #  88 the A4 sheet
 node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tests/journey.js              #  39 navigation and disclosure checks in Chromium
 node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
+node tests/rest_timer.js           #  73 timer, alerts, interruption and layout checks in Chromium
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
 node tools/qa_audit.js             # scripted user-journey audit
@@ -332,39 +339,18 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 
 ## Tests
 
-```
-node tests/design.js   →  210 passed   palette, contrast on washes, states, 44px targets, disclosures
-node tests/premium.js  →  213 passed   motion, dashboard, charts, the state matrix, boundaries
-node tests/ui.js       →  230 passed   onboarding, logging, anatomy, charts, restart, disclosure
-node tests/run.js      →  142 passed   progression, recovery, shifts, persistence, honesty, i18n
-node tests/inclusive.js→   65 passed   v1→v3 migration, a11y model, filtering, units, locale
-node tests/personas.js →   66 passed   the ten inclusive user journeys
-node tests/science.js  →  124 passed   Science Hub, evidence gate, why-panel
-node tests/logic.js    →  117 passed   exercise-aware logging, planned vs actual, records
-node tests/anatomy.js  →   64 passed   real glTF asset, mapping, raycast picking
-node tests/print.js    →   44 passed   the A4 sheet, measured
-node tests/browser.js  →   25 passed   real Chromium WebGL 2.0 pixels, 64 LTR/RTL viewports, SW offline
-```
+The 2026-10-30 verification ran all ten headless suites: **1,620 checks**
+covering design, UI, progression, recovery, workout logic, accessibility,
+locales, anatomy and print. The Chromium suites also passed: 95 browser/WebGL,
+39 navigation, 60 workout safety and 73 rest-timer checks, including a
+176-layout audit. The timer and workout-safety journeys run against modular,
+HTTP and single-file builds.
 
-**919 automated checks, all executed and green** (plus 0 issues from
-`tools/qa_audit.js`, 0 translation leaks across 1,503 keys × 7 languages from
-`tools/keyscan.js`, and a 1,981 KB self-contained offline bundle in
-`dist/ancestor.html` and `release/ancestor.html`).
-
-All were actually executed.
-
-| Area | Tests |
-|---|---|
-| Progression (ten rules, plate rounding, calendar-independence) | 30 |
-| Recovery (modifiers, bounds, adaptation, honesty) | 12 |
-| Shifts, sleep, timezones, biological day | 18 |
-| Program generation (equipment, limitations, style, substitutions) | 24 |
-| Refusal engine (rest, stop, no blanket shift ban, uncertainty) | 14 |
-| Persistence, export, import, migration, erase | 12 |
-| Safety & scientific-honesty guards | 7 |
-| i18n completeness (7 languages × 755 core keys + 84 exercises) | 14 |
-| **Design system** (palette exactness, WCAG AA contrast, no glass/emoji/gradients, responsive rail, component states) | **61** |
-| **End-to-end DOM** (12 journey groups) | **98** |
+The release gate also checked module boundaries, the single-file bundle,
+1,804 translation keys in seven languages and 67 site checks. Separate audits
+passed 75 Chromium accessibility-tree checks and 30 PWA install checks. These
+are automated checks, not a substitute for physical-device, Safari, Firefox or
+assistive-technology testing. See [Run it](#run-it) for the commands.
 
 ### Bugs the tests caught in this redesign
 

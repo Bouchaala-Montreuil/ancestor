@@ -521,6 +521,7 @@ function boot(){
   loadState();
   const s = getState();
   const restored = loadDraft();
+  if(restored && ACTIVE) restoreRestFromDraft();
   if(!s.onboarded) VIEW = 'onb';
   else if(ACTIVE) VIEW = 'session';
   render();
@@ -550,6 +551,8 @@ function boot(){
   document.addEventListener('visibilitychange', () => {
     if(document.hidden) return;
     retryStore();
+    /* A suspended page catches up to the actual deadline as soon as it returns. */
+    tickRest();
     /* A tab left open overnight is the case this exists for: the browser only
        looks for a new worker on navigation and on its own slow schedule, so
        coming back to the tab asks once. Offline, it throws and is ignored. */
@@ -570,7 +573,9 @@ function boot(){
   window.addEventListener('offline', () => render());
   window.addEventListener('hashchange', () => handleHashShortcut());
   window.addEventListener('popstate', restoreNavigation);
-  window.addEventListener('resize',  () => { try { renderNav(!!getState().onboarded); } catch(e){} });
+  window.addEventListener('resize', () => {
+    try { renderNav(!!getState().onboarded); syncRestHeight(); } catch(e){}
+  });
 
   /* Typing. On a phone the on-screen keyboard covers the bottom half of the
      screen — which is exactly where the tab bar sits, and often where the set's
@@ -584,6 +589,7 @@ function boot(){
     const el = e.target;
     const typing = !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT');
     document.body.classList.toggle('typing', typing);
+    if(REST) syncRestHeight();
   });
   document.addEventListener('focusout', () => {
     /* Deferred by a tick: moving between two fields fires focusout then focusin,
@@ -591,7 +597,10 @@ function boot(){
     setTimeout(() => {
       const a = document.activeElement;
       const still = !!a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT');
-      if(!still) document.body.classList.remove('typing');
+      if(!still){
+        document.body.classList.remove('typing');
+        if(REST) syncRestHeight();
+      }
     }, 0);
   });
 }

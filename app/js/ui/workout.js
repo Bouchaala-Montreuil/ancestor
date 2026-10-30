@@ -57,11 +57,13 @@ function togglePauseWorkout(){
     ACTIVE.pausedMs = (ACTIVE.pausedMs || 0) + Math.max(0, Date.now() - (ACTIVE.pausedAt || Date.now()));
     ACTIVE.paused = false;
     ACTIVE.pausedAt = null;
-    if(typeof REST !== 'undefined' && REST && REST.paused) resumeRest();
+    /* Resume only a rest that this workout pause interrupted. A rest the
+       person paused independently must stay paused. */
+    if(typeof REST !== 'undefined' && REST && REST.paused && REST.pausedByWorkout) resumeRest();
   } else {
     ACTIVE.paused = true;
     ACTIVE.pausedAt = Date.now();
-    if(typeof REST !== 'undefined' && REST && !REST.paused) pauseRest();
+    if(typeof REST !== 'undefined' && REST && !REST.paused) pauseRest(true);
   }
   saveDraft();
   syncLiveClock();
@@ -1161,7 +1163,7 @@ function finishSession(){
       FINISH_SAVE_FAILED = true; render(); return;
     }
     toast(t('log.alreadySaved')); ACTIVE = null; SESSION_SUB = 'plan';
-    FINISH_SAVE_FAILED = false; clearDraft(); go('progress'); return;
+    FINISH_SAVE_FAILED = false; clearDraft(); stopRest(); syncLiveClock(); go('progress'); return;
   }
   const exercises = [], loggable = [];
   let omittedWork = false;

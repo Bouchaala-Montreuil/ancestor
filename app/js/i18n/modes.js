@@ -2498,6 +2498,7 @@ Object.keys(TV43).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], TV43[
 /* Workout safety: these describe real draft and log states, not a new metric. */
 const WORKOUT_SAFETY = {
   en: {
+    'rest.timerHint':'Reopening this workout restores the timer. Keep the tab open for alerts; a sleeping browser can delay them.',
     'workout.activePlan':'Finish or discard the active session before starting another.',
     'workout.skipNext':'Skip next set',
     'workout.removeConfirm':'Remove this set? Its entered or logged values will be deleted from this session.',
@@ -2515,6 +2516,7 @@ const WORKOUT_SAFETY = {
     'workout.storeActive':'This device refused a save. Keep this tab open; an export includes your log, not the active workout.'
   },
   fr: {
+    'rest.timerHint':'Le minuteur est restauré en rouvrant cette séance. Gardez l’onglet ouvert pour les alertes : un navigateur en veille peut les retarder.',
     'workout.activePlan':'Terminez ou abandonnez la séance en cours avant d’en démarrer une autre.',
     'workout.skipNext':'Passer la prochaine série',
     'workout.removeConfirm':'Supprimer cette série ? Ses valeurs saisies ou enregistrées seront effacées de cette séance.',
@@ -2532,6 +2534,7 @@ const WORKOUT_SAFETY = {
     'workout.storeActive':'Cet appareil a refusé un enregistrement. Gardez cet onglet ouvert : l’export contient le journal, pas la séance en cours.'
   },
   es: {
+    'rest.timerHint':'Al volver a abrir esta sesión se recupera el temporizador. Mantén la pestaña abierta para recibir avisos; si el navegador se suspende pueden llegar tarde.',
     'workout.activePlan':'Termina o descarta la sesión activa antes de iniciar otra.',
     'workout.skipNext':'Omitir la siguiente serie',
     'workout.removeConfirm':'¿Quitar esta serie? Sus valores introducidos o registrados se borrarán de esta sesión.',
@@ -2549,6 +2552,7 @@ const WORKOUT_SAFETY = {
     'workout.storeActive':'El dispositivo rechazó un guardado. Mantén esta pestaña abierta; la exportación incluye el registro, no la sesión activa.'
   },
   de: {
+    'rest.timerHint':'Beim erneuten Öffnen dieser Einheit wird der Timer wiederhergestellt. Lass den Tab für Hinweise offen; ein pausierter Browser kann sie verzögern.',
     'workout.activePlan':'Beende oder verwirf die aktive Einheit, bevor du eine neue startest.',
     'workout.skipNext':'Nächsten Satz überspringen',
     'workout.removeConfirm':'Diesen Satz entfernen? Seine eingegebenen oder erfassten Werte werden aus dieser Einheit gelöscht.',
@@ -2566,6 +2570,7 @@ const WORKOUT_SAFETY = {
     'workout.storeActive':'Das Gerät hat das Speichern abgelehnt. Lass diesen Tab offen; der Export enthält das Tagebuch, nicht die aktive Einheit.'
   },
   it: {
+    'rest.timerHint':'Riaprendo questa sessione il timer viene ripristinato. Tieni aperta la scheda per gli avvisi; se il browser è sospeso possono arrivare in ritardo.',
     'workout.activePlan':'Termina o annulla la sessione attiva prima di avviarne un’altra.',
     'workout.skipNext':'Salta la prossima serie',
     'workout.removeConfirm':'Rimuovere questa serie? I valori inseriti o registrati verranno eliminati dalla sessione.',
@@ -2583,6 +2588,7 @@ const WORKOUT_SAFETY = {
     'workout.storeActive':'Il dispositivo ha rifiutato un salvataggio. Tieni aperta questa scheda: l’esportazione include il registro, non la sessione attiva.'
   },
   nl: {
+    'rest.timerHint':'Als je deze sessie opnieuw opent, wordt de timer hersteld. Houd het tabblad open voor meldingen; een slapende browser kan ze vertragen.',
     'workout.activePlan':'Rond de actieve sessie af of verwerp die voordat je een andere start.',
     'workout.skipNext':'Volgende set overslaan',
     'workout.removeConfirm':'Deze set verwijderen? De ingevoerde of vastgelegde waarden worden uit deze sessie gewist.',
@@ -2600,6 +2606,7 @@ const WORKOUT_SAFETY = {
     'workout.storeActive':'Dit apparaat weigerde een opslag. Houd dit tabblad open; een export bevat het logboek, niet de actieve sessie.'
   },
   ar: {
+    'rest.timerHint':'عند إعادة فتح هذه الحصة يعود المؤقت. أبقِ التبويب مفتوحاً للتنبيهات؛ قد يؤخرها المتصفح إذا دخل في وضع السكون.',
     'workout.activePlan':'أنهِ الحصة الجارية أو ألغها قبل بدء حصة أخرى.',
     'workout.skipNext':'تخطي المجموعة التالية',
     'workout.removeConfirm':'هل تريد إزالة هذه المجموعة؟ ستُحذف قيمها المدخلة أو المسجّلة من هذه الحصة.',
