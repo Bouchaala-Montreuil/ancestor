@@ -1672,6 +1672,8 @@ group('2p. Loading veil: the mark draws, and stays long enough to be seen');
       /\.app-boot-mark \.bs\{[^}]*transform:scaleX\(0\)[^}]*bs-draw/.test(cssB) && !/tally-draw/.test(cssB));
   chk('the closing stroke keeps its rotation on a wrapping group, not a transform attribute',
       /<g transform="rotate\(-16 12 12\)"><rect class="bs bs5"/.test(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')));
+  chk('a new screen staggers its top-level blocks in, through the shared helper',
+      /function transitionView[\s\S]*?staggerIn\(body, \{ selector: ':scope > \*' \}\)/.test(mot));
   chk('the veil waits for the mark before it lifts (minimum 900 ms on the page clock)',
       /const BOOT_MIN_MS = 900;/.test(mot) && mot.indexOf('BOOT_MIN_MS - elapsed') > 0);
 }

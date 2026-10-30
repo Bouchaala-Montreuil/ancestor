@@ -86,6 +86,7 @@ function dismissAppBoot(){
           [{ opacity: 0, transform: 'translate3d(0,8px,0)' }, { opacity: 1, transform: 'none' }],
           { duration: MOTION.base, easing: EASE.out }
         );
+        staggerIn(body, { selector: ':scope > *' });
       }
       const anim = el.animate(
         [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translate3d(0,-6px,0)' }],
@@ -110,6 +111,9 @@ function transitionView(updateFn){
   if(reducedMotion()) return false;
   const body = document.getElementById('screenBody');
   if(!body) return false;
+  /* The screen's top-level blocks rise in one after another, so a new view reads
+     as built rather than swapped. Capped at eight blocks by staggerIn. */
+  staggerIn(body, { selector: ':scope > *' });
   if(typeof body.animate === 'function'){
     try{
       body.animate(
