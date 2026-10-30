@@ -379,6 +379,8 @@ function exerciseMovement(ex){
   return '<section class="movement-guide" data-exercise="'+escAttr(ex.id)+'" aria-label="'+escAttr(t('movement.title'))+'">'+
     '<div class="move-heading">'+esc(t('movement.title'))+'</div>'+
     (guide[0]==='benchFly'?'<p class="movement-view">'+esc(t('movement.viewAbove'))+'</p>':'')+
+    (['face-pull','tri-pushdown','oh-tri-ext','band-pull-apart','band-pressdown'].indexOf(ex.id)>=0
+      ? '<p class="movement-view" data-seated-option>'+esc(t('movement.seatedNote'))+'</p>' : '')+
     '<div class="move-labels'+(hold?' is-hold':'')+'"><span>'+esc(firstLabel)+'</span>'+(hold?'':'<span>'+esc(secondLabel)+'</span>')+'</div>'+
     '<svg class="movement-figure'+(hold?' is-hold':'')+'" viewBox="0 -10 '+(hold?160:320)+' 160" aria-hidden="true" focusable="false">'+
       '<g data-moving transform="translate('+first+' 0)">'+movementStage(guide,a)+'</g>'+
@@ -386,5 +388,7 @@ function exerciseMovement(ex){
     (hold?'':'<button class="movement-play" type="button" data-act="movementPlay">'+esc(t('movement.play'))+'</button>')+
     '<div class="move-copy"><p>'+esc(t('movement.guide.'+guide[2]))+'</p>'+
       '<p><b>'+esc(t('movement.tip'))+'</b> '+esc(t('cue.'+ex.id))+'</p>'+
-      '<p><b>'+esc(t('movement.controlLabel'))+'</b> '+esc(t(control))+'</p></div></section>';
+      '<p><b>'+esc(t('movement.controlLabel'))+'</b> '+esc(t(control))+'</p></div>'+
+    (['bb-bench','closegrip-bench','bb-squat'].indexOf(ex.id) >= 0
+      ? '<p class="movement-safety" data-barbell-safety>'+esc(t('movement.barbellSafety'))+'</p>' : '')+'</section>';
 }

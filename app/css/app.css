@@ -3345,6 +3345,7 @@ html[lang="ar"] .mono{
 .move-copy{font-size:var(--fs-sm);line-height:1.55;color:var(--ink-2)}
 .move-copy p{margin:var(--s3) 0 0}
 .move-copy b{color:var(--ink)}
+.movement-safety{margin:var(--s3) 0 0;padding:var(--s2) var(--s3);border-inline-start:3px solid var(--warn);background:var(--recess);color:var(--ink);font-size:var(--fs-sm);line-height:1.55}
 :root[data-motion="on"] .movement-play{display:none}
 .movement-anatomy{border:1px solid var(--line)}
 .movement-anatomy summary{cursor:pointer;padding:var(--s3);font-weight:700}

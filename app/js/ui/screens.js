@@ -193,7 +193,7 @@ Screens.home = function(){
     });
     h += '</div>';
   }
-  if(d.state === 'stop') h += '<div class="safety">' + esc(t('feel.stop')) + '</div>';
+  if(d.state === 'stop') h += '<div class="safety">' + esc(t('state.stop.d')) + '</div>';
 
   /* Next Workout Blueprint Strip right inside the decision card */
   if(next && next.session && (next.session.exercises || []).length){
@@ -220,6 +220,10 @@ Screens.home = function(){
            : '') +
          '</div></div>';
   }
+
+  /* A plan made before the current choices must not look like a fresh
+     recommendation, including when the session is started from Today. */
+  if(next && !ACTIVE) h += exerciseConflictBanner(next.session.exercises, p, false);
 
   /* One dominant action. Everything a returning lifter might want is still one
      tap away, but it waits behind a disclosure instead of competing for the
@@ -421,8 +425,8 @@ function greetingFor(now){
 }
 
 function heroLine(s, d, shown, next, now){
-  if(!s.sessions.length) return t('home.heroFirst');
   if(d.state === 'stop') return t('home.heroStop');
+  if(!s.sessions.length) return t('home.heroFirst');
   if(shown === 'rest')   return t('home.heroRest');
   if(shown === 'modify' && next) return t('home.heroModify', { name: next.session.name });
   if(next)               return t('home.heroNext', { name: next.session.name });
@@ -1434,6 +1438,12 @@ function openExerciseDetail(exId){
     (spec.unilateral ? '<span class="flag plain">' + esc(t('log.unilateral')) + '</span>' : '') +
     '</div>';
 
+  const reasons = exerciseReasonText(ex, s.profile || {});
+  if(reasons){
+    h += '<div data-filter-warning>' + banner('warn', t('workout.filterTitle'),
+      t('workout.filterDetail', {reasons:reasons})) + '</div>';
+  }
+
   /* The same exercise-specific guide is used by the mechanics explorer. */
   if(typeof exerciseVisualSvg === 'function'){
     h += exerciseVisualSvg(ex);
@@ -1992,6 +2002,10 @@ Screens.profile = function(){
           esc(t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('profile.title')) + '</h1></div></div>';
 
+  if(s.plan && s.plan.sessions){
+    const planExercises = s.plan.sessions.reduce((all, day) => all.concat(day.exercises || []), []);
+    h += exerciseConflictBanner(planExercises, p, false);
+  }
   h += '<div class="profile-grid">';
 
   /* ==================== LEFT COLUMN: TRAINING & PROGRAMME ==================== */
@@ -2576,9 +2590,8 @@ Screens.lang = function(){
       '<span class="box" aria-hidden="true"></span>' +
       '<span class="lang-nm" dir="' + (rtl ? 'rtl' : 'ltr') + '">' + esc(langName(l)) + '</span>' +
       '<span class="lang-code">' + esc(String(l).toUpperCase()) + '</span>' +
-      /* The interface is fully translated in all seven; the lesson text is not.
-         Saying only the first number would be the flattering version, so the
-         row carries the second one too. */
+      /* If the configured content-key coverage is incomplete, show its own
+         measured number instead of implying it matches interface coverage. */
       ((st.contentPercent !== undefined && st.contentPercent < 100)
         ? '<span class="flag sm warn">' + esc(t('lang.contentPct', { p: st.contentPercent })) + '</span>'
         : '') +
@@ -2886,6 +2899,7 @@ Screens.onb = function(){
     const plan = buildPlan(p);
     b = head + '<h1 class="display mb-2">' + esc(t('onb.ready.t')) + '</h1>' +
       '<p class="onb-prose">' + esc(t('onb.ready.d')) + '</p>';
+    if(!plan.poolSize) b += banner('warn', t('workout.emptyPoolTitle'), t('a11y.poolEmpty'));
     plan.sessions.forEach(s2 => {
       b += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(s2.name) +
         '</h3><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';

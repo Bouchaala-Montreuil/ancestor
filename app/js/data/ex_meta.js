@@ -24,7 +24,9 @@ const REQUIREMENTS = ['grip','stand','kneel','overhead','balance','floorTransfer
 const CATEGORIES = ['resistance','bodyweight','band','machine','freeWeight','seated',
                     'wheelchair','lowImpact','mobility','balance','functional'];
 
-/* Metadata for the existing 59 exercises. Keyed by id. */
+/* Metadata describes the version actually instructed and illustrated in the
+   app, not every possible adaptation. For example a bench-supported row is not
+   a seated row, and sit-to-stand is not a seated-only movement. Keyed by id. */
 const EX_META = {
   /* horizontal push */
   'bb-bench':      {pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
@@ -33,15 +35,15 @@ const EX_META = {
   'incline-db':    {pos:['bench'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
   'db-fly':        {pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
   'cable-fly':     {pos:['standing'],req:['grip'],cat:['resistance','machine']},
-  'pushup':        {pos:['floor','standing'],req:['floorTransfer'],cat:['bodyweight']},
+  'pushup':        {pos:['floor'],req:['floorTransfer'],cat:['bodyweight']},
   'dip':           {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
 
   /* vertical push */
   'ohp':           {pos:['standing'],req:['grip','load','overhead','stand'],cat:['resistance','freeWeight']},
-  'db-ohp':        {pos:['standing','seated'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
-  'lateral-raise': {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'cable-lateral': {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
-  'rear-delt-fly': {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'db-ohp':        {pos:['standing'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
+  'lateral-raise': {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'cable-lateral': {pos:['standing'],req:['grip'],cat:['resistance','machine']},
+  'rear-delt-fly': {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
 
   /* pulls */
   'pullup':        {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
@@ -49,7 +51,7 @@ const EX_META = {
   'cg-pulldown':   {pos:['seated'],req:['grip','overhead'],cat:['resistance','machine']},
   'chinup':        {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
   'bb-row':        {pos:['standing'],req:['grip','load','stand'],cat:['resistance','freeWeight']},
-  'db-row':        {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'db-row':        {pos:['bench'],req:['grip','load','kneel','stand'],cat:['resistance','freeWeight']},
   'cable-row':     {pos:['seated'],req:['grip'],cat:['resistance','machine']},
   'chest-supported-row':{pos:['bench'],req:['grip'],cat:['resistance','machine']},
   'face-pull':     {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
@@ -77,28 +79,29 @@ const EX_META = {
   /* calves */
   'standing-calf': {pos:['standing'],req:['stand','balance'],cat:['resistance','machine']},
   'seated-calf':   {pos:['seated'],req:[],cat:['resistance','machine']},
-  'db-calf':       {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'bw-calf':       {pos:['standing','seated'],req:['stand','balance'],cat:['bodyweight']},
+  'db-calf':       {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'bw-calf':       {pos:['standing'],req:['stand','balance'],cat:['bodyweight']},
 
   /* arms */
   'bb-curl':       {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'db-curl':       {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'cable-curl':    {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
-  'hammer-curl':   {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'db-curl':       {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'cable-curl':    {pos:['standing'],req:['grip'],cat:['resistance','machine']},
+  'hammer-curl':   {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
   'tri-pushdown':  {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
   'oh-tri-ext':    {pos:['standing','seated'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
-  'skull-crusher': {pos:['bench','floor'],req:['grip','load','floorTransfer'],cat:['resistance','freeWeight']},
+  'skull-crusher': {pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
   'closegrip-bench':{pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'bench-dip':     {pos:['seated','bench'],req:[],cat:['bodyweight']},
+  'bench-dip':     {pos:['bench'],req:[],cat:['bodyweight']},
   'wrist-curl':    {pos:['seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'reverse-curl':  {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'reverse-curl':  {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
 
   /* trunk */
-  'cable-crunch':  {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
+  'cable-crunch':  {pos:['floor'],req:['grip','kneel','floorTransfer'],cat:['resistance','machine']},
   'hanging-raise': {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
-  'ab-wheel':      {pos:['floor'],req:['grip','floorTransfer'],cat:['bodyweight']},
-  'db-crunch':     {pos:['floor','seated'],req:['load'],cat:['resistance','freeWeight']},
+  'ab-wheel':      {pos:['floor'],req:['grip','kneel','floorTransfer'],cat:['bodyweight']},
+  'db-crunch':     {pos:['floor'],req:['load','floorTransfer'],cat:['resistance','freeWeight']},
   'dead-hang':     {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
+  'pike-pushup':   {pos:['floor'],req:['floorTransfer','overhead'],cat:['bodyweight']},
 
   /* timed holds — measured in seconds, no external load required */
   'plank':         {pos:['floor'],req:['floorTransfer'],cat:['bodyweight','mobility'],acc:['lowImpact']},
@@ -141,8 +144,8 @@ const EX_ACCESSIBLE = [
   {id:'chair-stand', pat:'squat', equip:'bodyweight', type:'compound',
    m:[['quads',.48],['glutes',.34],['hamstrings',.18]], reps:[8,15], rir:2,
    avoid:[], subs:['bw-squat','goblet-squat','leg-press'],
-   pos:['seated'], req:[], cat:['bodyweight','functional','lowImpact'],
-   acc:['seated','lowImpact','functional']},
+   pos:['standing'], req:['stand'], cat:['bodyweight','functional','lowImpact'],
+   acc:['lowImpact','functional']},
 
   {id:'seated-leg-ext', pat:'squat', equip:'bodyweight', type:'isolation',
    m:[['quads',.92],['glutes',.08]], reps:[10,20], rir:2,
@@ -165,8 +168,8 @@ const EX_ACCESSIBLE = [
   {id:'band-curl', pat:'curl', equip:'band', type:'isolation',
    m:[['biceps',.84],['forearms',.16]], reps:[12,20], rir:1,
    avoid:[], subs:['db-curl','cable-curl'],
-   pos:['standing','seated'], req:['grip'], cat:['band','lowImpact'],
-   acc:['seated','lowImpact']},
+   pos:['standing'], req:['grip','stand'], cat:['band','lowImpact'],
+   acc:['lowImpact']},
 
   {id:'band-pressdown', pat:'extend', equip:'band', type:'isolation',
    m:[['triceps',.88],['forearms',.12]], reps:[12,20], rir:1,
@@ -189,7 +192,7 @@ const EX_ACCESSIBLE = [
   {id:'cat-cow', pat:'core', equip:'bodyweight', type:'isolation',
    m:[['lowerback',.58],['abs',.42]], reps:[10,20], rir:3,
    avoid:[], subs:['bird-dog','dead-bug'],
-   pos:['floor','seated'], req:['kneel'], cat:['mobility','lowImpact'],
+   pos:['floor'], req:['kneel','floorTransfer'], cat:['mobility','lowImpact'],
    acc:['lowImpact','mobility']},
 
   {id:'heel-slide', pat:'hinge', equip:'bodyweight', type:'isolation',
@@ -201,7 +204,7 @@ const EX_ACCESSIBLE = [
   {id:'overhead-reach', pat:'pushV', equip:'bodyweight', type:'isolation',
    m:[['shoulders',.72],['back',.28]], reps:[10,20], rir:3,
    avoid:[], subs:['band-pull-apart'],
-   pos:['standing','seated'], req:[], cat:['mobility','lowImpact'],
+   pos:['standing','seated'], req:['overhead'], cat:['mobility','lowImpact'],
    acc:['seated','lowImpact','mobility']},
 
   {id:'balance-stand', pat:'squat', equip:'bodyweight', type:'isolation',
@@ -250,10 +253,10 @@ const EX_ACCESSIBLE = [
     e.pos = meta.pos || ['standing'];
     e.req = meta.req || [];
     e.cat = meta.cat || ['resistance'];
-    e.acc = [];
-    if(e.pos.indexOf('seated') >= 0) e.acc.push('seated');
-    if(e.cat.indexOf('lowImpact') >= 0) e.acc.push('lowImpact');
-    if(e.cat.indexOf('mobility') >= 0) e.acc.push('mobility');
+    e.acc = (meta.acc || []).slice();
+    if(e.pos.indexOf('seated') >= 0 && e.acc.indexOf('seated') < 0) e.acc.push('seated');
+    if(e.cat.indexOf('lowImpact') >= 0 && e.acc.indexOf('lowImpact') < 0) e.acc.push('lowImpact');
+    if(e.cat.indexOf('mobility') >= 0 && e.acc.indexOf('mobility') < 0) e.acc.push('mobility');
   });
   // 2. append the new accessible exercises
   EX_ACCESSIBLE.forEach(e => {
@@ -274,48 +277,36 @@ const EX_CATEGORIES = CATEGORIES;
 /* ------------------------------------------------------- filtering ---
    Returns true when an exercise is compatible with the user's context.
    `profile.needs` is optional throughout — nothing here is mandatory.   */
+/* Use one predicate for both the filter and its explanation. Position-only
+   standing/floor guides are conservative: don't prescribe them to someone who
+   said they cannot stand/get to the floor just because an old record omitted a
+   redundant requirement. The flags are not a guarantee of suitability. */
 function exerciseAllowed(ex, profile){
-  const ctx = profile || {};
-  const needs = ctx.needs || {};
-  const allowPos = ctx.positions && ctx.positions.length ? ctx.positions : null;
-
-  // seated-only / wheelchair
-  if(needs.seatedOnly && !(ex.pos || []).includes('seated')) return false;
-  if(needs.wheelchair  && !(ex.acc || []).includes('wheelchair')) return false;
-
-  // user-specified preferred positions act as a filter, not a ban
-  if(allowPos && !(ex.pos || []).some(p => allowPos.indexOf(p) >= 0)) return false;
-
-  // capability requirements the user has told us they cannot meet
-  const req = ex.req || [];
-  if(needs.noGrip      && req.includes('grip'))      return false;
-  if(needs.noKneeling  && req.includes('kneel'))     return false;
-  if(needs.noFloor     && req.includes('floorTransfer')) return false;
-  if(needs.noOverhead  && req.includes('overhead'))  return false;
-  if(needs.noStanding  && req.includes('stand'))     return false;
-  if(needs.noBalance   && req.includes('balance'))   return false;
-  if(needs.lowImpactOnly && !(ex.acc || []).includes('lowImpact')) return false;
-  return true;
+  return !!ex && !exclusionReason(ex, profile);
 }
 
-/* Human-readable reason an exercise was filtered out — shown in the UI so the
-   filtering is transparent rather than silent. */
-function exclusionReason(ex, profile){
-  const needs = (profile && profile.needs) || {};
-  const req = ex.req || [];
-  if(needs.seatedOnly && !(ex.pos||[]).includes('seated')) return 'a11y.needSeated';
-  if(needs.wheelchair && !(ex.acc||[]).includes('wheelchair')) return 'a11y.needWheelchair';
-  if(needs.lowImpactOnly && !(ex.acc||[]).includes('lowImpact')) return 'a11y.needLowImpact';
-  if(needs.noGrip && req.includes('grip')) return 'a11y.needGrip';
-  if(needs.noKneeling && req.includes('kneel')) return 'a11y.needKneel';
-  if(needs.noFloor && req.includes('floorTransfer')) return 'a11y.needFloor';
-  if(needs.noOverhead && req.includes('overhead')) return 'a11y.needOverhead';
-  if(needs.noStanding && req.includes('stand')) return 'a11y.needStand';
-  if(needs.noBalance && req.includes('balance')) return 'a11y.needBalance';
-  return null;
+/* Include every recorded mismatch in an override prompt; returning only the
+   first could hide another restriction from the person making that choice. */
+function exclusionReasons(ex, profile){
+  if(!ex) return [];
+  const p = profile || {}, needs = p.needs || {};
+  const req = ex.req || [], pos = ex.pos || [], reasons = [];
+  if(needs.seatedOnly && !pos.includes('seated')) reasons.push('a11y.needSeated');
+  if(needs.wheelchair && !(ex.acc||[]).includes('wheelchair')) reasons.push('a11y.needWheelchair');
+  if(p.positions && p.positions.length && !pos.some(x => p.positions.indexOf(x) >= 0)) reasons.push('a11y.needPosition');
+  if(needs.lowImpactOnly && !(ex.acc||[]).includes('lowImpact')) reasons.push('a11y.needLowImpact');
+  if(needs.noGrip && req.includes('grip')) reasons.push('a11y.needGrip');
+  if(needs.noKneeling && req.includes('kneel')) reasons.push('a11y.needKneel');
+  if(needs.noFloor && (req.includes('floorTransfer') || (pos.length && pos.every(x => x === 'floor')))) reasons.push('a11y.needFloor');
+  if(needs.noOverhead && req.includes('overhead')) reasons.push('a11y.needOverhead');
+  if(needs.noStanding && (req.includes('stand') || (pos.length && pos.every(x => x === 'standing')))) reasons.push('a11y.needStand');
+  if(needs.noBalance && req.includes('balance')) reasons.push('a11y.needBalance');
+  return reasons;
 }
+/* Preserve the single-reason helper for existing summaries. */
+function exclusionReason(ex, profile){ return exclusionReasons(ex, profile)[0] || null; }
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { EX_META, EX_ACCESSIBLE, POSITIONS, REQUIREMENTS, CATEGORIES,
-                     exerciseAllowed, exclusionReason };
+                     exerciseAllowed, exclusionReason, exclusionReasons };
 }

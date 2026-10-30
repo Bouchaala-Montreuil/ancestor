@@ -154,21 +154,21 @@ function emphasisSummary(plan, profile){
 }
 
 /* ---------- candidate pool ---------- */
+/* One source of truth for every automatic candidate AND a readable account
+   of why a deliberately browsed exercise is outside the current choices. */
+function exerciseFilterReasons(ex, profile){
+  if(!ex) return [];
+  const p = profile || {};
+  const eq = EQUIP_SETS[p.equipment] || equipmentFor(p);
+  const envEq = (p.environment && p.environment !== 'gym') ? equipmentFor(p) : null;
+  const reasons = [];
+  if(eq.indexOf(ex.equip) < 0 || (envEq && envEq.indexOf(ex.equip) < 0)) reasons.push('exercise.filterEquipment');
+  if((ex.avoid || []).some(tag => (p.limits || []).indexOf(tag) >= 0)) reasons.push('exercise.filterLimit');
+  if(p.exercises && p.exercises[ex.id] === false) reasons.push('exercise.filterExcluded');
+  return reasons.concat(exclusionReasons(ex, p));
+}
 function allowedExercises(profile){
-  // `equipment` (v1) still governs; `environment` (v2) narrows it further.
-  const eq = EQUIP_SETS[profile.equipment] || equipmentFor(profile);
-  const envEq = (profile.environment && profile.environment !== 'gym')
-    ? equipmentFor(profile) : null;
-  const limits = profile.limits || [];
-  const chosen = profile.exercises;
-  return EX.filter(ex => {
-    if(eq.indexOf(ex.equip) < 0) return false;
-    if(envEq && envEq.indexOf(ex.equip) < 0) return false;
-    for(let i=0;i<ex.avoid.length;i++) if(limits.indexOf(ex.avoid[i]) >= 0) return false;
-    if(chosen && chosen[ex.id] === false) return false;    // user said "not this one"
-    if(!exerciseAllowed(ex, profile)) return false;        // accessibility context
-    return true;
-  });
+  return EX.filter(ex => exerciseFilterReasons(ex, profile).length === 0);
 }
 
 /* Scoring bonus so the pool favours exercises matching the user's stated
@@ -392,21 +392,15 @@ function nextSession(state, now){
   return best;
 }
 
-/* Substitution preserving movement pattern and target muscles. */
+/* Authored alternatives followed by same-pattern candidates, all filtered. */
 function substitutesFor(profile, exId){
-  const eq = EQUIP_SETS[profile.equipment] || EQUIP_SETS.gym;
-  const limits = profile.limits || [];
   const ex = EX_BY_ID[exId]; if(!ex) return [];
+  const allowed = new Set(allowedExercises(profile || {}).map(e => e.id));
   const ids = [exId].concat(ex.subs || []);
-  // also anything sharing the same pattern
+  // Keep the authored ordering, then related movement patterns, but apply the
+  // exact same preferences as plan generation to both groups.
   EX.forEach(e => { if(e.pat === ex.pat && ids.indexOf(e.id) < 0) ids.push(e.id); });
-  return ids.filter(id => {
-    if(id === exId) return false;
-    const e = EX_BY_ID[id]; if(!e) return false;
-    if(eq.indexOf(e.equip) < 0) return false;
-    for(let i=0;i<e.avoid.length;i++) if(limits.indexOf(e.avoid[i]) >= 0) return false;
-    return true;
-  }).map(id => EX_BY_ID[id]);
+  return ids.filter(id => id !== exId && allowed.has(id)).map(id => EX_BY_ID[id]);
 }
 
 /* A set of 10 reps takes roughly 8 seconds a rep; a hold takes its own
@@ -432,7 +426,7 @@ function estimatedMinutes(session, restSec){
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { buildPlan, nextSession, substitutesFor, allowedExercises, setsFor, estimatedMinutes, STYLE, SPLITS,
+  module.exports = { buildPlan, nextSession, substitutesFor, allowedExercises, exerciseFilterReasons, setsFor, estimatedMinutes, STYLE, SPLITS,
                      setSecondsEstimate, volumePartiallyUnknown };
 }
 

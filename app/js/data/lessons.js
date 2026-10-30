@@ -1,9 +1,9 @@
 /* ============================================================================
    ANCESTOR — Science Hub lesson content
 
-   Scope note: lesson TITLES, SUMMARIES and TAKEAWAYS are localised.
-   Section bodies are currently English only; `langs` declares this and the UI
-   states it rather than silently showing English under another language name.
+   Lesson headings and bodies have dictionary entries in all seven shipped
+   languages. `langs` declares availability; the UI warns if a future lesson
+   does not have the active language. Presence is not expert translation review.
 
    Every scientific claim in a lesson is linked to an evidence record by id.
    Model simplifications are labelled, and no lesson claims to measure a user's

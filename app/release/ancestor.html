@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-SXwiirxR/6QRuTmRtgwdSq+guWIQC8LuMa+I9VzVFaU=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-3durKpNU0Um8Kt1OwXThxfHCgQD79aN0jYgDtLDqeSk=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-QvpAXxWkdDE3s1gaLHTYfJFaWveBKJfDuJuAoxE5ra8=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-IgY91sf96VmbEjV1G2curcXBftyLJ8Puj20pvISE+xU=' 'sha256-B9i5rqSz40vp+1vVe/O55PlygtUfqeJqg8ylgHXf5QA=' 'sha256-YSDBN0AUU4V9fivyoYGWqXzEQaNeqnE3IZTrhOmr208=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-jloKwvZSQI3BGJICwBOSzPdnlYtMXyqqIpOOO6x9+JY=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-bKoW332xc5GsNGrqnxEf4e1lhcrAWTT+ldXT55FoV3o=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-vjBc12nDy5xVtWCZCZ8vhWi/PqhQGjWyyw6KW4mdoD4=' 'sha256-msoFsowEghXpyKkh3cjiQcmzO+gVDd6IpJxTAoTMMqI=' 'sha256-k5UzQnxRE131ojpQyTmhykIgRcKuRF8LMMCPK/CJ2QM=' 'sha256-Spk4SpxFxWfXx+YJ7E2ldIuSP6yy2txCE8VMH33q7dY=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-wThK8px2h4aPFwoojjG9zoSE1CeCGR0OcZB0xR39jHg=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-cihUuYNamLBkqa9yQbat0vYpa7t/inmI24FLD66k6ds=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ehNq2GbT8+HCtvnjxg1iY855logzPM4Ow9paKAZdB2k=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-3durKpNU0Um8Kt1OwXThxfHCgQD79aN0jYgDtLDqeSk=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-QvpAXxWkdDE3s1gaLHTYfJFaWveBKJfDuJuAoxE5ra8=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-IgY91sf96VmbEjV1G2curcXBftyLJ8Puj20pvISE+xU=' 'sha256-YObl9r0wEYHVfinctMDcchN1Z8jo1YLX6oNB0gU1ni4=' 'sha256-Nxw5YCQx/I1yD7AbS6/ROr76ZaI+jtPioOZocd+5TvY=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-HJjHsLlPugaK0+I8BwaD2b0Q+cq4hu4efyHPmlNy+VY=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-oOtHtEd5ds7u5N4yLAAGBwrpAIGGqXLmZMPa3bSuK+g=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-KCkoHfFQ1rtrl1vgmEPN0Nau2LdP7lHOkeYHx4dVHkw=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-jloKwvZSQI3BGJICwBOSzPdnlYtMXyqqIpOOO6x9+JY=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-fVlh3rMFuRxMcXKb4idAMP6tfnUGXho3XRHlQlM4vw4=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-Kir4nRzmliHyTTQDLTQF/5uVJFVeTrocJ9qzrMrwZLQ=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-NxbjhhHvvB5JozqcUJaMxdc8mGeMH9wYtBa6x6hvFYM=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-vjBc12nDy5xVtWCZCZ8vhWi/PqhQGjWyyw6KW4mdoD4=' 'sha256-k+w31khpfjJhOq2obxHkbc5s37qPcYBqHKHTulFDDks=' 'sha256-aVRc1qPudRXcIfyhsZeckYJ8HHzRTT+i6n5OkxWJtlI=' 'sha256-cB3m63gbjQfbVznYFhiQhwN8Z6gqUMdmTHtwSqX4QwY=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-wThK8px2h4aPFwoojjG9zoSE1CeCGR0OcZB0xR39jHg=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-cihUuYNamLBkqa9yQbat0vYpa7t/inmI24FLD66k6ds=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -3370,6 +3370,7 @@ html[lang="ar"] .mono{
 .move-copy{font-size:var(--fs-sm);line-height:1.55;color:var(--ink-2)}
 .move-copy p{margin:var(--s3) 0 0}
 .move-copy b{color:var(--ink)}
+.movement-safety{margin:var(--s3) 0 0;padding:var(--s2) var(--s3);border-inline-start:3px solid var(--warn);background:var(--recess);color:var(--ink);font-size:var(--fs-sm);line-height:1.55}
 :root[data-motion="on"] .movement-play{display:none}
 .movement-anatomy{border:1px solid var(--line)}
 .movement-anatomy summary{cursor:pointer;padding:var(--s3);font-weight:700}
@@ -3699,6 +3700,7 @@ ACT('finishSession',                el => finishSession());
 ACT('movePlanExercise',             el => movePlanExercise(arg(el, 1), arg(el, 2), arg(el, 3)));
 ACT('openAddExerciseSheet',         el => openAddExerciseSheet(arg(el, 1), arg(el, 2)));
 ACT('openExerciseLibrary',          el => openExerciseLibrary(arg(el, 1)));
+ACT('openExerciseSettings',         () => openExerciseSettings());
 ACT('openPlanSub',                  el => openPlanSub(arg(el, 1), arg(el, 2)));
 ACT('openSub',                      el => openSub(arg(el, 1)));
 ACT('removePlanExercise',           el => removePlanExercise(arg(el, 1), arg(el, 2)));
@@ -8316,7 +8318,7 @@ const MOVEMENT_COPY = {
   "supportedRow": ["Brace one hand and knee on a bench, weight in the other hand. Pull toward your hip, then lower.", "Prenez appui sur un banc avec une main et un genou, charge dans l’autre main. Tirez vers la hanche, puis redescendez.", "Apoya una mano y una rodilla en un banco, con la pesa en la otra mano. Tira hacia la cadera y baja.", "Stütze eine Hand und ein Knie auf der Bank ab, Gewicht in der anderen Hand. Ziehe zur Hüfte und senke es.", "Appoggia una mano e un ginocchio sulla panca, peso nell’altra mano. Tira verso l’anca, poi abbassa.", "Steun met één hand en knie op een bank, gewicht in de andere hand. Trek naar je heup en laat zakken.", "اسند يداً وركبة على مقعد وأمسك الوزن باليد الأخرى. اسحبه نحو الورك ثم أنزله."],
   "seatedRow": ["Sit tall with arms forward holding the handle or band. Draw your elbows toward your sides, then extend without rounding your back.", "Assis droit, bras tendus devant avec la poignée ou l’élastique, ramenez les coudes près du corps puis retendez sans arrondir le dos.", "Siéntate erguido con los brazos delante sujetando el asa o la banda. Lleva los codos a los lados y estira sin redondear la espalda.", "Sitze aufrecht mit Griff oder Band in den nach vorn gestreckten Händen. Ziehe die Ellenbogen an die Seiten und strecke ohne Rundrücken.", "Siediti eretto con le braccia avanti e la maniglia o l’elastico in mano. Porta i gomiti ai fianchi, poi distendi senza arrotondare la schiena.", "Zit rechtop met de greep of band in je uitgestrekte handen. Trek je ellebogen naar je zij en strek zonder je rug te bollen.", "اجلس منتصباً والذراعان أمامك تحملان المقبض أو الشريط. اسحب المرفقين إلى جانبيك ثم مدّ الذراعين دون تدوير الظهر."],
   "supportedMachine": ["Set your chest against the pad with feet planted. Pull the handles to your sides, then let your arms lengthen.", "Posez la poitrine contre le coussin, pieds au sol. Tirez les poignées vers les côtés, puis laissez les bras se tendre.", "Apoya el pecho en el cojín y los pies en el suelo. Tira de las asas hacia los lados y deja que los brazos se estiren.", "Lehne die Brust an das Polster, Füße am Boden. Ziehe die Griffe zu den Seiten und strecke die Arme wieder.", "Appoggia il petto al cuscino e i piedi a terra. Tira le maniglie ai fianchi, poi lascia distendere le braccia.", "Plaats je borst tegen het kussen en je voeten op de grond. Trek de grepen naar je zij en laat je armen weer strekken.", "اسند صدرك إلى الوسادة وثبّت قدميك. اسحب المقبضين إلى جانبيك ثم مدّ ذراعيك."],
-  "facePull": ["Face a high cable with arms forward. Pull the handles toward your face with elbows out, then slowly reach forward.", "Face à un câble haut, bras tendus, tirez les poignées vers le visage, coudes ouverts, puis retendez lentement.", "Frente a una polea alta y con los brazos extendidos, tira de las asas hacia la cara con los codos abiertos y vuelve despacio.", "Stehe vor einem hohen Kabel mit Armen nach vorn. Ziehe die Griffe mit offenen Ellenbogen zum Gesicht und strecke langsam wieder.", "Di fronte a un cavo alto, braccia avanti, tira le maniglie verso il viso con i gomiti aperti, poi distendi lentamente.", "Sta voor een hoge kabel met je armen naar voren. Trek de grepen naar je gezicht met ellebogen naar buiten en strek langzaam terug.", "قف أمام كابل مرتفع وذراعاك للأمام. اسحب المقبضين نحو الوجه مع فتح المرفقين ثم مدّ الذراعين ببطء."],
+  "facePull": ["Stand or sit facing a high cable with arms forward. Pull the handles toward your face with elbows out, then slowly reach forward.", "Debout ou assis face à un câble haut, tendez les bras. Tirez les poignées vers le visage, coudes ouverts, puis retendez lentement.", "De pie o sentado frente a una polea alta, extiende los brazos. Tira de las asas hacia la cara con los codos abiertos y vuelve despacio.", "Stehe oder sitze vor einem hohen Kabel, die Arme nach vorn. Ziehe die Griffe mit offenen Ellenbogen zum Gesicht und strecke langsam wieder.", "In piedi o seduto di fronte a un cavo alto, porta le braccia avanti. Tira le maniglie verso il viso con i gomiti aperti, poi distendi lentamente.", "Sta of zit voor een hoge kabel met je armen naar voren. Trek de grepen naar je gezicht met je ellebogen naar buiten en strek langzaam terug.", "قف أو اجلس أمام كابل مرتفع وذراعاك للأمام. اسحب المقبضين نحو الوجه مع فتح المرفقين ثم مدّ الذراعين ببطء."],
   "squat": ["Stand with feet about shoulder width. Bend hips and knees to squat comfortably, then press through your whole foot to stand.", "Debout, pieds environ à largeur d’épaules, fléchissez hanches et genoux sans inconfort, puis poussez dans tout le pied pour vous relever.", "De pie, pies aproximadamente al ancho de hombros, flexiona caderas y rodillas cómodamente y empuja con todo el pie para subir.", "Stehe etwa schulterbreit. Beuge Hüfte und Knie angenehm tief und drücke dich über den ganzen Fuß wieder hoch.", "In piedi, piedi circa alla larghezza delle spalle, piega anche e ginocchia senza fastidio, poi spingi su tutto il piede per rialzarti.", "Sta met je voeten ongeveer op schouderbreedte. Buig je heupen en knieën comfortabel en duw via je hele voet weer omhoog.", "قف والقدمان بعرض الكتفين تقريباً. اثنِ الوركين والركبتين لمدى مريح ثم ادفع بكامل القدم للنهوض."],
   "legPress": ["Sit against the backrest with feet on the plate. Bend your knees comfortably, then press the plate away without locking them.", "Dos contre le dossier, pieds sur la plateforme, fléchissez les genoux confortablement puis poussez sans les verrouiller.", "Siéntate contra el respaldo con los pies en la plataforma. Flexiona las rodillas cómodamente y empuja sin bloquearlas.", "Sitze am Rückenpolster mit Füßen auf der Platte. Beuge die Knie angenehm weit und drücke die Platte weg, ohne die Knie zu verriegeln.", "Siediti contro lo schienale, piedi sulla pedana. Piega le ginocchia in modo confortevole, poi spingi senza bloccarle.", "Zit tegen de rugleuning met je voeten op de plaat. Buig je knieën comfortabel en duw de plaat weg zonder je knieën op slot te zetten.", "اجلس مسنداً ظهرك وقدماك على اللوح. اثنِ الركبتين لمدى مريح ثم ادفع اللوح دون قفل الركبتين."],
   "split": ["Put your rear foot on a bench and your front foot on the floor. Bend the front knee to lower, then push through that foot to rise.", "Placez le pied arrière sur un banc et le pied avant au sol. Fléchissez le genou avant pour descendre, puis poussez sur ce pied pour remonter.", "Coloca el pie trasero en un banco y el delantero en el suelo. Flexiona la rodilla delantera para bajar y empuja con ese pie para subir.", "Stelle den hinteren Fuß auf eine Bank und den vorderen auf den Boden. Beuge das vordere Knie zum Absenken und drücke dich über diesen Fuß hoch.", "Metti il piede posteriore sulla panca e quello anteriore a terra. Piega il ginocchio davanti per scendere, poi spingi con quel piede per salire.", "Zet je achterste voet op een bank en je voorste voet op de grond. Buig je voorste knie om te zakken en duw via die voet omhoog.", "ضع القدم الخلفية على مقعد والأمامية على الأرض. اثنِ الركبة الأمامية للنزول ثم ادفع بهذه القدم للنهوض."],
@@ -8331,8 +8333,8 @@ const MOVEMENT_COPY = {
   "calf": ["Stand on the balls of your feet, holding support if needed. Rise onto your toes, then lower your heels with control.", "Debout sur l’avant des pieds, avec un appui si nécessaire, montez sur la pointe des pieds puis abaissez les talons avec contrôle.", "De pie sobre la parte delantera de los pies, con apoyo si hace falta, sube a puntillas y baja los talones con control.", "Stehe auf den Fußballen, halte dich bei Bedarf fest. Hebe die Fersen und senke sie kontrolliert.", "In piedi sull’avampiede, con un sostegno se serve, sollevati sulle punte e abbassa i talloni con controllo.", "Sta op je voorvoeten en houd je zo nodig vast. Kom op je tenen en laat je hielen gecontroleerd zakken.", "قف على مقدمة القدمين واستند عند الحاجة. ارتفع على الأصابع ثم أنزل الكعبين بتحكم."],
   "seatedCalf": ["Sit with the balls of your feet on a block and knees under the pad. Lift your heels, pause, then lower.", "Assis, avant des pieds sur une cale et genoux sous le coussin, levez les talons, marquez une pause puis redescendez.", "Siéntate con la parte delantera de los pies sobre un bloque y las rodillas bajo el cojín. Eleva los talones, pausa y baja.", "Sitze mit den Fußballen auf einem Block und Knien unter dem Polster. Hebe die Fersen, halte kurz und senke sie.", "Siediti con avampiedi su un rialzo e ginocchia sotto il cuscino. Solleva i talloni, fermati, poi abbassa.", "Zit met je voorvoeten op een blok en knieën onder het kussen. Hef je hielen, pauzeer en laat zakken.", "اجلس ومقدمتا القدمين على قاعدة والركبتان تحت الوسادة. ارفع الكعبين وتوقف قليلاً ثم أنزل."],
   "curl": ["Stand tall with elbows close to your sides. Curl the weight toward your shoulders, then lower without swinging.", "Debout, coudes près du corps, montez la charge vers les épaules puis redescendez sans élan.", "De pie con los codos cerca del cuerpo, eleva el peso hacia los hombros y baja sin balancearte.", "Stehe aufrecht, Ellenbogen nah am Körper. Beuge die Arme zum Anheben des Gewichts Richtung Schultern und senke ohne Schwung.", "In piedi con gomiti vicino ai fianchi, porta il peso verso le spalle e riabbassalo senza oscillare.", "Sta rechtop met ellebogen dicht bij je zij. Breng het gewicht naar je schouders en laat zakken zonder te zwaaien.", "قف منتصباً والمرفقان قرب الجانبين. ارفع الوزن نحو الكتفين ثم أنزله دون تأرجح."],
-  "pushdown": ["Face the high cable or band with elbows by your sides. Straighten your elbows to press down, then return slowly.", "Face au câble haut ou à l’élastique, coudes près du corps, tendez les coudes vers le bas puis revenez lentement.", "Frente a la polea alta o banda, con los codos pegados al cuerpo, estíralos para empujar hacia abajo y vuelve lentamente.", "Stehe vor dem hohen Kabel oder Band, Ellenbogen am Körper. Strecke die Ellenbogen nach unten und führe langsam zurück.", "Di fronte al cavo alto o elastico, gomiti ai fianchi, distendi i gomiti verso il basso e ritorna lentamente.", "Sta voor de hoge kabel of band met ellebogen naast je zij. Strek je ellebogen naar beneden en keer langzaam terug.", "قف أمام كابل مرتفع أو شريط والمرفقان بجانبك. مدّ المرفقين للضغط للأسفل ثم عد ببطء."],
-  "overheadExt": ["Hold the weight overhead with elbows pointing up. Bend your elbows to lower it behind your head, then extend.", "Tenez la charge au-dessus de la tête, coudes vers le haut. Fléchissez-les pour descendre derrière la tête, puis tendez-les.", "Sujeta el peso sobre la cabeza con los codos hacia arriba. Flexiónalos para bajarlo detrás de la cabeza y vuelve a estirar.", "Halte das Gewicht über dem Kopf, Ellenbogen zeigen hoch. Beuge sie, um es hinter den Kopf zu senken, und strecke sie wieder.", "Tieni il peso sopra la testa con gomiti verso l’alto. Piegali per abbassarlo dietro la testa, poi distendili.", "Houd het gewicht boven je hoofd met ellebogen omhoog. Buig ze om het achter je hoofd te laten zakken en strek ze weer.", "أمسك الوزن فوق الرأس والمرفقان للأعلى. اثنهما لإنزال الوزن خلف الرأس ثم مدّهما."],
+  "pushdown": ["Stand or sit facing a high cable or anchored band, elbows by your sides. Straighten your elbows to press down, then return slowly.", "Debout ou assis face à un câble haut ou à un élastique fixé, coudes près du corps, tendez les coudes vers le bas puis revenez lentement.", "De pie o sentado frente a una polea alta o banda fijada, con los codos pegados al cuerpo, estíralos para empujar hacia abajo y vuelve lentamente.", "Stehe oder sitze vor einem hohen Kabel oder befestigten Band, die Ellenbogen am Körper. Strecke die Ellenbogen nach unten und führe langsam zurück.", "In piedi o seduto di fronte a un cavo alto o elastico fissato, gomiti ai fianchi, distendi i gomiti verso il basso e ritorna lentamente.", "Sta of zit voor een hoge kabel of vastgemaakte band met je ellebogen naast je zij. Strek je ellebogen naar beneden en keer langzaam terug.", "قف أو اجلس أمام كابل مرتفع أو شريط مثبت والمرفقان بجانبك. مدّ المرفقين للضغط للأسفل ثم عد ببطء."],
+  "overheadExt": ["Stand or sit tall and hold the weight overhead with elbows pointing up. Bend your elbows to lower it behind your head, then extend.", "Debout ou assis bien droit, tenez la charge au-dessus de la tête, coudes vers le haut. Fléchissez-les pour descendre derrière la tête, puis tendez-les.", "De pie o sentado con el torso erguido, sujeta el peso sobre la cabeza con los codos hacia arriba. Flexiónalos para bajarlo detrás de la cabeza y vuelve a estirar.", "Stehe oder sitze aufrecht und halte das Gewicht über dem Kopf, Ellenbogen zeigen hoch. Beuge sie, um es hinter den Kopf zu senken, und strecke sie wieder.", "In piedi o seduto con il busto eretto, tieni il peso sopra la testa con i gomiti verso l’alto. Piegali per abbassarlo dietro la testa, poi distendili.", "Sta of zit rechtop en houd het gewicht boven je hoofd met je ellebogen omhoog. Buig ze om het achter je hoofd te laten zakken en strek ze weer.", "قف أو اجلس منتصباً وأمسك الوزن فوق الرأس والمرفقان للأعلى. اثنهما لإنزال الوزن خلف الرأس ثم مدّهما."],
   "skull": ["Lie on a bench with arms above your chest. Bend elbows to bring the weight toward your forehead, then straighten them.", "Allongez-vous sur un banc, bras au-dessus de la poitrine. Fléchissez les coudes pour approcher la charge du front, puis retendez.", "Túmbate en un banco con los brazos sobre el pecho. Flexiona los codos para acercar el peso a la frente y vuelve a estirarlos.", "Lege dich auf eine Bank, Arme über der Brust. Beuge die Ellenbogen, führe das Gewicht zur Stirn und strecke sie wieder.", "Sdraiati sulla panca con braccia sopra il petto. Piega i gomiti per avvicinare il peso alla fronte, poi distendili.", "Ga op een bank liggen met armen boven je borst. Buig je ellebogen om het gewicht naar je voorhoofd te brengen en strek weer.", "استلقِ على مقعد والذراعان فوق الصدر. اثنِ المرفقين لتقريب الوزن من الجبهة ثم مدّهما."],
   "wristCurl": ["Rest your forearm on your thigh, palm up and hand beyond your knee. Curl your wrist up, then lower without moving your forearm.", "Posez l’avant-bras sur la cuisse, paume vers le haut et main au-delà du genou. Fléchissez le poignet puis redescendez sans bouger l’avant-bras.", "Apoya el antebrazo en el muslo, palma arriba y mano más allá de la rodilla. Flexiona la muñeca hacia arriba y baja sin mover el antebrazo.", "Lege den Unterarm mit Handfläche nach oben auf den Oberschenkel, Hand hinter dem Knie. Beuge das Handgelenk hoch und senke ohne den Unterarm zu bewegen.", "Appoggia l’avambraccio sulla coscia, palmo in alto e mano oltre il ginocchio. Piega il polso in alto, poi abbassalo senza muovere l’avambraccio.", "Leg je onderarm op je bovenbeen, handpalm omhoog en hand voorbij je knie. Buig je pols omhoog en laat zakken zonder je onderarm te bewegen.", "اسند الساعد إلى الفخذ وراحة اليد للأعلى واليد بعد الركبة. اثنِ الرسغ للأعلى ثم أنزل دون تحريك الساعد."],
   "cableCrunch": ["Kneel facing a high cable, holding the rope beside your head. Curl your ribs toward your pelvis, then return without pulling with your arms.", "À genoux face à un câble haut, corde près de la tête, enroulez les côtes vers le bassin puis revenez sans tirer avec les bras.", "De rodillas frente a una polea alta, cuerda junto a la cabeza, acerca las costillas a la pelvis y vuelve sin tirar con los brazos.", "Knie vor einem hohen Kabel, Seil neben dem Kopf. Rolle die Rippen zum Becken und kehre zurück, ohne mit den Armen zu ziehen.", "In ginocchio di fronte a un cavo alto, corda vicino alla testa, avvicina le costole al bacino e torna senza tirare con le braccia.", "Kniel voor een hoge kabel met het touw naast je hoofd. Krul je ribben naar je bekken en keer terug zonder met je armen te trekken.", "اجثُ أمام كابل مرتفع والحبل بجانب الرأس. قرّب الأضلاع من الحوض ثم عد دون السحب بالذراعين."],
@@ -8353,7 +8355,7 @@ const MOVEMENT_COPY = {
   "wallPush": ["Place hands on a wall at chest height, step back and keep your body straight. Bend elbows toward the wall, then press away.", "Mains au mur à hauteur de poitrine, reculez les pieds, corps aligné. Fléchissez les coudes vers le mur, puis repoussez.", "Apoya las manos en la pared a la altura del pecho, aleja los pies y mantén el cuerpo recto. Flexiona los codos hacia la pared y empuja.", "Setze die Hände auf Brusthöhe an die Wand, tritt zurück und halte den Körper gerade. Beuge die Ellenbogen zur Wand und drücke dich weg.", "Mani sul muro all’altezza del petto, piedi indietro e corpo allineato. Piega i gomiti verso il muro, poi spingi via.", "Zet je handen op borsthoogte tegen de muur, stap achteruit en houd je lichaam recht. Buig je ellebogen naar de muur en duw weg.", "ضع يديك على الحائط عند مستوى الصدر وابتعد بقدميك مع استقامة الجسم. اثنِ المرفقين نحو الحائط ثم ادفع بعيداً."],
   "chairStand": ["Sit on a stable chair with feet planted. Lean slightly forward, stand up, then sit back down slowly.", "Assis sur une chaise stable, pieds au sol, penchez-vous légèrement en avant, levez-vous puis rasseyez-vous lentement.", "Siéntate en una silla estable con los pies apoyados. Inclínate un poco hacia delante, levántate y vuelve a sentarte lentamente.", "Sitze auf einem stabilen Stuhl mit Füßen am Boden. Lehne dich leicht vor, stehe auf und setze dich langsam wieder.", "Siediti su una sedia stabile con piedi a terra. Inclinati leggermente avanti, alzati e siediti di nuovo lentamente.", "Zit op een stabiele stoel met voeten op de vloer. Leun iets naar voren, sta op en ga langzaam weer zitten.", "اجلس على كرسي ثابت وقدماك على الأرض. انحنِ قليلاً للأمام وقف ثم اجلس مجدداً ببطء."],
   "seatedMarch": ["Sit tall with feet on the floor. Lift one knee, lower it, then alternate sides at a steady pace.", "Assis droit, pieds au sol, levez un genou puis reposez-le et alternez les côtés à rythme régulier.", "Siéntate erguido con los pies en el suelo. Eleva una rodilla, bájala y alterna los lados a ritmo constante.", "Sitze aufrecht mit Füßen am Boden. Hebe ein Knie, senke es und wechsle im gleichmäßigen Tempo die Seite.", "Siediti eretto con piedi a terra. Solleva un ginocchio, abbassalo e alterna i lati a ritmo regolare.", "Zit rechtop met voeten op de grond. Hef één knie, laat zakken en wissel in een gelijkmatig tempo af.", "اجلس منتصباً وقدماك على الأرض. ارفع ركبة وأنزلها ثم بدّل الجانبين بإيقاع ثابت."],
-  "pullApart": ["Hold a band in front at shoulder height. Pull hands apart without shrugging, then bring them together slowly.", "Tenez un élastique devant vous à hauteur d’épaules. Écartez les mains sans hausser les épaules, puis rapprochez-les lentement.", "Sujeta una banda delante a la altura de los hombros. Separa las manos sin encoger los hombros y júntalas despacio.", "Halte ein Band auf Schulterhöhe vor dir. Ziehe die Hände auseinander ohne die Schultern zu heben und führe sie langsam zusammen.", "Tieni un elastico davanti all’altezza delle spalle. Separa le mani senza sollevare le spalle, poi riavvicinale lentamente.", "Houd een band voor je op schouderhoogte. Trek je handen uit elkaar zonder je schouders op te halen en breng ze langzaam samen.", "أمسك شريطاً أمامك عند مستوى الكتفين. باعد بين اليدين دون رفع الكتفين ثم قرّبهما ببطء."],
+  "pullApart": ["Stand or sit tall holding a band in front at shoulder height. Pull hands apart without shrugging, then bring them together slowly.", "Debout ou assis bien droit, tenez un élastique devant vous à hauteur d’épaules. Écartez les mains sans hausser les épaules, puis rapprochez-les lentement.", "De pie o sentado con el torso erguido, sujeta una banda delante a la altura de los hombros. Separa las manos sin encoger los hombros y júntalas despacio.", "Stehe oder sitze aufrecht und halte ein Band auf Schulterhöhe vor dir. Ziehe die Hände auseinander ohne die Schultern zu heben und führe sie langsam zusammen.", "In piedi o seduto con il busto eretto, tieni un elastico davanti all’altezza delle spalle. Separa le mani senza sollevare le spalle, poi riavvicinale lentamente.", "Sta of zit rechtop en houd een band voor je op schouderhoogte. Trek je handen uit elkaar zonder je schouders op te halen en breng ze langzaam samen.", "قف أو اجلس منتصباً وأمسك شريطاً أمامك عند مستوى الكتفين. باعد بين اليدين دون رفع الكتفين ثم قرّبهما ببطء."],
   "deadBug": ["Lie on your back with knees over hips and arms up. Slowly extend the opposite arm and leg, return, then switch sides.", "Sur le dos, genoux au-dessus des hanches et bras levés, tendez lentement le bras et la jambe opposés, revenez puis changez de côté.", "Boca arriba, rodillas sobre las caderas y brazos arriba, estira lentamente el brazo y la pierna opuestos, vuelve y cambia de lado.", "Lege dich auf den Rücken, Knie über der Hüfte und Arme oben. Strecke langsam gegenüberliegenden Arm und Bein, kehre zurück und wechsle.", "Supino, ginocchia sopra le anche e braccia in alto, distendi lentamente braccio e gamba opposti, torna e cambia lato.", "Lig op je rug, knieën boven je heupen en armen omhoog. Strek langzaam tegenovergestelde arm en been, keer terug en wissel.", "استلقِ على ظهرك والركبتان فوق الوركين والذراعان للأعلى. مدّ الذراع والساق المتقابلتين ببطء ثم عد وبدّل."],
   "birdDog": ["Start on hands and knees. Reach one arm forward and the opposite leg back without twisting your hips, then return and switch.", "À quatre pattes, tendez un bras devant et la jambe opposée derrière sans tourner le bassin, revenez puis changez de côté.", "A cuatro apoyos, extiende un brazo delante y la pierna opuesta atrás sin girar las caderas; vuelve y cambia.", "Im Vierfüßlerstand strecke einen Arm vor und das gegenüberliegende Bein zurück, ohne die Hüfte zu drehen; kehre zurück und wechsle.", "A quattro zampe, allunga un braccio avanti e la gamba opposta indietro senza ruotare le anche; torna e cambia.", "Begin op handen en knieën. Strek één arm naar voren en het tegenovergestelde been naar achter zonder je heupen te draaien; keer terug en wissel.", "ابدأ على اليدين والركبتين. مدّ ذراعاً للأمام والساق المقابلة للخلف دون تدوير الوركين، ثم عد وبدّل."],
   "catCow": ["On hands and knees, gently round your back, then slowly arch to a comfortable range while breathing.", "À quatre pattes, arrondissez doucement le dos puis creusez-le lentement dans une amplitude confortable en respirant.", "A cuatro apoyos, redondea suavemente la espalda y después arquéala lentamente dentro de un rango cómodo mientras respiras.", "Im Vierfüßlerstand runde den Rücken sanft und wölbe ihn dann langsam in angenehmem Maß, während du atmest.", "A quattro zampe, arrotonda dolcemente la schiena, poi inarcala lentamente entro un’ampiezza confortevole respirando.", "Maak op handen en knieën je rug rustig bol en hol hem daarna langzaam binnen een prettige beweging, terwijl je ademt.", "على اليدين والركبتين، دوّر ظهرك برفق ثم قوّسه ببطء ضمن مدى مريح مع التنفس."],
@@ -8380,6 +8382,14 @@ MOVEMENT_UI.en.viewAbove='View from above'; MOVEMENT_UI.fr.viewAbove='Vue de des
 MOVEMENT_UI.es.viewAbove='Vista desde arriba'; MOVEMENT_UI.de.viewAbove='Ansicht von oben';
 MOVEMENT_UI.it.viewAbove='Vista dall’alto'; MOVEMENT_UI.nl.viewAbove='Van boven gezien';
 MOVEMENT_UI.ar.viewAbove='منظر من الأعلى';
+/* The diagram uses the standing variant; the text also describes a seated one. */
+MOVEMENT_UI.en.seatedNote='The illustration shows standing. Choose a stable seat for the seated option.';
+MOVEMENT_UI.fr.seatedNote='L’illustration montre la version debout. Choisissez un siège stable pour la version assise.';
+MOVEMENT_UI.es.seatedNote='La ilustración muestra la versión de pie. Elige un asiento estable para la versión sentada.';
+MOVEMENT_UI.de.seatedNote='Die Abbildung zeigt die stehende Variante. Wähle für die sitzende Variante einen stabilen Sitz.';
+MOVEMENT_UI.it.seatedNote='L’illustrazione mostra la versione in piedi. Scegli un sedile stabile per la versione da seduto.';
+MOVEMENT_UI.nl.seatedNote='De afbeelding toont de staande versie. Kies een stabiele zitplaats voor de zittende versie.';
+MOVEMENT_UI.ar.seatedNote='يوضح الرسم الوضع واقفاً. اختر مقعداً ثابتاً لأداء التمرين جالساً.';
 Object.keys(MOVEMENT_UI).forEach(l => Object.keys(MOVEMENT_UI[l]).forEach(k => { T[l]['movement.'+k] = MOVEMENT_UI[l][k]; }));
 /* Muscle-group action shown immediately below an exercise guide. The original
    anatomical mapping stays authoritative; these strings translate its summary. */
@@ -11125,6 +11135,173 @@ const WORKOUT_SAFETY = {
 };
 Object.keys(WORKOUT_SAFETY).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], WORKOUT_SAFETY[l]); });
 
+/* Exercise choices and safety prompts. Filtering expresses the person's saved
+   choices, not a medical assessment; manual overrides must say so explicitly. */
+const EXERCISE_SAFETY = {
+  en: {
+    'exercise.filterEquipment':'equipment or training environment',
+    'exercise.filterLimit':'a selected limitation',
+    'exercise.filterExcluded':'you removed this exercise',
+    'a11y.needPosition':'outside your selected positions',
+    'workout.filterTitle':'Outside your current choices',
+    'workout.filterDetail':'Filtered from automatic suggestions: {reasons}. Adding it requires confirmation.',
+    'workout.addConfirm':'{exercise} is outside your current choices: {reasons}.\n\nAdding it does not change your settings or mean it is suitable for you. Add it anyway?',
+    'workout.filteredOption':'This option no longer matches your choices. Reopen the picker.',
+    'workout.planConflictTitle':'Review these planned exercises',
+    'workout.planConflictBody':'These do not match your current choices: {list}. Edit or rebuild the plan; an active workout is not changed.',
+    'workout.activeConflictTitle':'Review these workout exercises',
+    'workout.activeConflictBody':'These do not match your current choices: {list}. Review or substitute them. Your entered work stays in the workout.',
+    'workout.conflictStart':'These planned exercises do not match your current choices: {list}. Review, substitute or rebuild them.\n\nStart this session anyway?',
+    'workout.emptyPoolTitle':'No matching exercises',
+    'workout.reviewSettings':'Review exercise settings',
+    'workout.stopTitle':'Stop recommendation',
+    'workout.stopConfirm':'Your current recommendation is to stop training. Review your check-in; if you have pain or illness, seek advice from a qualified professional.\n\nStart a session anyway?',
+    'movement.barbellSafety':'Before using the barbell, arrange a safe way to handle a failed lift: set rack safety supports appropriately and/or use trained spotters. If you cannot, choose another exercise.',
+    'session.keep':'Options target related muscles or movements. Check each setup before choosing.',
+    'session.nosub':'No substitute matches your current choices.',
+    'onb.limits.note':'Exercises tagged for the selected area are excluded from automatic plans and substitutions. The tags are not comprehensive or medical advice.'
+  },
+  fr: {
+    'exercise.filterEquipment':'matériel ou environnement d’entraînement',
+    'exercise.filterLimit':'une limitation sélectionnée',
+    'exercise.filterExcluded':'vous avez retiré cet exercice',
+    'a11y.needPosition':'hors des positions sélectionnées',
+    'workout.filterTitle':'Hors de vos choix actuels',
+    'workout.filterDetail':'Exclu des suggestions automatiques : {reasons}. L’ajout demande une confirmation.',
+    'workout.addConfirm':'{exercise} ne correspond pas à vos choix : {reasons}.\n\nL’ajouter ne change pas vos réglages et ne signifie pas qu’il vous convient. L’ajouter quand même ?',
+    'workout.filteredOption':'Cette option ne correspond plus à vos choix. Rouvrez la liste.',
+    'workout.planConflictTitle':'Vérifiez ces exercices du programme',
+    'workout.planConflictBody':'Ils ne correspondent pas à vos choix actuels : {list}. Modifiez ou reconstruisez le programme ; une séance en cours reste intacte.',
+    'workout.activeConflictTitle':'Vérifiez ces exercices de la séance',
+    'workout.activeConflictBody':'Ils ne correspondent pas à vos choix actuels : {list}. Vérifiez-les ou remplacez-les. Vos données saisies restent dans la séance.',
+    'workout.conflictStart':'Ces exercices prévus ne correspondent pas à vos choix : {list}. Vérifiez-les, remplacez-les ou reconstruisez le programme.\n\nCommencer la séance quand même ?',
+    'workout.emptyPoolTitle':'Aucun exercice correspondant',
+    'workout.reviewSettings':'Vérifier les réglages des exercices',
+    'workout.stopTitle':'Recommandation d’arrêt',
+    'workout.stopConfirm':'La recommandation actuelle est d’arrêter l’entraînement. Vérifiez votre ressenti ; en cas de douleur ou de maladie, consultez un professionnel qualifié.\n\nCommencer une séance quand même ?',
+    'movement.barbellSafety':'Avant d’utiliser la barre, prévoyez comment gérer un échec : réglez les sécurités du rack et/ou faites appel à des pareurs formés. Sans dispositif adapté, choisissez un autre exercice.',
+    'session.keep':'Ces options ciblent des muscles ou mouvements proches. Vérifiez chaque installation avant de choisir.',
+    'session.nosub':'Aucun remplacement ne correspond à vos choix actuels.',
+    'onb.limits.note':'Les exercices associés à la zone choisie sont exclus des programmes et remplacements automatiques. Ces repères ne sont ni exhaustifs ni un avis médical.'
+  },
+  es: {
+    'exercise.filterEquipment':'material o entorno de entrenamiento',
+    'exercise.filterLimit':'una limitación seleccionada',
+    'exercise.filterExcluded':'has retirado este ejercicio',
+    'a11y.needPosition':'fuera de las posiciones seleccionadas',
+    'workout.filterTitle':'Fuera de tus opciones actuales',
+    'workout.filterDetail':'Excluido de las sugerencias automáticas: {reasons}. Añadirlo requiere confirmación.',
+    'workout.addConfirm':'{exercise} no coincide con tus opciones: {reasons}.\n\nAñadirlo no cambia tus ajustes ni significa que sea adecuado para ti. ¿Añadirlo igualmente?',
+    'workout.filteredOption':'Esta opción ya no coincide con tus ajustes. Abre de nuevo la lista.',
+    'workout.planConflictTitle':'Revisa estos ejercicios del plan',
+    'workout.planConflictBody':'No coinciden con tus opciones actuales: {list}. Edita o rehace el plan; una sesión activa no cambia.',
+    'workout.activeConflictTitle':'Revisa estos ejercicios de la sesión',
+    'workout.activeConflictBody':'No coinciden con tus opciones actuales: {list}. Revísalos o sustitúyelos. Tus datos introducidos permanecen en la sesión.',
+    'workout.conflictStart':'Estos ejercicios previstos no coinciden con tus opciones: {list}. Revísalos, sustitúyelos o rehace el plan.\n\n¿Empezar la sesión igualmente?',
+    'workout.emptyPoolTitle':'No hay ejercicios compatibles',
+    'workout.reviewSettings':'Revisar ajustes de ejercicios',
+    'workout.stopTitle':'Recomendación de parar',
+    'workout.stopConfirm':'La recomendación actual es detener el entrenamiento. Revisa cómo te encuentras; si tienes dolor o enfermedad, consulta a un profesional cualificado.\n\n¿Empezar una sesión igualmente?',
+    'movement.barbellSafety':'Antes de usar la barra, prepara una forma segura de actuar si fallas: ajusta los soportes de seguridad y/o recurre a asistentes formados. Si no puedes, elige otro ejercicio.',
+    'session.keep':'Las opciones trabajan músculos o movimientos relacionados. Comprueba cada montaje antes de elegir.',
+    'session.nosub':'Ningún sustituto coincide con tus opciones actuales.',
+    'onb.limits.note':'Los ejercicios etiquetados para la zona seleccionada se excluyen de planes y sustituciones automáticos. Las etiquetas no son exhaustivas ni consejo médico.'
+  },
+  de: {
+    'exercise.filterEquipment':'Ausrüstung oder Trainingsumgebung',
+    'exercise.filterLimit':'eine ausgewählte Einschränkung',
+    'exercise.filterExcluded':'du hast diese Übung entfernt',
+    'a11y.needPosition':'außerhalb deiner gewählten Positionen',
+    'workout.filterTitle':'Passt nicht zu deiner aktuellen Auswahl',
+    'workout.filterDetail':'Aus automatischen Vorschlägen gefiltert: {reasons}. Das Hinzufügen erfordert eine Bestätigung.',
+    'workout.addConfirm':'{exercise} passt nicht zu deiner Auswahl: {reasons}.\n\nDas Hinzufügen ändert deine Einstellungen nicht und bedeutet nicht, dass die Übung für dich geeignet ist. Trotzdem hinzufügen?',
+    'workout.filteredOption':'Diese Option passt nicht mehr zu deiner Auswahl. Öffne die Liste erneut.',
+    'workout.planConflictTitle':'Prüfe diese Übungen im Plan',
+    'workout.planConflictBody':'Sie passen nicht zu deiner aktuellen Auswahl: {list}. Bearbeite oder erstelle den Plan neu; eine aktive Einheit bleibt unverändert.',
+    'workout.activeConflictTitle':'Prüfe diese Übungen der Einheit',
+    'workout.activeConflictBody':'Sie passen nicht zu deiner aktuellen Auswahl: {list}. Prüfe oder ersetze sie. Deine Eingaben bleiben in der Einheit erhalten.',
+    'workout.conflictStart':'Diese geplanten Übungen passen nicht zu deiner Auswahl: {list}. Prüfe oder ersetze sie oder erstelle den Plan neu.\n\nEinheit trotzdem starten?',
+    'workout.emptyPoolTitle':'Keine passenden Übungen',
+    'workout.reviewSettings':'Übungseinstellungen prüfen',
+    'workout.stopTitle':'Empfehlung: Training stoppen',
+    'workout.stopConfirm':'Die aktuelle Empfehlung lautet, das Training zu stoppen. Prüfe deine Angaben; hole bei Schmerzen oder Krankheit fachlichen Rat ein.\n\nTrotzdem eine Einheit starten?',
+    'movement.barbellSafety':'Sorge vor der Langhantelübung für eine sichere Lösung bei einem Fehlversuch: Stelle Sicherheitsablagen passend ein und/oder nutze geschulte Sicherungspersonen. Wähle sonst eine andere Übung.',
+    'session.keep':'Die Optionen betreffen ähnliche Muskeln oder Bewegungen. Prüfe vor der Auswahl jeweils den Aufbau.',
+    'session.nosub':'Keine Ersatzübung passt zu deiner aktuellen Auswahl.',
+    'onb.limits.note':'Für die gewählte Körperregion markierte Übungen werden aus automatischen Plänen und Ersatzübungen ausgeschlossen. Die Markierungen sind weder vollständig noch medizinischer Rat.'
+  },
+  it: {
+    'exercise.filterEquipment':'attrezzatura o ambiente di allenamento',
+    'exercise.filterLimit':'una limitazione selezionata',
+    'exercise.filterExcluded':'hai rimosso questo esercizio',
+    'a11y.needPosition':'fuori dalle posizioni selezionate',
+    'workout.filterTitle':'Fuori dalle tue scelte attuali',
+    'workout.filterDetail':'Escluso dai suggerimenti automatici: {reasons}. Per aggiungerlo serve una conferma.',
+    'workout.addConfirm':'{exercise} non corrisponde alle tue scelte: {reasons}.\n\nAggiungerlo non cambia le impostazioni né significa che sia adatto a te. Aggiungerlo comunque?',
+    'workout.filteredOption':'Questa opzione non corrisponde più alle tue scelte. Riapri l’elenco.',
+    'workout.planConflictTitle':'Controlla questi esercizi del programma',
+    'workout.planConflictBody':'Non corrispondono alle tue scelte attuali: {list}. Modifica o ricrea il programma; una sessione attiva non viene cambiata.',
+    'workout.activeConflictTitle':'Controlla questi esercizi della sessione',
+    'workout.activeConflictBody':'Non corrispondono alle tue scelte attuali: {list}. Controllali o sostituiscili. I dati inseriti restano nella sessione.',
+    'workout.conflictStart':'Questi esercizi previsti non corrispondono alle tue scelte: {list}. Controllali, sostituiscili o ricrea il programma.\n\nAvviare comunque la sessione?',
+    'workout.emptyPoolTitle':'Nessun esercizio corrispondente',
+    'workout.reviewSettings':'Controlla le impostazioni degli esercizi',
+    'workout.stopTitle':'Raccomandazione di fermarsi',
+    'workout.stopConfirm':'La raccomandazione attuale è interrompere l’allenamento. Controlla come ti senti; in caso di dolore o malattia, consulta un professionista qualificato.\n\nAvviare comunque una sessione?',
+    'movement.barbellSafety':'Prima di usare il bilanciere, prepara un modo sicuro per gestire un tentativo fallito: regola le sicurezze del rack e/o usa assistenti preparati. Altrimenti scegli un altro esercizio.',
+    'session.keep':'Le opzioni coinvolgono muscoli o movimenti correlati. Controlla ogni preparazione prima di scegliere.',
+    'session.nosub':'Nessun sostituto corrisponde alle tue scelte attuali.',
+    'onb.limits.note':'Gli esercizi associati alla zona scelta sono esclusi da programmi e sostituzioni automatici. Le etichette non sono esaustive né un parere medico.'
+  },
+  nl: {
+    'exercise.filterEquipment':'materiaal of trainingsomgeving',
+    'exercise.filterLimit':'een gekozen beperking',
+    'exercise.filterExcluded':'je hebt deze oefening verwijderd',
+    'a11y.needPosition':'buiten je gekozen houdingen',
+    'workout.filterTitle':'Past niet bij je huidige keuzes',
+    'workout.filterDetail':'Uit automatische suggesties gefilterd: {reasons}. Toevoegen vereist bevestiging.',
+    'workout.addConfirm':'{exercise} past niet bij je keuzes: {reasons}.\n\nToevoegen verandert je instellingen niet en betekent niet dat de oefening geschikt voor je is. Toch toevoegen?',
+    'workout.filteredOption':'Deze optie past niet meer bij je keuzes. Open de lijst opnieuw.',
+    'workout.planConflictTitle':'Controleer deze oefeningen in je schema',
+    'workout.planConflictBody':'Ze passen niet bij je huidige keuzes: {list}. Pas het schema aan of bouw het opnieuw op; een actieve sessie blijft ongewijzigd.',
+    'workout.activeConflictTitle':'Controleer deze oefeningen in je sessie',
+    'workout.activeConflictBody':'Ze passen niet bij je huidige keuzes: {list}. Controleer of vervang ze. Je invoer blijft in de sessie bewaard.',
+    'workout.conflictStart':'Deze geplande oefeningen passen niet bij je keuzes: {list}. Controleer of vervang ze, of bouw het schema opnieuw op.\n\nDe sessie toch starten?',
+    'workout.emptyPoolTitle':'Geen passende oefeningen',
+    'workout.reviewSettings':'Oefeninstellingen controleren',
+    'workout.stopTitle':'Advies om te stoppen',
+    'workout.stopConfirm':'Het huidige advies is om te stoppen met trainen. Controleer hoe je je voelt; vraag bij pijn of ziekte advies aan een bevoegde professional.\n\nToch een sessie starten?',
+    'movement.barbellSafety':'Zorg vóór de halteroefening voor een veilige manier om een mislukte lift op te vangen: stel de veiligheidssteunen goed af en/of gebruik getrainde helpers. Kies anders een andere oefening.',
+    'session.keep':'De opties gebruiken verwante spieren of bewegingen. Controleer elke opstelling voordat je kiest.',
+    'session.nosub':'Geen vervanger past bij je huidige keuzes.',
+    'onb.limits.note':'Oefeningen met een markering voor het gekozen gebied worden uit automatische schema’s en vervangers gefilterd. De markeringen zijn niet volledig en geen medisch advies.'
+  },
+  ar: {
+    'exercise.filterEquipment':'المعدات أو بيئة التدريب',
+    'exercise.filterLimit':'أحد القيود المحددة',
+    'exercise.filterExcluded':'لقد استبعدت هذا التمرين',
+    'a11y.needPosition':'خارج الوضعيات التي اخترتها',
+    'workout.filterTitle':'خارج اختياراتك الحالية',
+    'workout.filterDetail':'مستبعد من الاقتراحات التلقائية: {reasons}. تتطلب إضافته تأكيداً.',
+    'workout.addConfirm':'{exercise} لا يطابق اختياراتك: {reasons}.\n\nإضافته لا تغيّر إعداداتك ولا تعني أنه مناسب لك. هل تريد إضافته رغم ذلك؟',
+    'workout.filteredOption':'لم يعد هذا الخيار يطابق اختياراتك. أعد فتح القائمة.',
+    'workout.planConflictTitle':'راجع هذه التمارين في البرنامج',
+    'workout.planConflictBody':'لا تطابق اختياراتك الحالية: {list}. عدّل البرنامج أو أعد بناءه؛ لن تتغير الحصة الجارية.',
+    'workout.activeConflictTitle':'راجع هذه التمارين في الحصة',
+    'workout.activeConflictBody':'لا تطابق اختياراتك الحالية: {list}. راجعها أو استبدلها. تبقى بياناتك المدخلة في الحصة.',
+    'workout.conflictStart':'هذه التمارين المخططة لا تطابق اختياراتك: {list}. راجعها أو استبدلها أو أعد بناء البرنامج.\n\nهل تريد بدء الحصة رغم ذلك؟',
+    'workout.emptyPoolTitle':'لا توجد تمارين مطابقة',
+    'workout.reviewSettings':'مراجعة إعدادات التمارين',
+    'workout.stopTitle':'توصية بالتوقف',
+    'workout.stopConfirm':'التوصية الحالية هي التوقف عن التدريب. راجع حالتك؛ إذا شعرت بألم أو مرض فاستشر مختصاً مؤهلاً.\n\nهل تريد بدء حصة رغم ذلك؟',
+    'movement.barbellSafety':'قبل استخدام البار، جهّز طريقة آمنة للتعامل مع محاولة فاشلة: اضبط دعامات الأمان و/أو اطلب مساعدة مراقبين مدرّبين. إن لم تستطع فاختر تمريناً آخر.',
+    'session.keep':'تستهدف الخيارات عضلات أو حركات متقاربة. تحقّق من إعداد كل تمرين قبل الاختيار.',
+    'session.nosub':'لا يوجد بديل يطابق اختياراتك الحالية.',
+    'onb.limits.note':'تُستبعد التمارين المرتبطة بالمنطقة المحددة من البرامج والبدائل التلقائية. هذه العلامات ليست شاملة ولا تشكّل نصيحة طبية.'
+  }
+};
+Object.keys(EXERCISE_SAFETY).forEach(l => Object.assign(T[l], EXERCISE_SAFETY[l]));
+
 </script>
 <script>/* ===== js/i18n/lesson_bodies_en.js ===== */
 /* AUTO-GENERATED English source for lesson sections. Do not edit by hand. */
@@ -11223,9 +11400,8 @@ Object.keys(TLEN).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], TLEN[
 /* ============================================================================
    ANCESTOR — French lesson bodies
 
-   Full French text for all 42 lesson sections across the 11 lessons. English
-   remains the source (js/i18n/lesson_bodies_en.js); other languages fall back
-   to English and the lesson page says so.
+   French text for all 42 sections across the 11 lessons. English remains the
+   source; the other shipped languages have separate lesson-body files.
    ========================================================================== */
 const TLFR = {};
 
@@ -12832,10 +13008,9 @@ function coverage(lang){
   };
 }
 
-/* The other half of the truth: lesson prose, coaching cues and exercise names.
-   The app says in the Science hub that the full lesson text is in English; this
-   is the figure behind that sentence, and it is shown on the language screen so
-   a reader knows what they are choosing before they choose it. */
+/* Measure the configured content prefixes separately from interface keys.
+   Lesson section bodies (sec.*) have their own completeness tests; a key count
+   cannot assess the accuracy or fluency of a translation. */
 function contentCoverage(lang){
   const en = T.en || {};
   const keys = Object.keys(en).filter(k => CONTENT_PREFIXES.some(p => k.indexOf(p) === 0));
@@ -13272,7 +13447,9 @@ const REQUIREMENTS = ['grip','stand','kneel','overhead','balance','floorTransfer
 const CATEGORIES = ['resistance','bodyweight','band','machine','freeWeight','seated',
                     'wheelchair','lowImpact','mobility','balance','functional'];
 
-/* Metadata for the existing 59 exercises. Keyed by id. */
+/* Metadata describes the version actually instructed and illustrated in the
+   app, not every possible adaptation. For example a bench-supported row is not
+   a seated row, and sit-to-stand is not a seated-only movement. Keyed by id. */
 const EX_META = {
   /* horizontal push */
   'bb-bench':      {pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
@@ -13281,15 +13458,15 @@ const EX_META = {
   'incline-db':    {pos:['bench'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
   'db-fly':        {pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
   'cable-fly':     {pos:['standing'],req:['grip'],cat:['resistance','machine']},
-  'pushup':        {pos:['floor','standing'],req:['floorTransfer'],cat:['bodyweight']},
+  'pushup':        {pos:['floor'],req:['floorTransfer'],cat:['bodyweight']},
   'dip':           {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
 
   /* vertical push */
   'ohp':           {pos:['standing'],req:['grip','load','overhead','stand'],cat:['resistance','freeWeight']},
-  'db-ohp':        {pos:['standing','seated'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
-  'lateral-raise': {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'cable-lateral': {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
-  'rear-delt-fly': {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'db-ohp':        {pos:['standing'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
+  'lateral-raise': {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'cable-lateral': {pos:['standing'],req:['grip'],cat:['resistance','machine']},
+  'rear-delt-fly': {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
 
   /* pulls */
   'pullup':        {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
@@ -13297,7 +13474,7 @@ const EX_META = {
   'cg-pulldown':   {pos:['seated'],req:['grip','overhead'],cat:['resistance','machine']},
   'chinup':        {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
   'bb-row':        {pos:['standing'],req:['grip','load','stand'],cat:['resistance','freeWeight']},
-  'db-row':        {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'db-row':        {pos:['bench'],req:['grip','load','kneel','stand'],cat:['resistance','freeWeight']},
   'cable-row':     {pos:['seated'],req:['grip'],cat:['resistance','machine']},
   'chest-supported-row':{pos:['bench'],req:['grip'],cat:['resistance','machine']},
   'face-pull':     {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
@@ -13325,28 +13502,29 @@ const EX_META = {
   /* calves */
   'standing-calf': {pos:['standing'],req:['stand','balance'],cat:['resistance','machine']},
   'seated-calf':   {pos:['seated'],req:[],cat:['resistance','machine']},
-  'db-calf':       {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'bw-calf':       {pos:['standing','seated'],req:['stand','balance'],cat:['bodyweight']},
+  'db-calf':       {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'bw-calf':       {pos:['standing'],req:['stand','balance'],cat:['bodyweight']},
 
   /* arms */
   'bb-curl':       {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'db-curl':       {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'cable-curl':    {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
-  'hammer-curl':   {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'db-curl':       {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'cable-curl':    {pos:['standing'],req:['grip'],cat:['resistance','machine']},
+  'hammer-curl':   {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
   'tri-pushdown':  {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
   'oh-tri-ext':    {pos:['standing','seated'],req:['grip','load','overhead'],cat:['resistance','freeWeight']},
-  'skull-crusher': {pos:['bench','floor'],req:['grip','load','floorTransfer'],cat:['resistance','freeWeight']},
+  'skull-crusher': {pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
   'closegrip-bench':{pos:['bench'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'bench-dip':     {pos:['seated','bench'],req:[],cat:['bodyweight']},
+  'bench-dip':     {pos:['bench'],req:[],cat:['bodyweight']},
   'wrist-curl':    {pos:['seated'],req:['grip','load'],cat:['resistance','freeWeight']},
-  'reverse-curl':  {pos:['standing','seated'],req:['grip','load'],cat:['resistance','freeWeight']},
+  'reverse-curl':  {pos:['standing'],req:['grip','load'],cat:['resistance','freeWeight']},
 
   /* trunk */
-  'cable-crunch':  {pos:['standing','seated'],req:['grip'],cat:['resistance','machine']},
+  'cable-crunch':  {pos:['floor'],req:['grip','kneel','floorTransfer'],cat:['resistance','machine']},
   'hanging-raise': {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
-  'ab-wheel':      {pos:['floor'],req:['grip','floorTransfer'],cat:['bodyweight']},
-  'db-crunch':     {pos:['floor','seated'],req:['load'],cat:['resistance','freeWeight']},
+  'ab-wheel':      {pos:['floor'],req:['grip','kneel','floorTransfer'],cat:['bodyweight']},
+  'db-crunch':     {pos:['floor'],req:['load','floorTransfer'],cat:['resistance','freeWeight']},
   'dead-hang':     {pos:['standing'],req:['grip','overhead'],cat:['bodyweight']},
+  'pike-pushup':   {pos:['floor'],req:['floorTransfer','overhead'],cat:['bodyweight']},
 
   /* timed holds — measured in seconds, no external load required */
   'plank':         {pos:['floor'],req:['floorTransfer'],cat:['bodyweight','mobility'],acc:['lowImpact']},
@@ -13389,8 +13567,8 @@ const EX_ACCESSIBLE = [
   {id:'chair-stand', pat:'squat', equip:'bodyweight', type:'compound',
    m:[['quads',.48],['glutes',.34],['hamstrings',.18]], reps:[8,15], rir:2,
    avoid:[], subs:['bw-squat','goblet-squat','leg-press'],
-   pos:['seated'], req:[], cat:['bodyweight','functional','lowImpact'],
-   acc:['seated','lowImpact','functional']},
+   pos:['standing'], req:['stand'], cat:['bodyweight','functional','lowImpact'],
+   acc:['lowImpact','functional']},
 
   {id:'seated-leg-ext', pat:'squat', equip:'bodyweight', type:'isolation',
    m:[['quads',.92],['glutes',.08]], reps:[10,20], rir:2,
@@ -13413,8 +13591,8 @@ const EX_ACCESSIBLE = [
   {id:'band-curl', pat:'curl', equip:'band', type:'isolation',
    m:[['biceps',.84],['forearms',.16]], reps:[12,20], rir:1,
    avoid:[], subs:['db-curl','cable-curl'],
-   pos:['standing','seated'], req:['grip'], cat:['band','lowImpact'],
-   acc:['seated','lowImpact']},
+   pos:['standing'], req:['grip','stand'], cat:['band','lowImpact'],
+   acc:['lowImpact']},
 
   {id:'band-pressdown', pat:'extend', equip:'band', type:'isolation',
    m:[['triceps',.88],['forearms',.12]], reps:[12,20], rir:1,
@@ -13437,7 +13615,7 @@ const EX_ACCESSIBLE = [
   {id:'cat-cow', pat:'core', equip:'bodyweight', type:'isolation',
    m:[['lowerback',.58],['abs',.42]], reps:[10,20], rir:3,
    avoid:[], subs:['bird-dog','dead-bug'],
-   pos:['floor','seated'], req:['kneel'], cat:['mobility','lowImpact'],
+   pos:['floor'], req:['kneel','floorTransfer'], cat:['mobility','lowImpact'],
    acc:['lowImpact','mobility']},
 
   {id:'heel-slide', pat:'hinge', equip:'bodyweight', type:'isolation',
@@ -13449,7 +13627,7 @@ const EX_ACCESSIBLE = [
   {id:'overhead-reach', pat:'pushV', equip:'bodyweight', type:'isolation',
    m:[['shoulders',.72],['back',.28]], reps:[10,20], rir:3,
    avoid:[], subs:['band-pull-apart'],
-   pos:['standing','seated'], req:[], cat:['mobility','lowImpact'],
+   pos:['standing','seated'], req:['overhead'], cat:['mobility','lowImpact'],
    acc:['seated','lowImpact','mobility']},
 
   {id:'balance-stand', pat:'squat', equip:'bodyweight', type:'isolation',
@@ -13498,10 +13676,10 @@ const EX_ACCESSIBLE = [
     e.pos = meta.pos || ['standing'];
     e.req = meta.req || [];
     e.cat = meta.cat || ['resistance'];
-    e.acc = [];
-    if(e.pos.indexOf('seated') >= 0) e.acc.push('seated');
-    if(e.cat.indexOf('lowImpact') >= 0) e.acc.push('lowImpact');
-    if(e.cat.indexOf('mobility') >= 0) e.acc.push('mobility');
+    e.acc = (meta.acc || []).slice();
+    if(e.pos.indexOf('seated') >= 0 && e.acc.indexOf('seated') < 0) e.acc.push('seated');
+    if(e.cat.indexOf('lowImpact') >= 0 && e.acc.indexOf('lowImpact') < 0) e.acc.push('lowImpact');
+    if(e.cat.indexOf('mobility') >= 0 && e.acc.indexOf('mobility') < 0) e.acc.push('mobility');
   });
   // 2. append the new accessible exercises
   EX_ACCESSIBLE.forEach(e => {
@@ -13522,50 +13700,38 @@ const EX_CATEGORIES = CATEGORIES;
 /* ------------------------------------------------------- filtering ---
    Returns true when an exercise is compatible with the user's context.
    `profile.needs` is optional throughout — nothing here is mandatory.   */
+/* Use one predicate for both the filter and its explanation. Position-only
+   standing/floor guides are conservative: don't prescribe them to someone who
+   said they cannot stand/get to the floor just because an old record omitted a
+   redundant requirement. The flags are not a guarantee of suitability. */
 function exerciseAllowed(ex, profile){
-  const ctx = profile || {};
-  const needs = ctx.needs || {};
-  const allowPos = ctx.positions && ctx.positions.length ? ctx.positions : null;
-
-  // seated-only / wheelchair
-  if(needs.seatedOnly && !(ex.pos || []).includes('seated')) return false;
-  if(needs.wheelchair  && !(ex.acc || []).includes('wheelchair')) return false;
-
-  // user-specified preferred positions act as a filter, not a ban
-  if(allowPos && !(ex.pos || []).some(p => allowPos.indexOf(p) >= 0)) return false;
-
-  // capability requirements the user has told us they cannot meet
-  const req = ex.req || [];
-  if(needs.noGrip      && req.includes('grip'))      return false;
-  if(needs.noKneeling  && req.includes('kneel'))     return false;
-  if(needs.noFloor     && req.includes('floorTransfer')) return false;
-  if(needs.noOverhead  && req.includes('overhead'))  return false;
-  if(needs.noStanding  && req.includes('stand'))     return false;
-  if(needs.noBalance   && req.includes('balance'))   return false;
-  if(needs.lowImpactOnly && !(ex.acc || []).includes('lowImpact')) return false;
-  return true;
+  return !!ex && !exclusionReason(ex, profile);
 }
 
-/* Human-readable reason an exercise was filtered out — shown in the UI so the
-   filtering is transparent rather than silent. */
-function exclusionReason(ex, profile){
-  const needs = (profile && profile.needs) || {};
-  const req = ex.req || [];
-  if(needs.seatedOnly && !(ex.pos||[]).includes('seated')) return 'a11y.needSeated';
-  if(needs.wheelchair && !(ex.acc||[]).includes('wheelchair')) return 'a11y.needWheelchair';
-  if(needs.lowImpactOnly && !(ex.acc||[]).includes('lowImpact')) return 'a11y.needLowImpact';
-  if(needs.noGrip && req.includes('grip')) return 'a11y.needGrip';
-  if(needs.noKneeling && req.includes('kneel')) return 'a11y.needKneel';
-  if(needs.noFloor && req.includes('floorTransfer')) return 'a11y.needFloor';
-  if(needs.noOverhead && req.includes('overhead')) return 'a11y.needOverhead';
-  if(needs.noStanding && req.includes('stand')) return 'a11y.needStand';
-  if(needs.noBalance && req.includes('balance')) return 'a11y.needBalance';
-  return null;
+/* Include every recorded mismatch in an override prompt; returning only the
+   first could hide another restriction from the person making that choice. */
+function exclusionReasons(ex, profile){
+  if(!ex) return [];
+  const p = profile || {}, needs = p.needs || {};
+  const req = ex.req || [], pos = ex.pos || [], reasons = [];
+  if(needs.seatedOnly && !pos.includes('seated')) reasons.push('a11y.needSeated');
+  if(needs.wheelchair && !(ex.acc||[]).includes('wheelchair')) reasons.push('a11y.needWheelchair');
+  if(p.positions && p.positions.length && !pos.some(x => p.positions.indexOf(x) >= 0)) reasons.push('a11y.needPosition');
+  if(needs.lowImpactOnly && !(ex.acc||[]).includes('lowImpact')) reasons.push('a11y.needLowImpact');
+  if(needs.noGrip && req.includes('grip')) reasons.push('a11y.needGrip');
+  if(needs.noKneeling && req.includes('kneel')) reasons.push('a11y.needKneel');
+  if(needs.noFloor && (req.includes('floorTransfer') || (pos.length && pos.every(x => x === 'floor')))) reasons.push('a11y.needFloor');
+  if(needs.noOverhead && req.includes('overhead')) reasons.push('a11y.needOverhead');
+  if(needs.noStanding && (req.includes('stand') || (pos.length && pos.every(x => x === 'standing')))) reasons.push('a11y.needStand');
+  if(needs.noBalance && req.includes('balance')) reasons.push('a11y.needBalance');
+  return reasons;
 }
+/* Preserve the single-reason helper for existing summaries. */
+function exclusionReason(ex, profile){ return exclusionReasons(ex, profile)[0] || null; }
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { EX_META, EX_ACCESSIBLE, POSITIONS, REQUIREMENTS, CATEGORIES,
-                     exerciseAllowed, exclusionReason };
+                     exerciseAllowed, exclusionReason, exclusionReasons };
 }
 
 </script>
@@ -14795,9 +14961,9 @@ if (typeof module !== 'undefined' && module.exports) {
 /* ============================================================================
    ANCESTOR — Science Hub lesson content
 
-   Scope note: lesson TITLES, SUMMARIES and TAKEAWAYS are localised.
-   Section bodies are currently English only; `langs` declares this and the UI
-   states it rather than silently showing English under another language name.
+   Lesson headings and bodies have dictionary entries in all seven shipped
+   languages. `langs` declares availability; the UI warns if a future lesson
+   does not have the active language. Presence is not expert translation review.
 
    Every scientific claim in a lesson is linked to an evidence record by id.
    Model simplifications are labelled, and no lesson claims to measure a user's
@@ -15568,7 +15734,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v39';
+const APP_BUILD = 'v40';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
@@ -17096,21 +17262,21 @@ function emphasisSummary(plan, profile){
 }
 
 /* ---------- candidate pool ---------- */
+/* One source of truth for every automatic candidate AND a readable account
+   of why a deliberately browsed exercise is outside the current choices. */
+function exerciseFilterReasons(ex, profile){
+  if(!ex) return [];
+  const p = profile || {};
+  const eq = EQUIP_SETS[p.equipment] || equipmentFor(p);
+  const envEq = (p.environment && p.environment !== 'gym') ? equipmentFor(p) : null;
+  const reasons = [];
+  if(eq.indexOf(ex.equip) < 0 || (envEq && envEq.indexOf(ex.equip) < 0)) reasons.push('exercise.filterEquipment');
+  if((ex.avoid || []).some(tag => (p.limits || []).indexOf(tag) >= 0)) reasons.push('exercise.filterLimit');
+  if(p.exercises && p.exercises[ex.id] === false) reasons.push('exercise.filterExcluded');
+  return reasons.concat(exclusionReasons(ex, p));
+}
 function allowedExercises(profile){
-  // `equipment` (v1) still governs; `environment` (v2) narrows it further.
-  const eq = EQUIP_SETS[profile.equipment] || equipmentFor(profile);
-  const envEq = (profile.environment && profile.environment !== 'gym')
-    ? equipmentFor(profile) : null;
-  const limits = profile.limits || [];
-  const chosen = profile.exercises;
-  return EX.filter(ex => {
-    if(eq.indexOf(ex.equip) < 0) return false;
-    if(envEq && envEq.indexOf(ex.equip) < 0) return false;
-    for(let i=0;i<ex.avoid.length;i++) if(limits.indexOf(ex.avoid[i]) >= 0) return false;
-    if(chosen && chosen[ex.id] === false) return false;    // user said "not this one"
-    if(!exerciseAllowed(ex, profile)) return false;        // accessibility context
-    return true;
-  });
+  return EX.filter(ex => exerciseFilterReasons(ex, profile).length === 0);
 }
 
 /* Scoring bonus so the pool favours exercises matching the user's stated
@@ -17334,21 +17500,15 @@ function nextSession(state, now){
   return best;
 }
 
-/* Substitution preserving movement pattern and target muscles. */
+/* Authored alternatives followed by same-pattern candidates, all filtered. */
 function substitutesFor(profile, exId){
-  const eq = EQUIP_SETS[profile.equipment] || EQUIP_SETS.gym;
-  const limits = profile.limits || [];
   const ex = EX_BY_ID[exId]; if(!ex) return [];
+  const allowed = new Set(allowedExercises(profile || {}).map(e => e.id));
   const ids = [exId].concat(ex.subs || []);
-  // also anything sharing the same pattern
+  // Keep the authored ordering, then related movement patterns, but apply the
+  // exact same preferences as plan generation to both groups.
   EX.forEach(e => { if(e.pat === ex.pat && ids.indexOf(e.id) < 0) ids.push(e.id); });
-  return ids.filter(id => {
-    if(id === exId) return false;
-    const e = EX_BY_ID[id]; if(!e) return false;
-    if(eq.indexOf(e.equip) < 0) return false;
-    for(let i=0;i<e.avoid.length;i++) if(limits.indexOf(e.avoid[i]) >= 0) return false;
-    return true;
-  }).map(id => EX_BY_ID[id]);
+  return ids.filter(id => id !== exId && allowed.has(id)).map(id => EX_BY_ID[id]);
 }
 
 /* A set of 10 reps takes roughly 8 seconds a rep; a hold takes its own
@@ -17374,7 +17534,7 @@ function estimatedMinutes(session, restSec){
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { buildPlan, nextSession, substitutesFor, allowedExercises, setsFor, estimatedMinutes, STYLE, SPLITS,
+  module.exports = { buildPlan, nextSession, substitutesFor, allowedExercises, exerciseFilterReasons, setsFor, estimatedMinutes, STYLE, SPLITS,
                      setSecondsEstimate, volumePartiallyUnknown };
 }
 
@@ -19094,6 +19254,8 @@ function exerciseMovement(ex){
   return '<section class="movement-guide" data-exercise="'+escAttr(ex.id)+'" aria-label="'+escAttr(t('movement.title'))+'">'+
     '<div class="move-heading">'+esc(t('movement.title'))+'</div>'+
     (guide[0]==='benchFly'?'<p class="movement-view">'+esc(t('movement.viewAbove'))+'</p>':'')+
+    (['face-pull','tri-pushdown','oh-tri-ext','band-pull-apart','band-pressdown'].indexOf(ex.id)>=0
+      ? '<p class="movement-view" data-seated-option>'+esc(t('movement.seatedNote'))+'</p>' : '')+
     '<div class="move-labels'+(hold?' is-hold':'')+'"><span>'+esc(firstLabel)+'</span>'+(hold?'':'<span>'+esc(secondLabel)+'</span>')+'</div>'+
     '<svg class="movement-figure'+(hold?' is-hold':'')+'" viewBox="0 -10 '+(hold?160:320)+' 160" aria-hidden="true" focusable="false">'+
       '<g data-moving transform="translate('+first+' 0)">'+movementStage(guide,a)+'</g>'+
@@ -19101,7 +19263,9 @@ function exerciseMovement(ex){
     (hold?'':'<button class="movement-play" type="button" data-act="movementPlay">'+esc(t('movement.play'))+'</button>')+
     '<div class="move-copy"><p>'+esc(t('movement.guide.'+guide[2]))+'</p>'+
       '<p><b>'+esc(t('movement.tip'))+'</b> '+esc(t('cue.'+ex.id))+'</p>'+
-      '<p><b>'+esc(t('movement.controlLabel'))+'</b> '+esc(t(control))+'</p></div></section>';
+      '<p><b>'+esc(t('movement.controlLabel'))+'</b> '+esc(t(control))+'</p></div>'+
+    (['bb-bench','closegrip-bench','bb-squat'].indexOf(ex.id) >= 0
+      ? '<p class="movement-safety" data-barbell-safety>'+esc(t('movement.barbellSafety'))+'</p>' : '')+'</section>';
 }
 
 </script>
@@ -19301,7 +19465,7 @@ Screens.home = function(){
     });
     h += '</div>';
   }
-  if(d.state === 'stop') h += '<div class="safety">' + esc(t('feel.stop')) + '</div>';
+  if(d.state === 'stop') h += '<div class="safety">' + esc(t('state.stop.d')) + '</div>';
 
   /* Next Workout Blueprint Strip right inside the decision card */
   if(next && next.session && (next.session.exercises || []).length){
@@ -19328,6 +19492,10 @@ Screens.home = function(){
            : '') +
          '</div></div>';
   }
+
+  /* A plan made before the current choices must not look like a fresh
+     recommendation, including when the session is started from Today. */
+  if(next && !ACTIVE) h += exerciseConflictBanner(next.session.exercises, p, false);
 
   /* One dominant action. Everything a returning lifter might want is still one
      tap away, but it waits behind a disclosure instead of competing for the
@@ -19529,8 +19697,8 @@ function greetingFor(now){
 }
 
 function heroLine(s, d, shown, next, now){
-  if(!s.sessions.length) return t('home.heroFirst');
   if(d.state === 'stop') return t('home.heroStop');
+  if(!s.sessions.length) return t('home.heroFirst');
   if(shown === 'rest')   return t('home.heroRest');
   if(shown === 'modify' && next) return t('home.heroModify', { name: next.session.name });
   if(next)               return t('home.heroNext', { name: next.session.name });
@@ -20542,6 +20710,12 @@ function openExerciseDetail(exId){
     (spec.unilateral ? '<span class="flag plain">' + esc(t('log.unilateral')) + '</span>' : '') +
     '</div>';
 
+  const reasons = exerciseReasonText(ex, s.profile || {});
+  if(reasons){
+    h += '<div data-filter-warning>' + banner('warn', t('workout.filterTitle'),
+      t('workout.filterDetail', {reasons:reasons})) + '</div>';
+  }
+
   /* The same exercise-specific guide is used by the mechanics explorer. */
   if(typeof exerciseVisualSvg === 'function'){
     h += exerciseVisualSvg(ex);
@@ -21100,6 +21274,10 @@ Screens.profile = function(){
           esc(t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('profile.title')) + '</h1></div></div>';
 
+  if(s.plan && s.plan.sessions){
+    const planExercises = s.plan.sessions.reduce((all, day) => all.concat(day.exercises || []), []);
+    h += exerciseConflictBanner(planExercises, p, false);
+  }
   h += '<div class="profile-grid">';
 
   /* ==================== LEFT COLUMN: TRAINING & PROGRAMME ==================== */
@@ -21684,9 +21862,8 @@ Screens.lang = function(){
       '<span class="box" aria-hidden="true"></span>' +
       '<span class="lang-nm" dir="' + (rtl ? 'rtl' : 'ltr') + '">' + esc(langName(l)) + '</span>' +
       '<span class="lang-code">' + esc(String(l).toUpperCase()) + '</span>' +
-      /* The interface is fully translated in all seven; the lesson text is not.
-         Saying only the first number would be the flattering version, so the
-         row carries the second one too. */
+      /* If the configured content-key coverage is incomplete, show its own
+         measured number instead of implying it matches interface coverage. */
       ((st.contentPercent !== undefined && st.contentPercent < 100)
         ? '<span class="flag sm warn">' + esc(t('lang.contentPct', { p: st.contentPercent })) + '</span>'
         : '') +
@@ -21994,6 +22171,7 @@ Screens.onb = function(){
     const plan = buildPlan(p);
     b = head + '<h1 class="display mb-2">' + esc(t('onb.ready.t')) + '</h1>' +
       '<p class="onb-prose">' + esc(t('onb.ready.d')) + '</p>';
+    if(!plan.poolSize) b += banner('warn', t('workout.emptyPoolTitle'), t('a11y.poolEmpty'));
     plan.sessions.forEach(s2 => {
       b += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(s2.name) +
         '</h3><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';
@@ -22151,6 +22329,40 @@ let LIVE_CLOCK  = null;
 let LAST_LOGGED_SET = null;
 
 const ENTERING_FIELDS = { w:1, r:1, t:1, d:1, a:1 };
+
+/* The library can be browsed freely; automatic choices use the planner's
+   eligibility rules. A manual override is a separate, explicit decision. */
+function exerciseReasonText(ex, profile){
+  return exerciseFilterReasons(ex, profile).map(key => t(key)).join(' · ');
+}
+function filteredExercises(items, profile){
+  return (items || []).filter(item => EX_BY_ID[item.id] &&
+    exerciseFilterReasons(EX_BY_ID[item.id], profile).length);
+}
+function filteredNames(items){
+  return Array.from(new Set(items.map(item => t('ex.' + item.id)))).join(', ');
+}
+function exerciseConflictBanner(items, profile, active){
+  const conflicts = filteredExercises(items, profile);
+  if(!conflicts.length) return '';
+  return '<div data-exercise-conflicts>' + banner('warn',
+    t(active ? 'workout.activeConflictTitle' : 'workout.planConflictTitle'),
+    t(active ? 'workout.activeConflictBody' : 'workout.planConflictBody', {list:filteredNames(conflicts)})) + '</div>';
+}
+function confirmExerciseAdd(ex, profile){
+  const reasons = exerciseReasonText(ex, profile);
+  return !reasons || confirm(t('workout.addConfirm', {exercise:t('ex.' + ex.id), reasons:reasons}));
+}
+function validatePickerChoice(ex, profile){
+  if(!exerciseFilterReasons(ex, profile).length) return true;
+  closeSheet(); render(); toast(t('workout.filteredOption'), 'alert');
+  return false;
+}
+function confirmStopRecommendation(state, ids, now){
+  if(decide(state, ids, now).state !== 'stop') return true;
+  return confirm(t('workout.stopTitle') + '\n\n' + t('workout.stopConfirm'));
+}
+function openExerciseSettings(){ closeSheet(); go('profile'); }
 
 function setSessionSub(tab){
   SESSION_SUB = tab || 'plan';
@@ -22382,6 +22594,11 @@ function renderWorkoutPlanner(){
          ).join('') + '</div>';
   }
 
+  h += exerciseConflictBanner(selected.exercises, s.profile, false);
+  if(decide(s, (selected.exercises || []).map(e => e.id), now).state === 'stop'){
+    h += banner('alert', t('workout.stopTitle'), t('state.stop.d'));
+  }
+
   h += '<div class="row">' +
        (ACTIVE
          ? '<button class="btn" data-act="go" data-a1="session">' + esc(t('plan.resumeLive')) + '</button>'
@@ -22574,6 +22791,7 @@ function applyPlanSub(dayId, exIdx, newId){
   const day = s.plan && (s.plan.sessions || []).filter(x => x.id === dayId)[0];
   const ex = EX_BY_ID[newId];
   if(!day || !day.exercises[exIdx] || !ex) return;
+  if(!validatePickerChoice(ex, s.profile || {})) return;
   const keepSets = day.exercises[exIdx].sets || 3;
   day.exercises[exIdx] = { id: newId, sets: keepSets, reps: ex.reps.slice(), rir: ex.rir };
   saveState(); closeSheet(); render();
@@ -22582,8 +22800,11 @@ function applyPlanSub(dayId, exIdx, newId){
 /* Add an exercise to a planned day OR to the live active workout! */
 function openAddExerciseSheet(targetKind, dayId){
   const s = getState();
-  const pool = allowedExercises(s.profile || {});
-  const list = pool.length ? pool : EX;
+  const list = allowedExercises(s.profile || {});
+  if(!list.length){
+    return sheet(t('plan.addEx'), emptyState('workout.emptyPoolTitle', 'a11y.poolEmpty', 'inbox',
+      '<button type="button" class="btn quiet" data-act="openExerciseSettings">' + esc(t('workout.reviewSettings')) + '</button>'));
+  }
   let h = '<div class="field"><label for="addExFilter">' + esc(t('sci.search')) + '</label>' +
           '<input type="text" id="addExFilter" placeholder="' + esc(t('plan.searchEx')) +
           '" data-in="filterAddExSheet" data-t1="v"></div>';
@@ -22615,7 +22836,7 @@ function addExerciseToPlan(dayId, exId){
   const s = getState();
   const ex = EX_BY_ID[exId]; if(!ex || !s.plan) return;
   const day = (s.plan.sessions || []).filter(x => x.id === dayId)[0] || s.plan.sessions[0];
-  if(!day) return;
+  if(!day || !confirmExerciseAdd(ex, s.profile || {})) return;
   const cfg = setsFor(ex, s.profile || {});
   const rangeUnit = exTargetRange(ex).unit;
   const reps = (cfg.bias && rangeUnit === 'reps') ? [cfg.bias.lo, cfg.bias.hi] : ex.reps.slice();
@@ -22632,7 +22853,9 @@ function addExerciseToPlan(dayId, exId){
 }
 function addExerciseToActive(exId){
   const ex = EX_BY_ID[exId]; if(!ex || !ACTIVE) return;
-  const cfg = setsFor(ex, getState().profile || {});
+  const profile = getState().profile || {};
+  if(!confirmExerciseAdd(ex, profile)) return;
+  const cfg = setsFor(ex, profile);
   ACTIVE.exercises.push(newActiveExercise({ id: ex.id, sets: cfg.sets, reps: ex.reps.slice(), rir: cfg.rir }));
   saveDraft(); closeSheet();
   SESSION_SUB = 'live';
@@ -22645,7 +22868,8 @@ function startCustomSession(){
   if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   const firstPool = allowedExercises(s.profile || {});
-  const seedEx = firstPool[0] || EX[0];
+  const seedEx = firstPool[0];
+  if(!confirmStopRecommendation(s, seedEx ? [seedEx.id] : [], now)) return;
   ACTIVE = {
     planId: 'custom',
     name: t('plan.customName'),
@@ -22825,6 +23049,18 @@ function renderLive(){
        esc(t('log.remaining', { n: logged, m: total })) +
        '</span><span class="track"><i style="width:' + (total ? Math.round(logged / total * 100) : 0) + '%"></i></span></div>';
   h += '</div>';
+
+  h += exerciseConflictBanner(ACTIVE.exercises, s.profile, true);
+  if(decide(s, ACTIVE.exercises.map(e => e.id), Date.now()).state === 'stop'){
+    h += banner('alert', t('workout.stopTitle'), t('state.stop.d'));
+  }
+  if(!ACTIVE.exercises.length){
+    const noPool = !allowedExercises(s.profile || {}).length;
+    h += emptyState(noPool ? 'workout.emptyPoolTitle' : 'plan.emptyDay',
+      noPool ? 'a11y.poolEmpty' : 'plan.emptyDayBody', 'inbox',
+      '<button type="button" class="btn quiet" data-act="openAddExerciseSheet" data-a1="active">+ ' + esc(t('plan.addEx')) + '</button>' +
+      (noPool ? '<button type="button" class="btn quiet" data-act="openExerciseSettings">' + esc(t('workout.reviewSettings')) + '</button>' : ''), 2);
+  }
 
   if(FINISH_SAVE_FAILED){
     h += '<div class="banner alert workout-save-warning" role="alert"><div>' +
@@ -23095,6 +23331,9 @@ function startSession(dayId){
     if(!next) return;
     chosen = next.session;
   }
+  if(!confirmStopRecommendation(s, (chosen.exercises || []).map(e => e.id), now)) return;
+  const conflicts = filteredExercises(chosen.exercises, s.profile || {});
+  if(conflicts.length && !confirm(t('workout.conflictStart', {list:filteredNames(conflicts)}))) return;
   ACTIVE = {
     planId: chosen.id, name: chosen.name, startedAt: now,
     finished: false,
@@ -23252,6 +23491,7 @@ function openSub(ei){
 function applySub(ei, id){
   const ex = EX_BY_ID[id], current = ACTIVE && ACTIVE.exercises[ei];
   if(!ex || !current || current.id === id) return;
+  if(!validatePickerChoice(ex, getState().profile || {})) return;
   const untouched = unstartedSets(current);
   const keepWork = exerciseHasWork(current);
   const replacement = newActiveExercise({ id:id, sets:Math.max(1, untouched.length), reps:ex.reps.slice(), rir:ex.rir });
@@ -23572,10 +23812,10 @@ function renderExerciseLibrary(){
            '<div class="ex-grid" data-stagger>';
     }
     const spec = exLogSpec(e);
-    const inPool = p.exercises ? p.exercises[e.id] !== false : true;
+    const excl = exerciseFilterReasons(e, p);
+    const inPool = excl.length === 0;
     const pb = personalBest(e.id);
     const histCount = exerciseHistory(e.id).length;
-    const excl = exclusionReason(e, p);
     const top = (e.m || [])[0];
     const meta = [
       top ? t('mg.' + top[0]) : '',
@@ -23591,7 +23831,7 @@ function renderExerciseLibrary(){
          '<span class="ex-card-t">' + esc(t('ex.' + e.id)) + '</span>' +
          '<span class="ex-meta">' + esc(meta) +
          (pb && histCount >= 2 ? '<b class="ex-pr">PR ' + esc(formatSet(pb.set, e, p)) + '</b>' : '') +
-         (excl ? '<span class="ex-excl">' + esc(t(excl)) + '</span>' : '') +
+         (excl.length ? '<span class="ex-excl">' + esc(excl.map(key => t(key)).join(' · ')) + '</span>' : '') +
          '</span>' +
          '<span class="ex-mbar" aria-hidden="true">' +
          (e.m || []).map((x, idx) => '<i class="' + (idx === 0 ? '' : 'sec') +

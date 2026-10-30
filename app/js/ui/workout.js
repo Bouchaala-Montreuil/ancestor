@@ -25,6 +25,40 @@ let LAST_LOGGED_SET = null;
 
 const ENTERING_FIELDS = { w:1, r:1, t:1, d:1, a:1 };
 
+/* The library can be browsed freely; automatic choices use the planner's
+   eligibility rules. A manual override is a separate, explicit decision. */
+function exerciseReasonText(ex, profile){
+  return exerciseFilterReasons(ex, profile).map(key => t(key)).join(' · ');
+}
+function filteredExercises(items, profile){
+  return (items || []).filter(item => EX_BY_ID[item.id] &&
+    exerciseFilterReasons(EX_BY_ID[item.id], profile).length);
+}
+function filteredNames(items){
+  return Array.from(new Set(items.map(item => t('ex.' + item.id)))).join(', ');
+}
+function exerciseConflictBanner(items, profile, active){
+  const conflicts = filteredExercises(items, profile);
+  if(!conflicts.length) return '';
+  return '<div data-exercise-conflicts>' + banner('warn',
+    t(active ? 'workout.activeConflictTitle' : 'workout.planConflictTitle'),
+    t(active ? 'workout.activeConflictBody' : 'workout.planConflictBody', {list:filteredNames(conflicts)})) + '</div>';
+}
+function confirmExerciseAdd(ex, profile){
+  const reasons = exerciseReasonText(ex, profile);
+  return !reasons || confirm(t('workout.addConfirm', {exercise:t('ex.' + ex.id), reasons:reasons}));
+}
+function validatePickerChoice(ex, profile){
+  if(!exerciseFilterReasons(ex, profile).length) return true;
+  closeSheet(); render(); toast(t('workout.filteredOption'), 'alert');
+  return false;
+}
+function confirmStopRecommendation(state, ids, now){
+  if(decide(state, ids, now).state !== 'stop') return true;
+  return confirm(t('workout.stopTitle') + '\n\n' + t('workout.stopConfirm'));
+}
+function openExerciseSettings(){ closeSheet(); go('profile'); }
+
 function setSessionSub(tab){
   SESSION_SUB = tab || 'plan';
   render();
@@ -255,6 +289,11 @@ function renderWorkoutPlanner(){
          ).join('') + '</div>';
   }
 
+  h += exerciseConflictBanner(selected.exercises, s.profile, false);
+  if(decide(s, (selected.exercises || []).map(e => e.id), now).state === 'stop'){
+    h += banner('alert', t('workout.stopTitle'), t('state.stop.d'));
+  }
+
   h += '<div class="row">' +
        (ACTIVE
          ? '<button class="btn" data-act="go" data-a1="session">' + esc(t('plan.resumeLive')) + '</button>'
@@ -447,6 +486,7 @@ function applyPlanSub(dayId, exIdx, newId){
   const day = s.plan && (s.plan.sessions || []).filter(x => x.id === dayId)[0];
   const ex = EX_BY_ID[newId];
   if(!day || !day.exercises[exIdx] || !ex) return;
+  if(!validatePickerChoice(ex, s.profile || {})) return;
   const keepSets = day.exercises[exIdx].sets || 3;
   day.exercises[exIdx] = { id: newId, sets: keepSets, reps: ex.reps.slice(), rir: ex.rir };
   saveState(); closeSheet(); render();
@@ -455,8 +495,11 @@ function applyPlanSub(dayId, exIdx, newId){
 /* Add an exercise to a planned day OR to the live active workout! */
 function openAddExerciseSheet(targetKind, dayId){
   const s = getState();
-  const pool = allowedExercises(s.profile || {});
-  const list = pool.length ? pool : EX;
+  const list = allowedExercises(s.profile || {});
+  if(!list.length){
+    return sheet(t('plan.addEx'), emptyState('workout.emptyPoolTitle', 'a11y.poolEmpty', 'inbox',
+      '<button type="button" class="btn quiet" data-act="openExerciseSettings">' + esc(t('workout.reviewSettings')) + '</button>'));
+  }
   let h = '<div class="field"><label for="addExFilter">' + esc(t('sci.search')) + '</label>' +
           '<input type="text" id="addExFilter" placeholder="' + esc(t('plan.searchEx')) +
           '" data-in="filterAddExSheet" data-t1="v"></div>';
@@ -488,7 +531,7 @@ function addExerciseToPlan(dayId, exId){
   const s = getState();
   const ex = EX_BY_ID[exId]; if(!ex || !s.plan) return;
   const day = (s.plan.sessions || []).filter(x => x.id === dayId)[0] || s.plan.sessions[0];
-  if(!day) return;
+  if(!day || !confirmExerciseAdd(ex, s.profile || {})) return;
   const cfg = setsFor(ex, s.profile || {});
   const rangeUnit = exTargetRange(ex).unit;
   const reps = (cfg.bias && rangeUnit === 'reps') ? [cfg.bias.lo, cfg.bias.hi] : ex.reps.slice();
@@ -505,7 +548,9 @@ function addExerciseToPlan(dayId, exId){
 }
 function addExerciseToActive(exId){
   const ex = EX_BY_ID[exId]; if(!ex || !ACTIVE) return;
-  const cfg = setsFor(ex, getState().profile || {});
+  const profile = getState().profile || {};
+  if(!confirmExerciseAdd(ex, profile)) return;
+  const cfg = setsFor(ex, profile);
   ACTIVE.exercises.push(newActiveExercise({ id: ex.id, sets: cfg.sets, reps: ex.reps.slice(), rir: cfg.rir }));
   saveDraft(); closeSheet();
   SESSION_SUB = 'live';
@@ -518,7 +563,8 @@ function startCustomSession(){
   if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   const firstPool = allowedExercises(s.profile || {});
-  const seedEx = firstPool[0] || EX[0];
+  const seedEx = firstPool[0];
+  if(!confirmStopRecommendation(s, seedEx ? [seedEx.id] : [], now)) return;
   ACTIVE = {
     planId: 'custom',
     name: t('plan.customName'),
@@ -698,6 +744,18 @@ function renderLive(){
        esc(t('log.remaining', { n: logged, m: total })) +
        '</span><span class="track"><i style="width:' + (total ? Math.round(logged / total * 100) : 0) + '%"></i></span></div>';
   h += '</div>';
+
+  h += exerciseConflictBanner(ACTIVE.exercises, s.profile, true);
+  if(decide(s, ACTIVE.exercises.map(e => e.id), Date.now()).state === 'stop'){
+    h += banner('alert', t('workout.stopTitle'), t('state.stop.d'));
+  }
+  if(!ACTIVE.exercises.length){
+    const noPool = !allowedExercises(s.profile || {}).length;
+    h += emptyState(noPool ? 'workout.emptyPoolTitle' : 'plan.emptyDay',
+      noPool ? 'a11y.poolEmpty' : 'plan.emptyDayBody', 'inbox',
+      '<button type="button" class="btn quiet" data-act="openAddExerciseSheet" data-a1="active">+ ' + esc(t('plan.addEx')) + '</button>' +
+      (noPool ? '<button type="button" class="btn quiet" data-act="openExerciseSettings">' + esc(t('workout.reviewSettings')) + '</button>' : ''), 2);
+  }
 
   if(FINISH_SAVE_FAILED){
     h += '<div class="banner alert workout-save-warning" role="alert"><div>' +
@@ -968,6 +1026,9 @@ function startSession(dayId){
     if(!next) return;
     chosen = next.session;
   }
+  if(!confirmStopRecommendation(s, (chosen.exercises || []).map(e => e.id), now)) return;
+  const conflicts = filteredExercises(chosen.exercises, s.profile || {});
+  if(conflicts.length && !confirm(t('workout.conflictStart', {list:filteredNames(conflicts)}))) return;
   ACTIVE = {
     planId: chosen.id, name: chosen.name, startedAt: now,
     finished: false,
@@ -1125,6 +1186,7 @@ function openSub(ei){
 function applySub(ei, id){
   const ex = EX_BY_ID[id], current = ACTIVE && ACTIVE.exercises[ei];
   if(!ex || !current || current.id === id) return;
+  if(!validatePickerChoice(ex, getState().profile || {})) return;
   const untouched = unstartedSets(current);
   const keepWork = exerciseHasWork(current);
   const replacement = newActiveExercise({ id:id, sets:Math.max(1, untouched.length), reps:ex.reps.slice(), rir:ex.rir });
@@ -1445,10 +1507,10 @@ function renderExerciseLibrary(){
            '<div class="ex-grid" data-stagger>';
     }
     const spec = exLogSpec(e);
-    const inPool = p.exercises ? p.exercises[e.id] !== false : true;
+    const excl = exerciseFilterReasons(e, p);
+    const inPool = excl.length === 0;
     const pb = personalBest(e.id);
     const histCount = exerciseHistory(e.id).length;
-    const excl = exclusionReason(e, p);
     const top = (e.m || [])[0];
     const meta = [
       top ? t('mg.' + top[0]) : '',
@@ -1464,7 +1526,7 @@ function renderExerciseLibrary(){
          '<span class="ex-card-t">' + esc(t('ex.' + e.id)) + '</span>' +
          '<span class="ex-meta">' + esc(meta) +
          (pb && histCount >= 2 ? '<b class="ex-pr">PR ' + esc(formatSet(pb.set, e, p)) + '</b>' : '') +
-         (excl ? '<span class="ex-excl">' + esc(t(excl)) + '</span>' : '') +
+         (excl.length ? '<span class="ex-excl">' + esc(excl.map(key => t(key)).join(' · ')) + '</span>' : '') +
          '</span>' +
          '<span class="ex-mbar" aria-hidden="true">' +
          (e.m || []).map((x, idx) => '<i class="' + (idx === 0 ? '' : 'sec') +

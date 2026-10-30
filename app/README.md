@@ -10,9 +10,9 @@ anyone whose life does not run on a Monday-to-Friday clock.
 ## Identity
 
 **Concept: Performance Lab.** Instrument panels, biomechanics, professional
-measurement interfaces, high-end technical publishing. Ivory dominates; charcoal
-structures; burnt orange is reserved for primary action, selection and
-meaningful accent. Monospace carries every unit, id and annotation.
+measurement interfaces and high-end technical publishing. The default theme is
+charcoal with warm ivory text; the original light paper theme remains available.
+Burnt orange is reserved for primary action, selection and meaningful accent. Monospace carries every unit, id and annotation.
 
 | Token | Value |
 |---|---|
@@ -81,6 +81,16 @@ fails, the app warns and offers a retry; an export contains the log, **not** an
 active workout. A failed draft write can leave the stored draft older than what
 is on screen, so keep the tab open until it is saved.
 
+Automatic plans and substitutions use the same equipment, environment,
+limitation, position and exercise-selection filters. The full library stays
+browseable: adding an exercise outside those choices requires an explicit
+confirmation that lists the recorded reasons for the mismatch. If a saved plan or live draft conflicts with later changes, the
+app flags the exercises and does not silently replace them or erase entered work.
+When nothing matches, it shows an empty state and a route to settings rather than
+inserting an arbitrary exercise. A stop recommendation is displayed in the
+planner and live session, and new starts require acknowledgement; it is advice,
+not a medical assessment or a lock on existing records.
+
 The rest timer is saved with that draft: a running rest catches up to its original
 deadline after reopening, while a paused rest keeps its remaining time. Alerts
 are optional, enabled from the timer's information button or Me. They can only
@@ -131,9 +141,9 @@ and connects every explanation to the user's own records and to sourced evidence
 - **11 lessons** across 10 categories — muscle physiology, energy and fat
   metabolism, strength, biomechanics, cardiovascular health, sleep and recovery,
   nutrition, aging and accessibility, training principles, scientific literacy.
-- **Lesson bodies fully localised in English and French**; the other five languages
-  get titles, summaries, takeaways, myths and quizzes with bodies falling back to
-  English, and the page says so.
+- All **42 lesson sections** have heading and body entries in each of the seven
+  language dictionaries. Automated checks verify presence and sample rendering;
+  they do not establish translation quality or scientific accuracy.
 - **Weekly volume split into direct and indirect** muscle involvement, with
   out-of-range counts raised as *review prompts* — never as targets or diagnoses.
 - **Five interactive explorers** — muscle growth, energy/fat metabolism, movement
@@ -152,8 +162,9 @@ Honest limits are part of the product, and they are measured rather than asserte
 **All 12 published sources verified against two independent registries** — NCBI PubMed
 and Crossref — on 2026-10-26, with DOI and PMID matching in both. The process caught
 three citation errors: a wrong DOI, a wrong title, and a record with the wrong journal,
-year and authors. Two records are internal notes, not published sources, and say so. Lesson bodies are English-only, Arabic is 93 % and labelled
-partial, and the app never estimates calories, body fat or muscle size.
+year and authors. Two records are internal notes, not published sources, and say so.
+The app never estimates calories, body fat or muscle size. The translated text and
+evidence interpretation still need independent language and subject-matter review.
 
 See [`PHASE_SCIENCE_REPORT.md`](PHASE_SCIENCE_REPORT.md) and
 [`EVIDENCE_VERIFICATION.md`](EVIDENCE_VERIFICATION.md).
@@ -175,10 +186,10 @@ ANCESTOR adapts to the person rather than forcing one training model on everyone
 - **Accessibility built in** — adjustable text size, high contrast, reduced motion,
   simplified interface, keyboard-operable anatomy, focus-managed dialogs, skip
   link, landmarks, `aria-live` status, ≥40 px touch targets, charts with tables.
-- **International** — 7 languages including **Arabic with full RTL**, locale-aware
-  numbers and dates, metric/imperial with real conversion of stored loads, and a
-  **measured** translation-coverage system. Arabic is 93 % and is reported as
-  *partial* in-product rather than claimed as complete.
+- **International** — seven language dictionaries including Arabic RTL,
+  locale-aware numbers and dates, metric/imperial conversion of stored loads,
+  and measured key coverage. Presence of translations is not a substitute for
+  native-speaker review or real-device RTL testing.
 
 See [`PHASE1_REPORT.md`](PHASE1_REPORT.md) for exactly what is implemented, what
 is verified, and what is not.
@@ -222,7 +233,7 @@ npm run verify                             # ~3 minutes
 Or a la carte, which is how the suites are named when one of them breaks:
 
 ```bash
-npm test                           # the eleven headless suites, in order
+npm test                           # headless suites, in order
 npm run test:browser               # the one that needs a real Chrome (source tools/chromium.sh)
 
 node tests/design.js               # 356 design system, states, targets, disclosures
@@ -231,16 +242,18 @@ node tests/ui.js                   # 323 end-to-end DOM tests
 node tests/run.js                  # 146 engine / i18n tests
 node tests/inclusive.js            #  70 migration / a11y / locale tests
 node tests/personas.js             #  73 persona journey checks
-node tests/science.js              # 130 Science Hub / evidence / transparency tests
+node tests/science.js              # Science Hub / evidence / transparency tests
 node tests/logic.js                # 156 exercise-aware logging and workout-safety checks
 node tests/anatomy.js              #  64 real 3D asset and selection tests
 node tests/print.js                #  88 the A4 sheet
-node tests/movement.js             # 166 exercise mappings, guidance, localization and safety checks
+node tests/movement.js             # exercise mappings, guidance and localization checks
+node tests/exercise_filters.js     # plan, substitution, empty-pool and preference regressions
 node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tests/journey.js              #  39 navigation and disclosure checks in Chromium
 node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
 node tests/rest_timer.js           #  73 timer, alerts, interruption and layout checks in Chromium
-node tests/movement_browser.js     #  38 guide, playback, RTL, theme, layout and offline checks in Chromium
+node tests/movement_browser.js     # guide, playback, RTL, theme, layout and offline checks
+node tests/exercise_filters_browser.js # preference, override, draft and warning journeys
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
 node tools/qa_audit.js             # scripted user-journey audit
@@ -303,7 +316,9 @@ muscle on the body map to see exactly which inputs produced the number.
 
 Severity ladder: `train → light → caution → rest → stop`
 
-- **Illness or severe joint pain → stop.** Hard, non-negotiable, with referral language.
+- **Illness or severe joint pain → stop recommendation.** The classification is
+  never downgraded by other signals. The app advises against training and asks
+  before a new session starts; it does not diagnose or lock existing records.
 - A muscle under 0.70 readiness can never be reported as "train".
 - **A shift is not an automatic ban.** Finishing a shift 3 hours ago downgrades
   the recommendation; it does not forbid training. Being mid-shift is surfaced
@@ -357,18 +372,47 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 
 ## Tests
 
-The 2026-10-30 verification ran all ten headless suites: **1,620 checks**
-covering design, UI, progression, recovery, workout logic, accessibility,
-locales, anatomy and print. The Chromium suites also passed: 95 browser/WebGL,
-39 navigation, 60 workout safety and 73 rest-timer checks, including a
-176-layout audit. The timer and workout-safety journeys run against modular,
-HTTP and single-file builds.
+The 2026-10-30 release gate passed **1,915 headless checks**, a scan of
+1,916 translation keys in seven languages and 67 site checks. The complete
+Chromium suite passed **359 checks**, including a 176-layout audit. The exercise
+selection (54), workout safety (60), rest timer (73) and movement guide (38)
+journeys each also passed against both the HTTP PWA and standalone file; the
+selection and guide journeys include offline reloads. Separate Chromium
+accessibility-tree and install audits passed
+75 and 30 checks, respectively. One HTTP timer assertion missed its wall-clock
+threshold by 8 ms while four browser suites ran concurrently; it passed 73/73
+when rerun in isolation, without changing the test.
 
-The release gate also checked module boundaries, the single-file bundle,
-1,804 translation keys in seven languages and 67 site checks. Separate audits
-passed 75 Chromium accessibility-tree checks and 30 PWA install checks. These
-are automated checks, not a substitute for physical-device, Safari, Firefox or
-assistive-technology testing. See [Run it](#run-it) for the commands.
+These checks cover design, UI, progression, recovery, preferences, drafts,
+anatomy, print and offline packaging. They are not substitutes for physical
+hardware, Safari, Firefox, assistive-technology or professional exercise review.
+Run the commands above for current results.
+
+### Launch-readiness audit — remaining work
+
+The October 2026 audit reproduced and fixed preference bypasses in substitute
+pickers, manual additions and empty pools, corrected several metadata/instruction
+contradictions, and added failed-lift setup guidance for barbell presses and
+squats. The filters express recorded preferences; their tags are incomplete and
+cannot determine whether any exercise is safe for an individual.
+
+Before a public launch, still arrange:
+
+- A qualified strength coach's review of every guide, prescription, equipment
+  setup, alternative and accessibility adaptation; clinical input for the
+  limitation and symptom language. This audit is **not** that review.
+- Real-device testing on Android and iOS, Safari and Firefox, actual screen
+  readers and keyboard/touch workflows, including offline updates and recovery.
+- Native-speaker review of all seven languages and RTL, and independent review
+  of the science explanations and linked evidence.
+- A release and dependency-security review, including a reproducible dependency
+  lock/audit and verification of all distribution licences. On 2026-10-30 an
+  npm audit of a freshly resolved **temporary** lock reported 10 high-severity
+  advisories in the Puppeteer development-tool chain; npm recommends a major
+  upgrade. `--omit=dev` reported zero, but does not assess the vendored runtime
+  bundle or prove absence of browser-side vulnerabilities. The repository does
+  not currently track a lockfile, so the temporary resolution is not a pinned
+  release audit.
 
 ### Bugs the tests caught in this redesign
 

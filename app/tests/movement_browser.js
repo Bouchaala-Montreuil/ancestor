@@ -202,7 +202,7 @@ async function frame(page){await page.evaluate(()=>new Promise(r=>requestAnimati
         await navigator.serviceWorker.ready;
         const names=await caches.keys();
         for(const name of names){const c=await caches.open(name);
-          if(name==='ancestor-v39' && await c.match('./js/ui/movement.js') && await c.match('./js/i18n/movement.js')) return true;}
+          if(name==='ancestor-'+APP_BUILD && await c.match('./js/ui/movement.js') && await c.match('./js/i18n/movement.js')) return true;}
         return false;
       },{timeout:30000});
     }

@@ -8,14 +8,14 @@ way: `index.html` must open from the file system, and `file://` blocks ES
 modules. So the boundary is a contract rather than a syntax — one owner per
 name, no unloaded files, and a count per file that cannot grow by accident.
 
-**45 files, 803 top-level names.** Each name has exactly one
+**45 files, 814 top-level names.** Each name has exactly one
 owner; `provides` is what a file creates, `reaches for` is what it mentions
 from another file (a token scan, so it over-reports — it is a reading list,
 not a dependency graph).
 
 | # | File | Provides | Reaches for |
 |---:|---|---:|---:|
-| 1 | `js/core/acts.js` | 8 | 152 |
+| 1 | `js/core/acts.js` | 8 | 153 |
 | 2 | `js/i18n/core.js` | 4 | 3 |
 | 3 | `js/i18n/ui.js` | 3 | 3 |
 | 4 | `js/i18n/exercises.js` | 2 | 4 |
@@ -27,7 +27,7 @@ not a dependency graph).
 | 10 | `js/i18n/science2.js` | 2 | 6 |
 | 11 | `js/i18n/ex_modes.js` | 1 | 3 |
 | 12 | `js/i18n/movement.js` | 4 | 4 |
-| 13 | `js/i18n/modes.js` | 9 | 15 |
+| 13 | `js/i18n/modes.js` | 10 | 15 |
 | 14 | `js/i18n/lesson_bodies_en.js` | 1 | 4 |
 | 15 | `js/i18n/lesson_bodies_fr.js` | 1 | 4 |
 | 16 | `js/i18n/lesson_bodies_es_de.js` | 2 | 3 |
@@ -36,7 +36,7 @@ not a dependency graph).
 | 19 | `js/i18n/focus.js` | 1 | 4 |
 | 20 | `js/i18n/locale.js` | 25 | 9 |
 | 21 | `js/data/exercises.js` | 9 | 0 |
-| 22 | `js/data/ex_meta.js` | 8 | 3 |
+| 22 | `js/data/ex_meta.js` | 9 | 3 |
 | 23 | `js/data/ex_logging.js` | 30 | 8 |
 | 24 | `js/data/anatomy_map.js` | 10 | 0 |
 | 25 | `js/data/modules.js` | 3 | 1 |
@@ -48,12 +48,12 @@ not a dependency graph).
 | 31 | `js/engine/progression.js` | 20 | 14 |
 | 32 | `js/engine/recovery.js` | 13 | 14 |
 | 33 | `js/engine/readiness.js` | 9 | 14 |
-| 34 | `js/engine/program.js` | 28 | 14 |
+| 34 | `js/engine/program.js` | 29 | 14 |
 | 35 | `js/engine/why.js` | 15 | 27 |
 | 36 | `js/ui/components.js` | 38 | 16 |
 | 37 | `js/ui/movement.js` | 13 | 5 |
-| 38 | `js/ui/screens.js` | 151 | 144 |
-| 39 | `js/ui/workout.js` | 90 | 78 |
+| 38 | `js/ui/screens.js` | 151 | 146 |
+| 39 | `js/ui/workout.js` | 98 | 79 |
 | 40 | `js/ui/printsheet.js` | 13 | 29 |
 | 41 | `js/ui/science.js` | 41 | 52 |
 | 42 | `js/ui/motion.js` | 20 | 2 |
@@ -78,7 +78,7 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/i18n/science2.js`** — 2: `TSC2` `TSC2_MIN`
 - **`js/i18n/ex_modes.js`** — 1: `TM`
 - **`js/i18n/movement.js`** — 4: `MOVEMENT_LANGS` `MOVEMENT_COPY` `MOVEMENT_UI` `MOVEMENT_GROUP_ACTION`
-- **`js/i18n/modes.js`** — 9: `TMODE` `TCOST` `TMODE_FULL` `TPLAN` `TPLAN2` `TV41` `TV42` `TV43` `WORKOUT_SAFETY`
+- **`js/i18n/modes.js`** — 10: `TMODE` `TCOST` `TMODE_FULL` `TPLAN` `TPLAN2` `TV41` `TV42` `TV43` `WORKOUT_SAFETY` `EXERCISE_SAFETY`
 - **`js/i18n/lesson_bodies_en.js`** — 1: `TLEN`
 - **`js/i18n/lesson_bodies_fr.js`** — 1: `TLFR`
 - **`js/i18n/lesson_bodies_es_de.js`** — 2: `TLES` `TLDE`
@@ -87,7 +87,7 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/i18n/focus.js`** — 1: `TFOCUS`
 - **`js/i18n/locale.js`** — 25: `RTL_LANGS` `LOCALE_TAG` `LANG_NAME` `localeTag` `isRTL` `langName` `langLabel` `formatNumber` `numExpr` `formatDate` `plural` `KG_PER_LB` `convertWeight` `convertStateUnits` `CORE_PREFIXES` `CONTENT_PREFIXES` `coreKeys` `coverage` `contentCoverage` `coverageAll` `SUPPORT_THRESHOLD` `isSupported` `langStatus` `applyLocale` `missingKeys`
 - **`js/data/exercises.js`** — 9: `MUSCLES` `MAP_FRONT` `MAP_BACK` `EQUIP_SETS` `INCREMENT` `EX` `EX_BY_ID` `muscleWeight` `exMuscles`
-- **`js/data/ex_meta.js`** — 8: `POSITIONS` `REQUIREMENTS` `CATEGORIES` `EX_META` `EX_ACCESSIBLE` `EX_CATEGORIES` `exerciseAllowed` `exclusionReason`
+- **`js/data/ex_meta.js`** — 9: `POSITIONS` `REQUIREMENTS` `CATEGORIES` `EX_META` `EX_ACCESSIBLE` `EX_CATEGORIES` `exerciseAllowed` `exclusionReasons` `exclusionReason`
 - **`js/data/ex_logging.js`** — 30: `SET_MODES` `MODE_BY_EQUIP` `MODE_OVERRIDES` `UNILATERAL` `SET_FIELDS` `exMode` `exLogSpec` `isUnilateral` `exTargetRange` `blankSet` `num` `loggedSets` `workingSets` `countedSets` `isSetComplete` `missingFields` `bodyweightOf` `setMetrics` `bestSetScore` `setsVolume` `fmtLoad` `formatSet` `formatDuration` `FT_PER_M` `formatDistance` `distanceUnit` `toDisplayDistance` `fromDisplayDistance` `previousPerformance` `recordKind`
 - **`js/data/anatomy_map.js`** — 10: `ANATOMY_TRAINING_GROUPS` `MESH_GROUP_MAP` `MESH_GROUP_ACTION` `GROUP_SIDE_PREFERENCE` `VIEW_AZIMUTH` `CONTEXT_MATERIALS` `anatomyGroupFor` `anatomyActionFor` `isContextMesh` `supportedAnatomyGroups`
 - **`js/data/modules.js`** — 3: `LEARNING_MODULES` `moduleById` `moduleStep`
@@ -99,12 +99,12 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/engine/progression.js`** — 20: `e1rm` `sessionScore` `RULES` `roundLoad` `roundLoadDown` `stepFor` `TIME_STEP_SEC` `DIST_STEP_RATIO` `roundSeconds` `roundDistance` `LOWER_PATTERNS` `recommend` `applyTarget` `advance` `reduceBy` `holdAndBuild` `r3Reason` `recordKindFor` `isPersonalBest` `personalBest`
 - **`js/engine/recovery.js`** — 13: `BASE_DAYS` `REF_STIMULUS` `STYLE_FACTOR` `EXP_FACTOR` `ADAPT_MIN` `recoveryDays` `allRecovery` `updateAdaptation` `recentRir` `exerciseTrend` `overallTrend` `clampNum` `round1`
 - **`js/engine/readiness.js`** — 9: `SEVERITY` `SEV_INDEX` `decide` `actionFor` `stateTitle` `stateBody` `stateClass` `dedupe` `round2`
-- **`js/engine/program.js`** — 28: `STYLE` `EXERCISES_BY_MINUTES` `SPLITS` `SPLIT_NAMES` `sessionName` `EMPHASIS_MAX_EXTRA_SESSIONS` `focusMuscles` `MUSCLE_PATTERNS` `patternsForMuscles` `sessionCovers` `emphasisSummary` `allowedExercises` `goalBonus` `pickForPattern` `setsFor` `restFor` `buildPlan` `sessionInvolvedMuscles` `nextSession` `substitutesFor` `setSecondsEstimate` `estimatedMinutes` `VOLUME_BANDS` `volumeBandFor` `muscleVolume` `volumePartiallyUnknown` `volumeByMuscle` `volumeReview`
+- **`js/engine/program.js`** — 29: `STYLE` `EXERCISES_BY_MINUTES` `SPLITS` `SPLIT_NAMES` `sessionName` `EMPHASIS_MAX_EXTRA_SESSIONS` `focusMuscles` `MUSCLE_PATTERNS` `patternsForMuscles` `sessionCovers` `emphasisSummary` `exerciseFilterReasons` `allowedExercises` `goalBonus` `pickForPattern` `setsFor` `restFor` `buildPlan` `sessionInvolvedMuscles` `nextSession` `substitutesFor` `setSecondsEstimate` `estimatedMinutes` `VOLUME_BANDS` `volumeBandFor` `muscleVolume` `volumePartiallyUnknown` `volumeByMuscle` `volumeReview`
 - **`js/engine/why.js`** — 15: `RULE_KINDS` `RECOMMENDATION_RULES` `RULE_CHANGELOG` `rule` `rulesAffectedByEvidence` `changelogFor` `stmt` `ruleBlock` `drivingEvidence` `explainProgression` `explainDecision` `explainRecovery` `explainVolume` `unitName` `goalLine`
 - **`js/ui/components.js`** — 38: `STATE_VAR` `STATE_TOKEN` `STATE_FALLBACK` `_tokenCache` `token` `tokenReset` `STATE_HEX` `FIG` `FIG_UID` `SIDE_MUSCLES` `bboxOf` `viewFor` `anatomyFigure` `readinessMeter` `metric` `metricsBlock` `dataTable` `niceCeil` `niceStep` `niceScale` `CHART_SEQ` `showChartTip` `lineChart` `barChart` `timelineStrip` `TALLY_BLANK` `SKEL_SHAPES` `skel` `waitMark` `TALLY_BROKEN` `failureState` `emptyState` `banner` `sparkline` `progressRing` `exerciseFigureSideSvg` `exerciseThumbSvg` `exerciseVisualSvg`
 - **`js/ui/movement.js`** — 13: `MOVEMENT_GUIDES` `MOVEMENT_POSES` `MOVEMENT_SCENES` `movementPose` `movementBody` `movementBackdrop` `movementLoad` `movementStage` `movementMixed` `movementReduced` `movementPlayers` `playMovement` `exerciseMovement`
 - **`js/ui/screens.js`** — 151: `DRAFT_KEY` `ACTIVE` `BODY_SIDE` `BODY_SEL` `BODY_ZOOM` `BODY_MODE` `BODY_FALLBACK` `BODY_LAYER` `BODY_REGION` `LAB_STRUCT` `REST` `PROG_EX` `PROG_PERIOD` `PROG_METRIC` `LAST_SUMMARY` `Screens` `esc` `$` `$$` `unit` `displayState` `STATE_WHY` `sessionCostLine` `sessionTotalVolume` `sessionSeries` `chartValue` `chartUnit` `chartLabelKey` `chartBasisKey` `bandHead` `journeyFold` `greetingFor` `heroLine` `trainingMilestones` `milestonesPanel` `trendGlyph` `sleepSummary` `weeklySetTotals` `volumeSparkline` `coverageBars` `contextualInsight` `nextLessonCard` `openAnalysis` `saveRestToDraft` `restoreRestFromDraft` `startRest` `tickRest` `runRestTimer` `pauseRest` `resumeRest` `toggleRest` `resetRest` `addRest` `stopRest` `focusAfterRest` `paintRest` `fmtClock` `syncRestHeight` `paintRestHost` `openRestInfo` `restAlertSupported` `notifyRestDone` `setRestNotify` `restSay` `DRAFT_STORAGE_FAILED` `saveDraft` `clearDraft` `loadDraft` `progressGroupNav` `labStructPanel` `setBodyMode` `noteLabFallback` `retryLab` `setSide` `selectMuscle` `clearMuscle` `toggleZoom` `resetFig` `setLabLayer` `setLabRegion` `groupAnatomicalAction` `openMobileMuscleSheet` `rotateFig` `bindAnatomyLab` `onLabStruct` `openExerciseDetail` `setProgMetric` `bodyweightTrendPanel` `countPRs` `sampleChart` `EDIT` `openSessionEditor` `renderSessionEditor` `editField` `saveEditedSet` `markWarmupEditedSet` `deleteEditedSet` `deleteWholeSession` `closeSessionEditor` `setPeriod` `setProgEx` `setHistEx` `delSession` `setEnvEquip` `toggleGoalP` `toggleNeedP` `setBodyweight` `setDisplay` `rebuildPlan` `replayOnboarding` `doExport` `setBtnBusy` `doImport` `doErase` `LAST_FOCUS` `focusables` `sheetKeyHandler` `sheet` `closeSheet` `openSheet` `saveBodyweightSheet` `removeBodyweightRow` `QUALITY` `pickQuality` `saveSleep` `saveShift` `FEEL` `pickFeel` `saveFeel` `pickLang` `chooseLang` `ONB_STEPS` `ONB_EX_OPEN` `onbExOpen` `onbIdx` `onbGo` `onbNext` `tile` `setConsent` `setOnbDays` `setOnbMinutes` `setP` `setEmphasis` `togglePriority` `planFocusStale` `setLimit` `restoreExPool` `toggleEx` `syncShiftPreview` `addShiftFromOnb` `finishOnboarding`
-- **`js/ui/workout.js`** — 90: `SESSION_SUB` `PLAN_DAY` `PLAN_EDIT` `LIB_QUERY` `LIB_MUSCLE` `LIB_EQUIP` `LIB_MODE` `LIVE_CLOCK` `LAST_LOGGED_SET` `ENTERING_FIELDS` `setSessionSub` `openTrain` `openExerciseLibrary` `activeElapsedMs` `togglePauseWorkout` `syncLiveClock` `formatElapsed` `sessionSubnavHtml` `renderSessionMasthead` `dayRecoveryRatio` `renderWorkoutPlanner` `selectPlanDay` `togglePlanEdit` `openRestPicker` `setPlanRestPick` `openRepPicker` `pickRep` `setPlanRest` `adjustPlanSets` `movePlanExercise` `removePlanExercise` `openPlanSub` `applyPlanSub` `openAddExerciseSheet` `filterAddExSheet` `addExerciseToPlan` `addExerciseToActive` `startCustomSession` `targetRangeText` `recommendationText` `recommendationTextPlain` `plannedSet` `newActiveExercise` `previousExerciseNote` `setExNote` `EX_OPEN` `EX_OPTIONS_OPEN` `SET_OPTIONS_OPEN` `EX_WAS_CURRENT` `exOpen` `exerciseOptionsOpen` `setOptionsOpen` `skipExercise` `renderLive` `setRowHtml` `fieldHtml` `sideFieldsHtml` `toggleLrSplit` `setSideVal` `emptyHintFor` `startSession` `setVal` `paintSetActions` `copyPrevToExercise` `toggleSet` `logSet` `skipSet` `unskipSet` `toggleWarmup` `addSet` `setHasWork` `removeSet` `exerciseHasWork` `unstartedSets` `openSub` `applySub` `discardSession` `FINISHING` `FINISH_SAVE_FAILED` `finishSession` `showCompletion` `closeCompletion` `emptySessionMessage` `normaliseLoggedSet` `setLibQuery` `setLibMuscle` `setLibEquip` `setLibMode` `resetLibFilters` `renderExerciseLibrary`
+- **`js/ui/workout.js`** — 98: `SESSION_SUB` `PLAN_DAY` `PLAN_EDIT` `LIB_QUERY` `LIB_MUSCLE` `LIB_EQUIP` `LIB_MODE` `LIVE_CLOCK` `LAST_LOGGED_SET` `ENTERING_FIELDS` `exerciseReasonText` `filteredExercises` `filteredNames` `exerciseConflictBanner` `confirmExerciseAdd` `validatePickerChoice` `confirmStopRecommendation` `openExerciseSettings` `setSessionSub` `openTrain` `openExerciseLibrary` `activeElapsedMs` `togglePauseWorkout` `syncLiveClock` `formatElapsed` `sessionSubnavHtml` `renderSessionMasthead` `dayRecoveryRatio` `renderWorkoutPlanner` `selectPlanDay` `togglePlanEdit` `openRestPicker` `setPlanRestPick` `openRepPicker` `pickRep` `setPlanRest` `adjustPlanSets` `movePlanExercise` `removePlanExercise` `openPlanSub` `applyPlanSub` `openAddExerciseSheet` `filterAddExSheet` `addExerciseToPlan` `addExerciseToActive` `startCustomSession` `targetRangeText` `recommendationText` `recommendationTextPlain` `plannedSet` `newActiveExercise` `previousExerciseNote` `setExNote` `EX_OPEN` `EX_OPTIONS_OPEN` `SET_OPTIONS_OPEN` `EX_WAS_CURRENT` `exOpen` `exerciseOptionsOpen` `setOptionsOpen` `skipExercise` `renderLive` `setRowHtml` `fieldHtml` `sideFieldsHtml` `toggleLrSplit` `setSideVal` `emptyHintFor` `startSession` `setVal` `paintSetActions` `copyPrevToExercise` `toggleSet` `logSet` `skipSet` `unskipSet` `toggleWarmup` `addSet` `setHasWork` `removeSet` `exerciseHasWork` `unstartedSets` `openSub` `applySub` `discardSession` `FINISHING` `FINISH_SAVE_FAILED` `finishSession` `showCompletion` `closeCompletion` `emptySessionMessage` `normaliseLoggedSet` `setLibQuery` `setLibMuscle` `setLibEquip` `setLibMode` `resetLibFilters` `renderExerciseLibrary`
 - **`js/ui/printsheet.js`** — 13: `PRINT_MARK` `printTallyPaths` `printTally` `printTallyEmpty` `printLastDone` `printSleepFor` `printShiftFor` `printSheet` `printTargetFor` `recordOutcome` `openPrintCard` `openPrintRecord` `printDocument`
 - **`js/ui/science.js`** — 41: `SCI_VIEW` `SCI_CAT` `SCI_QUERY` `LESSON_ID` `QUIZ_STATE` `EXPLORER` `SIM` `MECH_EX` `sciProgress` `sciSave` `sciRead` `isRead` `sciAchievements` `setSciView` `sciModules` `sciLessons` `setSciCat` `setSciQuery` `openLesson` `backToScience` `markRead` `answerQuiz` `finishQuiz` `retryQuiz` `personalBlock` `sciExplorers` `openExplorer` `explorerMuscle` `explorerMetabolism` `explorerMechanics` `setMechEx` `explorerTimeline` `explorerSim` `setSim` `sciEvidence` `evidenceCard` `openEvidence` `openWhy` `whyPanel` `acceptWhy` `rejectWhy`
 - **`js/ui/motion.js`** — 20: `MOTION` `EASE` `PREV_NUMBERS` `PREV_RINGS` `PREV_SUBNAV` `REVEAL_IO` `isJsdom` `reducedMotion` `dur` `BOOT_MIN_MS` `dismissAppBoot` `transitionView` `staggerIn` `animateNumber` `animateRing` `hydrateMotion` `animateSubnavs` `observeReveals` `pressFeedback` `moveIndicator`

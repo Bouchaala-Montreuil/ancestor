@@ -1,9 +1,8 @@
 /* ============================================================================
    ANCESTOR — French lesson bodies
 
-   Full French text for all 42 lesson sections across the 11 lessons. English
-   remains the source (js/i18n/lesson_bodies_en.js); other languages fall back
-   to English and the lesson page says so.
+   French text for all 42 sections across the 11 lessons. English remains the
+   source; the other shipped languages have separate lesson-body files.
    ========================================================================== */
 const TLFR = {};
 

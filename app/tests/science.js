@@ -522,7 +522,14 @@ group('9. Honesty about data and localisation');
   w.switchLang('en');
   w.openLesson('muscle-growth');
   chk('English shows no fallback notice', txt(d).indexOf(w.t('sci.notLocalised')) < 0);
-  note('Lesson bodies are fully localised in all seven languages (EN, FR, ES, DE, IT, NL, AR) — 336 section strings.');
+  const sections = w.eval('LESSONS').flatMap(lesson => lesson.sections);
+  ['en','fr','es','de','it','nl','ar'].forEach(l => {
+    const bag = w.eval('T')[l];
+    chk(l + ': all lesson sections have headings and bodies in the language dictionary',
+      sections.length === 42 && sections.every(sec => bag[sec.h] && bag[sec.b]) &&
+      w.eval('LESSONS').every(lesson => lesson.langs.includes(l)));
+  });
+  note('All 42 lesson sections have entries in seven languages; presence is not professional translation review.');
 }
 
 /* ==================================================================== */

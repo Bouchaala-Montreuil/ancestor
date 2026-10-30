@@ -244,6 +244,7 @@ ACT('finishSession',                el => finishSession());
 ACT('movePlanExercise',             el => movePlanExercise(arg(el, 1), arg(el, 2), arg(el, 3)));
 ACT('openAddExerciseSheet',         el => openAddExerciseSheet(arg(el, 1), arg(el, 2)));
 ACT('openExerciseLibrary',          el => openExerciseLibrary(arg(el, 1)));
+ACT('openExerciseSettings',         () => openExerciseSettings());
 ACT('openPlanSub',                  el => openPlanSub(arg(el, 1), arg(el, 2)));
 ACT('openSub',                      el => openSub(arg(el, 1)));
 ACT('removePlanExercise',           el => removePlanExercise(arg(el, 1), arg(el, 2)));

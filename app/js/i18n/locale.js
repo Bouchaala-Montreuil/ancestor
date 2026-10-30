@@ -143,10 +143,9 @@ function coverage(lang){
   };
 }
 
-/* The other half of the truth: lesson prose, coaching cues and exercise names.
-   The app says in the Science hub that the full lesson text is in English; this
-   is the figure behind that sentence, and it is shown on the language screen so
-   a reader knows what they are choosing before they choose it. */
+/* Measure the configured content prefixes separately from interface keys.
+   Lesson section bodies (sec.*) have their own completeness tests; a key count
+   cannot assess the accuracy or fluency of a translation. */
 function contentCoverage(lang){
   const en = T.en || {};
   const keys = Object.keys(en).filter(k => CONTENT_PREFIXES.some(p => k.indexOf(p) === 0));
