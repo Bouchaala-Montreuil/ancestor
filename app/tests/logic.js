@@ -293,15 +293,24 @@ group('6. An incomplete set is not counted as completed');
   chk('the loaded exercise asks for a load and a rep count',
       d.querySelector('#toast').textContent === w.t('log.emptyLoad'),
       d.querySelector('#toast').textContent);
-  /* the same refusal, phrased for a hold rather than a lift */
+  /* Substitution keeps the incomplete entry rather than deleting it. The
+     original hold-only refusal is still tested in its own clean session. */
   w.applySub(0, 'plank');
-  fill(w, d, cardAt(d,0), w.t('log.time'), '');
+  chk('substitution preserves the incomplete original entry',
+      w.ANC.active.exercises[0].id === 'bb-bench' &&
+      w.ANC.active.exercises[0].sets[0].w === '60' &&
+      w.ANC.active.exercises[1].id === 'plank');
+  const hold = boot();
+  onboard(hold.w, hold.d);
+  oneSession(hold.w, [{ id:'plank', sets:2, reps:[20,60], rir:2 }]);
+  hold.w.go('session'); hold.w.startSession();
+  fill(hold.w, hold.d, cardAt(hold.d,0), hold.w.t('log.time'), '');
   chk('a hold with no duration is not complete',
-      w.isSetComplete(w.ANC.active.exercises[0].sets[0], w.eval("EX_BY_ID['plank']")) === false);
-  w.finishSession();
+      hold.w.isSetComplete(hold.w.ANC.active.exercises[0].sets[0], hold.w.eval("EX_BY_ID['plank']")) === false);
+  hold.w.finishSession();
   chk('the hold asks for a duration, not a load',
-      d.querySelector('#toast').textContent === w.t('log.emptyTime'),
-      d.querySelector('#toast').textContent);
+      hold.d.querySelector('#toast').textContent === hold.w.t('log.emptyTime'),
+      hold.d.querySelector('#toast').textContent);
 }
 
 /* ==================================================================== */
@@ -438,9 +447,12 @@ group('11. Switching exercises updates the fields and the validation');
   chk('the row validates on the new field',
       w.isSetComplete(w.ANC.active.exercises[0].sets[0], w.eval("EX_BY_ID['plank']")) === true);
   w.applySub(0, 'assisted-pullup');
+  const assisted = d.querySelectorAll('.ex-block')[1].querySelector('.setcard');
   chk('an assisted row asks for assistance',
-      hasField(w, d, cardAt(d,0), w.t('log.assist')),
-      labels(w, d, cardAt(d,0)).join(', '));
+      hasField(w, d, assisted, w.t('log.assist')),
+      labels(w, d, assisted).join(', '));
+  chk('the entered hold remains attached to the original exercise',
+      w.ANC.active.exercises[0].id === 'plank' && w.ANC.active.exercises[0].sets[0].t === '40');
 }
 
 /* ==================================================================== */
@@ -811,6 +823,129 @@ group('Training focus: emphasis adds attention, never subtracts coverage');
   chk('the rebuilt plan names its focus on the session screen',
       w2.getState().plan.emphasis === 'glutes' &&
       w2.emphasisSummary(w2.getState().plan, w2.getState().profile).key === 'plan.focusGlutes');
+}
+
+/* ==================================================================== */
+group('Workout safety: an active draft and entered sets are never silently replaced');
+{
+  const { w, d } = boot();
+  onboard(w, d);
+  oneSession(w, [{ id:'bb-bench', sets:3, reps:[6,10], rir:2 }]);
+  w.go('session'); w.startSession('A');
+  w.setVal(0,0,'w','60'); w.setVal(0,0,'r','8'); w.toggleSet(0,0); w.stopRest();
+  const start = w.ANC.active.startedAt;
+  const firstDraft = w.localStorage.getItem('ancestor.draft.v1');
+  w.startSession('B'); w.startCustomSession();
+  chk('planned and custom starts cannot overwrite an active workout',
+      w.ANC.active.startedAt === start && w.ANC.active.planId === 'A' &&
+      w.localStorage.getItem('ancestor.draft.v1') === firstDraft);
+
+  w.skipSet(0);
+  chk('skip targets the next unfinished set, not a logged one',
+      w.ANC.active.exercises[0].sets[0].committed && !w.ANC.active.exercises[0].sets[0].skipped &&
+      w.ANC.active.exercises[0].sets[1].skipped);
+  w.unskipSet(0,1);
+  w.setVal(0,1,'w','50');
+  w.skipSet(0); w.unskipSet(0,1);
+  chk('undoing a skip retains entered values and their entered status',
+      w.ANC.active.exercises[0].sets[1].w === '50' &&
+      w.ANC.active.exercises[0].sets[1].entered && !w.ANC.active.exercises[0].sets[1].skipped);
+  w.setExNote(0, 'Seat setting');
+  w.applySub(0,'plank');
+  const original = w.ANC.active.exercises[0], replacement = w.ANC.active.exercises[1];
+  chk('substitution retains logged and partly entered sets on the original exercise',
+      original.id === 'bb-bench' && original.sets[0].committed &&
+      original.sets[0].w === '60' && original.sets[1].w === '50' && original.sets[1].entered);
+  chk('substitution retains notes and replaces only the untouched slot',
+      original.note === 'Seat setting' && original.sets[2].skipped &&
+      replacement.id === 'plank' && replacement.sets.length === 1);
+  chk('the replacement uses its own mode instead of copying the original values',
+      replacement.sets[0].w === '' && w.exLogSpec(w.eval("EX_BY_ID['plank']")).hasTime);
+  w.setVal(1,0,'t','45'); w.toggleSet(1,0); w.stopRest(); w.finishSession();
+  const rec = w.getState().sessions[0];
+  const bench = rec.exercises.find(e => e.id === 'bb-bench');
+  const plank = rec.exercises.find(e => e.id === 'plank');
+  chk('both movements reach the finished log with their own work',
+      bench && bench.note === 'Seat setting' && bench.sets.length === 2 &&
+      bench.sets[0].w === 60 && bench.sets[1].w === 50 && plank && plank.sets[0].t === 45);
+}
+{
+  const { w, d } = boot();
+  onboard(w, d);
+  oneSession(w, [{ id:'bb-bench', sets:2, reps:[6,10], rir:2 }]);
+  w.go('session'); w.startSession('A');
+  w.setVal(0,0,'w','60'); w.setVal(0,0,'r','8'); w.toggleSet(0,0); w.stopRest();
+  const real = w.localStorage;
+  const failing = {
+    getItem:k => real.getItem(k), removeItem:k => real.removeItem(k),
+    setItem(k,v){ if(k === 'ancestor.state.v1') throw new Error('quota'); real.setItem(k,v); }
+  };
+  Object.defineProperty(w, 'localStorage', { configurable:true, value:failing });
+  w.finishSession();
+  chk('a refused log write leaves the active workout and saved draft intact',
+      !!w.ANC.active && !!real.getItem('ancestor.draft.v1') && w.getState().sessions.length === 0);
+  chk('a refused finish shows a retry, not a completion claiming success',
+      !!d.querySelector('.workout-save-warning [data-act="finishSession"]') &&
+      !d.querySelector('#doneOverlay') && !d.getElementById('storeFlag').hidden);
+  Object.defineProperty(w, 'localStorage', { configurable:true, value:real });
+  w.retryStore();
+  chk('a background retry cannot save a phantom completed workout',
+      JSON.parse(real.getItem('ancestor.state.v1')).sessions.length === 0 && !!w.ANC.active);
+  w.finishSession(); w.finishSession();
+  chk('retry saves one workout and only then clears its draft',
+      w.getState().sessions.length === 1 && !w.ANC.active && !real.getItem('ancestor.draft.v1') &&
+      !!d.querySelector('#doneOverlay'));
+}
+{
+  const { w, d } = boot();
+  onboard(w, d);
+  oneSession(w, [{ id:'bb-bench', sets:2, reps:[6,10], rir:2 }]);
+  w.go('session'); w.startSession('A');
+  const real = w.localStorage;
+  const failing = {
+    getItem:k => real.getItem(k), removeItem:k => real.removeItem(k),
+    setItem(k,v){ if(k === 'ancestor.draft.v1') throw new Error('quota'); real.setItem(k,v); }
+  };
+  Object.defineProperty(w, 'localStorage', { configurable:true, value:failing });
+  w.setVal(0,0,'w','90');
+  w.saveState();
+  chk('a failed draft write remains visible even after an unrelated log save',
+      w.eval('DRAFT_STORAGE_FAILED') && !d.getElementById('storeFlag').hidden &&
+      d.querySelector('#storeFlag .sf-t').textContent === w.t('workout.draftTitle'));
+  Object.defineProperty(w, 'localStorage', { configurable:true, value:real });
+  w.retryStore();
+  chk('retry writes the latest draft and clears the warning',
+      JSON.parse(real.getItem('ancestor.draft.v1')).exercises[0].sets[0].w === '90' &&
+      !w.eval('DRAFT_STORAGE_FAILED') && d.getElementById('storeFlag').hidden);
+}
+
+{
+  const { w, d } = boot();
+  onboard(w, d);
+  oneSession(w, [{ id:'bb-bench', sets:2, reps:[6,10], rir:2 }]);
+  w.go('session'); w.startSession('A');
+  w.setVal(0,0,'w','60'); w.setVal(0,0,'r','8'); w.toggleSet(0,0); w.stopRest();
+  w.setVal(0,1,'w','50'); w.setVal(0,1,'r','');
+  let prompt = '';
+  w.confirm = text => { prompt = text; return false; };
+  w.finishSession();
+  chk('finish warns and keeps incomplete entered work when canceled',
+      prompt === w.t('workout.finishUnstored') && !!w.ANC.active && w.getState().sessions.length === 0 &&
+      w.ANC.active.exercises[0].sets[1].w === '50' && w.ANC.active.exercises[0].sets[1].r === '');
+  w.confirm = () => true;
+  w.finishSession();
+  chk('explicitly finishing without that incomplete set saves only the performed set',
+      !w.ANC.active && w.getState().sessions.length === 1 && w.getState().sessions[0].exercises[0].sets.length === 1);
+}
+{
+  const { w, d } = boot();
+  onboard(w, d);
+  oneSession(w, [{ id:'pushup', sets:2, reps:[8,20], rir:2 }]);
+  w.go('session'); w.startSession('A');
+  w.setVal(0,0,'rir','2');
+  w.finishSession();
+  chk('an optional-only entry never converts prefilled targets into performed work',
+      !!w.ANC.active && !w.ANC.active.exercises[0].sets[0].entered && w.getState().sessions.length === 0);
 }
 
 /* ==================================================================== */

@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-zQKIgDzcsKYt0Fo6IO27glCqYhCoOH+/NYrx6NY2RZY=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-MbKnFuo7a9aX6BC1C5w7V4+i8KCbDkg2vGkO0qxWFGU=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-bRBz6TUhwhepZ4gpGmwnuokDqZVKA2PV8x2jol91wqU=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-Fixg0yM12+uDQmHHNyPNW/PssVNv8qztDjqbprhG9eg=' 'sha256-DRy7ZX1R6LNoPdPTyp0J6QQhZ3qamJn8ze8BdN3hkHg=' 'sha256-E0R+JqlRj641xrR7zLw5urisvspU3SPMnK2zHfADWAU=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-TVZN82AzFzOzmAIPt/2/wWFCc2lALOPoDc/aRarUmPE=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-kjOeebReOcdcBc0j7EI510YG6jgAqRmCV+U7754ytWA=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-BJcBGzkcFZ0P3lOrV885tQa3CgoGBpSLZ7J8AJa+tHY=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-hOUK/egRZgjJOgpfhmC3D6JYkq7XuqSWbHNpNIFbENg=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-6w4kZx4th3UvP8hzKN5cMvlMhJfWSPkIwXVywiOvIXQ=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-bGbHNGW5im3ajiGLu1I9ktn3XrebdDpPI/KHgI3RWUo=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-7wgBLGOmudK/w18WAzoKozsonojWSxQApT2f8mqE6G8=' 'sha256-pRiQrnx7Qq8kbV1AxGXHkA8uqSaoYNkF7SjfAstZfvE=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-K8v2lbUaetbUdwtg5PsQlTl8nW+LDzTKaEO7DQxUkfE=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-Y5AqIkpbeGYDRIKnvNjbIlRpZSE1XTy6/PkAEY4cUjY=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-O7cZiWPHssw90/f3NNpdU6TlOtYl0ssPf8rd6heRh5Y=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-4IcqHMQqHXaG69GUMnu2CU5udDQt6ktb9DBjhdkskMA=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-7x2gw95xbUT/QALBED7GIXyg5Ixfy1lgmOdOKBbQzcg=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-0dbWLDwXRjZiISV3V+l8fBYDNsmD8PsldLTpZinzqac=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-QfOZjgimFKCpUzkrUUTfyLCc5zjTCRuqdA79tr/XQtU=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-Fixg0yM12+uDQmHHNyPNW/PssVNv8qztDjqbprhG9eg=' 'sha256-TdQ0UKeJvYbYAXHwKH1Zu/cHl1CaiAHOaP9AH/8gCPE=' 'sha256-nRCrslVKIC8jlKxmCyPVqpcl0eJR6+geCotk7jbJX/0=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-TVZN82AzFzOzmAIPt/2/wWFCc2lALOPoDc/aRarUmPE=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-+qZTrKevHog6CPTAUC9TK1QFTMl1sKKPt+xhcvBff+A=' 'sha256-BtFYYwAErzy2GgfXHPz6bEGDeNBxfALfnRrCqcznlw0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -3389,7 +3389,7 @@ html[lang="ar"] .mono{
     <span class="sf-k" aria-hidden="true">!</span>
     <span class="sf-t"></span>
     <span class="sf-b"></span>
-    <button class="btn quiet sm sf-x" data-act="doExport"></button>
+    <button class="btn quiet sm sf-x" data-act="storeRecovery"></button>
   </div>
   <!-- A deploy replaced the files under a tab that is still running the old
        ones. Not an alarm: nothing is lost, but the two versions should not be
@@ -3583,6 +3583,12 @@ ACT('deleteEditedSet',              el => deleteEditedSet(arg(el, 1)));
 ACT('deleteWholeSession',           el => deleteWholeSession());
 ACT('doErase',                      el => doErase());
 ACT('doExport',                     el => doExport());
+/* The header's single recovery control changes purpose with the failure. */
+ACT('storeRecovery',                () => {
+  if(LOAD_FAILED) keepDamagedRecord();
+  else if(STORAGE_FAILED) doExport();
+  else if(ACTIVE && DRAFT_STORAGE_FAILED) retryStore();
+});
 ACT('doImport',                     el => doImport(arg(el, 1)));
 ACT('editField',                    el => editField(arg(el, 1), arg(el, 2), arg(el, 3)));
 ACT('finishOnboarding',             el => finishOnboarding());
@@ -3645,7 +3651,9 @@ ACT('applySub',                     el => applySub(arg(el, 1), arg(el, 2)));
 ACT('closeCompletion',              el => closeCompletion(arg(el, 1)));
 ACT('copyPrevToExercise',           el => copyPrevToExercise(arg(el, 1)));
 ACT('discardSession',               el => discardSession());
-ACT('exOpen',                       el => exOpen(arg(el, 1), arg(el, 2)));
+ACT('exOpen',                       el => exOpen(arg(el, 1), arg(el, 2), arg(el, 3)));
+ACT('exerciseOptionsOpen',          el => exerciseOptionsOpen(arg(el, 1), arg(el, 2)));
+ACT('setOptionsOpen',               el => setOptionsOpen(arg(el, 1), arg(el, 2), arg(el, 3)));
 ACT('filterAddExSheet',             el => filterAddExSheet(arg(el, 1)));
 ACT('finishSession',                el => finishSession());
 ACT('movePlanExercise',             el => movePlanExercise(arg(el, 1), arg(el, 2), arg(el, 3)));
@@ -3691,7 +3699,11 @@ ACT('openLessonFromSheet',          (el) => { closeSheet(); openLesson(arg(el, 1
 ACT('openMuscle',                   (el) => { selectMuscle(arg(el, 1)); go('body'); });
 ACT('openMuscleFromSheet',          (el) => { closeSheet(); selectMuscle(arg(el, 1)); go('body'); });
 ACT('setSciCatAll',                 (el) => { setSciCat('all'); setSciQuery(''); });
-ACT('setSessionSubGo',              (el) => { SESSION_SUB = arg(el, 1) || 'plan'; go('session'); });
+ACT('setSessionSubGo',              (el) => {
+  const sub = arg(el, 1) || 'plan';
+  SESSION_SUB = (ACTIVE && sub === 'plan') ? 'plan-peek' : sub;
+  go('session');
+});
 ACT('setSleepHours',                (el) => { setP('sleepHours', arg(el, 1)); const lab = document.getElementById('sl_v'); if(lab) lab.textContent = el.value; });
 
 </script>
@@ -10741,6 +10753,130 @@ const TV43 = {
 Object.keys(TV43).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], TV43[l]); });
 
 
+/* Workout safety: these describe real draft and log states, not a new metric. */
+const WORKOUT_SAFETY = {
+  en: {
+    'workout.activePlan':'Finish or discard the active session before starting another.',
+    'workout.skipNext':'Skip next set',
+    'workout.removeConfirm':'Remove this set? Its entered or logged values will be deleted from this session.',
+    'workout.discardConfirm':'Discard this session? All entered and logged work in it will be deleted.',
+    'workout.discardFailed':'The draft could not be removed. The workout is still open.',
+    'workout.subKeep':'Entered sets and notes stay with this exercise. Unstarted sets move to the substitute.',
+    'workout.subAdd':'Entered sets and notes stay with this exercise. The substitute starts with one new set.',
+    'workout.subKept':'Previous work kept',
+    'workout.finishUnstored':'Some entered details will not be saved: unfinished or skipped sets, or notes without a saved set. Finish anyway?',
+    'workout.finishFailedTitle':'Session not saved',
+    'workout.finishFailedBody':'Your workout is still open. Keep this tab open and try saving again when storage is available. Exports do not include an active workout.',
+    'workout.trySave':'Try saving again',
+    'workout.draftTitle':'Workout draft not saved',
+    'workout.draftBody':'This device could not save the latest draft. Keep this tab open; reloading may lose recent entries.',
+    'workout.storeActive':'This device refused a save. Keep this tab open; an export includes your log, not the active workout.'
+  },
+  fr: {
+    'workout.activePlan':'Terminez ou abandonnez la séance en cours avant d’en démarrer une autre.',
+    'workout.skipNext':'Passer la prochaine série',
+    'workout.removeConfirm':'Supprimer cette série ? Ses valeurs saisies ou enregistrées seront effacées de cette séance.',
+    'workout.discardConfirm':'Abandonner cette séance ? Toutes ses données saisies et enregistrées seront effacées.',
+    'workout.discardFailed':'Le brouillon n’a pas pu être supprimé. La séance reste ouverte.',
+    'workout.subKeep':'Les séries saisies et les notes restent associées à cet exercice. Les séries non commencées passent à l’exercice de remplacement.',
+    'workout.subAdd':'Les séries saisies et les notes restent associées à cet exercice. Le remplacement commence avec une nouvelle série.',
+    'workout.subKept':'Travail précédent conservé',
+    'workout.finishUnstored':'Certaines données ne seront pas enregistrées : séries inachevées ou passées, ou notes sans série enregistrée. Terminer quand même ?',
+    'workout.finishFailedTitle':'Séance non enregistrée',
+    'workout.finishFailedBody':'Votre séance reste ouverte. Gardez cet onglet ouvert et réessayez lorsque le stockage sera disponible. Les exports ne contiennent pas la séance en cours.',
+    'workout.trySave':'Réessayer d’enregistrer',
+    'workout.draftTitle':'Brouillon non enregistré',
+    'workout.draftBody':'Cet appareil n’a pas pu enregistrer le dernier brouillon. Gardez cet onglet ouvert : un rechargement peut effacer les dernières saisies.',
+    'workout.storeActive':'Cet appareil a refusé un enregistrement. Gardez cet onglet ouvert : l’export contient le journal, pas la séance en cours.'
+  },
+  es: {
+    'workout.activePlan':'Termina o descarta la sesión activa antes de iniciar otra.',
+    'workout.skipNext':'Omitir la siguiente serie',
+    'workout.removeConfirm':'¿Quitar esta serie? Sus valores introducidos o registrados se borrarán de esta sesión.',
+    'workout.discardConfirm':'¿Descartar esta sesión? Se borrarán todos sus datos introducidos y registrados.',
+    'workout.discardFailed':'No se pudo borrar el borrador. La sesión sigue abierta.',
+    'workout.subKeep':'Las series introducidas y las notas permanecen en este ejercicio. Las series sin empezar pasan al sustituto.',
+    'workout.subAdd':'Las series introducidas y las notas permanecen en este ejercicio. El sustituto comienza con una serie nueva.',
+    'workout.subKept':'Trabajo anterior conservado',
+    'workout.finishUnstored':'Algunos datos no se guardarán: series sin completar u omitidas, o notas sin una serie guardada. ¿Terminar de todos modos?',
+    'workout.finishFailedTitle':'Sesión sin guardar',
+    'workout.finishFailedBody':'Tu sesión sigue abierta. Mantén esta pestaña abierta y vuelve a guardar cuando haya almacenamiento disponible. La exportación no incluye la sesión activa.',
+    'workout.trySave':'Volver a guardar',
+    'workout.draftTitle':'Borrador sin guardar',
+    'workout.draftBody':'El dispositivo no pudo guardar el último borrador. Mantén esta pestaña abierta: al recargar podrías perder las últimas entradas.',
+    'workout.storeActive':'El dispositivo rechazó un guardado. Mantén esta pestaña abierta; la exportación incluye el registro, no la sesión activa.'
+  },
+  de: {
+    'workout.activePlan':'Beende oder verwirf die aktive Einheit, bevor du eine neue startest.',
+    'workout.skipNext':'Nächsten Satz überspringen',
+    'workout.removeConfirm':'Diesen Satz entfernen? Seine eingegebenen oder erfassten Werte werden aus dieser Einheit gelöscht.',
+    'workout.discardConfirm':'Diese Einheit verwerfen? Alle eingegebenen und erfassten Daten darin werden gelöscht.',
+    'workout.discardFailed':'Der Entwurf konnte nicht gelöscht werden. Die Einheit bleibt offen.',
+    'workout.subKeep':'Eingegebene Sätze und Notizen bleiben bei dieser Übung. Noch nicht begonnene Sätze gehen an die Ersatzübung.',
+    'workout.subAdd':'Eingegebene Sätze und Notizen bleiben bei dieser Übung. Die Ersatzübung beginnt mit einem neuen Satz.',
+    'workout.subKept':'Bisherige Arbeit behalten',
+    'workout.finishUnstored':'Einige Eingaben werden nicht gespeichert: unvollständige oder übersprungene Sätze und Notizen ohne gespeicherten Satz. Trotzdem beenden?',
+    'workout.finishFailedTitle':'Einheit nicht gespeichert',
+    'workout.finishFailedBody':'Deine Einheit bleibt offen. Lass diesen Tab geöffnet und versuche erneut zu speichern, sobald Speicher verfügbar ist. Exporte enthalten keine aktive Einheit.',
+    'workout.trySave':'Erneut speichern',
+    'workout.draftTitle':'Einheitsentwurf nicht gespeichert',
+    'workout.draftBody':'Das Gerät konnte den neuesten Entwurf nicht speichern. Lass diesen Tab offen; beim Neuladen können letzte Eingaben verloren gehen.',
+    'workout.storeActive':'Das Gerät hat das Speichern abgelehnt. Lass diesen Tab offen; der Export enthält das Tagebuch, nicht die aktive Einheit.'
+  },
+  it: {
+    'workout.activePlan':'Termina o annulla la sessione attiva prima di avviarne un’altra.',
+    'workout.skipNext':'Salta la prossima serie',
+    'workout.removeConfirm':'Rimuovere questa serie? I valori inseriti o registrati verranno eliminati dalla sessione.',
+    'workout.discardConfirm':'Annullare questa sessione? Tutti i dati inseriti e registrati verranno eliminati.',
+    'workout.discardFailed':'Impossibile eliminare la bozza. La sessione resta aperta.',
+    'workout.subKeep':'Le serie inserite e le note restano associate a questo esercizio. Le serie non iniziate passano al sostituto.',
+    'workout.subAdd':'Le serie inserite e le note restano associate a questo esercizio. Il sostituto inizia con una nuova serie.',
+    'workout.subKept':'Lavoro precedente conservato',
+    'workout.finishUnstored':'Alcuni dati non saranno salvati: serie incomplete o saltate, oppure note senza una serie salvata. Terminare comunque?',
+    'workout.finishFailedTitle':'Sessione non salvata',
+    'workout.finishFailedBody':'La sessione è ancora aperta. Tieni aperta questa scheda e riprova a salvare quando lo spazio sarà disponibile. Le esportazioni non includono la sessione attiva.',
+    'workout.trySave':'Riprova a salvare',
+    'workout.draftTitle':'Bozza non salvata',
+    'workout.draftBody':'Il dispositivo non ha potuto salvare l’ultima bozza. Tieni aperta questa scheda: ricaricandola potresti perdere le ultime voci.',
+    'workout.storeActive':'Il dispositivo ha rifiutato un salvataggio. Tieni aperta questa scheda: l’esportazione include il registro, non la sessione attiva.'
+  },
+  nl: {
+    'workout.activePlan':'Rond de actieve sessie af of verwerp die voordat je een andere start.',
+    'workout.skipNext':'Volgende set overslaan',
+    'workout.removeConfirm':'Deze set verwijderen? De ingevoerde of vastgelegde waarden worden uit deze sessie gewist.',
+    'workout.discardConfirm':'Deze sessie verwerpen? Alle ingevoerde en vastgelegde gegevens worden gewist.',
+    'workout.discardFailed':'Het concept kon niet worden verwijderd. De sessie blijft open.',
+    'workout.subKeep':'Ingevoerde sets en notities blijven bij deze oefening. Nog niet begonnen sets gaan naar de vervanger.',
+    'workout.subAdd':'Ingevoerde sets en notities blijven bij deze oefening. De vervanger begint met één nieuwe set.',
+    'workout.subKept':'Eerder werk behouden',
+    'workout.finishUnstored':'Sommige gegevens worden niet opgeslagen: onvoltooide of overgeslagen sets en notities zonder opgeslagen set. Toch afronden?',
+    'workout.finishFailedTitle':'Sessie niet opgeslagen',
+    'workout.finishFailedBody':'Je sessie blijft open. Houd dit tabblad open en probeer opnieuw op te slaan wanneer opslag beschikbaar is. Exports bevatten geen actieve sessie.',
+    'workout.trySave':'Opnieuw opslaan',
+    'workout.draftTitle':'Sessieconcept niet opgeslagen',
+    'workout.draftBody':'Dit apparaat kon het nieuwste concept niet opslaan. Houd dit tabblad open; bij herladen kunnen recente invoeren verloren gaan.',
+    'workout.storeActive':'Dit apparaat weigerde een opslag. Houd dit tabblad open; een export bevat het logboek, niet de actieve sessie.'
+  },
+  ar: {
+    'workout.activePlan':'أنهِ الحصة الجارية أو ألغها قبل بدء حصة أخرى.',
+    'workout.skipNext':'تخطي المجموعة التالية',
+    'workout.removeConfirm':'هل تريد إزالة هذه المجموعة؟ ستُحذف قيمها المدخلة أو المسجّلة من هذه الحصة.',
+    'workout.discardConfirm':'هل تريد إلغاء هذه الحصة؟ ستُحذف كل البيانات المدخلة والمسجّلة فيها.',
+    'workout.discardFailed':'تعذّر حذف المسودة. لا تزال الحصة مفتوحة.',
+    'workout.subKeep':'تبقى المجموعات المدخلة والملاحظات مع هذا التمرين. تنتقل المجموعات التي لم تبدأ إلى البديل.',
+    'workout.subAdd':'تبقى المجموعات المدخلة والملاحظات مع هذا التمرين. يبدأ البديل بمجموعة جديدة واحدة.',
+    'workout.subKept':'تم الاحتفاظ بالعمل السابق',
+    'workout.finishUnstored':'لن تُحفظ بعض البيانات المدخلة: المجموعات غير المكتملة أو المتخطاة، والملاحظات دون مجموعة محفوظة. هل تريد الإنهاء رغم ذلك؟',
+    'workout.finishFailedTitle':'لم تُحفظ الحصة',
+    'workout.finishFailedBody':'لا تزال حصتك مفتوحة. أبقِ هذا التبويب مفتوحاً وحاول الحفظ مجدداً عند توفر التخزين. لا يشمل التصدير الحصة الجارية.',
+    'workout.trySave':'حاول الحفظ مجدداً',
+    'workout.draftTitle':'لم تُحفظ مسودة الحصة',
+    'workout.draftBody':'تعذّر على الجهاز حفظ أحدث مسودة. أبقِ هذا التبويب مفتوحاً؛ فقد تفقد آخر المدخلات عند إعادة التحميل.',
+    'workout.storeActive':'رفض الجهاز الحفظ. أبقِ هذا التبويب مفتوحاً؛ يشمل التصدير السجل لا الحصة الجارية.'
+  }
+};
+Object.keys(WORKOUT_SAFETY).forEach(l => { if (!T[l]) T[l] = {}; Object.assign(T[l], WORKOUT_SAFETY[l]); });
+
 </script>
 <script>/* ===== js/i18n/lesson_bodies_en.js ===== */
 /* AUTO-GENERATED English source for lesson sections. Do not edit by hand. */
@@ -15184,7 +15320,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v36';
+const APP_BUILD = 'v37';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
@@ -19423,10 +19559,38 @@ function restSay(prefix){
   el.textContent = prefix + ' · ' + fmtClock(left);
 }
 
-function saveDraft(){ try{ if(ACTIVE) localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); }catch(e){} }
-function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+/* A draft is a separate write from the log. A successful profile save cannot
+   prove that the latest set survived; report and retry that write separately. */
+let DRAFT_STORAGE_FAILED = false;
+function saveDraft(){
+  if(!ACTIVE) return true;
+  let ok = false;
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); ok = true; }catch(e){}
+  DRAFT_STORAGE_FAILED = !ok;
+  if(typeof paintStoreFlag === 'function') paintStoreFlag();
+  return ok;
+}
+function clearDraft(){
+  let ok = false;
+  try{ localStorage.removeItem(DRAFT_KEY); ok = true; }catch(e){}
+  if(ok) DRAFT_STORAGE_FAILED = false;
+  if(typeof paintStoreFlag === 'function') paintStoreFlag();
+  return ok;
+}
 function loadDraft(){
-  try{ const raw = localStorage.getItem(DRAFT_KEY); if(raw){ ACTIVE = JSON.parse(raw); return true; } }catch(e){}
+  try{
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if(!raw) return false;
+    const draft = JSON.parse(raw);
+    /* If a completed log landed but removing its draft failed, don't reopen
+       the same workout or allow it to be recorded twice after a restart. */
+    if(draft && draft.startedAt != null && !LOAD_FAILED &&
+       (getState().sessions || []).some(s => s.startedAt === draft.startedAt)){
+      clearDraft(); return false;
+    }
+    ACTIVE = draft;
+    return !!ACTIVE;
+  }catch(e){}
   return false;
 }
 
@@ -21469,7 +21633,7 @@ function finishOnboarding(){
                    customise sets/order/exercises/rest, or launch any day
      2. ACTIVE   — focused gym-floor HUD with live clock, tabular mode-aware
                    set rows, mid-session exercise addition & completion summary
-     3. LIBRARY  — searchable, multi-facet 84-exercise atlas with muscle
+     3. LIBRARY  — searchable, multi-facet exercise atlas with muscle
                    contribution bars, logging modes, PRs & 1-tap add to plan
 
    Preserves 100% of schema v3, deterministic progression, planned-vs-actual
@@ -21552,6 +21716,7 @@ function formatElapsed(ms){
 /* ----------------------------------------------------------- sub-navigation */
 function sessionSubnavHtml(){
   const cur = (ACTIVE && SESSION_SUB === 'plan') ? 'live' : SESSION_SUB;
+  const planSelected = cur === 'plan' || cur === 'plan-peek';
   let h = '<div class="subnav" data-subnav="session" role="tablist" aria-label="' + esc(t('nav.session')) + '">' +
           '<i class="subnav-ind" hidden></i>';
   if(ACTIVE){
@@ -21559,12 +21724,11 @@ function sessionSubnavHtml(){
          '" class="subnav-btn ' + (cur==='live'?'on':'') + '" data-act="setSessionSub" data-a1="live">' +
          esc(t('plan.tabActive')) + '<span class="subnav-cnt" aria-hidden="true">●</span></button>';
   }
-  h += '<button type="button" role="tab" aria-selected="' + (cur==='plan' && !ACTIVE ? 'true' : (cur==='plan'?'true':'false')) +
-       '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) + '" data-act="setSessionSub" data-a1="' + (ACTIVE ? 'plan-peek' : 'plan') + '">' +
+  h += '<button type="button" role="tab" aria-selected="' + (planSelected?'true':'false') +
+       '" class="subnav-btn ' + (planSelected?'on':'') + '" data-act="setSessionSub" data-a1="' + (ACTIVE ? 'plan-peek' : 'plan') + '">' +
        esc(t('plan.tabPlan')) + '</button>';
-  h += '<button type="button" role="tab" aria-selected="' + (cur==='library'?'true':'false') +
-       '" class="subnav-btn ' + (cur==='library'?'on':'') + '" data-act="setSessionSub" data-a1="library">' +
-       esc(t('plan.tabLibrary')) + '<span class="subnav-cnt" aria-hidden="true">' + EX.length + '</span></button>';
+  /* Library already has a primary destination. Repeating it here clipped the
+     last tab on phones and made the two workout states harder to distinguish. */
   h += '</div>';
   return h;
 }
@@ -21717,16 +21881,19 @@ function renderWorkoutPlanner(){
   }
 
   h += '<div class="row">' +
-       '<button class="btn" data-act="startSession" data-a1="' + selected.id + '">' +
-       esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>' +
+       (ACTIVE
+         ? '<button class="btn" data-act="go" data-a1="session">' + esc(t('plan.resumeLive')) + '</button>'
+         : '<button class="btn" data-act="startSession" data-a1="' + selected.id + '">' +
+           esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>') +
        '<button class="btn quiet sm" data-act="togglePlanEdit" aria-pressed="' + (PLAN_EDIT?'true':'false') + '">' +
        esc(PLAN_EDIT ? t('btn.done') : t('plan.customize')) + '</button></div>' +
+       (ACTIVE ? '<p class="hint mt-2 mb-0">' + esc(t('workout.activePlan')) + '</p>' : '') +
        '<details class="dis" data-remember="plan-options"><summary><span class="dis-t">' +
        esc(t('journey.moreOptions')) + '</span></summary><div class="row mt-2">' +
        '<button class="btn quiet sm" data-act="openAddExerciseSheet" data-a1="plan" data-a2="' + selected.id + '">+ ' +
        esc(t('plan.addEx')) + '</button>' +
-       '<button class="btn quiet sm" data-act="startCustomSession">' +
-       esc(t('plan.custom')) + '</button>' +
+       (!ACTIVE ? '<button class="btn quiet sm" data-act="startCustomSession">' +
+         esc(t('plan.custom')) + '</button>' : '') +
        '<button class="btn quiet sm" data-act="openPrintCard" data-a1="' + selected.id + '">' +
        esc(t('pa.button')) + '</button>' +
        '<button class="btn quiet sm" data-act="go" data-a1="profile">' + esc(t('prog.change')) + '</button>' +
@@ -21971,6 +22138,9 @@ function addExerciseToActive(exId){
   render();
 }
 function startCustomSession(){
+  /* There is one recoverable draft. Never replace it with another workout,
+     even if a stale button, shortcut or rapid second tap reaches this handler. */
+  if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   const firstPool = allowedExercises(s.profile || {});
   const seedEx = firstPool[0] || EX[0];
@@ -22078,15 +22248,28 @@ function setExNote(ei, val){
   saveDraft();
 }
 
-/* Which exercise blocks the user has opened or closed by hand. Keyed by exercise
-   id so it survives the re-render a keystroke in a weight field causes.
-
-   One exception, and it is the whole point: when the session moves on, the new
-   current exercise opens whether or not it had been closed earlier. A stale
-   "closed" on the lift you are now supposed to do would hide the work. */
-let EX_OPEN = {};
+/* Remember the actual exercise/set objects, not their names or positions: a
+   workout can contain the same movement twice, and a substitution can insert
+   a row. Each disclosure then stays attached to the work it describes. */
+let EX_OPEN = new WeakMap();
+let EX_OPTIONS_OPEN = new WeakMap();
+let SET_OPTIONS_OPEN = new WeakMap();
 let EX_WAS_CURRENT = null;
-function exOpen(id, open){ EX_OPEN[id] = open; }
+function exOpen(id, open, index){
+  const list = ACTIVE && ACTIVE.exercises || [];
+  const e = (Number.isInteger(index) && list[index] && list[index].id === id)
+    ? list[index] : list.find(x => x.id === id);
+  if(e) EX_OPEN.set(e, open);
+}
+function exerciseOptionsOpen(ei, open){
+  const e = ACTIVE && ACTIVE.exercises[ei];
+  if(e) EX_OPTIONS_OPEN.set(e, open);
+}
+function setOptionsOpen(ei, si, open){
+  const e = ACTIVE && ACTIVE.exercises[ei];
+  const st = e && e.sets[si];
+  if(st) SET_OPTIONS_OPEN.set(st, open);
+}
 
 function skipExercise(ei){
   const e = ACTIVE && ACTIVE.exercises[ei];
@@ -22141,10 +22324,20 @@ function renderLive(){
        '</span><span class="track"><i style="width:' + (total ? Math.round(logged / total * 100) : 0) + '%"></i></span></div>';
   h += '</div>';
 
-  /* Exercise panels */
-  /* the exercise the session is now on always presents itself */
-  const curId = (curEi >= 0 && ACTIVE.exercises[curEi]) ? ACTIVE.exercises[curEi].id : null;
-  if(curId && curId !== EX_WAS_CURRENT){ delete EX_OPEN[curId]; EX_WAS_CURRENT = curId; }
+  if(FINISH_SAVE_FAILED){
+    h += '<div class="banner alert workout-save-warning" role="alert"><div>' +
+         '<strong>' + esc(t('workout.finishFailedTitle')) + '</strong>' +
+         '<p class="body-sm mt-1">' + esc(t('workout.finishFailedBody')) + '</p>' +
+         '<button class="btn quiet sm" data-act="finishSession">' + esc(t('workout.trySave')) + '</button>' +
+         '</div></div>';
+  }
+
+  /* When work advances, the new current exercise always presents itself. */
+  const currentExercise = curEi >= 0 ? ACTIVE.exercises[curEi] : null;
+  if(currentExercise && currentExercise !== EX_WAS_CURRENT){
+    EX_OPEN.delete(currentExercise);
+    EX_WAS_CURRENT = currentExercise;
+  }
 
   ACTIVE.exercises.forEach((e, ei) => {
     const ex = EX_BY_ID[e.id]; if(!ex) return;
@@ -22163,13 +22356,12 @@ function renderLive(){
     const skippedHere = e.sets.filter(st => st.skipped).length;
     /* An exercise the user opened stays open across the re-render every keystroke
        causes; otherwise looking ahead at the next lift would close itself. */
-    const openHere = (e.id in EX_OPEN) ? EX_OPEN[e.id] : isCurrent;
+    const openHere = EX_OPEN.has(e) ? EX_OPEN.get(e) : isCurrent;
     h += '<details class="panel ex-block' + (isCurrent ? ' is-current' : '') + '"' +
          (openHere ? ' open' : '') + '>';
-    /* The state is recorded from the click, not from `toggle`: a `toggle` event
-       also fires for the element the page just created, which would freeze
-       "current" into "always open" after the first re-render. */
-    h += '<summary class="ex-block-sum" data-act="exOpen" data-a1="' + e.id + '" data-t2="o"><span class="ex-block-hd">' +
+    /* Record the intended click state, not the initial `toggle` event that a
+       freshly rendered <details> can dispatch on its own. */
+    h += '<summary class="ex-block-sum" data-act="exOpen" data-a1="' + e.id + '" data-t2="o" data-a3="' + ei + '" data-t3="l"><span class="ex-block-hd">' +
          (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(ex) : '') +
          '<span class="mono ex-block-idx">' + String(ei+1).padStart(2,'0') + '</span>' +
          '<h2 class="sess-ex-h">' + esc(t('ex.'+e.id)) + '</h2>' +
@@ -22211,11 +22403,13 @@ function renderLive(){
          '<input id="exnote_' + ei + '" type="text" value="' + esc(e.note || '') +
          '" placeholder="' + esc(t('log.notePlaceholder')) + '" data-in="setExNote" data-a1="' + ei + '" data-t1="l" data-t2="v"></div>';
 
-    h += '<details class="dis ex-opts"><summary><span class="dis-t">' +
+    const canSkip = e.sets.some(st => !st.skipped && !st.committed);
+    h += '<details class="dis ex-opts"' + (EX_OPTIONS_OPEN.get(e) ? ' open' : '') +
+         '><summary data-act="exerciseOptionsOpen" data-a1="' + ei + '" data-t1="l" data-t2="o"><span class="dis-t">' +
          esc(t('log.exOptions')) + '</span></summary><div class="row mt-2">';
     h += '<button class="btn quiet sm" data-act="addSet" data-a1="' + ei + '" data-t1="l">' + esc(t('log.addSet')) + '</button>';
-    h += '<button class="btn quiet sm" data-act="skipSet" data-a1="' + ei + '" data-t1="l">' + esc(t('session.skipset')) + '</button>';
-    h += '<button class="btn quiet sm" data-act="skipExercise" data-a1="' + ei + '" data-t1="l">' + esc(t('log.skipEx')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="skipSet" data-a1="' + ei + '" data-t1="l"' + (canSkip ? '' : ' disabled') + '>' + esc(t('workout.skipNext')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="skipExercise" data-a1="' + ei + '" data-t1="l"' + (canSkip ? '' : ' disabled') + '>' + esc(t('log.skipEx')) + '</button>';
     h += '<button class="btn quiet sm" data-act="openSub" data-a1="' + ei + '" data-t1="l">' + esc(t('session.sub')) + '</button>';
     h += '<button class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '" ' +
          'aria-label="' + esc(t('exd.open') + ' — ' + t('ex.' + e.id)) + '">' + esc(t('exd.open')) + '</button>';
@@ -22289,7 +22483,8 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
   }
   h += '</div>';
   if(!locked){
-    h += '<details class="dis inline set-opts"><summary><span class="dis-t">' +
+    h += '<details class="dis inline set-opts"' + (SET_OPTIONS_OPEN.get(set) ? ' open' : '') +
+         '><summary data-act="setOptionsOpen" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-t3="o"><span class="dis-t">' +
          esc(t('log.setOptions')) + '</span></summary><div class="row mt-1">' +
          '<button class="btn quiet sm" data-act="toggleWarmup" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" aria-pressed="' +
          (set.warmup ? 'true' : 'false') + '">' + esc(t('log.warmup')) + '</button>' +
@@ -22387,6 +22582,7 @@ function emptyHintFor(spec, missing){
 /* Starts the recommended session when called with no args, or a specific split
    day when given its plan session id. */
 function startSession(dayId){
+  if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   let chosen = null;
   if(dayId && s.plan && s.plan.sessions){
@@ -22490,16 +22686,17 @@ function logSet(ei, si){
 
 function skipSet(ei){
   const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
-  const i = e.sets.findIndex(x => !x.skipped);
+  /* Skip the next unfinished set, never a set already logged. */
+  const i = e.sets.findIndex(x => !x.skipped && !x.committed);
   if(i < 0) return;
   e.sets[i].skipped = true;
-  e.sets[i].committed = false;
   saveDraft(); render();
 }
 function unskipSet(ei, si){
   const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
   const set = e.sets[si]; if(!set) return;
-  set.skipped = false; set.committed = false; set.entered = false;
+  /* Skipping is reversible; do not rewrite any existing status or value. */
+  set.skipped = false;
   saveDraft(); render();
 }
 function toggleWarmup(ei, si){
@@ -22517,61 +22714,111 @@ function addSet(ei){
   e.sets.push(set);
   saveDraft(); render();
 }
+/* Optional RIR and explicit set options are also user input. They do not mark
+   a planned set as performed, but must survive substitution and removal. Look
+   at the values themselves so older saved drafts get the same protection. */
+function setHasWork(st){
+  return !!(st && (st.entered || st.committed || st.warmup || st.lrSplit ||
+    (st.rir !== '' && st.rir != null)));
+}
 function removeSet(ei, si){
-  const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
+  const e = ACTIVE && ACTIVE.exercises[ei]; if(!e || !e.sets[si]) return;
   if(e.sets.length <= 1){ toast(t('log.needOneSet')); return; }
+  if(setHasWork(e.sets[si]) && !confirm(t('workout.removeConfirm'))) return;
   e.sets.splice(si, 1);
   saveDraft(); render();
 }
 
+function exerciseHasWork(e){
+  return !!(e && ((e.note && String(e.note).trim()) || e.sets.some(setHasWork)));
+}
+function unstartedSets(e){
+  return e.sets.filter(st => st && !st.skipped && !setHasWork(st));
+}
 function openSub(ei){
-  const subs = substitutesFor(getState().profile, ACTIVE.exercises[ei].id);
+  const current = ACTIVE && ACTIVE.exercises[ei]; if(!current) return;
+  const subs = substitutesFor(getState().profile, current.id);
+  const workNote = exerciseHasWork(current)
+    ? '<p class="body-sm mb-3">' + esc(t(unstartedSets(current).length ? 'workout.subKeep' : 'workout.subAdd')) + '</p>' : '';
   sheet(t('session.sub'), subs.length ? (
-    '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p><div class="tiles">' +
+    '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p>' + workNote + '<div class="tiles">' +
     subs.map(e => '<button class="tile" data-act="applySub" data-a1="' + ei + '" data-t1="l" data-a2="' + e.id + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('ex.'+e.id)) + '</span><span class="d">' +
       esc(e.m.map(function(x){ return t('mg.'+x[0]); }).join(', ')) + '</span></span></button>').join('') + '</div>')
     : emptyState('session.nosub','session.nosubBody','inbox'));
 }
 function applySub(ei, id){
-  const ex = EX_BY_ID[id]; if(!ex) return;
-  const keep = ACTIVE.exercises[ei].prescribed;
-  ACTIVE.exercises[ei] = newActiveExercise({ id:id, sets:keep, reps:ex.reps.slice(), rir:ex.rir });
+  const ex = EX_BY_ID[id], current = ACTIVE && ACTIVE.exercises[ei];
+  if(!ex || !current || current.id === id) return;
+  const untouched = unstartedSets(current);
+  const keepWork = exerciseHasWork(current);
+  const replacement = newActiveExercise({ id:id, sets:Math.max(1, untouched.length), reps:ex.reps.slice(), rir:ex.rir });
+  if(keepWork){
+    /* Keep actual/partially entered work and notes on the exercise they belong
+       to. Only genuinely untouched slots move to the new movement. */
+    untouched.forEach(st => { st.skipped = true; });
+    ACTIVE.exercises.splice(ei + 1, 0, replacement);
+  } else {
+    ACTIVE.exercises[ei] = replacement;
+  }
   saveDraft(); closeSheet(); render();
+  if(keepWork) toast(t('workout.subKept'), 'ok');
+  const blocks = document.querySelectorAll('#screenBody .ex-block > summary');
+  const target = blocks[keepWork ? ei + 1 : ei];
+  if(target && target.focus) target.focus();
 }
 function discardSession(){
-  if(!confirm(t('dlg.confirm'))) return;
-  ACTIVE = null; SESSION_SUB = 'plan';
-  clearDraft(); stopRest(); syncLiveClock();
+  if(!ACTIVE || !confirm(t('workout.discardConfirm'))) return;
+  /* If storage refuses removal, do not pretend the old draft was discarded. */
+  if(!clearDraft()){ toast(t('workout.discardFailed'), 'alert'); return; }
+  ACTIVE = null; SESSION_SUB = 'plan'; FINISH_SAVE_FAILED = false;
+  stopRest(); syncLiveClock();
   go('session');
 }
 
 let FINISHING = false;
+let FINISH_SAVE_FAILED = false;
 function finishSession(){
   if(!ACTIVE || FINISHING) return;
   const s = getState();
   const startedAt = ACTIVE.startedAt;
   if(s.sessions.some(x => x.startedAt === startedAt)){
-    toast(t('log.alreadySaved')); ACTIVE = null; SESSION_SUB = 'plan'; clearDraft(); go('progress'); return;
+    /* An in-memory record is not proof of a successful write. */
+    if(LOAD_FAILED || (STORAGE_FAILED && !saveState())){
+      FINISH_SAVE_FAILED = true; render(); return;
+    }
+    toast(t('log.alreadySaved')); ACTIVE = null; SESSION_SUB = 'plan';
+    FINISH_SAVE_FAILED = false; clearDraft(); go('progress'); return;
   }
   const exercises = [], loggable = [];
+  let omittedWork = false;
   ACTIVE.exercises.forEach(e => {
-    const ex = EX_BY_ID[e.id]; if(!ex) return;
+    const ex = EX_BY_ID[e.id];
+    const cleanNote = e.note && String(e.note).trim() ? String(e.note).trim().slice(0, 240) : '';
+    if(!ex){
+      if(cleanNote || (e.sets || []).some(setHasWork)) omittedWork = true;
+      return;
+    }
     const sets = [];
     e.sets.forEach(x => {
-      if(!x || x.skipped) return;
-      if(!(x.committed || x.entered)) return;
-      if(!isSetComplete(x, ex)) return;
+      if(!x) return;
+      if(x.skipped || !(x.committed || x.entered)){
+        if(setHasWork(x)) omittedWork = true;
+        return;
+      }
+      if(!isSetComplete(x, ex)){ omittedWork = true; return; }
       sets.push(normaliseLoggedSet(x, ex));
     });
-    if(!sets.length) return;
-    const cleanNote = e.note && String(e.note).trim() ? String(e.note).trim().slice(0, 240) : '';
+    if(!sets.length){ if(cleanNote) omittedWork = true; return; }
     const entry = { id:e.id, sets:sets, plan:e.plan || null };
     if(cleanNote) entry.note = cleanNote;
     loggable.push(entry);
     exercises.push(entry);
   });
   if(!exercises.length){ toast(emptySessionMessage()); return; }
+  /* A log cannot represent unfinished work. Let the person return to it or
+     explicitly choose to finish without it, rather than silently dropping it. */
+  if(omittedWork && !confirm(t('workout.finishUnstored'))) return;
 
   FINISHING = true;
   const nowFinish = Date.now();
@@ -22580,6 +22827,17 @@ function finishSession(){
   const durationMs = activeElapsedMs();
   const rec = addSession({ planId:ACTIVE.planId, name:ACTIVE.name, startedAt:startedAt,
                            exercises:exercises, durationMs:durationMs });
+  if(LOAD_FAILED || STORAGE_FAILED){
+    /* The append was only in memory. Roll it back and retain the draft, so a
+       retry cannot duplicate a session and a reload can still restore the work. */
+    const at = s.sessions.indexOf(rec);
+    if(at >= 0) s.sessions.splice(at, 1);
+    FINISHING = false;
+    FINISH_SAVE_FAILED = true;
+    render();
+    return;
+  }
+  FINISH_SAVE_FAILED = false;
   loggable.forEach(e => updateAdaptation(s, e.id, rec.date));
 
   const records = { pr:[], baseline:[] };
@@ -22726,7 +22984,7 @@ function normaliseLoggedSet(x, ex){
 }
 
 /* ============================================================================
-   3. 84-EXERCISE ATLAS LIBRARY
+   3. EXERCISE ATLAS LIBRARY
    ========================================================================== */
 function setLibQuery(v){ LIB_QUERY = v || ''; render(); const inp = document.getElementById('libSearchInput'); if(inp){ inp.focus(); inp.setSelectionRange(LIB_QUERY.length, LIB_QUERY.length); } }
 function setLibMuscle(m){ LIB_MUSCLE = m || 'all'; render(); }
@@ -25752,7 +26010,9 @@ function paintStoreFlag(){
   if(!el) return;
   const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
   const damaged = (typeof LOAD_FAILED !== 'undefined') && LOAD_FAILED;
-  if(!failing && !damaged){
+  const draftFailing = (typeof ACTIVE !== 'undefined' && ACTIVE &&
+                        typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED);
+  if(!failing && !damaged && !draftFailing){
     if(!el.hidden){ el.hidden = true; }
     cancelStoreRetry();
     return;
@@ -25764,16 +26024,21 @@ function paintStoreFlag(){
     const newer = (typeof LOAD_NEWER !== 'undefined') && LOAD_NEWER;
     if(tEl) tEl.textContent = t('app.load.title');
     if(bEl) bEl.textContent = newer ? t('app.load.newer') : t('app.load.body');
-    if(xEl){ xEl.textContent = t('app.load.get'); xEl.onclick = keepDamagedRecord; }
-  } else {
+    if(xEl) xEl.textContent = t('app.load.get');
+  } else if(failing){
     if(tEl) tEl.textContent = t('app.store.title');
-    if(bEl) bEl.textContent = t('app.store.body');
-    if(xEl){ xEl.textContent = t('you.export'); xEl.onclick = doExport; }
+    /* The ordinary export contains the log, not the active draft. Say so. */
+    if(bEl) bEl.textContent = ACTIVE ? t('workout.storeActive') : t('app.store.body');
+    if(xEl) xEl.textContent = t('you.export');
+  } else {
+    if(tEl) tEl.textContent = t('workout.draftTitle');
+    if(bEl) bEl.textContent = t('workout.draftBody');
+    if(xEl) xEl.textContent = t('btn.retry');
   }
   el.hidden = false;
   /* A refused write is retried; an unreadable one is not, because the retry would
      be the overwrite. There the only way forward is the button. */
-  if(failing) scheduleStoreRetry();
+  if(failing || draftFailing) scheduleStoreRetry();
 }
 
 /* ---------------------------------------------------------- a deploy landed
@@ -25845,10 +26110,16 @@ function keepDamagedRecord(){
    visibility events cover a browser that was suspended and came back, and a
    successful write anywhere cancels the loop. */
 let storeRetryTimer = null;
+function storeNeedsRetry(){
+  return !!((typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) ||
+    (typeof ACTIVE !== 'undefined' && ACTIVE && typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED));
+}
 function retryStore(){
-  if(!(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED)) return false;
-  saveState();
-  return !STORAGE_FAILED;
+  if(!storeNeedsRetry()) return false;
+  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) saveState();
+  if(typeof ACTIVE !== 'undefined' && ACTIVE &&
+     typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED) saveDraft();
+  return !storeNeedsRetry();
 }
 function cancelStoreRetry(){
   if(storeRetryTimer){ clearTimeout(storeRetryTimer); storeRetryTimer = null; }
@@ -25857,7 +26128,7 @@ function scheduleStoreRetry(){
   if(storeRetryTimer) return;
   storeRetryTimer = setTimeout(function tick(){
     storeRetryTimer = null;
-    if(typeof STORAGE_FAILED === 'undefined' || !STORAGE_FAILED) return;  /* nothing to retry */
+    if(!storeNeedsRetry()) return;
     if(retryStore()) return;          /* written — the strip is already gone */
     scheduleStoreRetry();
   }, 15000);

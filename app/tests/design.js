@@ -1372,7 +1372,7 @@ group('8r. The masthead asks nothing; the first screen asks one thing');
       top.length > 0 && !/data-act=/.test(top) && !/<button|<a\s|<select/.test(top),
       top.replace(/\s+/g, ' ').slice(0, 70));
   chk('the only buttons the header owns are the two recovery offers, both hidden',
-      acts.length === 2 && acts.indexOf('data-act="doExport"') >= 0 &&
+      acts.length === 2 && acts.indexOf('data-act="storeRecovery"') >= 0 &&
       acts.indexOf('data-act="reloadApp"') >= 0 &&
       /id="storeFlag"[^>]*hidden/.test(hdr) && /id="updateFlag"[^>]*hidden/.test(hdr),
       acts.join(' ') || 'none');

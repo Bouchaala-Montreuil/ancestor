@@ -67,11 +67,19 @@ and no two regions overlap beyond tolerance.
 
 | Section | Contents |
 |---|---|
-| **Today** | Training decision (TRAIN / MODIFY / REST) with reasons, availability estimate, anatomy, performance metrics, 7-day timeline |
-| **Session** | Fast live logging: one action per set, large touch targets, rest timer, draft survives interruption |
-| **Body** | Interactive anatomy and the per-muscle record |
-| **Progress** | Overview metrics, load and estimated-1RM charts, volume by muscle group, session log, personal records |
-| **Profile** | Goal, equipment, limitations, style, units, planning, declared sleep, export / import / erase, About |
+| **Today** | Training decision with reasons, availability estimate and a path to the next session |
+| **Train** | Workout plan and live logging, with a local draft and rest timer |
+| **Progress** | Charts, records and session log, plus Body and Science |
+| **Library** | Searchable exercise atlas and exercise details |
+| **Me** | Goals, equipment, preferences, declared sleep, export / import / erase, About |
+
+Only one workout draft can be active. The plan can be viewed without replacing
+it; finish or explicitly discard it before starting another. Substitutions keep
+entered work on the original exercise. Finishing asks before omitting unfinished
+or skipped entries or notes without a saved set. If a draft or final log write
+fails, the app warns and offers a retry; an export contains the log, **not** an
+active workout. A failed draft write can leave the stored draft older than what
+is on screen, so keep the tab open until it is saved.
 
 ---
 
@@ -95,7 +103,7 @@ See [`android/README.md`](android/README.md).
 
 ## Science Hub & transparency
 
-ANCESTOR explains itself. A sixth section, **Science**, teaches how the body adapts
+ANCESTOR explains itself. **Science**, within Progress, teaches how the body adapts
 and connects every explanation to the user's own records and to sourced evidence.
 
 - **11 lessons** across 10 categories — muscle physiology, energy and fat
@@ -202,10 +210,12 @@ node tests/run.js                  # 146 engine / i18n tests
 node tests/inclusive.js            #  70 migration / a11y / locale tests
 node tests/personas.js             #  73 persona journey checks
 node tests/science.js              # 130 Science Hub / evidence / transparency tests
-node tests/logic.js                # 138 exercise-aware logging regression tests
+node tests/logic.js                # 156 exercise-aware logging and workout-safety checks
 node tests/anatomy.js              #  64 real 3D asset and selection tests
 node tests/print.js                #  88 the A4 sheet
-node tests/browser.js              #  93 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
+node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
+node tests/journey.js              #  39 navigation and disclosure checks in Chromium
+node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
 node tools/qa_audit.js             # scripted user-journey audit

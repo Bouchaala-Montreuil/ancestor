@@ -167,6 +167,12 @@ ACT('deleteEditedSet',              el => deleteEditedSet(arg(el, 1)));
 ACT('deleteWholeSession',           el => deleteWholeSession());
 ACT('doErase',                      el => doErase());
 ACT('doExport',                     el => doExport());
+/* The header's single recovery control changes purpose with the failure. */
+ACT('storeRecovery',                () => {
+  if(LOAD_FAILED) keepDamagedRecord();
+  else if(STORAGE_FAILED) doExport();
+  else if(ACTIVE && DRAFT_STORAGE_FAILED) retryStore();
+});
 ACT('doImport',                     el => doImport(arg(el, 1)));
 ACT('editField',                    el => editField(arg(el, 1), arg(el, 2), arg(el, 3)));
 ACT('finishOnboarding',             el => finishOnboarding());
@@ -229,7 +235,9 @@ ACT('applySub',                     el => applySub(arg(el, 1), arg(el, 2)));
 ACT('closeCompletion',              el => closeCompletion(arg(el, 1)));
 ACT('copyPrevToExercise',           el => copyPrevToExercise(arg(el, 1)));
 ACT('discardSession',               el => discardSession());
-ACT('exOpen',                       el => exOpen(arg(el, 1), arg(el, 2)));
+ACT('exOpen',                       el => exOpen(arg(el, 1), arg(el, 2), arg(el, 3)));
+ACT('exerciseOptionsOpen',          el => exerciseOptionsOpen(arg(el, 1), arg(el, 2)));
+ACT('setOptionsOpen',               el => setOptionsOpen(arg(el, 1), arg(el, 2), arg(el, 3)));
 ACT('filterAddExSheet',             el => filterAddExSheet(arg(el, 1)));
 ACT('finishSession',                el => finishSession());
 ACT('movePlanExercise',             el => movePlanExercise(arg(el, 1), arg(el, 2), arg(el, 3)));
@@ -275,5 +283,9 @@ ACT('openLessonFromSheet',          (el) => { closeSheet(); openLesson(arg(el, 1
 ACT('openMuscle',                   (el) => { selectMuscle(arg(el, 1)); go('body'); });
 ACT('openMuscleFromSheet',          (el) => { closeSheet(); selectMuscle(arg(el, 1)); go('body'); });
 ACT('setSciCatAll',                 (el) => { setSciCat('all'); setSciQuery(''); });
-ACT('setSessionSubGo',              (el) => { SESSION_SUB = arg(el, 1) || 'plan'; go('session'); });
+ACT('setSessionSubGo',              (el) => {
+  const sub = arg(el, 1) || 'plan';
+  SESSION_SUB = (ACTIVE && sub === 'plan') ? 'plan-peek' : sub;
+  go('session');
+});
 ACT('setSleepHours',                (el) => { setP('sleepHours', arg(el, 1)); const lab = document.getElementById('sl_v'); if(lab) lab.textContent = el.value; });

@@ -1115,3 +1115,44 @@ number from an earlier state of the product, and four of them were wrong.
    two stacked anatomy figures and no visible way out. It is now a bottom sheet
    with a sticky title row, a paired figure block and a Close control in reach.
 4. **The plan screen** — the only surface never audited in this phase.
+
+---
+
+## 10. Active workout: protect the work in hand
+
+A real-browser walk found that **Skip set** could skip an already logged set,
+that a second start from the plan could overwrite the active draft, and that a
+substitution could replace entered work. A refused final-log write also cleared
+the draft while displaying a completion message. These were data-loss paths,
+not new training features.
+
+- The plan preview now offers **Resume** while a workout is active. A planned or
+  custom start also checks the existing draft at the handler, and the two
+  workout-state tabs correctly announce which is selected. Library remains a
+  primary destination rather than a clipped duplicate tab.
+- **Skip next set** selects an unfinished set, not a committed one. Undo keeps
+  its entered state. Removing entered or logged values and discarding a workout
+  say what will be deleted before asking for confirmation.
+- Substitution keeps entered sets and notes attached to their original exercise;
+  untouched sets are skipped there and provisioned for the substitute. Optional
+  RIR and explicit warm-up or side choices count as user input, but do not turn
+  a prefilled target into a performed set. If no untouched sets remain, the
+  substitute gets one new set.
+- A finished log can only include complete performed sets and notes attached to
+  an exercise with such a set. If finishing would omit entered incomplete or
+  skipped work, or a note without a loggable set, a confirmation explains this.
+  Cancel keeps the draft available to fix; continuing is an explicit choice.
+- A refused final write leaves the workout open, retains the stored draft, rolls
+  back the unsaved in-memory log entry and shows a retry rather than claiming
+  success. Draft-write failures have their own persistent warning and retry.
+  The ordinary export contains the log, **not** an active workout; the warning
+  says this. If the latest draft write failed, its previous stored copy can be
+  stale, so the tab needs to stay open. A saved session with a stale leftover
+  draft is reconciled on the next boot rather than reopened as a duplicate.
+- Exercise and set disclosures remember the actual objects, so repeated
+  movements and inserted substitutes do not share an open/closed state.
+
+`tests/logic.js` covers the data paths; `tests/workout_safety.js` walks them in
+Chromium, including simulated storage refusal, reload, seven languages at
+320 px, both themes and reduced motion. This is not a physical-device, Safari,
+Firefox or assistive-technology test.

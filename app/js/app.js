@@ -151,7 +151,9 @@ function paintStoreFlag(){
   if(!el) return;
   const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
   const damaged = (typeof LOAD_FAILED !== 'undefined') && LOAD_FAILED;
-  if(!failing && !damaged){
+  const draftFailing = (typeof ACTIVE !== 'undefined' && ACTIVE &&
+                        typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED);
+  if(!failing && !damaged && !draftFailing){
     if(!el.hidden){ el.hidden = true; }
     cancelStoreRetry();
     return;
@@ -163,16 +165,21 @@ function paintStoreFlag(){
     const newer = (typeof LOAD_NEWER !== 'undefined') && LOAD_NEWER;
     if(tEl) tEl.textContent = t('app.load.title');
     if(bEl) bEl.textContent = newer ? t('app.load.newer') : t('app.load.body');
-    if(xEl){ xEl.textContent = t('app.load.get'); xEl.onclick = keepDamagedRecord; }
-  } else {
+    if(xEl) xEl.textContent = t('app.load.get');
+  } else if(failing){
     if(tEl) tEl.textContent = t('app.store.title');
-    if(bEl) bEl.textContent = t('app.store.body');
-    if(xEl){ xEl.textContent = t('you.export'); xEl.onclick = doExport; }
+    /* The ordinary export contains the log, not the active draft. Say so. */
+    if(bEl) bEl.textContent = ACTIVE ? t('workout.storeActive') : t('app.store.body');
+    if(xEl) xEl.textContent = t('you.export');
+  } else {
+    if(tEl) tEl.textContent = t('workout.draftTitle');
+    if(bEl) bEl.textContent = t('workout.draftBody');
+    if(xEl) xEl.textContent = t('btn.retry');
   }
   el.hidden = false;
   /* A refused write is retried; an unreadable one is not, because the retry would
      be the overwrite. There the only way forward is the button. */
-  if(failing) scheduleStoreRetry();
+  if(failing || draftFailing) scheduleStoreRetry();
 }
 
 /* ---------------------------------------------------------- a deploy landed
@@ -244,10 +251,16 @@ function keepDamagedRecord(){
    visibility events cover a browser that was suspended and came back, and a
    successful write anywhere cancels the loop. */
 let storeRetryTimer = null;
+function storeNeedsRetry(){
+  return !!((typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) ||
+    (typeof ACTIVE !== 'undefined' && ACTIVE && typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED));
+}
 function retryStore(){
-  if(!(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED)) return false;
-  saveState();
-  return !STORAGE_FAILED;
+  if(!storeNeedsRetry()) return false;
+  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) saveState();
+  if(typeof ACTIVE !== 'undefined' && ACTIVE &&
+     typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED) saveDraft();
+  return !storeNeedsRetry();
 }
 function cancelStoreRetry(){
   if(storeRetryTimer){ clearTimeout(storeRetryTimer); storeRetryTimer = null; }
@@ -256,7 +269,7 @@ function scheduleStoreRetry(){
   if(storeRetryTimer) return;
   storeRetryTimer = setTimeout(function tick(){
     storeRetryTimer = null;
-    if(typeof STORAGE_FAILED === 'undefined' || !STORAGE_FAILED) return;  /* nothing to retry */
+    if(!storeNeedsRetry()) return;
     if(retryStore()) return;          /* written — the strip is already gone */
     scheduleStoreRetry();
   }, 15000);

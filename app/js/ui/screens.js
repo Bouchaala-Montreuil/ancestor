@@ -883,10 +883,38 @@ function restSay(prefix){
   el.textContent = prefix + ' · ' + fmtClock(left);
 }
 
-function saveDraft(){ try{ if(ACTIVE) localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); }catch(e){} }
-function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+/* A draft is a separate write from the log. A successful profile save cannot
+   prove that the latest set survived; report and retry that write separately. */
+let DRAFT_STORAGE_FAILED = false;
+function saveDraft(){
+  if(!ACTIVE) return true;
+  let ok = false;
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); ok = true; }catch(e){}
+  DRAFT_STORAGE_FAILED = !ok;
+  if(typeof paintStoreFlag === 'function') paintStoreFlag();
+  return ok;
+}
+function clearDraft(){
+  let ok = false;
+  try{ localStorage.removeItem(DRAFT_KEY); ok = true; }catch(e){}
+  if(ok) DRAFT_STORAGE_FAILED = false;
+  if(typeof paintStoreFlag === 'function') paintStoreFlag();
+  return ok;
+}
 function loadDraft(){
-  try{ const raw = localStorage.getItem(DRAFT_KEY); if(raw){ ACTIVE = JSON.parse(raw); return true; } }catch(e){}
+  try{
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if(!raw) return false;
+    const draft = JSON.parse(raw);
+    /* If a completed log landed but removing its draft failed, don't reopen
+       the same workout or allow it to be recorded twice after a restart. */
+    if(draft && draft.startedAt != null && !LOAD_FAILED &&
+       (getState().sessions || []).some(s => s.startedAt === draft.startedAt)){
+      clearDraft(); return false;
+    }
+    ACTIVE = draft;
+    return !!ACTIVE;
+  }catch(e){}
   return false;
 }
 

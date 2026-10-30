@@ -6,7 +6,7 @@
                    customise sets/order/exercises/rest, or launch any day
      2. ACTIVE   — focused gym-floor HUD with live clock, tabular mode-aware
                    set rows, mid-session exercise addition & completion summary
-     3. LIBRARY  — searchable, multi-facet 84-exercise atlas with muscle
+     3. LIBRARY  — searchable, multi-facet exercise atlas with muscle
                    contribution bars, logging modes, PRs & 1-tap add to plan
 
    Preserves 100% of schema v3, deterministic progression, planned-vs-actual
@@ -89,6 +89,7 @@ function formatElapsed(ms){
 /* ----------------------------------------------------------- sub-navigation */
 function sessionSubnavHtml(){
   const cur = (ACTIVE && SESSION_SUB === 'plan') ? 'live' : SESSION_SUB;
+  const planSelected = cur === 'plan' || cur === 'plan-peek';
   let h = '<div class="subnav" data-subnav="session" role="tablist" aria-label="' + esc(t('nav.session')) + '">' +
           '<i class="subnav-ind" hidden></i>';
   if(ACTIVE){
@@ -96,12 +97,11 @@ function sessionSubnavHtml(){
          '" class="subnav-btn ' + (cur==='live'?'on':'') + '" data-act="setSessionSub" data-a1="live">' +
          esc(t('plan.tabActive')) + '<span class="subnav-cnt" aria-hidden="true">●</span></button>';
   }
-  h += '<button type="button" role="tab" aria-selected="' + (cur==='plan' && !ACTIVE ? 'true' : (cur==='plan'?'true':'false')) +
-       '" class="subnav-btn ' + (!ACTIVE && cur==='plan' ? 'on' : (ACTIVE && SESSION_SUB==='plan-peek' ? 'on' : '')) + '" data-act="setSessionSub" data-a1="' + (ACTIVE ? 'plan-peek' : 'plan') + '">' +
+  h += '<button type="button" role="tab" aria-selected="' + (planSelected?'true':'false') +
+       '" class="subnav-btn ' + (planSelected?'on':'') + '" data-act="setSessionSub" data-a1="' + (ACTIVE ? 'plan-peek' : 'plan') + '">' +
        esc(t('plan.tabPlan')) + '</button>';
-  h += '<button type="button" role="tab" aria-selected="' + (cur==='library'?'true':'false') +
-       '" class="subnav-btn ' + (cur==='library'?'on':'') + '" data-act="setSessionSub" data-a1="library">' +
-       esc(t('plan.tabLibrary')) + '<span class="subnav-cnt" aria-hidden="true">' + EX.length + '</span></button>';
+  /* Library already has a primary destination. Repeating it here clipped the
+     last tab on phones and made the two workout states harder to distinguish. */
   h += '</div>';
   return h;
 }
@@ -254,16 +254,19 @@ function renderWorkoutPlanner(){
   }
 
   h += '<div class="row">' +
-       '<button class="btn" data-act="startSession" data-a1="' + selected.id + '">' +
-       esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>' +
+       (ACTIVE
+         ? '<button class="btn" data-act="go" data-a1="session">' + esc(t('plan.resumeLive')) + '</button>'
+         : '<button class="btn" data-act="startSession" data-a1="' + selected.id + '">' +
+           esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>') +
        '<button class="btn quiet sm" data-act="togglePlanEdit" aria-pressed="' + (PLAN_EDIT?'true':'false') + '">' +
        esc(PLAN_EDIT ? t('btn.done') : t('plan.customize')) + '</button></div>' +
+       (ACTIVE ? '<p class="hint mt-2 mb-0">' + esc(t('workout.activePlan')) + '</p>' : '') +
        '<details class="dis" data-remember="plan-options"><summary><span class="dis-t">' +
        esc(t('journey.moreOptions')) + '</span></summary><div class="row mt-2">' +
        '<button class="btn quiet sm" data-act="openAddExerciseSheet" data-a1="plan" data-a2="' + selected.id + '">+ ' +
        esc(t('plan.addEx')) + '</button>' +
-       '<button class="btn quiet sm" data-act="startCustomSession">' +
-       esc(t('plan.custom')) + '</button>' +
+       (!ACTIVE ? '<button class="btn quiet sm" data-act="startCustomSession">' +
+         esc(t('plan.custom')) + '</button>' : '') +
        '<button class="btn quiet sm" data-act="openPrintCard" data-a1="' + selected.id + '">' +
        esc(t('pa.button')) + '</button>' +
        '<button class="btn quiet sm" data-act="go" data-a1="profile">' + esc(t('prog.change')) + '</button>' +
@@ -508,6 +511,9 @@ function addExerciseToActive(exId){
   render();
 }
 function startCustomSession(){
+  /* There is one recoverable draft. Never replace it with another workout,
+     even if a stale button, shortcut or rapid second tap reaches this handler. */
+  if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   const firstPool = allowedExercises(s.profile || {});
   const seedEx = firstPool[0] || EX[0];
@@ -615,15 +621,28 @@ function setExNote(ei, val){
   saveDraft();
 }
 
-/* Which exercise blocks the user has opened or closed by hand. Keyed by exercise
-   id so it survives the re-render a keystroke in a weight field causes.
-
-   One exception, and it is the whole point: when the session moves on, the new
-   current exercise opens whether or not it had been closed earlier. A stale
-   "closed" on the lift you are now supposed to do would hide the work. */
-let EX_OPEN = {};
+/* Remember the actual exercise/set objects, not their names or positions: a
+   workout can contain the same movement twice, and a substitution can insert
+   a row. Each disclosure then stays attached to the work it describes. */
+let EX_OPEN = new WeakMap();
+let EX_OPTIONS_OPEN = new WeakMap();
+let SET_OPTIONS_OPEN = new WeakMap();
 let EX_WAS_CURRENT = null;
-function exOpen(id, open){ EX_OPEN[id] = open; }
+function exOpen(id, open, index){
+  const list = ACTIVE && ACTIVE.exercises || [];
+  const e = (Number.isInteger(index) && list[index] && list[index].id === id)
+    ? list[index] : list.find(x => x.id === id);
+  if(e) EX_OPEN.set(e, open);
+}
+function exerciseOptionsOpen(ei, open){
+  const e = ACTIVE && ACTIVE.exercises[ei];
+  if(e) EX_OPTIONS_OPEN.set(e, open);
+}
+function setOptionsOpen(ei, si, open){
+  const e = ACTIVE && ACTIVE.exercises[ei];
+  const st = e && e.sets[si];
+  if(st) SET_OPTIONS_OPEN.set(st, open);
+}
 
 function skipExercise(ei){
   const e = ACTIVE && ACTIVE.exercises[ei];
@@ -678,10 +697,20 @@ function renderLive(){
        '</span><span class="track"><i style="width:' + (total ? Math.round(logged / total * 100) : 0) + '%"></i></span></div>';
   h += '</div>';
 
-  /* Exercise panels */
-  /* the exercise the session is now on always presents itself */
-  const curId = (curEi >= 0 && ACTIVE.exercises[curEi]) ? ACTIVE.exercises[curEi].id : null;
-  if(curId && curId !== EX_WAS_CURRENT){ delete EX_OPEN[curId]; EX_WAS_CURRENT = curId; }
+  if(FINISH_SAVE_FAILED){
+    h += '<div class="banner alert workout-save-warning" role="alert"><div>' +
+         '<strong>' + esc(t('workout.finishFailedTitle')) + '</strong>' +
+         '<p class="body-sm mt-1">' + esc(t('workout.finishFailedBody')) + '</p>' +
+         '<button class="btn quiet sm" data-act="finishSession">' + esc(t('workout.trySave')) + '</button>' +
+         '</div></div>';
+  }
+
+  /* When work advances, the new current exercise always presents itself. */
+  const currentExercise = curEi >= 0 ? ACTIVE.exercises[curEi] : null;
+  if(currentExercise && currentExercise !== EX_WAS_CURRENT){
+    EX_OPEN.delete(currentExercise);
+    EX_WAS_CURRENT = currentExercise;
+  }
 
   ACTIVE.exercises.forEach((e, ei) => {
     const ex = EX_BY_ID[e.id]; if(!ex) return;
@@ -700,13 +729,12 @@ function renderLive(){
     const skippedHere = e.sets.filter(st => st.skipped).length;
     /* An exercise the user opened stays open across the re-render every keystroke
        causes; otherwise looking ahead at the next lift would close itself. */
-    const openHere = (e.id in EX_OPEN) ? EX_OPEN[e.id] : isCurrent;
+    const openHere = EX_OPEN.has(e) ? EX_OPEN.get(e) : isCurrent;
     h += '<details class="panel ex-block' + (isCurrent ? ' is-current' : '') + '"' +
          (openHere ? ' open' : '') + '>';
-    /* The state is recorded from the click, not from `toggle`: a `toggle` event
-       also fires for the element the page just created, which would freeze
-       "current" into "always open" after the first re-render. */
-    h += '<summary class="ex-block-sum" data-act="exOpen" data-a1="' + e.id + '" data-t2="o"><span class="ex-block-hd">' +
+    /* Record the intended click state, not the initial `toggle` event that a
+       freshly rendered <details> can dispatch on its own. */
+    h += '<summary class="ex-block-sum" data-act="exOpen" data-a1="' + e.id + '" data-t2="o" data-a3="' + ei + '" data-t3="l"><span class="ex-block-hd">' +
          (typeof exerciseThumbSvg === 'function' ? exerciseThumbSvg(ex) : '') +
          '<span class="mono ex-block-idx">' + String(ei+1).padStart(2,'0') + '</span>' +
          '<h2 class="sess-ex-h">' + esc(t('ex.'+e.id)) + '</h2>' +
@@ -748,11 +776,13 @@ function renderLive(){
          '<input id="exnote_' + ei + '" type="text" value="' + esc(e.note || '') +
          '" placeholder="' + esc(t('log.notePlaceholder')) + '" data-in="setExNote" data-a1="' + ei + '" data-t1="l" data-t2="v"></div>';
 
-    h += '<details class="dis ex-opts"><summary><span class="dis-t">' +
+    const canSkip = e.sets.some(st => !st.skipped && !st.committed);
+    h += '<details class="dis ex-opts"' + (EX_OPTIONS_OPEN.get(e) ? ' open' : '') +
+         '><summary data-act="exerciseOptionsOpen" data-a1="' + ei + '" data-t1="l" data-t2="o"><span class="dis-t">' +
          esc(t('log.exOptions')) + '</span></summary><div class="row mt-2">';
     h += '<button class="btn quiet sm" data-act="addSet" data-a1="' + ei + '" data-t1="l">' + esc(t('log.addSet')) + '</button>';
-    h += '<button class="btn quiet sm" data-act="skipSet" data-a1="' + ei + '" data-t1="l">' + esc(t('session.skipset')) + '</button>';
-    h += '<button class="btn quiet sm" data-act="skipExercise" data-a1="' + ei + '" data-t1="l">' + esc(t('log.skipEx')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="skipSet" data-a1="' + ei + '" data-t1="l"' + (canSkip ? '' : ' disabled') + '>' + esc(t('workout.skipNext')) + '</button>';
+    h += '<button class="btn quiet sm" data-act="skipExercise" data-a1="' + ei + '" data-t1="l"' + (canSkip ? '' : ' disabled') + '>' + esc(t('log.skipEx')) + '</button>';
     h += '<button class="btn quiet sm" data-act="openSub" data-a1="' + ei + '" data-t1="l">' + esc(t('session.sub')) + '</button>';
     h += '<button class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '" ' +
          'aria-label="' + esc(t('exd.open') + ' — ' + t('ex.' + e.id)) + '">' + esc(t('exd.open')) + '</button>';
@@ -826,7 +856,8 @@ function setRowHtml(e, set, ei, si, ex, spec, range, isCurrentSet){
   }
   h += '</div>';
   if(!locked){
-    h += '<details class="dis inline set-opts"><summary><span class="dis-t">' +
+    h += '<details class="dis inline set-opts"' + (SET_OPTIONS_OPEN.get(set) ? ' open' : '') +
+         '><summary data-act="setOptionsOpen" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" data-t3="o"><span class="dis-t">' +
          esc(t('log.setOptions')) + '</span></summary><div class="row mt-1">' +
          '<button class="btn quiet sm" data-act="toggleWarmup" data-a1="' + ei + '" data-t1="l" data-a2="' + si + '" data-t2="l" aria-pressed="' +
          (set.warmup ? 'true' : 'false') + '">' + esc(t('log.warmup')) + '</button>' +
@@ -924,6 +955,7 @@ function emptyHintFor(spec, missing){
 /* Starts the recommended session when called with no args, or a specific split
    day when given its plan session id. */
 function startSession(dayId){
+  if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   let chosen = null;
   if(dayId && s.plan && s.plan.sessions){
@@ -1027,16 +1059,17 @@ function logSet(ei, si){
 
 function skipSet(ei){
   const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
-  const i = e.sets.findIndex(x => !x.skipped);
+  /* Skip the next unfinished set, never a set already logged. */
+  const i = e.sets.findIndex(x => !x.skipped && !x.committed);
   if(i < 0) return;
   e.sets[i].skipped = true;
-  e.sets[i].committed = false;
   saveDraft(); render();
 }
 function unskipSet(ei, si){
   const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
   const set = e.sets[si]; if(!set) return;
-  set.skipped = false; set.committed = false; set.entered = false;
+  /* Skipping is reversible; do not rewrite any existing status or value. */
+  set.skipped = false;
   saveDraft(); render();
 }
 function toggleWarmup(ei, si){
@@ -1054,61 +1087,111 @@ function addSet(ei){
   e.sets.push(set);
   saveDraft(); render();
 }
+/* Optional RIR and explicit set options are also user input. They do not mark
+   a planned set as performed, but must survive substitution and removal. Look
+   at the values themselves so older saved drafts get the same protection. */
+function setHasWork(st){
+  return !!(st && (st.entered || st.committed || st.warmup || st.lrSplit ||
+    (st.rir !== '' && st.rir != null)));
+}
 function removeSet(ei, si){
-  const e = ACTIVE && ACTIVE.exercises[ei]; if(!e) return;
+  const e = ACTIVE && ACTIVE.exercises[ei]; if(!e || !e.sets[si]) return;
   if(e.sets.length <= 1){ toast(t('log.needOneSet')); return; }
+  if(setHasWork(e.sets[si]) && !confirm(t('workout.removeConfirm'))) return;
   e.sets.splice(si, 1);
   saveDraft(); render();
 }
 
+function exerciseHasWork(e){
+  return !!(e && ((e.note && String(e.note).trim()) || e.sets.some(setHasWork)));
+}
+function unstartedSets(e){
+  return e.sets.filter(st => st && !st.skipped && !setHasWork(st));
+}
 function openSub(ei){
-  const subs = substitutesFor(getState().profile, ACTIVE.exercises[ei].id);
+  const current = ACTIVE && ACTIVE.exercises[ei]; if(!current) return;
+  const subs = substitutesFor(getState().profile, current.id);
+  const workNote = exerciseHasWork(current)
+    ? '<p class="body-sm mb-3">' + esc(t(unstartedSets(current).length ? 'workout.subKeep' : 'workout.subAdd')) + '</p>' : '';
   sheet(t('session.sub'), subs.length ? (
-    '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p><div class="tiles">' +
+    '<p class="body-sm mb-3">' + esc(t('session.keep')) + '</p>' + workNote + '<div class="tiles">' +
     subs.map(e => '<button class="tile" data-act="applySub" data-a1="' + ei + '" data-t1="l" data-a2="' + e.id + '"><span class="box"></span>' +
       '<span><span class="t">' + esc(t('ex.'+e.id)) + '</span><span class="d">' +
       esc(e.m.map(function(x){ return t('mg.'+x[0]); }).join(', ')) + '</span></span></button>').join('') + '</div>')
     : emptyState('session.nosub','session.nosubBody','inbox'));
 }
 function applySub(ei, id){
-  const ex = EX_BY_ID[id]; if(!ex) return;
-  const keep = ACTIVE.exercises[ei].prescribed;
-  ACTIVE.exercises[ei] = newActiveExercise({ id:id, sets:keep, reps:ex.reps.slice(), rir:ex.rir });
+  const ex = EX_BY_ID[id], current = ACTIVE && ACTIVE.exercises[ei];
+  if(!ex || !current || current.id === id) return;
+  const untouched = unstartedSets(current);
+  const keepWork = exerciseHasWork(current);
+  const replacement = newActiveExercise({ id:id, sets:Math.max(1, untouched.length), reps:ex.reps.slice(), rir:ex.rir });
+  if(keepWork){
+    /* Keep actual/partially entered work and notes on the exercise they belong
+       to. Only genuinely untouched slots move to the new movement. */
+    untouched.forEach(st => { st.skipped = true; });
+    ACTIVE.exercises.splice(ei + 1, 0, replacement);
+  } else {
+    ACTIVE.exercises[ei] = replacement;
+  }
   saveDraft(); closeSheet(); render();
+  if(keepWork) toast(t('workout.subKept'), 'ok');
+  const blocks = document.querySelectorAll('#screenBody .ex-block > summary');
+  const target = blocks[keepWork ? ei + 1 : ei];
+  if(target && target.focus) target.focus();
 }
 function discardSession(){
-  if(!confirm(t('dlg.confirm'))) return;
-  ACTIVE = null; SESSION_SUB = 'plan';
-  clearDraft(); stopRest(); syncLiveClock();
+  if(!ACTIVE || !confirm(t('workout.discardConfirm'))) return;
+  /* If storage refuses removal, do not pretend the old draft was discarded. */
+  if(!clearDraft()){ toast(t('workout.discardFailed'), 'alert'); return; }
+  ACTIVE = null; SESSION_SUB = 'plan'; FINISH_SAVE_FAILED = false;
+  stopRest(); syncLiveClock();
   go('session');
 }
 
 let FINISHING = false;
+let FINISH_SAVE_FAILED = false;
 function finishSession(){
   if(!ACTIVE || FINISHING) return;
   const s = getState();
   const startedAt = ACTIVE.startedAt;
   if(s.sessions.some(x => x.startedAt === startedAt)){
-    toast(t('log.alreadySaved')); ACTIVE = null; SESSION_SUB = 'plan'; clearDraft(); go('progress'); return;
+    /* An in-memory record is not proof of a successful write. */
+    if(LOAD_FAILED || (STORAGE_FAILED && !saveState())){
+      FINISH_SAVE_FAILED = true; render(); return;
+    }
+    toast(t('log.alreadySaved')); ACTIVE = null; SESSION_SUB = 'plan';
+    FINISH_SAVE_FAILED = false; clearDraft(); go('progress'); return;
   }
   const exercises = [], loggable = [];
+  let omittedWork = false;
   ACTIVE.exercises.forEach(e => {
-    const ex = EX_BY_ID[e.id]; if(!ex) return;
+    const ex = EX_BY_ID[e.id];
+    const cleanNote = e.note && String(e.note).trim() ? String(e.note).trim().slice(0, 240) : '';
+    if(!ex){
+      if(cleanNote || (e.sets || []).some(setHasWork)) omittedWork = true;
+      return;
+    }
     const sets = [];
     e.sets.forEach(x => {
-      if(!x || x.skipped) return;
-      if(!(x.committed || x.entered)) return;
-      if(!isSetComplete(x, ex)) return;
+      if(!x) return;
+      if(x.skipped || !(x.committed || x.entered)){
+        if(setHasWork(x)) omittedWork = true;
+        return;
+      }
+      if(!isSetComplete(x, ex)){ omittedWork = true; return; }
       sets.push(normaliseLoggedSet(x, ex));
     });
-    if(!sets.length) return;
-    const cleanNote = e.note && String(e.note).trim() ? String(e.note).trim().slice(0, 240) : '';
+    if(!sets.length){ if(cleanNote) omittedWork = true; return; }
     const entry = { id:e.id, sets:sets, plan:e.plan || null };
     if(cleanNote) entry.note = cleanNote;
     loggable.push(entry);
     exercises.push(entry);
   });
   if(!exercises.length){ toast(emptySessionMessage()); return; }
+  /* A log cannot represent unfinished work. Let the person return to it or
+     explicitly choose to finish without it, rather than silently dropping it. */
+  if(omittedWork && !confirm(t('workout.finishUnstored'))) return;
 
   FINISHING = true;
   const nowFinish = Date.now();
@@ -1117,6 +1200,17 @@ function finishSession(){
   const durationMs = activeElapsedMs();
   const rec = addSession({ planId:ACTIVE.planId, name:ACTIVE.name, startedAt:startedAt,
                            exercises:exercises, durationMs:durationMs });
+  if(LOAD_FAILED || STORAGE_FAILED){
+    /* The append was only in memory. Roll it back and retain the draft, so a
+       retry cannot duplicate a session and a reload can still restore the work. */
+    const at = s.sessions.indexOf(rec);
+    if(at >= 0) s.sessions.splice(at, 1);
+    FINISHING = false;
+    FINISH_SAVE_FAILED = true;
+    render();
+    return;
+  }
+  FINISH_SAVE_FAILED = false;
   loggable.forEach(e => updateAdaptation(s, e.id, rec.date));
 
   const records = { pr:[], baseline:[] };
@@ -1263,7 +1357,7 @@ function normaliseLoggedSet(x, ex){
 }
 
 /* ============================================================================
-   3. 84-EXERCISE ATLAS LIBRARY
+   3. EXERCISE ATLAS LIBRARY
    ========================================================================== */
 function setLibQuery(v){ LIB_QUERY = v || ''; render(); const inp = document.getElementById('libSearchInput'); if(inp){ inp.focus(); inp.setSelectionRange(LIB_QUERY.length, LIB_QUERY.length); } }
 function setLibMuscle(m){ LIB_MUSCLE = m || 'all'; render(); }
