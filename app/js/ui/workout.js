@@ -30,6 +30,14 @@ function setSessionSub(tab){
   render();
 }
 
+/* A primary Train tap always returns to the active workout or plan, never
+   to the library just because that was the previous session sub-view. */
+function openTrain(){
+  SESSION_SUB = ACTIVE ? 'live' : 'plan';
+  if(VIEW !== 'session') go('session');
+  else { render(); window.scrollTo(0, 0); }
+}
+
 function openExerciseLibrary(muscle){
   LIB_MUSCLE = muscle || 'all';
   SESSION_SUB = 'library';
@@ -104,7 +112,7 @@ function sessionSubnavHtml(){
 Screens.session = function(){
   if(SESSION_SUB === 'library'){
     setTimeout(syncLiveClock, 0);
-    return { html: renderSessionMasthead('library') + sessionSubnavHtml() + renderExerciseLibrary() };
+    return { html: renderSessionMasthead('library') + renderExerciseLibrary() };
   }
   if(ACTIVE && SESSION_SUB !== 'plan-peek'){
     SESSION_SUB = 'live';
@@ -121,9 +129,9 @@ function renderSessionMasthead(mode){
   const idx = mode === 'library'
     ? t('plan.exCount', { n: EX.length })
     : (splitN + ' ' + t('plan.day') + ' · ' + t('onb.style.' + (p.style || 'std')));
-  const title = mode === 'library' ? t('plan.libTitle') : t('nav.session');
+  const title = mode === 'library' ? t('nav.library') : t('nav.train');
   const sub = mode === 'library' ? t('plan.libSub') : t('session.warmup');
-  return '<div class="masthead"><div>' +
+  return '<div class="masthead masthead-' + (mode === 'library' ? 'library' : 'train') + '"><div>' +
          '<p class="masthead-idx">' + esc(idx) + '</p>' +
          '<h1 class="masthead-title">' + esc(title) + '</h1>' +
          '<p class="masthead-sub">' + esc(sub) + '</p>' +
@@ -144,7 +152,7 @@ function dayRecoveryRatio(state, sess, now){
 
 function renderWorkoutPlanner(){
   const s = getState(), now = Date.now();
-  let h = renderSessionMasthead('plan') + sessionSubnavHtml();
+  let h = renderSessionMasthead('plan') + (ACTIVE ? sessionSubnavHtml() : '');
 
   if(!s.plan || !s.plan.sessions || !s.plan.sessions.length){
     h += emptyState('session.noplan', 'session.noplanBody', 'plan',
@@ -249,7 +257,9 @@ function renderWorkoutPlanner(){
        '<button class="btn" data-act="startSession" data-a1="' + selected.id + '">' +
        esc(isRec ? t('btn.start') : t('home.startNext', { name: selected.name })) + '</button>' +
        '<button class="btn quiet sm" data-act="togglePlanEdit" aria-pressed="' + (PLAN_EDIT?'true':'false') + '">' +
-       esc(PLAN_EDIT ? t('btn.done') : t('plan.customize')) + '</button>' +
+       esc(PLAN_EDIT ? t('btn.done') : t('plan.customize')) + '</button></div>' +
+       '<details class="dis" data-remember="plan-options"><summary><span class="dis-t">' +
+       esc(t('journey.moreOptions')) + '</span></summary><div class="row mt-2">' +
        '<button class="btn quiet sm" data-act="openAddExerciseSheet" data-a1="plan" data-a2="' + selected.id + '">+ ' +
        esc(t('plan.addEx')) + '</button>' +
        '<button class="btn quiet sm" data-act="startCustomSession">' +
@@ -257,7 +267,7 @@ function renderWorkoutPlanner(){
        '<button class="btn quiet sm" data-act="openPrintCard" data-a1="' + selected.id + '">' +
        esc(t('pa.button')) + '</button>' +
        '<button class="btn quiet sm" data-act="go" data-a1="profile">' + esc(t('prog.change')) + '</button>' +
-       '</div>';
+       '</div></details>';
 
   if(PLAN_EDIT){
     h += '<div class="row mt-3" style="padding-top:var(--s3);border-top:var(--hair) solid var(--line)">' +
@@ -315,7 +325,8 @@ function renderWorkoutPlanner(){
            '</div>';
     }
     h += '</div>';
-
+    h += '<details class="dis plan-ex-more" data-remember="plan-ex-' + esc(selected.id + '-' + e.id + '-' + i) + '">' +
+         '<summary><span class="dis-t">' + esc(t('journey.exerciseDetails')) + '</span></summary>';
     h += '<p class="body-sm mb-0 mt-2">' + esc(t('cue.' + e.id)) + '</p>';
 
     /* The "previous" slot is for a previous. With no history it used to say
@@ -346,7 +357,7 @@ function renderWorkoutPlanner(){
          '<button type="button" class="btn quiet sm" data-act="openExerciseDetail" data-a1="' + e.id + '" ' +
            'aria-label="' + esc(t('exd.open') + ' — ' + t('ex.' + e.id)) + '">' +
            esc(t('exd.open')) + '</button></div>';
-    h += '</div>';
+    h += '</details></div>';
   });
   h += '</div>';
 
@@ -1282,7 +1293,15 @@ function renderExerciseLibrary(){
        '<input id="libSearchInput" type="text" value="' + esc(LIB_QUERY) +
        '" placeholder="' + esc(t('plan.searchEx')) + '" data-in="setLibQuery" data-t1="v"></div>';
 
-  /* Muscle filter */
+  /* All filters sit behind one labelled disclosure; selected filters remain
+     visible in its summary, even when it is closed. */
+  const activeExtra = [LIB_MUSCLE !== 'all' ? t('mg.' + LIB_MUSCLE) : '',
+                       LIB_EQUIP !== 'all' ? t('equip.' + LIB_EQUIP) : '',
+                       LIB_MODE !== 'all' ? t('exd.mode.' + LIB_MODE) : ''].filter(Boolean).join(' · ');
+  h += '<details class="dis atlas-more" data-remember="library-filters"' + (activeExtra ? ' open' : '') + '>' +
+       '<summary><span class="dis-t">' + esc(t('journey.filters')) + '</span>' +
+       (activeExtra ? '<span class="flag sm accent">' + esc(activeExtra) + '</span>' : '') +
+       '</summary><div class="atlas-more-body">';
   h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('exd.muscles')) + '</span><div class="chips">' +
        '<button type="button" class="chip sm ' + (LIB_MUSCLE==='all'?'on':'') + '" data-act="setLibMuscle" data-a1="all">' + esc(t('sci.all')) + '</button>' +
@@ -1290,18 +1309,6 @@ function renderExerciseLibrary(){
          '<button type="button" class="chip sm ' + (LIB_MUSCLE===m?'on':'') + '" data-act="setLibMuscle" data-a1="' + m + '">' +
          esc(t('mg.' + m)) + '</button>'
        ).join('') + '</div></div>';
-
-  /* Equipment and mode: two axes, four controls each, and almost nobody
-     touches them twice. One disclosure, with the active filter named on the
-     closed row so a filtered list never lies about why it is short. */
-  const activeExtra = (LIB_EQUIP !== 'all' ? t('equip.' + LIB_EQUIP) : '') +
-                      (LIB_EQUIP !== 'all' && LIB_MODE !== 'all' ? ' · ' : '') +
-                      (LIB_MODE !== 'all' ? t('exd.mode.' + LIB_MODE) : '');
-  h += '<details class="dis atlas-more"' + (activeExtra ? ' open' : '') + '>' +
-       '<summary><span class="dis-t">' + esc(t('plan.equipLabel')) + ' · ' +
-       esc(t('chart.basis')) + '</span>' +
-       (activeExtra ? '<span class="flag sm accent">' + esc(activeExtra) + '</span>' : '') +
-       '</summary><div class="atlas-more-body">';
 
   h += '<div class="anat-filter-row mb-2">' +
        '<span class="anat-filter-lbl">' + esc(t('plan.equipLabel')) + '</span><div class="chips">' +
@@ -1334,7 +1341,13 @@ function renderExerciseLibrary(){
      tap to the sheet that already holds every action, and the two filter
      axes that nobody changes (equipment, mode) behind a disclosure. */
   h += '<div class="ex-grid" data-stagger>';
-  filtered.forEach(e => {
+  filtered.forEach((e, i) => {
+    if(i === 12){
+      h += '</div><details class="journey-fold library-more" data-remember="library-more"><summary>' +
+           '<span class="journey-fold-copy"><span class="journey-fold-title">' +
+           esc(t('journey.moreExercises', { n: filtered.length - 12 })) + '</span></span></summary>' +
+           '<div class="ex-grid" data-stagger>';
+    }
     const spec = exLogSpec(e);
     const inPool = p.exercises ? p.exercises[e.id] !== false : true;
     const pb = personalBest(e.id);
@@ -1364,6 +1377,6 @@ function renderExerciseLibrary(){
     h += '<span class="ex-go" aria-hidden="true">\u203a</span>';
     h += '</button>';
   });
-  h += '</div>';
+  h += '</div>' + (filtered.length > 12 ? '</details>' : '');
   return h;
 }

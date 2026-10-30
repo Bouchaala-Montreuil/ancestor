@@ -703,7 +703,7 @@ group('8i. The navigation marks are drawn, not borrowed');
   const nav = /const NAV = \[([\s\S]*?)\n\];/.exec(app);
   const body = nav ? nav[1] : '';
 
-  chk('four marks, one per destination', (body.match(/id:'/g) || []).length === 4);
+  chk('five marks, one per destination', (body.match(/id:'/g) || []).length === 5);
   chk('the two that left the bar kept their marks', (function(){
     const mk = /const NAV_MARK = \{([\s\S]*?)\n\};/.exec(app);
     return !!mk && /body:/.test(mk[1]) && /science:/.test(mk[1]);
@@ -1507,17 +1507,20 @@ group('2d. The verdict fits its card at every width (1024 collision, 768 bleed)'
 }
 
 /* ================================================================ */
-group('2e. The cinematic masthead: photographic band, legible, paper-free');
+group('2e. Cinematic mastheads: photographic bands, legible in both themes');
 {
-  chk('Today and Body carry the photographic masthead modifier',
-      /\.masthead-today\{background:url\("\.\.\/img\/hero-today\.jpg"\)/.test(css) &&
-      /\.masthead-body\{background:url\("\.\.\/img\/hero-body\.jpg"\)/.test(css));
+  const bands = ['today','body','train','progress','library','profile'];
+  chk('every primary screen and Body has a photographic masthead',
+      ['today','train','progress','library'].every(name => new RegExp('\\.masthead-' + name + '\\{background-image:url\\(').test(css)) &&
+      /\.masthead-body,\.masthead-profile\{background-image:url\(/.test(css));
   chk('the images exist in the repository',
-      fs.existsSync(path.join(ROOT,'img/hero-today.jpg')) && fs.existsSync(path.join(ROOT,'img/hero-body.jpg')));
-  chk('a legibility overlay sits over the photograph, so no type is on the image itself',
-      /\.masthead-today::before,\.masthead-body::before\{[^}]*linear-gradient\(90deg,var\(--paper\)/.test(css));
-  chk('the paper theme removes the photograph and its overlay',
-      /:root\[data-theme="paper"\] \.masthead-today,\s*:root\[data-theme="paper"\] \.masthead-body\{background:none/.test(css));
+      ['today','body','train','progress','library'].every(name => fs.existsSync(path.join(ROOT,'img/hero-' + name + '.jpg'))));
+  chk('a dark legibility overlay sits over every photograph',
+      bands.every(name => css.includes('.masthead-' + name + '::before')) &&
+      /linear-gradient\(90deg,rgba\(9,9,9,\.92\)/.test(css));
+  chk('both themes keep cinematic bands with independent light text',
+      !/:root\[data-theme="paper"\][^{]*\.masthead-today[^}]*background:none/.test(css) &&
+      /\.masthead-title\{color:#F7F5F0\}/.test(css));
   const buildPy = fs.readFileSync(path.join(ROOT,'build.py'),'utf8');
    chk('the build inlines ../img/*.jpg as data URIs, so the single file has no asset folder',
       buildPy.includes('../img/') && buildPy.includes('data_uri("img/" + m.group(1)') && buildPy.includes('.jpg'));
@@ -1651,7 +1654,7 @@ group('2n. Hero bands sit inside the content column at desktop width');
   const i = css.indexOf('@media (min-width:1024px)', css.indexOf('.masthead-body'));
   const seg = i >= 0 ? css.slice(i, css.indexOf('}', css.indexOf('}', i) + 1) + 1) : '';
   chk('at 1024 px and up the masthead bands drop the full-bleed negative margin',
-      i >= 0 && /masthead-today,\.masthead-body\{margin-inline:0/.test(seg));
+      i >= 0 && /masthead-today,\.masthead-body,\.masthead-train,\.masthead-progress,\.masthead-library,\.masthead-profile\{margin-inline:0/.test(seg));
 }
 
 group('2o. Three visible fixes: programme summary wrap, chart decimals, placeholder source');

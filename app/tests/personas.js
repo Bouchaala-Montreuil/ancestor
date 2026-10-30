@@ -223,8 +223,8 @@ group('7. User navigating with a screen reader');
       (d.querySelector('a.skip-link')||{}).getAttribute('href') === '#screenBody');
   chk('the main region is a landmark',
       (d.querySelector('main')||{}).getAttribute('role') === 'main');
-  chk('the primary navigation is labelled',
-      (d.querySelector('nav')||{}).getAttribute('aria-label') === 'Primary');
+  chk('the primary navigation is labelled in the current language',
+      (d.querySelector('#nav')||{}).getAttribute('aria-label') === w.t('journey.primaryNav'));
   chk('status messages are announced',
       (d.querySelector('#toast')||{}).getAttribute('aria-live') === 'polite');
   w.go('body');

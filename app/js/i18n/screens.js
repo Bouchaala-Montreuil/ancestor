@@ -6,7 +6,10 @@
 const TS = {};
 
 TS.en = {
-'nav.today':'Today','nav.session':'Session','nav.body':'Body','nav.progress':'Progress','nav.profile':'Profile',
+'journey.primaryNav':"Primary navigation",
+'nav.progressShort':"Progress",'nav.libraryShort':"Library",
+"nav.train":"Train","nav.me":"Me","journey.filters":"Filters","journey.moreExercises":"Show {n} more exercises","journey.moreOptions":"More options","journey.exerciseDetails":"Guidance & details",
+'nav.today':'Today','nav.session':'Session','nav.body':'Body','nav.progress':'Progress','nav.profile':'Profile','nav.library':'Library',
 
 'home.title':'Today','home.hello':'Good to see you','home.sub':'Decision, anatomy and current performance',
 'home.decision':'Training decision','home.analysis':'Detailed analysis','home.performance':'Performance',
@@ -67,7 +70,10 @@ TS.en = {
 };
 
 TS.fr = {
-'nav.today':'Aujourd\'hui','nav.session':'Séance','nav.body':'Corps','nav.progress':'Progression','nav.profile':'Profil',
+'journey.primaryNav':"Navigation principale",
+'nav.progressShort':"Progrès",'nav.libraryShort':"Exercices",
+"nav.train":"Séance","nav.me":"Moi","journey.filters":"Filtres","journey.moreExercises":"Voir {n} exercices de plus","journey.moreOptions":"Plus d’options","journey.exerciseDetails":"Conseils et détails",
+'nav.today':'Aujourd\'hui','nav.session':'Séance','nav.body':'Corps','nav.progress':'Progression','nav.profile':'Profil','nav.library':'Bibliothèque',
 
 'home.title':'Aujourd\'hui','home.hello':'Bonjour','home.sub':'Décision, anatomie et performance du moment',
 'home.decision':'Décision d\'entraînement','home.analysis':'Analyse détaillée','home.performance':'Performance',
@@ -128,7 +134,10 @@ TS.fr = {
 };
 
 TS.es = {
-'nav.today':'Hoy','nav.session':'Sesión','nav.body':'Cuerpo','nav.progress':'Progreso','nav.profile':'Perfil',
+'journey.primaryNav':"Navegación principal",
+'nav.progressShort':"Progreso",'nav.libraryShort':"Ejercicios",
+"nav.train":"Entrenar","nav.me":"Yo","journey.filters":"Filtros","journey.moreExercises":"Ver {n} ejercicios más","journey.moreOptions":"Más opciones","journey.exerciseDetails":"Consejos y detalles",
+'nav.today':'Hoy','nav.session':'Sesión','nav.body':'Cuerpo','nav.progress':'Progreso','nav.profile':'Perfil','nav.library':'Biblioteca',
 'home.title':'Hoy','home.hello':'Hola','home.sub':'Decisión, anatomía y rendimiento actual',
 'home.decision':'Decisión de entrenamiento','home.analysis':'Análisis detallado','home.performance':'Rendimiento',
 'home.lastSession':'Última sesión','home.nextSession':'Próxima sesión','home.insufficient':'Datos insuficientes',
@@ -177,7 +186,10 @@ TS.es = {
 };
 
 TS.de = {
-'nav.today':'Heute','nav.session':'Einheit','nav.body':'Körper','nav.progress':'Fortschritt','nav.profile':'Profil',
+'journey.primaryNav':"Hauptnavigation",
+'nav.progressShort':"Verlauf",'nav.libraryShort':"Übungen",
+"nav.train":"Training","nav.me":"Ich","journey.filters":"Filter","journey.moreExercises":"{n} weitere Übungen anzeigen","journey.moreOptions":"Mehr Optionen","journey.exerciseDetails":"Hinweise & Details",
+'nav.today':'Heute','nav.session':'Einheit','nav.body':'Körper','nav.progress':'Fortschritt','nav.profile':'Profil','nav.library':'Bibliothek',
 'home.title':'Heute','home.hello':'Guten Tag','home.sub':'Entscheidung, Anatomie und aktuelle Leistung',
 'home.decision':'Trainingsentscheidung','home.analysis':'Detaillierte Analyse','home.performance':'Leistung',
 'home.lastSession':'Letzte Einheit','home.nextSession':'Nächste Einheit','home.insufficient':'Daten unzureichend',
@@ -226,7 +238,10 @@ TS.de = {
 };
 
 TS.it = {
-'nav.today':'Oggi','nav.session':'Sessione','nav.body':'Corpo','nav.progress':'Progressi','nav.profile':'Profilo',
+'journey.primaryNav':"Navigazione principale",
+'nav.progressShort':"Progressi",'nav.libraryShort':"Esercizi",
+"nav.train":"Allenati","nav.me":"Io","journey.filters":"Filtri","journey.moreExercises":"Mostra altri {n} esercizi","journey.moreOptions":"Altre opzioni","journey.exerciseDetails":"Indicazioni e dettagli",
+'nav.today':'Oggi','nav.session':'Sessione','nav.body':'Corpo','nav.progress':'Progressi','nav.profile':'Profilo','nav.library':'Libreria',
 'home.title':'Oggi','home.hello':'Buongiorno','home.sub':'Decisione, anatomia e prestazione attuale',
 'home.decision':'Decisione di allenamento','home.analysis':'Analisi dettagliata','home.performance':'Prestazione',
 'home.lastSession':'Ultima sessione','home.nextSession':'Prossima sessione','home.insufficient':'Dati insufficienti',
@@ -275,7 +290,10 @@ TS.it = {
 };
 
 TS.nl = {
-'nav.today':'Vandaag','nav.session':'Sessie','nav.body':'Lichaam','nav.progress':'Voortgang','nav.profile':'Profiel',
+'journey.primaryNav':"Hoofdnavigatie",
+'nav.progressShort':"Voortgang",'nav.libraryShort':"Oefeningen",
+"nav.train":"Trainen","nav.me":"Ik","journey.filters":"Filters","journey.moreExercises":"Toon {n} extra oefeningen","journey.moreOptions":"Meer opties","journey.exerciseDetails":"Uitleg en details",
+'nav.today':'Vandaag','nav.session':'Sessie','nav.body':'Lichaam','nav.progress':'Voortgang','nav.profile':'Profiel','nav.library':'Bibliotheek',
 'home.title':'Vandaag','home.hello':'Goedendag','home.sub':'Beslissing, anatomie en huidige prestatie',
 'home.decision':'Trainingsbeslissing','home.analysis':'Gedetailleerde analyse','home.performance':'Prestatie',
 'home.lastSession':'Laatste sessie','home.nextSession':'Volgende sessie','home.insufficient':'Onvoldoende gegevens',

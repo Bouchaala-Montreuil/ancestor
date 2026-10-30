@@ -1,9 +1,9 @@
 /* ============================================================================
    ANCESTOR — Router & boot
-   Five sections: today · session · body · progress · profile
+   Five primary destinations: Today · Train · Progress · Library · Me
    ========================================================================== */
 
-/* The six section marks. Drawn, not picked from a set: every one is built from
+/* The section marks. Drawn, not picked from a set: every one is built from
    the mark's own numbers — 24 grid, 2.4 mass, 3.2 margin, 4.2..19.8 span — so
    the navigation is in the same hand as the logo. Solid, not stroked: a 1.4 px
    hairline disappears on a 3x phone screen, 2.4 px of mass does not. */
@@ -13,32 +13,34 @@ const _frame = (x, y, w, h) =>
   _bar(x, y, w, T_ICON) + _bar(x, y + h - T_ICON, w, T_ICON) +
   _bar(x, y, T_ICON, h) + _bar(x + w - T_ICON, y, T_ICON, h);
 
-/* Four primary destinations, not six.
-   A bottom bar is a thumb's map, and six was a menu: Body and Science are places
-   you go to study something, not places a session takes you. Both stay one tap
-   from Today (the figure and the lesson card are already entry points) and from
-   Profile's Explore section, so nothing was deleted — it was ranked. */
+/* Five destinations: the exercise library has its own reliable entry point.
+   Body, Science, lessons and modules belong to the Progress group. */
 const NAV = [
   /* a calendar with one day inked — today, not a week */
-  { id:'home', icon:
+  { id:'home', label:'nav.today', icon:
       _frame(M_ICON, Y_ICON, R_ICON - M_ICON, Y2_ICON - Y_ICON) +
       _bar(M_ICON, Y_ICON + 4.6, R_ICON - M_ICON, T_ICON) +
       _bar(M_ICON + T_ICON + 2.4, Y_ICON + 9.4, 7.2, 5.0) },
   /* a tally of two */
-  { id:'session', icon:
+  { id:'session', label:'nav.train', icon:
       _bar(7.0, Y_ICON, T_ICON, Y2_ICON - Y_ICON) +
       _bar(13.4, Y_ICON, T_ICON, Y2_ICON - Y_ICON) +
       '<rect x="2.30" y="10.8" width="19.4" height="2.4" transform="rotate(-16 12 12)"/>' },
   /* ascending bars on a baseline */
-  { id:'progress', icon:
+  { id:'progress', shortLabel:'nav.progressShort', icon:
       _bar(M_ICON, Y2_ICON + 0.4, R_ICON - M_ICON, T_ICON) +
       _bar(4.6, 14.2, 2.8, 5.2) +
       _bar(9.0, 10.6, 2.8, 8.8) +
       _bar(13.4, 7.4, 2.8, 12.0) +
       _bar(17.8, 4.2, 2.8, 15.2) },
+  /* three ruled lines of decreasing length: a list of movements, not a shelf */
+  { id:'library', shortLabel:'nav.libraryShort', act:'openExerciseLibrary', arg:'', icon:
+      _bar(3.2, 5.2, 17.6, 2.4) +
+      _bar(3.2, 10.8, 17.6, 2.4) +
+      _bar(3.2, 16.4, 10.8, 2.4) },
   /* the dossier stamp itself: an inked block with the record knocked out of it,
      the same device that numbers every section in the app */
-  { id:'profile', icon:
+  { id:'profile', label:'nav.me', icon:
       '<path fill-rule="evenodd" d="M3.2 4.2h17.6v15.6H3.2z M7.6 8.6h8.8v2.4H7.6z M7.6 13h5.6v2.4H7.6z"/>' },
 ];
 
@@ -101,19 +103,25 @@ function renderNav(show){
   if(!nav) return;
   if(!show){ nav.style.display = 'none'; NAV_SIG = ''; return; }
   nav.style.display = '';
+  nav.setAttribute('aria-label', t('journey.primaryNav'));
 
-  /* Body, Science, a lesson and a module are all reachable but none of them owns
-     a slot in the bar, so none of them may light one up: a selected mark that
-     points at a different screen is a lie about where you are. */
-  const inBar = NAV.some(n => n.id === VIEW);
-  const active = inBar ? VIEW : null;
+  /* These screens have a visible route back to the Progress group. The
+     library shares the session renderer, but is a destination in its own right. */
+  const here = (VIEW === 'session' && typeof SESSION_SUB !== 'undefined' && SESSION_SUB === 'library') ? 'library'
+             : (['body','science','lesson','module'].indexOf(VIEW) >= 0) ? 'progress' : VIEW;
+  const inBar = NAV.some(n => n.id === here);
+  const active = inBar ? here : null;
   const sig = CURRENT_LANG + '|' + NAV.map(n => n.id).join(',');
   if(NAV_SIG !== sig || !nav.querySelector('.inner')){
-    nav.innerHTML = '<div class="inner"><i class="nav-ind" hidden></i>' + NAV.map(n =>
-      '<button data-nav="' + n.id + '" class="" data-act="go" data-a1="' + n.id + '" ' +
-      'aria-label="' + esc(t('nav.' + n.id)) + '">' +
-      '<svg viewBox="0 0 24 24">' + n.icon + '</svg><span>' + esc(t('nav.' + n.id)) + '</span></button>'
-    ).join('') + '</div>';
+    nav.innerHTML = '<div class="inner"><i class="nav-ind" hidden></i>' + NAV.map(n => {
+      const full = t(n.label || ('nav.' + n.id));
+      const visible = t(n.shortLabel || n.label || ('nav.' + n.id));
+      /* The accessible name starts with the visible label for speech control. */
+      const name = visible === full ? full : visible + ' — ' + full;
+      return '<button data-nav="' + n.id + '" class="" data-act="' + (n.act || 'go') + '" data-a1="' + (n.arg === undefined ? n.id : n.arg) + '" ' +
+        'aria-label="' + esc(name) + '">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' + n.icon + '</svg><span>' + esc(visible) + '</span></button>';
+    }).join('') + '</div>';
     NAV_SIG = sig;
   }
   let activeBtn = null;
@@ -276,7 +284,66 @@ function reportUncaught(err){
   }catch(e){ /* a handler that throws must not throw */ }
 }
 
+/* Browser/device Back follows actual screens, including the library, rather
+   than abandoning a single-page app with no history. State updates within a
+   screen do not create extra entries. A route contains no personal data. */
+let ROUTE_HISTORY_READY = false;
+let ROUTE_HISTORY_RESTORING = false;
+function routeSnapshot(){
+  const r = { view: VIEW };
+  if(VIEW === 'session') r.sub = SESSION_SUB;
+  if(VIEW === 'science') r.science = SCI_VIEW;
+  if(VIEW === 'lesson') r.lesson = LESSON_ID;
+  if(VIEW === 'module'){ r.module = MOD_ID; r.step = MOD_STEP; }
+  return r;
+}
+function recordNavigation(){
+  if(ROUTE_HISTORY_RESTORING || !getState().onboarded || typeof history === 'undefined') return;
+  try{
+    const route = routeSnapshot();
+    const previous = history.state && history.state.ancestorRoute;
+    const state = Object.assign({}, history.state || {}, { ancestorRoute: route });
+    if(!ROUTE_HISTORY_READY){ history.replaceState(state, ''); ROUTE_HISTORY_READY = true; }
+    else if(JSON.stringify(previous) !== JSON.stringify(route)) history.pushState(state, '');
+  }catch(e){ /* history is optional: the tab bar and back links still work */ }
+}
+function restoreNavigation(ev){
+  const r = ev && ev.state && ev.state.ancestorRoute;
+  if(!r || !getState().onboarded ||
+     ['home','session','progress','body','science','profile','lesson','module','onb'].indexOf(r.view) < 0) return;
+  ROUTE_HISTORY_RESTORING = true;
+  try{
+    if(r.view === 'session') SESSION_SUB = r.sub || 'plan';
+    if(r.view === 'science' && r.science) SCI_VIEW = r.science;
+    if(r.view === 'lesson') LESSON_ID = r.lesson;
+    if(r.view === 'module'){ MOD_ID = r.module; MOD_STEP = r.step || 0; }
+    VIEW = r.view;
+    const ov = document.getElementById('doneOverlay');
+    if(ov && ov.parentNode) ov.parentNode.innerHTML = '';
+    if(typeof closeSheet === 'function') closeSheet();
+    transitionView(() => { render(); window.scrollTo(0, 0); });
+  }finally{ ROUTE_HISTORY_RESTORING = false; }
+}
+
+/* Keep a disclosure open while its controls re-render the screen. Keys are
+   stable across languages and routes; no preference or training data is saved. */
+const OPEN_DISCLOSURES = Object.create(null);
+function rememberDisclosures(root){
+  if(!root) return;
+  root.querySelectorAll('details[data-remember]').forEach(el => {
+    OPEN_DISCLOSURES[el.getAttribute('data-remember')] = el.open;
+  });
+}
+function restoreDisclosures(root){
+  if(!root) return;
+  root.querySelectorAll('details[data-remember]').forEach(el => {
+    const key = el.getAttribute('data-remember');
+    if(Object.prototype.hasOwnProperty.call(OPEN_DISCLOSURES, key)) el.open = OPEN_DISCLOSURES[key];
+  });
+}
+
 function render(){
+  rememberDisclosures(document.getElementById('screenBody'));
   const s = getState();
   const onboarding = !s.onboarded;
   /* Step zero of onboarding is the language the rest of it is written in. The
@@ -313,6 +380,7 @@ function render(){
   }
   body.className = 'screens on';
   body.innerHTML = out.html || '';
+  restoreDisclosures(body);
 
   $('#wordmark').textContent = t('app.name');
   $('#ver').textContent = t('app.tag');
@@ -332,6 +400,7 @@ function render(){
   try { bindAnatomyLab(); } catch(e) { /* the flat figure still works */ }
   try { bindModuleView(); } catch(e) { /* static diagram still renders */ }
   try { if(typeof hydrateMotion === 'function') hydrateMotion(body); } catch(e){}
+  recordNavigation();
 }
 
 /* Tapping a region on the figure selects that muscle on the Body screen. */
@@ -487,6 +556,7 @@ function boot(){
   window.addEventListener('online',  () => { retryStore(); render(); });
   window.addEventListener('offline', () => render());
   window.addEventListener('hashchange', () => handleHashShortcut());
+  window.addEventListener('popstate', restoreNavigation);
   window.addEventListener('resize',  () => { try { renderNav(!!getState().onboarded); } catch(e){} });
 
   /* Typing. On a phone the on-screen keyboard covers the bottom half of the

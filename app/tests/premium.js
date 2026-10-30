@@ -119,7 +119,7 @@ group('3. Navigation: persistent buttons and a shared indicator');
   const { w, d } = boot();
   onboard(w, d);
   const nav = d.getElementById('nav');
-  chk('the nav renders four destinations', nav.querySelectorAll('button').length === 4,
+  chk('the nav renders five destinations', nav.querySelectorAll('button').length === 5,
       Array.from(nav.querySelectorAll('button')).map(b => b.textContent.trim()).join(' / '));
   const first = nav.querySelector('button');
   w.go('progress');
@@ -149,15 +149,17 @@ group('3. Navigation: persistent buttons and a shared indicator');
   chk('the indicator moves when the section changes',
       atHome === 'translateY(0px)' && ind2.style.transform === 'translateY(' + (idxOf('profile') * 64) + 'px)',
       atHome + ' → ' + ind2.style.transform);
-  /* A screen with no slot in the bar — Body, Science, a lesson — must not leave
-     the mark pointing at the tab you came from. */
+  /* Body and Science live under Progress: the mark points at Progress there,
+     which is true, rather than at the tab you came from. */
   w.go('body');
-  chk('a screen outside the bar hides the indicator rather than lying', ind2.hidden === true,
-      'hidden=' + ind2.hidden);
+  chk('Body lights the Progress tab it lives under', ind2.hidden === false &&
+      ind2.style.transform === 'translateY(' + (idxOf('progress') * 64) + 'px)',
+      'hidden=' + ind2.hidden + ' ' + ind2.style.transform);
   w.switchLang('fr');
   chk('the nav is rebuilt when the language changes',
-      nav.querySelectorAll('button').length === 4 &&
-      nav.textContent.indexOf(w.t('nav.progress')) >= 0, nav.textContent.trim());
+      nav.querySelectorAll('button').length === 5 &&
+      nav.textContent.indexOf(w.t('nav.progressShort')) >= 0 &&
+      nav.querySelector('[data-nav=progress]').getAttribute('aria-label').indexOf(w.t('nav.progress')) >= 0, nav.textContent.trim());
 }
 
 /* ==================================================================== */

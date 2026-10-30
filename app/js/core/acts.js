@@ -121,7 +121,7 @@ wireActs();
    ========================================================================== */
 
 /* the shell */
-ACT('go',                           el => go(arg(el, 1)));
+ACT('go',                           el => { const dest = arg(el, 1); if(dest === 'session') openTrain(); else go(dest); });
 ACT('reloadApp',                    el => reloadApp());
 ACT('render',                       el => render());
 ACT('switchLang',                   el => switchLang(arg(el, 1)));
@@ -275,5 +275,5 @@ ACT('openLessonFromSheet',          (el) => { closeSheet(); openLesson(arg(el, 1
 ACT('openMuscle',                   (el) => { selectMuscle(arg(el, 1)); go('body'); });
 ACT('openMuscleFromSheet',          (el) => { closeSheet(); selectMuscle(arg(el, 1)); go('body'); });
 ACT('setSciCatAll',                 (el) => { setSciCat('all'); setSciQuery(''); });
-ACT('setSessionSubGo',              (el) => { setSessionSub(arg(el, 1)); go('session'); });
+ACT('setSessionSubGo',              (el) => { SESSION_SUB = arg(el, 1) || 'plan'; go('session'); });
 ACT('setSleepHours',                (el) => { setP('sleepHours', arg(el, 1)); const lab = document.getElementById('sl_v'); if(lab) lab.textContent = el.value; });

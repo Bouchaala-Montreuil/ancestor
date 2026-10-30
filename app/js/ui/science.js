@@ -54,6 +54,7 @@ Screens.science = function(){
                     { r: 16, stroke: 3.5, ringKey: 'sci.read', label: t('sci.progress') }) +
        '<span class="meta">' +
        numExpr(read.length + ' / ' + LESSONS.length) + ' ' + esc(t('sci.lessonsDone')) + '</span></div></div>';
+  h += progressGroupNav('science');
 
   /* architectural sub-tabs (keep .chip in classList so automated tab queries match) */
   const TABS = ['lessons','modules','explorers','evidence'];
@@ -74,12 +75,12 @@ Screens.science = function(){
 
   /* achievements — rows with a mark that fills when earned, not pills. Every
      other section in the dossier is numbered; this one was not. */
-  h += '<div class="sect"><h2 class="title">' + esc(t('sci.achievements')) + '</h2><span class="rule"></span></div>';
+  h += journeyFold('science-achievements', t('sci.achievements'), ach.length + ' / ' + ACHIEVEMENTS.length);
   h += '<div class="factors bare">' + ACHIEVEMENTS.map(a => {
       const got = ach.indexOf(a.id) >= 0;
       return '<div class="factor' + (got ? ' up' : ' locked') + '">' +
              '<span class="dot"></span><span class="txt">' + esc(t(a.label)) + '</span></div>';
-    }).join('') + '</div>';
+    }).join('') + '</div></div></details>';
 
   return { html: h };
 };
@@ -112,12 +113,16 @@ function sciLessons(){
      names the field; the placeholder says what to type. */
   h += '<div class="field"><label for="sciSearchInput">' + esc(t('sci.search')) + '</label>' +
        '<input id="sciSearchInput" type="text" value="' + esc(SCI_QUERY) + '" data-in="setSciQuery" data-t1="v" placeholder="' + esc(t('sci.searchHint')) + '"></div>';
-  /* Eleven categories. Wrapped, they were five rows of buttons before the first
-     lesson; as one rail they are one row that scrolls. */
+  /* Categories are optional refinements. The current category is named on
+     the closed row and the choice survives a screen re-render. */
+  const cat = SCIENCE_CATEGORIES.filter(c => c.id === SCI_CAT)[0];
+  h += '<details class="dis science-filters" data-remember="science-filters"><summary>' +
+       '<span class="dis-t">' + esc(t('sci.catLabel')) + '</span>' +
+       (cat ? '<span class="flag sm accent">' + esc(t(cat.label)) + '</span>' : '') + '</summary>';
   h += '<div class="chips rail mb-4" role="group" aria-label="' + esc(t('sci.catLabel')) + '">' +
        '<button class="chip sm ' + (SCI_CAT==='all'?'on':'') + '" data-act="setSciCat" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        SCIENCE_CATEGORIES.map(c => '<button class="chip sm ' + (SCI_CAT===c.id?'on':'') + '" data-act="setSciCat" data-a1="' + c.id + '">' +
-       esc(t(c.label)) + '</button>').join('') + '</div>';
+       esc(t(c.label)) + '</button>').join('') + '</div></details>';
 
   const q = SCI_QUERY.trim().toLowerCase();
   const list = LESSONS.filter(l =>
@@ -149,7 +154,11 @@ function sciLessons(){
   return h;
 }
 function setSciCat(c){ SCI_CAT = c; render(); }
-function setSciQuery(v){ SCI_QUERY = v; render(); }
+function setSciQuery(v){
+  SCI_QUERY = v || ''; render();
+  const inp = document.getElementById('sciSearchInput');
+  if(inp){ inp.focus(); inp.setSelectionRange(SCI_QUERY.length, SCI_QUERY.length); }
+}
 
 /* ======================================================================== */
 /*  LESSON                                                                   */

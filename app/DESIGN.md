@@ -21,6 +21,35 @@ motion, and thumb reach. §8 states it precisely.
 
 ---
 
+## 0a. Wayfinding and progressive disclosure (2026-10-30)
+
+This revision supersedes the earlier four-tab and paper-without-photographs
+choices recorded below. The five primary destinations are **Today, Train,
+Progress, Library and Me**. Body and Science are grouped under Progress; the
+same labelled navigation appears on each of those three pages. Lessons and
+modules keep a visible route back to Science. Train always returns to the
+current workout or plan, including after a Library visit. Browser Back and
+Forward follow these screen changes without adding entries for ordinary edits.
+
+Today leads with the existing recommendation and its primary action; the week
+and learning sections are named disclosures. Train keeps the start and edit
+actions prominent, with guidance and other actions available on demand.
+Progress leads with its overview; analysis, the session log, records and
+optional bodyweight remain available in named folds. Library leads with search,
+shows twelve of the existing exercises and reveals the rest on request; its
+filters name the current selection. Me begins with five closed setting groups,
+not a long open form. These folds retain their open state across a screen
+re-render during the visit; no training or preference data is removed.
+
+Each primary destination uses a people-free, training-texture masthead, with a
+legibility scrim in both themes. Live workout logging stays focused rather than
+adding a hero above the logger. The service worker caches the photographs and
+the single-file build embeds them. System and in-app reduced-motion choices
+still skip the nonessential entrance animation. The new browser journey checks
+cover the routes, active-workout return, disclosure persistence, search focus,
+seven-language narrow navigation and reduced motion. Real-device and
+cross-browser usability testing is still needed.
+
 ## 0. Theme and tokens — dark cinematic (2026-10-29)
 
 **Default: dark.** Near-black canvas, warm white type, one burnt-orange signal.
@@ -55,12 +84,13 @@ Rules that follow from the palette, and that the tests hold:
   `--on-alert`). A light word on a light state was the first contrast failure the
   dark palette produced; the toast and the strip now carry their own ink.
 - **Type.** Primary actions are Barlow Condensed 17 px bold (was 11 px tracked
-  monospace). Tab labels are 13 px display (was 9.5 px). Monospace stays for
+  monospace). Tab labels use 11–12 px condensed display. Monospace stays for
   units, identifiers and figures.
-- **Imagery is abstract and people-free.** Two generated textures (`img/hero-today.jpg`,
-  `img/hero-body.jpg`) sit behind the Today and Body mastheads. They are inlined
-  as data URIs in the single file. They contain no people and no text. Paper
-  removes them. The anatomy plate remains the app's own geometry.
+- **Imagery is abstract and people-free.** Five training textures sit behind
+  the primary mastheads and the Body masthead. They are inlined as data URIs in
+  the single file and cached offline. Paper retains the dark, legible band; the
+  paper palette continues below it. The anatomy plate remains the app's own
+  geometry.
 - **Measured contrast (WCAG 2.x), dark canvas `#090909`, surface `#141414`:**
   `--ink` 18.3:1; `--ink-2` 7.9:1; `--ink-3` 6.0:1; `--action` 7.4:1; `--on-action`
   on `--action` 7.4:1; `--ok` 9.5:1; `--warn` 10.5:1; `--alert` 7.8:1. The brief's
@@ -231,7 +261,8 @@ closed**:
 Nothing was removed to make the page short — that is the difference between this
 and the atlas, which really had four controls per exercise doing one job. Here
 every control still exists; the page simply stops answering questions nobody
-asked. Programme opens, because a programme is the reason the screen exists.
+asked. In the 2026-10-30 revision all five groups start closed; the summary
+names what each contains and preserves its open state while settings change.
 
 The same pass fixed a structural fault that ran through five screens: every page
 title was an `h2`, so each screen's outline began at level 2 and then jumped to

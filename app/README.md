@@ -82,7 +82,7 @@ and no two regions overlap beyond tolerance.
 There is no Android SDK or Gradle toolchain in this environment, so no signed
 APK is produced here. What ships:
 
-- `release/ancestor.html` — one 2.8 MB file, zero external references, works
+- `release/ancestor.html` — one 3.0 MB file, zero external references, works
   offline; rebuilt byte-identically from source by `python3 build.py` (`dist/` is the same file, git-ignored)
 - A full PWA (manifest, service worker, icons) that installs from Chrome on
   Android → **Install app**
@@ -158,7 +158,7 @@ is verified, and what is not.
 ## Run it
 
 ```bash
-# the shipped single file: one 2.8 MB document, zero external requests
+# the shipped single file: one 3.0 MB document, zero external requests
 xdg-open release/ancestor.html
 
 # or the modular source, with the preview server

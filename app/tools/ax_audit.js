@@ -316,13 +316,18 @@ function collect() {
   {
     await page.evaluate(() => { try { window.go('home'); } catch (e) {} });
     await new Promise(r => setTimeout(r, 300));
-    /* `el.click()` does not move focus, so the first version of this test left
-       LAST_FOCUS as <body> and then complained that focus went back to <body>.
-       A pointer press focuses the button; do that. */
-    await page.evaluate(() => {
-      const b = document.querySelector('[data-act="openSheet"]');
-      if (b) { window.__axOpener = b; b.focus(); b.click(); }
+    /* The quick logs are inside the named week disclosure. Open it with a
+       real pointer, then press an actually visible button rather than invoking
+       a hidden control programmatically. A pointer press also moves focus. */
+    const weekClosed = await page.evaluate(() => {
+      const week = document.querySelector('[data-remember="home-week"]');
+      return !!week && !week.open;
     });
+    if(weekClosed) await page.click('[data-remember="home-week"] > summary');
+    await page.evaluate(() => {
+      window.__axOpener = document.querySelector('[data-remember="home-week"] [data-act="openSheet"]');
+    });
+    await page.click('[data-remember="home-week"] [data-act="openSheet"]');
     await new Promise(r => setTimeout(r, 400));
     const c = await page.evaluate(collect);
     chk('a sheet is a dialog with a name', !!c.dialog && !!c.dialog.label,

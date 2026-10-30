@@ -1,6 +1,6 @@
 /* ============================================================================
    ANCESTOR — Screens (Performance Lab)
-   Five sections: Today · Session · Body · Progress · Profile
+   Primary destinations: Today · Train · Progress · Library · Me
    ========================================================================== */
 
 const DRAFT_KEY = 'ancestor.draft.v1';
@@ -253,9 +253,9 @@ Screens.home = function(){
   h += '</div></details>';
   h += '</div></div>';
 
-  /* The page answers three questions in three bands. It used to answer nine,
-     in the order the data happened to exist. */
-  h += bandHead(t('home.bandWeek'));
+  /* Keep the day's decision first. The week remains available on request,
+     without presenting an entire dashboard before the person can train. */
+  h += journeyFold('home-week', t('home.bandWeek'), thisWeek + ' / ' + (p.daysPerWeek || 3) + ' · ' + t('progress.sessions'), true);
   /* 3. Training Progress Sparkline */
   h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.progressTitle')) +
        '</h3><span class="rule"></span></div>';
@@ -338,11 +338,12 @@ Screens.home = function(){
        '<button class="btn quiet sm" data-act="openSheet" data-a1="feel">' + esc(t('home.logfeel')) + '</button>' +
        '</div></div></div>';
 
+  h += '</div></details>'; /* end week disclosure */
   h += '</div>'; /* end left bento-col */
 
   /* ==================== RIGHT COLUMN ==================== */
   h += '<div class="bento-col">';
-  h += bandHead(t('home.bandUnderstand'));
+  h += journeyFold('home-understand', t('home.bandUnderstand'), t('nav.body') + ' · ' + t('nav.science'), true);
 
   /* 6. Contextual Lab Insight */
   h += '<div><div class="sect mt-0"><h3 class="title">' + esc(t('home.insightTitle')) +
@@ -386,6 +387,7 @@ Screens.home = function(){
        '<span class="aside"><button type="button" class="link-btn" data-act="go" data-a1="science">' +
        esc(t('sci.title')) + ' \u2192</button></span></div>' + nextLessonCard(s) + '</div>';
 
+  h += '</div></details>'; /* end understand disclosure */
   h += '</div>'; /* end right bento-col */
   h += '</div>'; /* end bento-home */
 
@@ -394,6 +396,15 @@ Screens.home = function(){
 
 function bandHead(label){
   return '<h2 class="band-h">' + esc(label) + '</h2>';
+}
+
+/* A named route to details, with a short preview and a native keyboard control. */
+function journeyFold(key, title, note, heading){
+  const tag = heading ? 'h2' : 'span';
+  return '<details class="journey-fold" data-remember="' + esc(key) + '"><summary>' +
+         '<div class="journey-fold-copy"><' + tag + ' class="journey-fold-title">' + esc(title) + '</' + tag + '>' +
+         (note ? '<span class="journey-fold-note">' + esc(note) + '</span>' : '') +
+         '</div></summary><div class="journey-fold-body">';
 }
 
 /* --------------------------------------------------------- dashboard pieces
@@ -882,6 +893,16 @@ function loadDraft(){
 /* ===================================================================== */
 /*  BODY — interactive anatomy                                            */
 /* ===================================================================== */
+/* A shared, labelled wayfinding bar for the Progress group. These are page
+   destinations, not ARIA tabs: each opens a complete page of its own. */
+function progressGroupNav(cur){
+  const ids = ['progress', 'body', 'science'];
+  return '<nav class="group-nav" aria-label="' + esc(t('nav.progress')) + '">' +
+    ids.map(id => '<button type="button"' + (id === cur ? ' aria-current="page"' : '') +
+      ' class="group-nav-btn' + (id === cur ? ' on' : '') + '" data-act="go" data-a1="' + id + '">' +
+      esc(t('nav.' + id)) + '</button>').join('') + '</nav>';
+}
+
 Screens.body = function(){
   const s = getState(), now = Date.now();
   const rec = allRecovery(s, now);
@@ -891,7 +912,7 @@ Screens.body = function(){
           '<p class="masthead-idx">' + numExpr(trackedCount + ' / ' + MUSCLES.length) + ' ' + esc(t('body.tracked')) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('body.title')) + '</h1>' +
           '<p class="masthead-sub">' + esc(BODY_MODE === 'model' ? t('lab3d.atlasTag') : t('body.note2d')) + '</p>' +
-          '</div></div>';
+          '</div></div>' + progressGroupNav('body');
 
   h += '<div class="layout"><div>';
   h += '<div class="fig-stage">';
@@ -945,7 +966,12 @@ Screens.body = function(){
   h += '<div class="fig-note">' + esc(BODY_MODE==='model' ? t('lab3d.note3d') : t('body.note2d')) + '</div>';
   h += '</div>';
   if(BODY_MODE === 'model'){
-    h += '<div class="anat-filters">' +
+    const bodyFilters = [BODY_LAYER !== 'all' ? t('lab3d.layer.' + BODY_LAYER) : '',
+                         BODY_REGION !== 'all' ? t('lab3d.reg.' + BODY_REGION) : ''].filter(Boolean).join(' · ');
+    h += '<details class="dis" data-remember="body-filters"><summary><span class="dis-t">' +
+         esc(t('journey.filters')) + '</span>' +
+         (bodyFilters ? '<span class="flag sm accent">' + esc(bodyFilters) + '</span>' : '') + '</summary>' +
+         '<div class="anat-filters">' +
          '<div class="anat-filter-row" role="group" aria-label="' + esc(t('lab3d.filterLayer')) + '">' +
          '<span class="anat-filter-lbl">' + esc(t('lab3d.filterLayer')) + '</span><div class="chips">' +
          ['all','superficial','deep'].map(ly =>
@@ -961,7 +987,7 @@ Screens.body = function(){
            'aria-pressed="' + (BODY_REGION===rg?'true':'false') + '" ' +
            'aria-label="' + esc(t('lab3d.filterRegion') + ' — ' + (rg==='all' ? t('sci.all') : t('lab3d.reg.'+rg))) + '">' +
            esc(rg==='all' ? t('sci.all') : t('lab3d.reg.'+rg)) + '</button>'
-         ).join('') + '</div></div></div>';
+         ).join('') + '</div></div></div></details>';
   }
   h += '<div class="fig-hint"><svg viewBox="0 0 24 24"><path d="M9 11V6a1.5 1.5 0 0 1 3 0"/>' +
        '<path d="M12 11v5M8 13l4-2 4 2"/></svg>' + esc(t(BODY_MODE==='model' ? 'lab3d.tapHint' : 'body.tapHint')) + '</div>';
@@ -1429,10 +1455,10 @@ Screens.progress = function(){
   const periodLabel = PROG_PERIOD === 0 ? t('progress.pall')
                     : PROG_PERIOD === 30 ? t('progress.p30') : t('progress.p90');
 
-  let h = '<div class="masthead"><div>' +
+  let h = '<div class="masthead masthead-progress"><div>' +
           '<p class="masthead-idx">' + s.sessions.length + ' ' + esc(t('progress.sessions').toLowerCase()) + '</p>' +
           '<h1 class="masthead-title">' + esc(t('progress.title')) + '</h1></div>' +
-          '<span class="flag plain">' + esc(periodLabel) + '</span></div>';
+          '<span class="flag plain">' + esc(periodLabel) + '</span></div>' + progressGroupNav('progress');
 
   if(LAST_SUMMARY){
     const bits = [];
@@ -1464,11 +1490,9 @@ Screens.progress = function(){
       emptyState('progress.nodata', 'progress.nodataBody', 'chart',
         '<button class="btn" data-act="go" data-a1="session">' + esc(t('progress.start')) + '</button>', 2) +
       '</div>';
-    h += '<div class="panel mt-3">' +
-      '<div class="eyebrow mb-2">' + esc(t('progress.sample')) + '</div>' +
-      '<p class="body-sm mb-3">' + esc(t('progress.sampleNote')) + '</p>' +
-      sampleChart() + '</div>';
-    h += bodyweightTrendPanel(s);
+    h += journeyFold('progress-sample', t('progress.sample'), t('progress.sampleNote')) +
+      '<div class="panel mt-3">' + sampleChart() + '</div></div></details>';
+    h += journeyFold('progress-weight', t('profile.bodyweight'), '') + bodyweightTrendPanel(s) + '</div></details>';
     return { html: h };
   }
 
@@ -1488,6 +1512,10 @@ Screens.progress = function(){
   }
   h += '<p class="hint mt-2">' + esc(t('progress.volumeDef')) +
        (volumePartiallyUnknown(s, from) ? ' ' + esc(t('log.volumeNote')) : '') + '</p></div>';
+
+  /* Analysis, the log, records and weight remain complete but do not crowd
+     the overview. Each fold names its contents before it is opened. */
+  h += journeyFold('progress-analysis', t('progress.detail'), t('progress.exercise'));
 
   /* --- per-exercise detail --- */
   const exIds = [];
@@ -1560,6 +1588,8 @@ Screens.progress = function(){
          esc(t('progress.unknownEx')) + '</div></div>';
   }
 
+  h += '</div></details>';
+  h += journeyFold('progress-log', t('progress.table'), periodLabel);
   /* --- session table --- */
   h += '<div class="sect"><h2 class="sub">' + esc(t('progress.table')) + '</h2><span class="rule"></span></div>';
   h += '<div class="panel flush"><div class="table-wrap"><table class="data">' +
@@ -1598,6 +1628,8 @@ Screens.progress = function(){
   h += '</tbody></table></div></div>';
   h += '<p class="hint">' + esc(t('hist.recalcNote')) + '</p>';
 
+  h += '</div></details>';
+  h += journeyFold('progress-records', t('progress.pr'), '');
   /* --- personal records --- */
   h += '<div class="sect"><h2 class="sub">' + esc(t('progress.pr')) + '</h2><span class="rule"></span></div>';
   h += '<div class="panel flush"><div class="table-wrap"><table class="data"><thead><tr>' +
@@ -1621,9 +1653,10 @@ Screens.progress = function(){
 
   /* --- verifiable training milestones --- */
   h += milestonesPanel(s, now);
+  h += '</div></details>';
 
   /* --- optional bodyweight trend log --- */
-  h += bodyweightTrendPanel(s);
+  h += journeyFold('progress-weight', t('profile.bodyweight'), '') + bodyweightTrendPanel(s) + '</div></details>';
 
   return { html: h };
 };
@@ -1858,25 +1891,25 @@ Screens.profile = function(){
                    langName(CURRENT_LANG)].filter(Boolean).join(' · ');
   const valData = [s.sessions.length + ' ' + t('progress.sessions'),
                    t('you.lastBackup') + ' ' + (s.lastExportAt ? dateLabel(s.lastExportAt) : '—')].join(' · ');
-  const groupOpen = (title, value, open) =>
-    '<details class="prof-group"' + (open ? ' open' : '') + '><summary>' +
+  const groupOpen = (key, title, value, open) =>
+    '<details class="prof-group" data-remember="profile-' + key + '"' + (open ? ' open' : '') + '><summary>' +
     '<h2>' + esc(title) + '</h2>' +
     (value ? '<span class="prof-val">' + esc(value) + '</span>' : '') + '</summary>';
   const groupClose = '</details>';
 
-  let h = '<div class="masthead"><div>' +
+  let h = '<div class="masthead masthead-profile"><div>' +
           '<p class="masthead-idx">' + esc(t('onb.style.' + (p.style || 'std'))) + ' · ' +
           esc(t('onb.equip.' + (p.equipment === 'minimal' ? 'min' : (p.equipment || 'gym')))) + '</p>' +
-          '<h1 class="masthead-title">' + esc(t('profile.title')) + '</h1></div>' +
-          '<div class="row">' +
-          '<button class="btn sm" data-act="rebuildPlan">' + esc(t('profile.rebuild')) + '</button>' +
-          '<button class="btn quiet sm" data-act="go" data-a1="onb">' + esc(t('onb.redo')) + '</button></div></div>';
+          '<h1 class="masthead-title">' + esc(t('profile.title')) + '</h1></div></div>';
 
   h += '<div class="profile-grid">';
 
   /* ==================== LEFT COLUMN: TRAINING & PROGRAMME ==================== */
   h += '<div class="profile-col">';
-  h += groupOpen(t('profile.gProgramme'), valProgramme, true);
+  h += groupOpen('programme', t('profile.gProgramme'), valProgramme, false);
+  h += '<div class="row mb-3">' +
+       '<button class="btn sm" data-act="rebuildPlan">' + esc(t('profile.rebuild')) + '</button>' +
+       '<button class="btn quiet sm" data-act="go" data-a1="onb">' + esc(t('onb.redo')) + '</button></div>';
 
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('prog.title')) + '</h3></div>';
   h += '<div class="field"><label for="pf_name">' + esc(t('onb.name')) + '</label>' +
@@ -2027,7 +2060,7 @@ Screens.profile = function(){
   h += '<div class="profile-col">';
 
   /* Schedule & Sleep */
-  h += groupOpen(t('profile.gBody'), valBody, false);
+  h += groupOpen('body', t('profile.gBody'), valBody, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.planning')) +
        '</h3><span class="hint">' + esc(t('onb.shift.note')) + '</span></div>';
   h += '<div class="field"><label>' + esc(t('onb.shift.t')) + '</label><div class="chips">' +
@@ -2065,7 +2098,7 @@ Screens.profile = function(){
   h += groupClose;
 
   /* Display & Accessibility */
-  h += groupOpen(t('profile.gAccess'), valA11y, false);
+  h += groupOpen('access', t('profile.gAccess'), valA11y, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('a11y.title')) + '</h3></div>';
   h += '<div class="field"><label>' + esc(t('a11y.textSize')) + '</label><div class="chips">' +
        [1, 1.15, 1.3].map(v => '<button class="chip sm ' + (p.display.textScale === v ? 'on' : '') + '" data-act="setDisplay" data-a1="textScale" data-a2="' + v + '" data-t2="l">' + Math.round(v*100) + '%</button>').join('') +
@@ -2113,7 +2146,7 @@ Screens.profile = function(){
   /* Local Data Vault */
   const persistLabel = (typeof STORAGE_PERSISTED !== 'undefined' && STORAGE_PERSISTED === true)
     ? t('you.persistProtected') : t('you.persistStandard');
-  h += groupOpen(t('profile.gData'), valData, false);
+  h += groupOpen('data', t('profile.gData'), valData, false);
   h += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(t('profile.data')) + '</h3>' +
        '<span class="flag sm ' + ((typeof STORAGE_PERSISTED !== 'undefined' && STORAGE_PERSISTED === true) ? 'ok' : 'plain') + '">' +
        esc(persistLabel) + '</span></div>';
@@ -2163,10 +2196,9 @@ Screens.profile = function(){
   h += '</div>';
 
   h += groupClose;
-  /* Explore. Body and Science left the bottom bar because a thumb's map has
-     room for four destinations, not six. They are not hidden: each is a full row
-     here, drawn with the same mark it had in the bar, and Today links to both. */
-  h += groupOpen(t('profile.explore'), t('nav.body') + ' · ' + t('nav.science'), false);
+  /* Explore remains a second route to Body and Science; their primary group
+     is Progress, and the marks match the links on Today. */
+  h += groupOpen('explore', t('profile.explore'), t('nav.body') + ' · ' + t('nav.science'), false);
   h += '<div class="stack">' +
        '<button class="btn quiet block nav-link" data-act="go" data-a1="body">' +
          '<svg viewBox="0 0 24 24" aria-hidden="true" class="nav-link-mark">' + NAV_MARK.body + '</svg>' +

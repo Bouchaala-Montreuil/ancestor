@@ -171,10 +171,10 @@ chk('onboarding completes and a plan is generated',
     !!w.getState().plan && w.getState().plan.sessions.length === 3,
     w.getState().plan.sessions.length + ' sessions');
 chk('nav becomes visible', $('#nav').style.display !== 'none');
-chk('four primary destinations', $$('#nav button').length === 4,
+chk('five primary destinations', $$('#nav button').length === 5,
     $$('#nav button').map(b => b.textContent.trim()).join(' / '));
 chk('and nothing else is in the bar', $$('#nav button').every(b =>
-    ['home','session','progress','profile'].indexOf(b.getAttribute('data-nav')) >= 0));
+    ['home','session','progress','library','profile'].indexOf(b.getAttribute('data-nav')) >= 0));
 
 /* The masthead is static markup, so a language control could only come back by
    being injected per screen: assert every destination, not just the one the
@@ -864,8 +864,9 @@ group('19. Today answers three questions, not nine');
       h3s.filter(h => h2s.some(b => b.textContent.trim() === h.textContent.trim())).length === 0,
       h3s.map(h => h.textContent.trim()).join(' · '));
   chk('every band heading is inside a column, not orphaned at the end',
-      h2s.every(h => h.parentElement &&
-        h.parentElement.classList.contains('bento-col')));
+      h2s.every(h => !!h.closest('.bento-col')));
+  chk('week and understand are closed but clearly named at first',
+      h2s.slice(1).every(h => h.closest('details') && !h.closest('details').open));
   chk('the band heading is not a link and has no control in it',
       h2s.every(h => h.querySelectorAll('button,a').length === 0));
   /* the outline order matches reading order: Today before This week before Understand */

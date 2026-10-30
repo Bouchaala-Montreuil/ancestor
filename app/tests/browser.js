@@ -49,6 +49,7 @@ const MIME = {
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.glb': 'model/gltf-binary',
   '.png': 'image/png',
+  '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml'
 };
 
@@ -116,6 +117,11 @@ function startServer(){
     {
       await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
       await page.reload({ waitUntil: 'networkidle0' });
+      /* The boot veil intentionally remains up while the mark draws. Do not
+         click through it: wait until a user can actually reach the question. */
+      await page.waitForFunction(() => !document.getElementById('appBoot'), { timeout: 10000 });
+      chk('the boot veil leaves the language choices reachable',
+          await page.$('#appBoot') === null);
 
       const rows = await page.$$eval('.lang-row', els => els.map(e => ({
         lang: e.getAttribute('lang'), dir: e.querySelector('.lang-nm').getAttribute('dir'),
@@ -1025,6 +1031,18 @@ function startServer(){
 
     await page.setOfflineMode(true);
     await page.reload({ waitUntil: 'domcontentloaded' });
+    const offlineBands = await page.evaluate(async () => {
+      const names = ['today','body','train','progress','library'];
+      return Promise.all(names.map(async name => {
+        try{
+          const res = await fetch('img/hero-' + name + '.jpg');
+          const blob = await res.blob();
+          return { name, ok:res.ok && blob.type === 'image/jpeg' && blob.size > 1000 };
+        }catch(e){ return { name, ok:false }; }
+      }));
+    });
+    chk('all five cinematic images are available offline',
+        offlineBands.every(img => img.ok), JSON.stringify(offlineBands));
     await page.evaluate(() => go('body'));
     await page.waitForFunction(() => typeof labIsLoaded === 'function' && labIsLoaded() === true, { timeout: 15000 });
     const offlineState = await page.evaluate(() => ({

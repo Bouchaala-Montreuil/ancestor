@@ -1,5 +1,5 @@
 /* ANCESTOR — offline cache. Bump CACHE on every deploy. */
-const CACHE = 'ancestor-v35';  // v35: the veil explains itself if it never lifts
+const CACHE = 'ancestor-v36';  // v36: five destinations and offline cinematic bands
 const FILES = [
   './', './index.html', './css/app.css',
   './js/i18n/core.js', './js/i18n/ui.js', './js/i18n/exercises.js', './js/i18n/screens.js', './js/i18n/acc.js', './js/i18n/ar.js', './js/i18n/v2.js', './js/i18n/science.js', './js/i18n/science2.js', './js/i18n/ex_modes.js', './js/i18n/modes.js', './js/i18n/focus.js', './js/i18n/lesson_bodies_en.js', './js/i18n/lesson_bodies_fr.js', './js/i18n/lesson_bodies_es_de.js', './js/i18n/lesson_bodies_it_nl_ar.js', './js/i18n/print.js', './js/i18n/locale.js',
@@ -8,7 +8,8 @@ const FILES = [
   './js/engine/readiness.js', './js/engine/program.js', './js/engine/why.js',
   './js/ui/components.js', './js/ui/screens.js', './js/ui/workout.js', './js/ui/printsheet.js', './js/ui/motion.js', './js/ui/modules.js', './js/ui/science.js', './js/ui/anatomy3d.js', './js/app.js',
   './js/vendor/three-bundle.js', './assets/anatomy-male-mobile.glb',
-  './manifest.webmanifest', './img/icon-192.png', './img/icon-512.png'
+  './manifest.webmanifest', './img/icon-192.png', './img/icon-512.png',
+  './img/hero-today.jpg', './img/hero-body.jpg', './img/hero-train.jpg', './img/hero-progress.jpg', './img/hero-library.jpg'
 ];
 self.addEventListener('install', e => {
   self.skipWaiting();

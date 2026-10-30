@@ -10,6 +10,9 @@
    ========================================================================== */
 
 const TAR = {
+'journey.primaryNav':'التنقل الرئيسي',
+'nav.progressShort':'التقدّم','nav.libraryShort':'التمارين',
+"nav.train":"تمرين","nav.me":"أنا","journey.filters":"عوامل التصفية","journey.moreExercises":"عرض {n} تمارين إضافية","journey.moreOptions":"خيارات إضافية","journey.exerciseDetails":"الإرشادات والتفاصيل",
 'state.stop':'لا تتدرّب اليوم',
 'app.bootNote':'سجلّك لا يغادر هذا الجهاز أبدًا','app.name':'ANCESTOR','app.tag':'محرّك التعافي',
 'app.update.title':'إصدار جديد جاهز',
@@ -20,7 +23,7 @@ const TAR = {
 'app.crash.note':'محفوظ على هذا الجهاز كي يمكن الإبلاغ عنه. ولا يُرسَل إلى أي جهة.',
 'app.crash.clear':'مسح',
 
-'nav.home':'الرئيسية','nav.today':'اليوم','nav.session':'الحصة','nav.body':'الجسم','nav.progress':'التقدّم','nav.profile':'الملف',
+'nav.home':'الرئيسية','nav.today':'اليوم','nav.session':'الحصة','nav.body':'الجسم','nav.progress':'التقدّم','nav.profile':'الملف','nav.library':'المكتبة',
 
 'btn.next':'متابعة','btn.back':'رجوع','btn.save':'حفظ','btn.cancel':'إلغاء','btn.close':'إغلاق',
 'btn.done':'تم','btn.start':'بدء الحصة','btn.confirm':'تأكيد','btn.delete':'حذف','btn.edit':'تعديل',

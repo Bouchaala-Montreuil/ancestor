@@ -227,7 +227,9 @@ def main():
 
     rel = app / 'release/ancestor.html'
     size_mb = rel.stat().st_size / (1024 * 1024) if rel.exists() else 0
-    chk('the single file is about 2.8 MB', 2.6 <= size_mb <= 3.0, '%.2f MB' % size_mb)
+    chk('the single file is about 3.0 MB and stays under 3 MB', 2.9 <= size_mb <= 3.0, '%.2f MB' % size_mb)
+    chk('the advertised size matches the file to one decimal place',
+        PAGE.read_text().count('%.1f MB' % size_mb) >= 2, '%.1f MB' % size_mb)
     chk('the single file asks for nothing',
         not re.search(r'(?:src|href)\s*=\s*["\']https?:', rel.read_text())
         if rel.exists() else False)
