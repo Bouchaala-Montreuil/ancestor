@@ -53,6 +53,17 @@ which travel with the work:
      rest of this notice says; how far the share-alike obligation reaches into
      the surrounding work is a legal question, not one answered here.
 
+  3. Three.js, by the three.js authors — MIT License. Its copyright and
+     permission notice are reproduced at app/assets/THREE-LICENSE.txt.
+
+  4. The meshoptimizer decoder, by Arseny Kapoulkine — MIT License. Its
+     copyright and permission notice are at app/assets/MESHOPT-LICENSE.txt.
+
+The two software notices are included in the vendored 3D bundle, and the
+software, font and anatomy notices are embedded in both app distributions.
+They are available offline in Me → Data → Third-party licences. These notices
+are not a substitute for legal review of distribution and share-alike terms.
+
 
 NO WARRANTY
 

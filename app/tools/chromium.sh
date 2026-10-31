@@ -1,33 +1,60 @@
 #!/usr/bin/env bash
-# Get a Chromium for `tests/browser.js` from the npm registry alone.
+# Chromium for the real-browser suites, installed outside the repository.
+# The default package and its transitive dependencies are pinned by
+# tools/chromium-deps/package-lock.json. The browser is decompressed into a
+# lock-specific directory so a previous /tmp/chromium cannot silently win.
 #
-# The obvious route — `npx puppeteer browsers install chrome` — pulls from
-# Google's CDN, which is blocked in a locked-down sandbox. `@sparticuz/chromium`
-# ships the same Chromium, brotli-compressed, inside an npm tarball, plus the
-# Amazon Linux 2023 shared libraries it needs (libnspr4, libnss3, libexpat).
-# That is enough to run the 93 real-browser checks anywhere npm works.
+#   source tools/chromium.sh
+#   npm run test:browser
 #
-#   source tools/chromium.sh        # sets PUPPETEER_EXECUTABLE_PATH and LD_LIBRARY_PATH
-#   node tests/browser.js
-#
-# Written and verified 2026-10-29; the suite passed 93/93 with it.
+# CR_ROOT selects the temporary working directory. CR_PKG can opt into a
+# different Chromium package, but that custom choice is not covered by the
+# checked-in lock and is not the browser used for the documented release gate.
 
 set -euo pipefail
 
-CR_ROOT="${CR_ROOT:-/tmp/ancestor-chromium}"
-CR_PKG="${CR_PKG:-@sparticuz/chromium@153.0.0}"   # the version this was verified with
+CR_TOOLS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CR_BASE="${CR_ROOT:-/tmp/ancestor-chromium}"
+mkdir -p "$CR_BASE"
+CR_BASE="$(cd -- "$CR_BASE" && pwd -P)"
+CR_LOCK_DIR="$CR_TOOLS_DIR/chromium-deps"
+CR_LOCKED_SPEC="$(node -p "'@sparticuz/chromium@'+require(process.argv[1]).dependencies['@sparticuz/chromium']" "$CR_LOCK_DIR/package.json")"
+CR_SELECTED_PKG="${CR_PKG:-$CR_LOCKED_SPEC}"
 
-mkdir -p "$CR_ROOT"
-if [ ! -d "$CR_ROOT/node_modules/@sparticuz/chromium" ]; then
-  echo "fetching $CR_PKG from the npm registry into $CR_ROOT ..." >&2
-  ( cd "$CR_ROOT" && npm init -y >/dev/null 2>&1 && npm install "$CR_PKG" --no-audit --no-fund >/dev/null 2>&1 )
+# Node is already required by the helper; avoid platform-specific sha256sum.
+cr_hash_file() { node -e 'const c=require("crypto"),f=require("fs");process.stdout.write(c.createHash("sha256").update(f.readFileSync(process.argv[1])).digest("hex"))' "$1"; }
+cr_hash_text() { node -e 'process.stdout.write(require("crypto").createHash("sha256").update(process.argv[1]).digest("hex"))' "$1"; }
+
+if [ "$CR_SELECTED_PKG" = "$CR_LOCKED_SPEC" ]; then
+  CR_DIR="$CR_BASE/locked"
+  CR_LOCK_ID="$(cr_hash_file "$CR_LOCK_DIR/package-lock.json")"
+  mkdir -p "$CR_DIR"
+  if [ ! -f "$CR_DIR/node_modules/@sparticuz/chromium/package.json" ] ||
+     [ "$(cat "$CR_DIR/.ancestor-lock-id" 2>/dev/null || true)" != "$CR_LOCK_ID" ]; then
+    echo "installing locked $CR_SELECTED_PKG from the npm registry into $CR_DIR ..." >&2
+    cp "$CR_LOCK_DIR/package.json" "$CR_LOCK_DIR/package-lock.json" "$CR_DIR/"
+    ( cd "$CR_DIR" && npm ci --ignore-scripts --no-audit --no-fund >/dev/null )
+    printf '%s\n' "$CR_LOCK_ID" > "$CR_DIR/.ancestor-lock-id"
+  fi
+else
+  # Preserve the existing override for maintainers testing a different build,
+  # while keeping it separate from (and never claiming it is) the pinned one.
+  CR_OVERRIDE_ID="$(cr_hash_text "$CR_SELECTED_PKG")"
+  CR_OVERRIDE_ID="${CR_OVERRIDE_ID:0:16}"
+  CR_DIR="$CR_BASE/custom-$CR_OVERRIDE_ID"
+  mkdir -p "$CR_DIR"
+  if [ ! -f "$CR_DIR/node_modules/@sparticuz/chromium/package.json" ]; then
+    echo "installing custom $CR_SELECTED_PKG (not covered by the release lock) into $CR_DIR ..." >&2
+    ( cd "$CR_DIR" && npm init -y >/dev/null 2>&1 && npm install --save-exact --ignore-scripts --no-audit --no-fund "$CR_SELECTED_PKG" >/dev/null )
+  fi
+  CR_LOCK_ID="$(cr_hash_file "$CR_DIR/package-lock.json")"
 fi
 
-# 1. the browser binary, decompressed out of chromium.br by the package itself
-BIN="$(cd "$CR_ROOT" && node -e '
-  /* The package has changed its export shape between majors (153: default is
-     the instance; 143: a class under .default), so unwrap defensively rather
-     than pinning the caller to one of them. */
+# Both the binary and SwiftShader use os.tmpdir(). Give each resolved lock its
+# own directory; @sparticuz otherwise reuses any unrelated /tmp/chromium.
+CR_RUNTIME="$CR_DIR/runtime-${CR_LOCK_ID:0:16}"
+mkdir -p "$CR_RUNTIME"
+BIN="$(cd "$CR_DIR" && TMPDIR="$CR_RUNTIME" node -e '
   let m = require("@sparticuz/chromium");
   m = (m && m.default) || m;
   if (m && m.default && typeof m.executablePath !== "function") m = m.default;
@@ -35,20 +62,26 @@ BIN="$(cd "$CR_ROOT" && node -e '
   m.executablePath().then(p => process.stdout.write(p)).catch(e => { console.error(e.message); process.exit(1); });
 ')"
 
-# 2. the shared libraries it links against, out of al2023.tar.br
-LIBS="$CR_ROOT/lib"
-if [ ! -f "$LIBS/libnspr4.so" ]; then
-  mkdir -p "$LIBS"
+# The package contains the Amazon Linux shared libraries used by the browser.
+if [ ! -f "$CR_RUNTIME/lib/libnspr4.so" ]; then
   node -e '
     const fs = require("fs"), zlib = require("zlib");
-    const src = process.argv[1], out = process.argv[2];
-    fs.writeFileSync(out, zlib.brotliDecompressSync(fs.readFileSync(src)));
-  ' "$CR_ROOT/node_modules/@sparticuz/chromium/bin/al2023.tar.br" "$CR_ROOT/al2023.tar"
-  tar -xf "$CR_ROOT/al2023.tar" -C "$CR_ROOT"
+    fs.writeFileSync(process.argv[2], zlib.brotliDecompressSync(fs.readFileSync(process.argv[1])));
+  ' "$CR_DIR/node_modules/@sparticuz/chromium/bin/al2023.tar.br" "$CR_RUNTIME/al2023.tar"
+  tar -xf "$CR_RUNTIME/al2023.tar" -C "$CR_RUNTIME"
 fi
 
-# 3. SwiftShader, which is what makes the WebGL checks mean anything without a GPU
 export PUPPETEER_EXECUTABLE_PATH="$BIN"
-export LD_LIBRARY_PATH="$CR_ROOT/lib:$CR_ROOT:${LD_LIBRARY_PATH:-}"
+# Re-sourcing with another package must not leave the previous helper's
+# libraries in the search path. Also avoid an empty trailing component, which
+# would implicitly add the caller's current directory to that search path.
+if [ -n "${ANCESTOR_CHROMIUM_LIB_PREFIX:-}" ]; then
+  case "${LD_LIBRARY_PATH:-}" in
+    "$ANCESTOR_CHROMIUM_LIB_PREFIX") LD_LIBRARY_PATH='' ;;
+    "$ANCESTOR_CHROMIUM_LIB_PREFIX":*) LD_LIBRARY_PATH="${LD_LIBRARY_PATH#"$ANCESTOR_CHROMIUM_LIB_PREFIX":}" ;;
+  esac
+fi
+ANCESTOR_CHROMIUM_LIB_PREFIX="$CR_RUNTIME/lib:$CR_RUNTIME"
+export LD_LIBRARY_PATH="$ANCESTOR_CHROMIUM_LIB_PREFIX${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 echo "PUPPETEER_EXECUTABLE_PATH=$PUPPETEER_EXECUTABLE_PATH" >&2
 echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >&2

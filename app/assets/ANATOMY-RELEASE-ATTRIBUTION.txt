@@ -1,0 +1,23 @@
+Anatomy model and derived flat figure — Z-Anatomy / BodyParts3D
+
+"Z-Anatomy - The libre 3D atlas of anatomy - CC-BY-SA 4.0"
+https://github.com/Z-Anatomy/Models-of-human-anatomy
+Authors: Kousaku Okubo (original model BodyParts3D), Gauthier Kervyn
+(design, 3D, anatomy), Marcin Zielinski (Blender add-on), and upstream contributors.
+
+"BodyParts3D - The Database Center for Life Science - CC-BY-SA 2.1 Japan"
+https://creativecommons.org/licenses/by-sa/2.1/jp/
+"BodyParts3D, © The Database Center for Life Science licensed under
+CC Attribution 4.0 International"
+https://creativecommons.org/licenses/by/4.0/
+https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html
+
+Adapted material is licensed under CC BY-SA 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+Changes: skeletal muscles were extracted and simplified, assigned training-group
+metadata and compressed; the flat figure was projected from the adapted mesh.
+Training colours are estimates, not measurements. The model and projection have
+not been independently reviewed by an anatomy specialist.
+
+Full provenance and the public copy of the adaptations:
+https://github.com/slfresh/fitmitwith-anatomy-atlas

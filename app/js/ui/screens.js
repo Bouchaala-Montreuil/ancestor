@@ -2275,6 +2275,15 @@ Screens.profile = function(){
     esc(t('about.p'+i)) + '</p>'; });
   h += '<div class="uncertain mt-3"><b>' + esc(t('lab3d.credits')) +
        '</b> ' + esc(t('body.note2d')) + '</div>';
+  /* The original licence texts remain in English and left-to-right even when
+     the surrounding interface is RTL. The inert template is in both builds,
+     so the disclosure works without a network or a separate file. */
+  const notices = document.getElementById('third-party-notices');
+  if(notices && notices.content){
+    h += '<details class="dis mt-3" data-third-party-notices><summary><span class="dis-t">' +
+      esc(t('about.thirdParty')) + '</span></summary><pre class="license-text" lang="en" dir="ltr">' +
+      esc(notices.content.textContent.trim()) + '</pre></details>';
+  }
 
   /* Which build is this? A tab can be running yesterday's code against
      today's cache, and until now there was no way to tell from inside the

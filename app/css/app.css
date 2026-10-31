@@ -3352,3 +3352,6 @@ html[lang="ar"] .mono{
 .movement-anatomy .ex-vis-figs{border:0;border-top:1px solid var(--line)}
 .movement-legend{gap:8px;padding:0 var(--s3)}
 .movement-diagram-note{margin:var(--s2) var(--s3) var(--s3)}
+
+/* Original licence texts stay readable at narrow widths and in RTL. */
+.license-text{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink-2);font-family:var(--f-body);font-size:var(--fs-sm);line-height:1.55}

@@ -2,13 +2,13 @@
   "name": "ancestor",
   "version": "3.0.0",
   "private": true,
-  "description": "ANCESTOR \u2014 offline-first, self-contained fitness PWA. No runtime dependencies.",
+  "description": "ANCESTOR — offline-first, self-contained fitness PWA. No runtime dependencies.",
   "scripts": {
     "build": "python3 build.py",
     "pretest": "npm run build",
-    "test": "node tests/design.js && node tests/premium.js && node tests/ui.js && node tests/run.js && node tests/inclusive.js && node tests/personas.js && node tests/science.js && node tests/logic.js && node tests/anatomy.js && node tests/print.js && node tests/movement.js && node tests/exercise_filters.js",
+    "test": "node tests/design.js && node tests/premium.js && node tests/ui.js && node tests/run.js && node tests/inclusive.js && node tests/personas.js && node tests/science.js && node tests/logic.js && node tests/anatomy.js && node tests/print.js && node tests/movement.js && node tests/exercise_filters.js && node tests/release_integrity.js",
     "test:logic": "node tests/logic.js",
-    "test:browser": "node tests/browser.js && node tests/journey.js && node tests/workout_safety.js && node tests/rest_timer.js && node tests/movement_browser.js && node tests/exercise_filters_browser.js",
+    "test:browser": "node tests/browser.js && node tests/journey.js && node tests/workout_safety.js && node tests/rest_timer.js && node tests/movement_browser.js && node tests/exercise_filters_browser.js && node tests/release_integrity_browser.js",
     "keys": "node tools/keyscan.js",
     "qa": "node tools/qa_audit.js",
     "figure": "node tools/build-figure.js",
@@ -19,7 +19,10 @@
     "test:all": "npm test && npm run test:browser && node tools/pwa_audit.js",
     "pwa": "node tools/pwa_audit.js",
     "ax": "node tools/ax_audit.js",
-    "verify": "npm test && npm run modules -- --check && npm run figure -- --check && npm run keys && npm run qa && npm run build && npm run smoke && python3 ../site/build.py && python3 ../site/check.py"
+    "verify": "npm test && npm run modules -- --check && npm run notices -- --check && npm run vendor -- --check && npm run figure -- --check && npm run keys && npm run qa && npm run build && npm run smoke && python3 ../site/build.py && python3 ../site/check.py",
+    "vendor": "node tools/vendor_three.js",
+    "audit:deps": "node tools/audit_deps.js",
+    "notices": "python3 tools/notices.py"
   },
   "devDependencies": {
     "@gltf-transform/core": "^4.5.1",
@@ -30,7 +33,10 @@
     "jsdom": "^29.1.1",
     "meshoptimizer": "^1.3.0",
     "playwright-core": "^1.64.1",
-    "puppeteer": "^24.43.1",
+    "puppeteer": "^25.16.0",
     "three": "^0.186.1"
+  },
+  "engines": {
+    "node": "^22.17.0 || >=24.0.0"
   }
 }

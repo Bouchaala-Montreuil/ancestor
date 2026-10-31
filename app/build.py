@@ -70,6 +70,13 @@ manifest_b64 = base64.b64encode(json.dumps(manifest).encode()).decode()
 # away from the source. The bundle is now built from index.html itself, so
 # the two can never disagree again.
 html = read("index.html")
+# Fail closed: every standalone build must carry the current third-party
+# licences and attribution, not a stale or omitted embedded copy.
+from tools.notices import check_document
+try:
+    check_document(html)
+except (OSError, ValueError) as error:
+    raise SystemExit(str(error)) from error
 
 # stylesheet
 # Photographic bands are referenced from the stylesheet as ../img/*.jpg. The

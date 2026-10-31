@@ -8,7 +8,7 @@ way: `index.html` must open from the file system, and `file://` blocks ES
 modules. So the boundary is a contract rather than a syntax — one owner per
 name, no unloaded files, and a count per file that cannot grow by accident.
 
-**45 files, 814 top-level names.** Each name has exactly one
+**45 files, 815 top-level names.** Each name has exactly one
 owner; `provides` is what a file creates, `reaches for` is what it mentions
 from another file (a token scan, so it over-reports — it is a reading list,
 not a dependency graph).
@@ -27,7 +27,7 @@ not a dependency graph).
 | 10 | `js/i18n/science2.js` | 2 | 6 |
 | 11 | `js/i18n/ex_modes.js` | 1 | 3 |
 | 12 | `js/i18n/movement.js` | 4 | 4 |
-| 13 | `js/i18n/modes.js` | 10 | 15 |
+| 13 | `js/i18n/modes.js` | 11 | 15 |
 | 14 | `js/i18n/lesson_bodies_en.js` | 1 | 4 |
 | 15 | `js/i18n/lesson_bodies_fr.js` | 1 | 4 |
 | 16 | `js/i18n/lesson_bodies_es_de.js` | 2 | 3 |
@@ -78,7 +78,7 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/i18n/science2.js`** — 2: `TSC2` `TSC2_MIN`
 - **`js/i18n/ex_modes.js`** — 1: `TM`
 - **`js/i18n/movement.js`** — 4: `MOVEMENT_LANGS` `MOVEMENT_COPY` `MOVEMENT_UI` `MOVEMENT_GROUP_ACTION`
-- **`js/i18n/modes.js`** — 10: `TMODE` `TCOST` `TMODE_FULL` `TPLAN` `TPLAN2` `TV41` `TV42` `TV43` `WORKOUT_SAFETY` `EXERCISE_SAFETY`
+- **`js/i18n/modes.js`** — 11: `TMODE` `TCOST` `TMODE_FULL` `TPLAN` `TPLAN2` `TV41` `TV42` `TV43` `WORKOUT_SAFETY` `EXERCISE_SAFETY` `THIRD_PARTY_LABELS`
 - **`js/i18n/lesson_bodies_en.js`** — 1: `TLEN`
 - **`js/i18n/lesson_bodies_fr.js`** — 1: `TLFR`
 - **`js/i18n/lesson_bodies_es_de.js`** — 2: `TLES` `TLDE`

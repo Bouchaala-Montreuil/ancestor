@@ -203,23 +203,34 @@ is verified, and what is not.
 xdg-open release/ancestor.html
 
 # or the modular source, with the preview server
-npm install
+PUPPETEER_SKIP_DOWNLOAD=1 npm ci
 npm run preview            # → http://0.0.0.0:8000
 ```
 
-`npm install` pulls a Chrome for the browser suite, which fails on a network that
-blocks Google's CDN. If that is your network:
+Use Node **22.17+ in the 22.x line, or 24+**. `npm ci` installs the exact
+versions and integrity hashes recorded in `package-lock.json`; Puppeteer is a
+development tool, not an application runtime dependency. The command above
+skips Puppeteer's separate Chrome download. For browser tests, get the pinned
+Chromium helper and its own locked dependencies from the npm registry:
 
 ```bash
-PUPPETEER_SKIP_DOWNLOAD=1 npm install
-source tools/chromium.sh   # Chromium from the npm registry instead
+source tools/chromium.sh   # installs into a temporary directory, not the repo
+npm run test:browser
 ```
+
+The pinned helper contains a Linux x86-64 browser. On other platforms, set
+`PUPPETEER_EXECUTABLE_PATH` to a compatible locally installed Chromium/Chrome
+instead; that browser is outside the locked release gate.
+
+Setting `CR_PKG` deliberately tests another Chromium package; that custom
+selection is not covered by the checked-in browser lock or release results.
 
 Everything else is regenerated, never hand-edited:
 
 ```bash
 python3 build.py                              # rebuild the single file → dist/ and release/
-node tools/vendor_three.js                    # rebuild js/vendor/three-bundle.js (build-time only)
+npm run vendor                                # rebuild js/vendor/three-bundle.js (build-time only)
+python3 tools/notices.py                      # sync offline licence notices into index.html
 node tools/compress_glb.mjs in.glb out.glb    # re-compress the anatomy model
 ```
 
@@ -248,12 +259,15 @@ node tests/anatomy.js              #  64 real 3D asset and selection tests
 node tests/print.js                #  88 the A4 sheet
 node tests/movement.js             # exercise mappings, guidance and localization checks
 node tests/exercise_filters.js     # plan, substitution, empty-pool and preference regressions
+node tests/release_integrity.js    # locks, offline notices, vendor payload and build budget
 node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tests/journey.js              #  39 navigation and disclosure checks in Chromium
 node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
 node tests/rest_timer.js           #  73 timer, alerts, interruption and layout checks in Chromium
 node tests/movement_browser.js     # guide, playback, RTL, theme, layout and offline checks
 node tests/exercise_filters_browser.js # preference, override, draft and warning journeys
+node tests/release_integrity_browser.js # keyboard, localization and offline notices
+npm run audit:deps                 # networked audit of both committed lockfiles
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
 node tools/qa_audit.js             # scripted user-journey audit
@@ -365,7 +379,7 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 - Everything stored in `localStorage` on the device. Nothing uploaded.
 - No account, no email, no analytics, no advertising, no third-party requests
   (there is a test asserting zero external references in the HTML).
-- Full **export to JSON** and **erase everything**, both from You → Your data.
+- Full **export to JSON** and **erase everything**, both from Me → Data.
 - Onboarding states all of this before collecting anything.
 
 ---
@@ -388,6 +402,28 @@ anatomy, print and offline packaging. They are not substitutes for physical
 hardware, Safari, Firefox, assistive-technology or professional exercise review.
 Run the commands above for current results.
 
+### Dependency and distribution pass — 2026-10-31
+
+Puppeteer was upgraded to 25.16.0 and the application tooling and Chromium
+helper each received an npm lockfile. A fresh `npm ci` and a fresh helper
+installation succeeded on Node 22.22.3/Linux x86-64. Both lockfiles returned
+zero known npm advisories on that date. This is not a claim about future
+advisories, the bundled runtime, the Chromium binary or legal compliance.
+
+The offline app now carries the complete Three.js and meshoptimizer MIT
+notices, the complete Barlow OFL and the anatomy attribution. They are readable
+under Me → Data → Third-party licences in both distributions. The deterministic
+gate checks those notices against their canonical files and regenerates the 3D
+bundle to check its licensed source and banner.
+
+For this pass the headless gate ran **1,942 checks**, translation keyscan
+covered **1,917 keys in seven languages**, and the site gate passed **67 checks**.
+Chromium ran **379 checks**, including 176 layouts and standalone 3D offline;
+install and accessibility-tree audits passed **30** and **75** checks. The
+notice, exercise-filter, safety, movement and timer journeys also passed against
+both an HTTP PWA and the standalone file. These automated results do not replace
+the independent reviews below.
+
 ### Launch-readiness audit — remaining work
 
 The October 2026 audit reproduced and fixed preference bypasses in substitute
@@ -405,14 +441,14 @@ Before a public launch, still arrange:
   readers and keyboard/touch workflows, including offline updates and recovery.
 - Native-speaker review of all seven languages and RTL, and independent review
   of the science explanations and linked evidence.
-- A release and dependency-security review, including a reproducible dependency
-  lock/audit and verification of all distribution licences. On 2026-10-30 an
-  npm audit of a freshly resolved **temporary** lock reported 10 high-severity
-  advisories in the Puppeteer development-tool chain; npm recommends a major
-  upgrade. `--omit=dev` reported zero, but does not assess the vendored runtime
-  bundle or prove absence of browser-side vulnerabilities. The repository does
-  not currently track a lockfile, so the temporary resolution is not a pinned
-  release audit.
+- Independent release, security and legal review, including the CC BY-SA
+  implications and distribution rights of every asset. On 2026-10-30 a
+  temporary npm resolution reported 10 high-severity advisories in Puppeteer's
+  development chain. On 2026-10-31 Puppeteer was upgraded and separate locks for
+  the application tooling and the Chromium helper were committed; `npm run
+  audit:deps` reported **zero known npm advisories** for both locks at that time.
+  This is a time-specific registry result, not a security guarantee, and does
+  not audit the browser binary, vendored runtime, assets or licensing terms.
 
 ### Bugs the tests caught in this redesign
 
@@ -528,9 +564,12 @@ windows are labelled estimates throughout; when data is missing the screen says
 
 Proprietary, all rights reserved — see **[../LICENSE](../LICENSE)**: read it and
 run it, do not copy, modify, redistribute or reuse it outside this repository
-without written permission. Two pieces inside it are not proprietary: Barlow
-Condensed (SIL OFL 1.1, `app/fonts/OFL.txt`) and the anatomy mesh
-(CC BY-SA 4.0, share-alike, `app/assets/`), whose terms travel with the work.
+without written permission. Third-party material retains its own terms:
+Barlow Condensed (SIL OFL 1.1), the anatomy model and its derived figure
+(CC BY-SA 4.0), and Three.js and meshoptimizer (MIT). Their notices are
+embedded in the app under **Me → Data → Third-party licences**, including in
+the offline standalone file. Source copies and attribution are in `fonts/`
+and `assets/`. These notices do not replace legal review.
 
 ## Free to use, and it stays that way
 

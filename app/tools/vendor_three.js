@@ -18,6 +18,15 @@ const fs = require('fs');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'js', 'vendor', 'three-bundle.js');
+const CHECK = process.argv.includes('--check');
+/* Both licences require their copyright and permission notices to travel with
+   copies of the code. Keep the complete notices in the vendored file even
+   though esbuild removes its upstream comments. They also appear in the app's
+   offline notices, including the single-file distribution. */
+const licenseText = ['assets/THREE-LICENSE.txt', 'assets/MESHOPT-LICENSE.txt']
+  .map(file => fs.readFileSync(path.join(ROOT, file), 'utf8').trim()).join('\n\n');
+if (licenseText.includes('*/')) throw new Error('Licence text cannot contain a comment terminator');
+const licenseBanner = '/*!\n' + licenseText + '\n*/';
 
 const entry = `
 import {
@@ -68,10 +77,21 @@ build({
   minify: true,
   treeShaking: true,
   legalComments: 'none',
+  banner: { js: licenseBanner },
   target: 'es2020',
   outfile: OUT,
+  write: !CHECK,
   logLevel: 'info'
-}).then(() => {
-  const kb = (fs.statSync(OUT).size / 1024).toFixed(0);
-  console.log('Wrote ' + path.relative(ROOT, OUT) + '  (' + kb + ' KB)');
-}).catch(() => process.exit(1));
+}).then(result => {
+  if (CHECK) {
+    if (!fs.existsSync(OUT) || !Buffer.from(result.outputFiles[0].contents).equals(fs.readFileSync(OUT))) {
+      console.error('Vendor bundle is stale. Run npm run vendor.');
+      process.exitCode = 1;
+      return;
+    }
+    console.log('Vendor bundle matches the locked sources and licence notices.');
+  } else {
+    const kb = (fs.statSync(OUT).size / 1024).toFixed(0);
+    console.log('Wrote ' + path.relative(ROOT, OUT) + '  (' + kb + ' KB)');
+  }
+}).catch(error => { console.error(error.message || error); process.exitCode = 1; });

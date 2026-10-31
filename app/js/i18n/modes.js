@@ -2792,3 +2792,11 @@ const EXERCISE_SAFETY = {
   }
 };
 Object.keys(EXERCISE_SAFETY).forEach(l => Object.assign(T[l], EXERCISE_SAFETY[l]));
+
+/* The legal notices themselves are the unmodified English source texts. */
+const THIRD_PARTY_LABELS = {
+  en:'Third-party licences', fr:'Licences des composants tiers',
+  es:'Licencias de terceros', de:'Lizenzen von Drittanbietern',
+  it:'Licenze di terze parti', nl:'Licenties van derden', ar:'تراخيص المكوّنات الخارجية'
+};
+Object.keys(THIRD_PARTY_LABELS).forEach(l => { T[l]['about.thirdParty'] = THIRD_PARTY_LABELS[l]; });
