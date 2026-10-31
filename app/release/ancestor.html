@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-7Cu+5LQDAR2MV6IGWp/mYNVYzLAbAdHIL4meF7X7r8E=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-3durKpNU0Um8Kt1OwXThxfHCgQD79aN0jYgDtLDqeSk=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-QvpAXxWkdDE3s1gaLHTYfJFaWveBKJfDuJuAoxE5ra8=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-JmoOWzWkcsD27s62xpyH8pzUCNt+eLMrf5/LQt2lRUQ=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-IgY91sf96VmbEjV1G2curcXBftyLJ8Puj20pvISE+xU=' 'sha256-YObl9r0wEYHVfinctMDcchN1Z8jo1YLX6oNB0gU1ni4=' 'sha256-EEkdZpS4eXZ8xHFhewt52kcP+AK2Sfz9YzmSPmXhk1E=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-HJjHsLlPugaK0+I8BwaD2b0Q+cq4hu4efyHPmlNy+VY=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-DbftNkhwX+ULRej5pVrEV6QrX2vsFNgEVBWZBIZE1uc=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-KCkoHfFQ1rtrl1vgmEPN0Nau2LdP7lHOkeYHx4dVHkw=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-jloKwvZSQI3BGJICwBOSzPdnlYtMXyqqIpOOO6x9+JY=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-fVlh3rMFuRxMcXKb4idAMP6tfnUGXho3XRHlQlM4vw4=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-Sxdj2OIdJqE9UwyMqxG4oPLdyQovlQwcIHIYpRxp7sU=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-NxbjhhHvvB5JozqcUJaMxdc8mGeMH9wYtBa6x6hvFYM=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-MkLEF9l5ylIz5SLUH4FXifHMhrBzX+IHZn/Is0cvLNw=' 'sha256-k+w31khpfjJhOq2obxHkbc5s37qPcYBqHKHTulFDDks=' 'sha256-knX3+EpgHKjWNAErb8udgvQlZfOURyZsnM8SSn4LupI=' 'sha256-92CIn4QKJtM3twFoPog8I8Gsi8V6UakxV/gQyki9l8s=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-wThK8px2h4aPFwoojjG9zoSE1CeCGR0OcZB0xR39jHg=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-n1QCbZE3uXt//FdBE9dzxr1SZIklXPNsxmndt3XNkDs=' 'sha256-0cTqgFhUEqq7Yq9elSA3iD5K/nsdL4A9PWUjOHupXfA='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-6wBEt/kn4BlsjqT1gNF6M2UuqrUldutKVXL2vhMR73E=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-3durKpNU0Um8Kt1OwXThxfHCgQD79aN0jYgDtLDqeSk=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-QvpAXxWkdDE3s1gaLHTYfJFaWveBKJfDuJuAoxE5ra8=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-JmoOWzWkcsD27s62xpyH8pzUCNt+eLMrf5/LQt2lRUQ=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-IgY91sf96VmbEjV1G2curcXBftyLJ8Puj20pvISE+xU=' 'sha256-YObl9r0wEYHVfinctMDcchN1Z8jo1YLX6oNB0gU1ni4=' 'sha256-EEkdZpS4eXZ8xHFhewt52kcP+AK2Sfz9YzmSPmXhk1E=' 'sha256-NUKtwlT0pAzG/s/fxeWLXQVHnH3qDIQVliqEy94Xnno=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-HJjHsLlPugaK0+I8BwaD2b0Q+cq4hu4efyHPmlNy+VY=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-DbftNkhwX+ULRej5pVrEV6QrX2vsFNgEVBWZBIZE1uc=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-KCkoHfFQ1rtrl1vgmEPN0Nau2LdP7lHOkeYHx4dVHkw=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-jloKwvZSQI3BGJICwBOSzPdnlYtMXyqqIpOOO6x9+JY=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-fVlh3rMFuRxMcXKb4idAMP6tfnUGXho3XRHlQlM4vw4=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-RV4ks/AwKnSj7WyXJ+VOJcNuoy7gKOG3ksZ7hF2OW3E=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-NxbjhhHvvB5JozqcUJaMxdc8mGeMH9wYtBa6x6hvFYM=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-MkLEF9l5ylIz5SLUH4FXifHMhrBzX+IHZn/Is0cvLNw=' 'sha256-k+w31khpfjJhOq2obxHkbc5s37qPcYBqHKHTulFDDks=' 'sha256-F0hy9doJPdX7LAxC9J33JcO7KJWG5+1O0L7TKsseFK4=' 'sha256-XG3TrFUULDK7CEnwBTazRA7zbRQMQug5sWzwPIxm2dM=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-wThK8px2h4aPFwoojjG9zoSE1CeCGR0OcZB0xR39jHg=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-Kf5tcLrLzFkfifLp+PiCNIWCByPfGZgRXiA9j+z0TcI=' 'sha256-0cTqgFhUEqq7Yq9elSA3iD5K/nsdL4A9PWUjOHupXfA='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -3456,8 +3456,12 @@ ACT('doExport',                     el => doExport());
 /* The header's single recovery control changes purpose with the failure. */
 ACT('storeRecovery',                () => {
   if(LOAD_FAILED) keepDamagedRecord();
-  else if(STORAGE_FAILED) doExport();
+  else if(STORAGE_FAILED || STORE_CONFLICT) doExport();
+  else if(RAW_DRAFT !== null) downloadUnreadableDraft();
+  else if(DRAFT_CONFLICT){ if(ACTIVE) doExport(); else reloadApp(); }
   else if(ACTIVE && DRAFT_STORAGE_FAILED) retryStore();
+  else if(MIRROR_UNCHECKED) keepUncheckedMirror();
+  else if(ERASE_INCOMPLETE) dismissEraseNotice();
 });
 ACT('doImport',                     el => doImport(arg(el, 1)));
 ACT('editField',                    el => editField(arg(el, 1), arg(el, 2), arg(el, 3)));
@@ -11140,6 +11144,249 @@ const THIRD_PARTY_LABELS = {
 Object.keys(THIRD_PARTY_LABELS).forEach(l => { T[l]['about.thirdParty'] = THIRD_PARTY_LABELS[l]; });
 
 </script>
+<script>/* ===== js/i18n/data_safety.js ===== */
+/* Backup, recovery and draft-safety copy. Values follow the key order. */
+const DATA_SAFETY_KEYS = ["data.exportLabel","data.exportNote","data.exportStarted","data.exportFailed","data.importConfirm","data.importInvalid","data.importNewer","data.importActive","data.importUnreadable","data.importUnsaved","data.importWrite","data.archiveFailed","data.conflictTitle","data.conflictBody","data.eraseFailed","you.lastBackup","onb.privacy.l3","you.idbNote","you.erase.warn","data.eraseIncompleteTitle","data.eraseIncomplete","data.dismiss","data.draftConflictTitle","data.draftConflictActive","data.draftConflictIdle","data.draftReload","data.draftUnreadableTitle","data.draftUnreadable","data.draftDownload","data.mirrorTitle","data.mirrorBody"];
+const DATA_SAFETY_VALUES = {
+  en: [
+ "Export log",
+ "Exports include the profile and history in this tab, not an active workout. Check that the downloaded file was saved.",
+ "Export started. Check that the file was saved.",
+ "Could not start the export. No new export was recorded.",
+ "Import replaces the saved profile and history on this device. Export a backup first if you want to keep them.\n\nReplace them with this file?",
+ "This is not a supported ANCESTOR backup. Your current data was not changed.",
+ "This backup is from a newer app version. Update the app before importing; your current data was not changed.",
+ "Finish or discard the active workout before importing. Exports do not include it.",
+ "First keep the unreadable record using the warning above. The import was not applied.",
+ "Keep a copy of unsaved changes before importing. The import was not applied.",
+ "The imported data could not be saved. Your current log was not replaced.",
+ "Could not keep the earlier copy. This tab did not overwrite it. Free storage and retry.",
+ "Saved data differs",
+ "The saved log differs from this tab’s unsaved changes. Export this tab’s log before reloading. Automatic retry is paused.",
+ "The data could not be erased. Nothing was reset; keep this tab open.",
+ "Last export started",
+ "Export saved data or erase local data in Me. Exports do not include a workout in progress.",
+ "An IndexedDB mirror is attempted; keep separate exports too.",
+ "Delete the local log, active workout and archived copies? This cannot be undone. Close other tabs; downloaded files are not deleted.",
+ "Erase incomplete",
+ "Some local data may remain. Close other tabs and clear this app’s site data in browser settings. Downloaded files must be deleted separately.",
+ "Dismiss",
+ "Workout changed in another tab",
+ "Keep this tab open: another tab changed the draft. Auto-save is paused. Finish to save this workout; exports omit active workouts.",
+ "Another tab changed the workout draft. Close that tab and reload to continue it.",
+ "Reload",
+ "Unreadable workout draft",
+ "The draft cannot be opened and will not be overwritten. Download a copy. Export your saved log separately before clearing site data.",
+ "Download draft",
+ "Backup not checked",
+ "An older local copy could not be checked. Retry keeps it locally before replacing it. Export your log separately."
+  ],
+  fr: [
+ "Exporter le journal",
+ "L’export contient le profil et l’historique de cet onglet, pas la séance en cours. Vérifiez que le fichier téléchargé a bien été enregistré.",
+ "Export lancé. Vérifiez que le fichier a bien été enregistré.",
+ "Impossible de lancer l’export. Aucun nouvel export n’a été enregistré.",
+ "L’import remplace le profil et l’historique enregistrés sur cet appareil. Exportez une copie avant si vous souhaitez les conserver.\n\nLes remplacer par ce fichier ?",
+ "Ce fichier n’est pas une sauvegarde ANCESTOR prise en charge. Vos données actuelles n’ont pas changé.",
+ "Cette sauvegarde vient d’une version plus récente. Mettez l’application à jour avant l’import ; vos données actuelles n’ont pas changé.",
+ "Terminez ou abandonnez la séance en cours avant l’import. Les exports ne la contiennent pas.",
+ "Conservez d’abord le fichier illisible à l’aide de l’avertissement ci-dessus. L’import n’a pas été appliqué.",
+ "Conservez une copie des modifications non enregistrées avant l’import. L’import n’a pas été appliqué.",
+ "Les données importées n’ont pas pu être enregistrées. Votre journal actuel n’a pas été remplacé.",
+ "Impossible de conserver l’ancienne copie. Cet onglet ne l’a pas écrasée. Libérez de l’espace et réessayez.",
+ "Données enregistrées différentes",
+ "Le journal enregistré diffère des changements non enregistrés de cet onglet. Exportez ce journal avant de recharger. Les nouvelles tentatives automatiques sont suspendues.",
+ "Les données n’ont pas pu être effacées. Rien n’a été réinitialisé ; gardez cet onglet ouvert.",
+ "Dernier export lancé",
+ "Exportez les données enregistrées ou effacez les données locales dans Profil. L’export ne contient pas la séance en cours.",
+ "Une copie IndexedDB est tentée ; conservez aussi des exports séparés.",
+ "Effacer le journal local, la séance en cours et les copies archivées ? Action irréversible. Fermez les autres onglets ; les téléchargements ne seront pas supprimés.",
+ "Effacement incomplet",
+ "Des données locales peuvent subsister. Fermez les autres onglets et effacez les données du site dans les réglages du navigateur. Les fichiers téléchargés doivent être supprimés séparément.",
+ "Fermer",
+ "Séance modifiée dans un autre onglet",
+ "Gardez cet onglet ouvert : un autre onglet a modifié le brouillon. L’enregistrement automatique est suspendu. Terminez pour enregistrer la séance ; les exports ne la contiennent pas.",
+ "Un autre onglet a modifié le brouillon. Fermez cet onglet et rechargez pour reprendre la séance.",
+ "Recharger",
+ "Brouillon de séance illisible",
+ "Le brouillon ne peut pas être ouvert et ne sera pas écrasé. Téléchargez une copie. Exportez séparément votre journal avant d’effacer les données du site.",
+ "Télécharger le brouillon",
+ "Copie non vérifiée",
+ "Ancienne copie locale non vérifiée. Réessayer la conserve localement avant de la remplacer. Exportez aussi votre journal."
+  ],
+  es: [
+ "Exportar registro",
+ "La exportación incluye el perfil y el historial de esta pestaña, no una sesión activa. Comprueba que el archivo descargado se haya guardado.",
+ "Exportación iniciada. Comprueba que se haya guardado el archivo.",
+ "No se pudo iniciar la exportación. No se registró ninguna exportación nueva.",
+ "La importación sustituye el perfil y el historial guardados en este dispositivo. Exporta una copia primero si quieres conservarlos.\n\n¿Sustituirlos por este archivo?",
+ "Este archivo no es una copia de ANCESTOR compatible. Tus datos actuales no han cambiado.",
+ "Esta copia es de una versión más reciente. Actualiza la aplicación antes de importarla; tus datos actuales no han cambiado.",
+ "Termina o descarta la sesión activa antes de importar. Las exportaciones no la incluyen.",
+ "Primero guarda el registro ilegible usando el aviso superior. La importación no se aplicó.",
+ "Guarda una copia de los cambios sin guardar antes de importar. La importación no se aplicó.",
+ "No se pudieron guardar los datos importados. Tu registro actual no se sustituyó.",
+ "No se pudo conservar la copia anterior. Esta pestaña no la sobrescribió. Libera espacio y reintenta.",
+ "Los datos guardados son distintos",
+ "El registro guardado difiere de los cambios sin guardar de esta pestaña. Expórtalo antes de recargar. El reintento automático está pausado.",
+ "No se pudieron borrar los datos. No se restableció nada; mantén esta pestaña abierta.",
+ "Última exportación iniciada",
+ "Exporta los datos guardados o borra los datos locales desde Perfil. La exportación no incluye la sesión activa.",
+ "Se intenta crear una copia IndexedDB; conserva también exportaciones separadas.",
+ "¿Borrar el registro local, la sesión activa y las copias archivadas? Es irreversible. Cierra otras pestañas; los archivos descargados no se borran.",
+ "Borrado incompleto",
+ "Pueden quedar datos locales. Cierra las otras pestañas y borra los datos del sitio en la configuración del navegador. Los archivos descargados deben borrarse por separado.",
+ "Cerrar",
+ "Sesión modificada en otra pestaña",
+ "Mantén esta pestaña abierta: otra cambió el borrador. El guardado automático está pausado. Termina para guardar la sesión; las exportaciones no incluyen sesiones activas.",
+ "Otra pestaña cambió el borrador. Cierra esa pestaña y recarga para continuar la sesión.",
+ "Recargar",
+ "Borrador de sesión ilegible",
+ "No se puede abrir el borrador y no se sobrescribirá. Descarga una copia. Exporta el registro guardado por separado antes de borrar los datos del sitio.",
+ "Descargar borrador",
+ "Copia no verificada",
+ "No se pudo verificar una copia anterior. Al reintentar se guarda localmente antes de sustituirla. Exporta también tu registro."
+  ],
+  de: [
+ "Protokoll exportieren",
+ "Der Export enthält Profil und Verlauf dieses Tabs, aber keine laufende Einheit. Prüfe, ob die heruntergeladene Datei gespeichert wurde.",
+ "Export gestartet. Prüfe, ob die Datei gespeichert wurde.",
+ "Der Export konnte nicht gestartet werden. Es wurde kein neuer Export vermerkt.",
+ "Der Import ersetzt das gespeicherte Profil und den Verlauf auf diesem Gerät. Exportiere vorher eine Sicherung, wenn du sie behalten möchtest.\n\nDurch diese Datei ersetzen?",
+ "Dies ist keine unterstützte ANCESTOR-Sicherung. Deine aktuellen Daten wurden nicht geändert.",
+ "Diese Sicherung stammt aus einer neueren App-Version. Aktualisiere die App vor dem Import; deine Daten wurden nicht geändert.",
+ "Beende oder verwirf die laufende Einheit vor dem Import. Exporte enthalten sie nicht.",
+ "Sichere zuerst den unlesbaren Datensatz über die Warnung oben. Der Import wurde nicht angewendet.",
+ "Sichere ungespeicherte Änderungen vor dem Import. Der Import wurde nicht angewendet.",
+ "Die importierten Daten konnten nicht gespeichert werden. Dein aktuelles Protokoll wurde nicht ersetzt.",
+ "Die frühere Kopie konnte nicht gesichert werden. Dieser Tab hat sie nicht überschrieben. Gib Speicher frei und versuche es erneut.",
+ "Gespeicherte Daten unterscheiden sich",
+ "Das gespeicherte Protokoll unterscheidet sich von den ungespeicherten Änderungen dieses Tabs. Exportiere es vor dem Neuladen. Automatische Wiederholungen sind pausiert.",
+ "Die Daten konnten nicht gelöscht werden. Nichts wurde zurückgesetzt; lass diesen Tab offen.",
+ "Letzter gestarteter Export",
+ "Exportiere gespeicherte Daten oder lösche lokale Daten unter Profil. Exporte enthalten keine laufende Einheit.",
+ "Eine IndexedDB-Kopie wird versucht; bewahre auch separate Exporte auf.",
+ "Lokales Protokoll, laufende Einheit und archivierte Kopien löschen? Unwiderruflich. Schließe andere Tabs; Downloads werden nicht gelöscht.",
+ "Löschen unvollständig",
+ "Lokale Daten können zurückbleiben. Schließe andere Tabs und lösche die Websitedaten in den Browser-Einstellungen. Heruntergeladene Dateien musst du separat löschen.",
+ "Schließen",
+ "Einheit in anderem Tab geändert",
+ "Lass diesen Tab offen: Ein anderer Tab änderte den Entwurf. Automatisches Speichern ist pausiert. Beende die Einheit zum Speichern; Exporte enthalten keine laufenden Einheiten.",
+ "Ein anderer Tab hat den Entwurf geändert. Schließe diesen Tab und lade neu, um die Einheit fortzusetzen.",
+ "Neu laden",
+ "Unlesbarer Einheitsentwurf",
+ "Der Entwurf kann nicht geöffnet werden und wird nicht überschrieben. Lade eine Kopie herunter. Exportiere das gespeicherte Protokoll separat, bevor du die Websitedaten löschst.",
+ "Entwurf herunterladen",
+ "Sicherung nicht geprüft",
+ "Ältere lokale Kopie ungeprüft. Erneutes Prüfen sichert sie lokal vor dem Ersetzen. Exportiere auch dein Protokoll."
+  ],
+  it: [
+ "Esporta il registro",
+ "L’esportazione contiene profilo e cronologia di questa scheda, non una sessione attiva. Verifica che il file scaricato sia stato salvato.",
+ "Esportazione avviata. Verifica che il file sia stato salvato.",
+ "Impossibile avviare l’esportazione. Non è stata registrata una nuova esportazione.",
+ "L’importazione sostituisce il profilo e la cronologia salvati su questo dispositivo. Esporta prima una copia se vuoi conservarli.\n\nSostituirli con questo file?",
+ "Questo file non è un backup ANCESTOR supportato. I dati attuali non sono stati modificati.",
+ "Questo backup proviene da una versione più recente. Aggiorna l’app prima di importarlo; i dati attuali non sono stati modificati.",
+ "Termina o scarta la sessione attiva prima di importare. Le esportazioni non la includono.",
+ "Conserva prima il registro illeggibile usando l’avviso sopra. L’importazione non è stata applicata.",
+ "Conserva una copia delle modifiche non salvate prima di importare. L’importazione non è stata applicata.",
+ "Impossibile salvare i dati importati. Il registro attuale non è stato sostituito.",
+ "Impossibile conservare la copia precedente. Questa scheda non l’ha sovrascritta. Libera spazio e riprova.",
+ "I dati salvati sono diversi",
+ "Il registro salvato differisce dalle modifiche non salvate di questa scheda. Esportalo prima di ricaricare. I tentativi automatici sono sospesi.",
+ "Impossibile cancellare i dati. Nulla è stato reimpostato; tieni aperta questa scheda.",
+ "Ultima esportazione avviata",
+ "Esporta i dati salvati o cancella i dati locali da Profilo. Le esportazioni non includono la sessione attiva.",
+ "Viene tentata una copia IndexedDB; conserva anche esportazioni separate.",
+ "Eliminare registro locale, sessione attiva e copie archiviate? È irreversibile. Chiudi le altre schede; i file scaricati non saranno eliminati.",
+ "Cancellazione incompleta",
+ "Potrebbero restare dati locali. Chiudi le altre schede e cancella i dati del sito nelle impostazioni del browser. I file scaricati vanno eliminati separatamente.",
+ "Chiudi",
+ "Sessione modificata in un’altra scheda",
+ "Tieni aperta questa scheda: un’altra ha modificato la bozza. Il salvataggio automatico è sospeso. Termina per salvare la sessione; le esportazioni non includono sessioni attive.",
+ "Un’altra scheda ha modificato la bozza. Chiudi quella scheda e ricarica per continuare la sessione.",
+ "Ricarica",
+ "Bozza della sessione illeggibile",
+ "La bozza non può essere aperta e non sarà sovrascritta. Scaricane una copia. Esporta separatamente il registro salvato prima di cancellare i dati del sito.",
+ "Scarica bozza",
+ "Copia non verificata",
+ "Copia locale precedente non verificata. Riprova la conserva localmente prima di sostituirla. Esporta anche il registro."
+  ],
+  nl: [
+ "Logboek exporteren",
+ "De export bevat het profiel en de geschiedenis van deze tab, niet een actieve sessie. Controleer of het gedownloade bestand is opgeslagen.",
+ "Export gestart. Controleer of het bestand is opgeslagen.",
+ "De export kon niet starten. Er is geen nieuwe export vastgelegd.",
+ "Importeren vervangt het opgeslagen profiel en de geschiedenis op dit apparaat. Exporteer eerst een kopie als je die wilt bewaren.\n\nVervangen door dit bestand?",
+ "Dit is geen ondersteunde ANCESTOR-back-up. Je huidige gegevens zijn niet gewijzigd.",
+ "Deze back-up komt uit een nieuwere appversie. Werk de app bij vóór het importeren; je gegevens zijn niet gewijzigd.",
+ "Rond de actieve sessie af of verwerp die vóór het importeren. Exports bevatten die sessie niet.",
+ "Bewaar eerst het onleesbare logboek via de waarschuwing hierboven. De import is niet toegepast.",
+ "Bewaar een kopie van niet-opgeslagen wijzigingen vóór het importeren. De import is niet toegepast.",
+ "De geïmporteerde gegevens konden niet worden opgeslagen. Je huidige logboek is niet vervangen.",
+ "De eerdere kopie kon niet worden bewaard. Deze tab heeft die niet overschreven. Maak ruimte vrij en probeer opnieuw.",
+ "Opgeslagen gegevens verschillen",
+ "Het opgeslagen logboek verschilt van de niet-opgeslagen wijzigingen in deze tab. Exporteer het vóór het herladen. Automatisch opnieuw proberen is gepauzeerd.",
+ "De gegevens konden niet worden gewist. Er is niets gereset; houd deze tab open.",
+ "Laatst gestarte export",
+ "Exporteer opgeslagen gegevens of wis lokale gegevens via Profiel. Exports bevatten geen actieve sessie.",
+ "Een IndexedDB-kopie wordt geprobeerd; bewaar ook aparte exports.",
+ "Lokaal logboek, actieve sessie en archiefkopieën wissen? Dit is onomkeerbaar. Sluit andere tabs; downloads worden niet gewist.",
+ "Wissen onvolledig",
+ "Er kunnen lokale gegevens achterblijven. Sluit andere tabs en wis de sitegegevens in de browserinstellingen. Gedownloade bestanden moet je apart verwijderen.",
+ "Sluiten",
+ "Sessie gewijzigd in een andere tab",
+ "Houd deze tab open: een andere tab wijzigde het concept. Automatisch opslaan is gepauzeerd. Rond de sessie af om die te bewaren; exports bevatten geen actieve sessies.",
+ "Een andere tab wijzigde het concept. Sluit die tab en herlaad om de sessie voort te zetten.",
+ "Herladen",
+ "Onleesbaar sessieconcept",
+ "Het concept kan niet worden geopend en wordt niet overschreven. Download een kopie. Exporteer het opgeslagen logboek apart voordat je sitegegevens wist.",
+ "Concept downloaden",
+ "Back-up niet gecontroleerd",
+ "Oudere lokale kopie niet gecontroleerd. Opnieuw proberen bewaart die lokaal vóór vervanging. Exporteer ook je logboek."
+  ],
+  ar: [
+ "تصدير السجل",
+ "يتضمن التصدير الملف الشخصي والسجل في هذا التبويب، وليس الحصة الجارية. تحقّق من حفظ الملف الذي تم تنزيله.",
+ "بدأ التصدير. تحقّق من حفظ الملف.",
+ "تعذّر بدء التصدير. لم يُسجّل تصدير جديد.",
+ "يستبدل الاستيراد الملف الشخصي والسجل المحفوظين على هذا الجهاز. صدّر نسخة أولاً إذا أردت الاحتفاظ بهما.\n\nهل تريد استبدالهما بهذا الملف؟",
+ "هذا الملف ليس نسخة ANCESTOR احتياطية مدعومة. لم تتغير بياناتك الحالية.",
+ "هذه النسخة من إصدار أحدث. حدّث التطبيق قبل استيرادها؛ لم تتغير بياناتك الحالية.",
+ "أنه الحصة الجارية أو تخلّ عنها قبل الاستيراد. لا تتضمنها ملفات التصدير.",
+ "احتفظ بالسجل غير المقروء أولاً باستخدام التنبيه أعلاه. لم يُطبّق الاستيراد.",
+ "احتفظ بنسخة من التغييرات غير المحفوظة قبل الاستيراد. لم يُطبّق الاستيراد.",
+ "تعذّر حفظ البيانات المستوردة. لم يُستبدل سجلك الحالي.",
+ "تعذّر الاحتفاظ بالنسخة الأقدم. لم يستبدلها هذا التبويب. أفرغ مساحة وأعد المحاولة.",
+ "البيانات المحفوظة مختلفة",
+ "يختلف السجل المحفوظ عن تغييرات هذا التبويب غير المحفوظة. صدّر سجل هذا التبويب قبل إعادة التحميل. توقفت المحاولات التلقائية مؤقتاً.",
+ "تعذّر مسح البيانات. لم تتم إعادة ضبط أي شيء؛ أبقِ هذا التبويب مفتوحاً.",
+ "آخر تصدير بدأ",
+ "صدّر البيانات المحفوظة أو امسح البيانات المحلية من الملف الشخصي. لا يتضمن التصدير الحصة الجارية.",
+ "تُحاول نسخة IndexedDB؛ احتفظ أيضاً بنسخ تصدير منفصلة.",
+ "حذف السجل المحلي والحصة الجارية والنسخ المؤرشفة؟ لا يمكن التراجع. أغلق التبويبات الأخرى؛ لن تُحذف الملفات المنزّلة.",
+ "لم يكتمل المسح",
+ "قد تبقى بيانات محلية. أغلق التبويبات الأخرى وامسح بيانات الموقع في إعدادات المتصفح. يجب حذف الملفات المنزّلة بشكل منفصل.",
+ "إغلاق",
+ "تغيّرت الحصة في تبويب آخر",
+ "أبقِ التبويب مفتوحاً: غيّر تبويب آخر المسودة وتوقف الحفظ التلقائي. أنه الحصة لحفظها؛ لا تتضمن ملفات التصدير الحصص الجارية.",
+ "غيّر تبويب آخر مسودة الحصة. أغلق ذلك التبويب وأعد التحميل لمتابعة الحصة.",
+ "إعادة التحميل",
+ "مسودة حصة غير مقروءة",
+ "لا يمكن فتح المسودة ولن تُستبدل. نزّل نسخة منها. صدّر السجل المحفوظ بشكل منفصل قبل مسح بيانات الموقع.",
+ "تنزيل المسودة",
+ "لم تُفحص النسخة",
+ "لم تُفحص نسخة محلية أقدم. تحتفظ إعادة المحاولة بها محلياً قبل استبدالها. صدّر سجلك أيضاً."
+  ]
+};
+Object.keys(DATA_SAFETY_VALUES).forEach(l => {
+  DATA_SAFETY_KEYS.forEach((k,i) => { T[l][k] = DATA_SAFETY_VALUES[l][i]; });
+  T[l]["you.export"] = T[l]["data.exportLabel"];
+  T[l]["data.conflictActive"] = T[l]["data.conflictBody"] + " " + T[l]["workout.storeActive"];
+});
+
+</script>
 <script>/* ===== js/i18n/lesson_bodies_en.js ===== */
 /* AUTO-GENERATED English source for lesson sections. Do not edit by hand. */
 const TLEN = {};
@@ -15576,7 +15823,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v44';
+const APP_BUILD = 'v45';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
@@ -15674,72 +15921,186 @@ let STATE = null;
 let STORAGE_PERSISTED = null;  // null = unknown, true/false once queried
 const IDB_NAME = 'ancestor_vault';
 const IDB_STORE = 'kv';
+/* A durable tombstone prevents an old mirror from being resurrected when an
+   erase or a delayed IndexedDB operation fails. It contains no user data. */
+const IDB_ERASE_KEY = 'ancestor.mirror.erased.v1';
+const ERASE_NOTICE_KEY = 'ancestor.erase.incomplete.v1';
+const IDB_UNCHECKED_KEY = 'ancestor.mirror.unchecked.v1';
+let ERASE_INCOMPLETE = false, MIRROR_UNCHECKED = false;
 
-function idbMirrorPut(raw){
-  try{
-    if(typeof indexedDB === 'undefined' || !indexedDB) return;
-    if(typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || '')) return;
-    const req = indexedDB.open(IDB_NAME, 1);
+/* Old versions could create an empty database while clearing. Repair only that
+   case by upgrading it; a healthy v1 vault and its records stay untouched. */
+function openVault(onOpen, onFailure){
+  let settled = false;
+  const fail = () => { if(settled) return; settled = true; if(onFailure) onFailure(); };
+  function open(version){
+    const req = version ? indexedDB.open(IDB_NAME, version) : indexedDB.open(IDB_NAME);
     req.onupgradeneeded = () => {
-      const db = req.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      if(!req.result.objectStoreNames.contains(IDB_STORE)) req.result.createObjectStore(IDB_STORE);
     };
+    req.onerror = req.onblocked = fail;
     req.onsuccess = () => {
+      const db = req.result;
+      if(settled){ db.close(); return; }
+      if(!db.objectStoreNames.contains(IDB_STORE)){
+        const next = db.version + 1; db.close();
+        try{ open(next); }catch(e){ fail(); }
+        return;
+      }
+      settled = true; onOpen(db);
+    };
+  }
+  try{
+    if(typeof indexedDB === 'undefined' || !indexedDB ||
+       (typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || ''))) return fail();
+    open();
+  }catch(e){ fail(); }
+}
+
+function idbMirrorPut(raw, onDone){
+  let done = false;
+  const finish = ok => { if(done) return; done = true; if(typeof onDone === 'function') onDone(ok); };
+  openVault(db => {
+      if(done){ db.close(); return; }
       try{
-        const db = req.result;
+        /* A newer write or erase wins over a queued, older mirror put. */
+        if(MIRROR_UNCHECKED || localStorage.getItem(IDB_UNCHECKED_KEY) !== null ||
+           localStorage.getItem(STORE_KEY) !== raw){ db.close(); finish(false); return; }
         const tx = db.transaction(IDB_STORE, 'readwrite');
         tx.objectStore(IDB_STORE).put(raw, STORE_KEY);
-        tx.oncomplete = () => db.close();
-      }catch(e){}
-    };
-  }catch(e){}
+        tx.oncomplete = () => {
+          db.close();
+          try{
+            if(localStorage.getItem(STORE_KEY) === raw && localStorage.getItem(IDB_ERASE_KEY) !== null)
+              localStorage.removeItem(IDB_ERASE_KEY);
+          }catch(e){ /* leaving the tombstone is safer than restoring old data */ }
+          finish(true);
+        };
+        tx.onerror = tx.onabort = () => { db.close(); finish(false); };
+      }catch(e){ db.close(); finish(false); }
+  }, () => finish(false));
 }
 
-function idbMirrorClear(){
-  try{
-    if(typeof indexedDB === 'undefined' || !indexedDB) return;
-    if(typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || '')) return;
-    const req = indexedDB.open(IDB_NAME, 1);
-    req.onsuccess = () => {
+function idbMirrorClear(onDone){
+  let done = false;
+  const timer = setTimeout(() => finish(false), 10000);
+  const finish = ok => { if(done) return; done = true; clearTimeout(timer); if(typeof onDone === 'function') onDone(ok); };
+  openVault(db => {
+      if(done){ db.close(); return; }
       try{
-        const db = req.result;
-        if(!db.objectStoreNames.contains(IDB_STORE)){ db.close(); return; }
+        /* A new primary record may have been saved while the erase was pending.
+           Mirror that new record instead of clearing its backup. */
+        const current = localStorage.getItem(STORE_KEY);
+        if(current !== null){ db.close(); idbMirrorPut(current, finish); return; }
         const tx = db.transaction(IDB_STORE, 'readwrite');
         tx.objectStore(IDB_STORE).delete(STORE_KEY);
-        tx.oncomplete = () => db.close();
-      }catch(e){}
-    };
-  }catch(e){}
+        tx.oncomplete = () => {
+          db.close();
+          try{
+            const after = localStorage.getItem(STORE_KEY);
+            if(after !== null){ idbMirrorPut(after, finish); return; }
+            finish(true);
+          }catch(e){ finish(false); }
+        };
+        tx.onerror = tx.onabort = () => { db.close(); finish(false); };
+      }catch(e){ db.close(); finish(false); }
+  }, () => finish(false));
 }
 
+function clearUncheckedMirror(){
+  try{ localStorage.removeItem(IDB_UNCHECKED_KEY); MIRROR_UNCHECKED = false; return true; }
+  catch(e){ return false; }
+}
+function markUncheckedMirror(){
+  MIRROR_UNCHECKED = true;
+  try{ localStorage.setItem(IDB_UNCHECKED_KEY, '1'); }catch(e){}
+}
+function showUncheckedMirror(){ if(typeof paintStoreFlag === 'function') paintStoreFlag(); }
 function idbRecoverIfEmpty(onRecovered){
   try{
-    if(typeof indexedDB === 'undefined' || !indexedDB) return;
     if(typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || '')) return;
-    if(localStorage.getItem(STORE_KEY)) return;
-    const req = indexedDB.open(IDB_NAME, 1);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
-    };
-    req.onsuccess = () => {
+    if(localStorage.getItem(STORE_KEY) !== null || localStorage.getItem(IDB_ERASE_KEY) !== null || LOAD_FAILED) return;
+    if(MIRROR_UNCHECKED || localStorage.getItem(IDB_UNCHECKED_KEY) !== null){ MIRROR_UNCHECKED = true; showUncheckedMirror(); return; }
+    /* Block mirror writes until the potentially older copy has been checked. */
+    markUncheckedMirror();
+    const initialState = STATE, initialSnapshot = JSON.stringify(STATE);
+    openVault(db => {
       try{
-        const db = req.result;
         const tx = db.transaction(IDB_STORE, 'readonly');
         const g = tx.objectStore(IDB_STORE).get(STORE_KEY);
         g.onsuccess = () => {
           db.close();
-          if(g.result && !localStorage.getItem(STORE_KEY)){
+          try{
+            if(g.result == null){
+              if(clearUncheckedMirror()){
+                const current = localStorage.getItem(STORE_KEY);
+                if(current !== null) idbMirrorPut(current);
+              }
+              showUncheckedMirror(); return;
+            }
+            /* A person may have entered data, or another tab may have written,
+               while IndexedDB was opening. Neither may be replaced by a mirror. */
+            if(STATE !== initialState || JSON.stringify(STATE) !== initialSnapshot ||
+               LOAD_FAILED || STORAGE_FAILED || STORE_CONFLICT || localStorage.getItem(STORE_KEY) !== null ||
+               localStorage.getItem(IDB_ERASE_KEY) !== null){ showUncheckedMirror(); return; }
+            const raw = typeof g.result === 'string' ? g.result : JSON.stringify(g.result);
+            let recovered, stored;
             try{
-              STATE = migrate(JSON.parse(g.result));
-              localStorage.setItem(STORE_KEY, JSON.stringify(STATE));
-              if(typeof onRecovered === 'function') onRecovered(STATE);
-            }catch(err){}
-          }
+              const parsed = JSON.parse(raw);
+              validateDataRecord(parsed);
+              recovered = migrate(parsed); stored = JSON.stringify(recovered);
+            }catch(err){
+              /* The mirror may be the only surviving copy. Keep its exact bytes
+                 and block writes when it is malformed or from a newer schema. */
+              LOAD_FAILED = true; LOAD_NEWER = !!(err && err.code === 'newer'); RAW_RECORD = raw;
+              if(typeof paintStoreFlag === 'function') paintStoreFlag();
+              return;
+            }
+            let saved = false;
+            try{ localStorage.setItem(STORE_KEY, stored); LAST_STORED_RAW = stored; saved = true; }
+            catch(err){ STORAGE_FAILED = true; }
+            /* The unchanged initial state may safely adopt the valid mirror even
+               if its write failed: the warning and export now protect that data. */
+            STATE = recovered;
+            if(saved && clearUncheckedMirror()) idbMirrorPut(stored);
+            showUncheckedMirror();
+            if(typeof onRecovered === 'function') onRecovered(STATE, saved);
+          }catch(err){}
         };
-      }catch(e){}
-    };
+        g.onerror = () => { db.close(); showUncheckedMirror(); };
+      }catch(e){ db.close(); showUncheckedMirror(); }
+    }, showUncheckedMirror);
   }catch(e){}
+}
+
+function keepUncheckedMirror(){
+  openVault(db => {
+    try{
+      const g = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(STORE_KEY);
+      g.onsuccess = () => {
+        db.close();
+        try{
+          if(g.result != null){
+            const raw = typeof g.result === 'string' ? g.result : JSON.stringify(g.result);
+            const key = STORE_KEY + '.damaged.' + Date.now() + '.' + Math.random().toString(36).slice(2,7);
+            try{
+              const u=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+              const a=document.createElement('a');a.href=u;a.download='ancestor-older-backup.json';
+              document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
+            }catch(e){ /* The archive below is the second copy. */ }
+            localStorage.setItem(key, raw);
+            if(localStorage.getItem(key) !== raw) throw new Error('archive failed');
+          }
+          if(!clearUncheckedMirror()) throw new Error('marker failed');
+          const current = localStorage.getItem(STORE_KEY);
+          if(current !== null) idbMirrorPut(current);
+          showUncheckedMirror();
+          if(g.result != null) toast(t('app.load.kept'), 'ok');
+        }catch(e){ toast(t('data.archiveFailed'), 'alert'); }
+      };
+      g.onerror = () => { db.close(); toast(t('data.archiveFailed'), 'alert'); };
+    }catch(e){ db.close(); toast(t('data.archiveFailed'), 'alert'); }
+  }, () => toast(t('data.archiveFailed'), 'alert'));
 }
 
 function requestPersistentStorage(onDone){
@@ -15765,38 +16126,80 @@ function requestPersistentStorage(onDone){
 let LOAD_FAILED = false;
 let LOAD_NEWER = false;   /* …written by a version that knows more than this one */
 let RAW_RECORD = null;
+/* The exact disk value this tab last read or wrote. `undefined` means this tab
+   has not loaded yet; null means it saw no record. A differing value is not
+   silently overwritten, even if the other tab's storage event is still queued. */
+let LAST_STORED_RAW;
+let STORE_CONFLICT = false;
+let STORAGE_READ_FAILED = false;
+
+function dataError(code){ const e = new Error(code); e.code = code; return e; }
+function dataObject(value){ return !!value && typeof value === 'object' && !Array.isArray(value); }
+function dataVersion(record){
+  if(!dataObject(record)) throw dataError('invalid');
+  if(!Object.prototype.hasOwnProperty.call(record, 'version')) return 0;
+  const v = record.version;
+  if(!Number.isSafeInteger(v) || v < 0) throw dataError('invalid');
+  return v;
+}
+/* Allow missing fields from older backups, but never "repair" a malformed
+   collection into an empty one. Unknown fields and exercise IDs stay intact. */
+function validateDataRecord(record){
+  const parsed = record;
+  dataVersion(parsed);
+  if(parsed.version > SCHEMA_VERSION) throw dataError('newer');
+  const known = ['profile','sessions','sleep','shifts','feelings','bodyweights','plan','science'];
+  if(!known.some(k => Object.prototype.hasOwnProperty.call(record, k))) throw dataError('invalid');
+  if(Object.prototype.hasOwnProperty.call(record, 'profile') && !dataObject(record.profile)) throw dataError('invalid');
+  for(const key of ['plan','science','adaptation']){
+    if(record[key] != null && !dataObject(record[key])) throw dataError('invalid');
+  }
+  for(const key of ['sessions','sleep','shifts','feelings','bodyweights']){
+    if(Object.prototype.hasOwnProperty.call(record, key) && !Array.isArray(record[key])) throw dataError('invalid');
+    if(Array.isArray(record[key]) && record[key].some(item => !dataObject(item))) throw dataError('invalid');
+  }
+  for(const session of record.sessions || []){
+    if(Object.prototype.hasOwnProperty.call(session, 'exercises') && !Array.isArray(session.exercises)) throw dataError('invalid');
+    for(const ex of session.exercises || []){
+      if(!dataObject(ex)) throw dataError('invalid');
+      if(Object.prototype.hasOwnProperty.call(ex, 'sets') && !Array.isArray(ex.sets)) throw dataError('invalid');
+      if((ex.sets || []).some(set => !dataObject(set))) throw dataError('invalid');
+    }
+  }
+  if((record.bodyweights || []).some(b => typeof b.w !== 'number' || !isFinite(b.w) || b.w <= 0)) throw dataError('invalid');
+  return record;
+}
 
 function loadState(){
+  try{
+    ERASE_INCOMPLETE = localStorage.getItem(ERASE_NOTICE_KEY) === '1';
+    MIRROR_UNCHECKED = localStorage.getItem(IDB_UNCHECKED_KEY) !== null;
+  }catch(e){}
   let raw = null;
   try{
     raw = localStorage.getItem(STORE_KEY);
   }catch(e){
-    /* Storage is unavailable, not damaged. A clean start is the only option and
-       there is nothing to protect. */
+    /* We do not know whether an existing record is behind the failed read.
+       Keep the new state in memory and refuse to overwrite an unseen record. */
+    STORAGE_READ_FAILED = true; STORAGE_FAILED = true;
     STATE = defaultState();
     return STATE;
   }
-  if(!raw){
+  LAST_STORED_RAW = raw;
+  if(raw === null){
     STATE = defaultState();
     return STATE;
   }
   try{
     const parsed = JSON.parse(raw);
-    /* A record from a newer build is not a corrupt record, but it is the same
-       danger: migrate() would stamp it with this build's version and drop the
-       fields it does not know on the next save. Refuse it too, and say why. */
-    if(parsed && typeof parsed.version === 'number' && parsed.version > SCHEMA_VERSION){
-      LOAD_NEWER = true;
-    }
+    validateDataRecord(parsed);
     STATE = migrate(parsed);
-    LOAD_FAILED = LOAD_NEWER;
-    if(LOAD_NEWER){ RAW_RECORD = raw; return STATE; }
-    RAW_RECORD = null;
+    LOAD_FAILED = false; LOAD_NEWER = false; RAW_RECORD = null;
     return STATE;
   }catch(e){
-    LOAD_NEWER = false;
-    /* There is a record and this build cannot open it. Keep the bytes, refuse to
-       overwrite them, and say so. */
+    /* Syntactically valid JSON can still be a damaged or newer log. Keep its
+       exact bytes and refuse writes rather than migrating it into an empty log. */
+    LOAD_NEWER = !!(e && e.code === 'newer');
     LOAD_FAILED = true;
     RAW_RECORD = raw;
     STATE = defaultState();
@@ -15820,11 +16223,18 @@ function reloadState(){
    again. Returns the bytes that were held, so the caller can hand them over. */
 function archiveDamagedRecord(){
   const raw = RAW_RECORD;
-  const stamped = STORE_KEY + '.damaged.' + Date.now();
+  if(raw == null) return false;
+  const stamped = STORE_KEY + '.damaged.' + Date.now() + '.' + Math.random().toString(36).slice(2,7);
   try{
-    if(raw != null) localStorage.setItem(stamped, raw);
-    localStorage.removeItem(STORE_KEY);
-  }catch(e){ /* a full disk cannot hold the copy; the download still can */ }
+    const current = localStorage.getItem(STORE_KEY);
+    /* A different tab may have replaced the record since this one was read. */
+    if(current !== null && current !== raw) return false;
+    localStorage.setItem(stamped, raw);
+    if(localStorage.getItem(stamped) !== raw) return false;
+    if(current !== null) localStorage.removeItem(STORE_KEY);
+  }catch(e){ return false; }
+  LAST_STORED_RAW = null;
+  STORE_CONFLICT = false;
   LOAD_FAILED = false;
   LOAD_NEWER = false;
   RAW_RECORD = null;
@@ -15870,12 +16280,24 @@ function saveState(){
     }
     return false;
   }
+  if(STORE_CONFLICT){
+    if(typeof paintStoreFlag === 'function') try{ paintStoreFlag(); } catch(e){}
+    return false;
+  }
   let ok = false;
   try{
-    const raw = JSON.stringify(STATE);
-    localStorage.setItem(STORE_KEY, raw);
-    idbMirrorPut(raw);
-    ok = true;
+    const current = localStorage.getItem(STORE_KEY);
+    if(STORAGE_READ_FAILED && current === null){ STORAGE_READ_FAILED = false; LAST_STORED_RAW = null; }
+    if((STORAGE_READ_FAILED && current !== null) ||
+       (LAST_STORED_RAW !== undefined && current !== LAST_STORED_RAW)){
+      STORE_CONFLICT = true; STORAGE_FAILED = true;
+    } else {
+      const raw = JSON.stringify(STATE);
+      localStorage.setItem(STORE_KEY, raw);
+      LAST_STORED_RAW = raw;
+      idbMirrorPut(raw);
+      ok = true;
+    }
   }
   catch(e){ ok = false; }
   STORAGE_FAILED = !ok;
@@ -15887,13 +16309,27 @@ function saveState(){
 
 function getState(){ return STATE || loadState(); }
 
-function eraseAll(){
-  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
-  idbMirrorClear();
+function eraseAll(onMirrorCleared){
+  let previousMarker = null;
+  try{
+    previousMarker = localStorage.getItem(IDB_ERASE_KEY);
+    localStorage.setItem(IDB_ERASE_KEY, '1');
+    localStorage.removeItem(STORE_KEY);
+  }catch(e){
+    try{
+      if(previousMarker === null) localStorage.removeItem(IDB_ERASE_KEY);
+      else localStorage.setItem(IDB_ERASE_KEY, previousMarker);
+    }catch(_e){}
+    return false;
+  }
+  LAST_STORED_RAW = null;
+  STORE_CONFLICT = false;
+  STORAGE_FAILED = false; STORAGE_READ_FAILED = false;
   LOAD_FAILED = false;
   LOAD_NEWER = false;
   RAW_RECORD = null;
   STATE = defaultState();
+  idbMirrorClear(onMirrorCleared);
   return STATE;
 }
 
@@ -15938,13 +16374,34 @@ function migrateSession(sess){
 function exportJSON(){
   return JSON.stringify(getState(), null, 2);
 }
-function importJSON(text){
-  const parsed = JSON.parse(text);
-  if(!parsed || typeof parsed !== 'object') throw new Error('bad file');
-  STATE = migrate(parsed);
-  saveState();
+function prepareImport(text){
+  let parsed;
+  try{ parsed = JSON.parse(text); }catch(e){ throw dataError('invalid'); }
+  validateDataRecord(parsed);
+  try{ return migrate(parsed); }catch(e){ throw dataError('invalid'); }
+}
+function commitImport(candidate){
+  if(LOAD_FAILED || (typeof RAW_DRAFT !== 'undefined' && RAW_DRAFT !== null)) throw dataError('unreadable');
+  if(typeof ACTIVE !== 'undefined' && ACTIVE) throw dataError('active');
+  if(STORAGE_FAILED || STORE_CONFLICT || (typeof DRAFT_CONFLICT !== 'undefined' && DRAFT_CONFLICT)) throw dataError('unsaved');
+  let raw;
+  try{
+    const current = localStorage.getItem(STORE_KEY);
+    if(LAST_STORED_RAW !== undefined && current !== LAST_STORED_RAW){
+      STORE_CONFLICT = true; STORAGE_FAILED = true;
+      if(typeof paintStoreFlag === 'function') paintStoreFlag();
+      throw dataError('unsaved');
+    }
+    raw = JSON.stringify(candidate);
+    localStorage.setItem(STORE_KEY, raw);
+  }catch(e){ if(e && e.code === 'unsaved') throw e; throw dataError('write'); }
+  /* Never adopt a replacement in memory until its local write has succeeded. */
+  STATE = candidate;
+  LAST_STORED_RAW = raw;
+  idbMirrorPut(raw);
   return STATE;
 }
+function importJSON(text){ return commitImport(prepareImport(text)); }
 
 /* ---------- logging helpers ---------- */
 function addSession(obj){
@@ -19112,6 +19569,7 @@ function exerciseMovement(ex){
    ========================================================================== */
 
 const DRAFT_KEY = 'ancestor.draft.v1';
+const DRAFT_ERASE_KEY = 'ancestor.draft.erased.v1';
 
 let ACTIVE = null;        // live session being logged
 let BODY_SIDE = 'front';
@@ -20059,17 +20517,48 @@ function restSay(prefix){
 /* A draft is a separate write from the log. A successful profile save cannot
    prove that the latest set survived; report and retry that write separately. */
 let DRAFT_STORAGE_FAILED = false;
+let DRAFT_CONFLICT = false;
+let LAST_DRAFT_RAW;       // exact draft this tab last read or wrote
+let RAW_DRAFT = null;     // unreadable bytes, including the empty string
+function draftCanStart(){
+  if(RAW_DRAFT !== null || DRAFT_CONFLICT){ paintStoreFlag(); return false; }
+  try{
+    const current = localStorage.getItem(DRAFT_KEY);
+    if(LAST_DRAFT_RAW === undefined || current !== LAST_DRAFT_RAW){
+      DRAFT_CONFLICT = true; paintStoreFlag(); return false;
+    }
+    return true;
+  }catch(e){ DRAFT_CONFLICT = true; paintStoreFlag(); return false; }
+}
 function saveDraft(){
   if(!ACTIVE) return true;
   let ok = false;
-  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); ok = true; }catch(e){}
+  try{
+    const current = localStorage.getItem(DRAFT_KEY);
+    if(RAW_DRAFT !== null || DRAFT_CONFLICT || LAST_DRAFT_RAW === undefined || current !== LAST_DRAFT_RAW){
+      DRAFT_CONFLICT = true;
+    }else{
+      const raw = JSON.stringify(ACTIVE);
+      localStorage.setItem(DRAFT_KEY, raw); LAST_DRAFT_RAW = raw;
+      if(localStorage.getItem(DRAFT_ERASE_KEY) !== null) localStorage.removeItem(DRAFT_ERASE_KEY);
+      ok = true;
+    }
+  }catch(e){}
   DRAFT_STORAGE_FAILED = !ok;
   if(typeof paintStoreFlag === 'function') paintStoreFlag();
   return ok;
 }
-function clearDraft(){
+function clearDraft(force){
   let ok = false;
-  try{ localStorage.removeItem(DRAFT_KEY); ok = true; }catch(e){}
+  try{
+    const current = localStorage.getItem(DRAFT_KEY);
+    if(!force && (RAW_DRAFT !== null || DRAFT_CONFLICT || LAST_DRAFT_RAW === undefined || current !== LAST_DRAFT_RAW)){
+      DRAFT_CONFLICT = true;
+    }else{
+      localStorage.removeItem(DRAFT_KEY); LAST_DRAFT_RAW = null;
+      DRAFT_CONFLICT = false; RAW_DRAFT = null; ok = true;
+    }
+  }catch(e){}
   if(ok) DRAFT_STORAGE_FAILED = false;
   if(typeof paintStoreFlag === 'function') paintStoreFlag();
   return ok;
@@ -20077,18 +20566,37 @@ function clearDraft(){
 function loadDraft(){
   try{
     const raw = localStorage.getItem(DRAFT_KEY);
-    if(!raw) return false;
-    const draft = JSON.parse(raw);
+    LAST_DRAFT_RAW = raw;
+    if(localStorage.getItem(DRAFT_ERASE_KEY) !== null || raw === null) return false;
+    let draft;
+    try{
+      draft = JSON.parse(raw);
+      if(!dataObject(draft) || !Number.isFinite(draft.startedAt) || !Array.isArray(draft.exercises) ||
+         draft.exercises.some(ex => !dataObject(ex) || !Array.isArray(ex.sets))) throw new Error('invalid draft');
+    }catch(e){ RAW_DRAFT = raw; return false; }
     /* If a completed log landed but removing its draft failed, don't reopen
        the same workout or allow it to be recorded twice after a restart. */
-    if(draft && draft.startedAt != null && !LOAD_FAILED &&
+    if(draft.startedAt != null && !LOAD_FAILED &&
        (getState().sessions || []).some(s => s.startedAt === draft.startedAt)){
       clearDraft(); return false;
     }
     ACTIVE = draft;
-    return !!ACTIVE;
-  }catch(e){}
-  return false;
+    return true;
+  }catch(e){ return false; }
+}
+function downloadUnreadableDraft(){
+  if(RAW_DRAFT === null) return;
+  let url;
+  try{
+    url = URL.createObjectURL(new Blob([RAW_DRAFT],{type:'application/json'}));
+    const a = document.createElement('a');a.href=url;a.download='ancestor-workout-unreadable.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast(t('data.exportStarted'),'ok');
+  }catch(e){
+    if(url) try{ URL.revokeObjectURL(url); }catch(_e){}
+    toast(t('data.exportFailed'),'alert');
+  }
 }
 
 /* ===================================================================== */
@@ -21374,7 +21882,8 @@ Screens.profile = function(){
        esc(s.lastExportAt ? dateLabel(s.lastExportAt) : t('state.none')) + ' · ' + esc(t('you.idbNote')) + '</p>';
   h += '<div class="stack">' +
        '<button class="btn quiet" data-act="openSheet" data-a1="bw">+ ' + esc(t('bw.log')) + '</button>' +
-       '<button class="btn quiet" data-act="doExport">' + esc(t('you.export')) + '</button>' +
+       '<p class="hint">' + esc(t('data.exportNote')) + '</p>' +
+       '<button class="btn quiet" data-act="doExport">' + esc(t('data.exportLabel')) + '</button>' +
        '<button class="btn quiet" data-act="doImport" data-t1="e">' + esc(t('you.import')) + '</button>' +
        '<button class="btn danger" data-act="doErase">' + esc(t('you.erase')) + '</button></div></div>';
 
@@ -21473,23 +21982,32 @@ function rebuildPlan(){
 function replayOnboarding(){ const s = getState(); s.onboarded = false; saveState(); onbIdx = 0; go('onb'); }
 
 function doExport(){
-  /* Exporting an empty log while the real one sits unreadable would be a claim
-     about the wrong data. The strip has the action that makes sense. */
+  /* An unreadable log is exported from the warning, never as an empty log. */
   if(typeof LOAD_FAILED !== 'undefined' && LOAD_FAILED){
     toast(t('app.load.title'), 'alert');
-    return;
+    return false;
   }
-  const s = getState();
-  s.lastExportAt = Date.now();
-  saveState();
-  const blob = new Blob([exportJSON()], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ancestor-data-' + dateKey(Date.now()) + '.json';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  const s = getState(), at = Date.now();
+  let url = null, a = null;
+  try{
+    const snapshot = Object.assign({}, s, {lastExportAt:at});
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], {type:'application/json'});
+    url = URL.createObjectURL(blob);
+    a = document.createElement('a');
+    a.href = url; a.download = 'ancestor-data-' + dateKey(at) + '.json';
+    document.body.appendChild(a); a.click();
+  }catch(e){
+    if(url) try{ URL.revokeObjectURL(url); }catch(_e){}
+    toast(t('data.exportFailed'), 'alert');
+    return false;
+  }finally{ if(a && a.parentNode) a.parentNode.removeChild(a); }
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  toast(t('you.export'),'ok');
+  /* A browser can confirm a download was requested, not that a person saved it. */
+  s.lastExportAt = at;
+  saveState();
+  toast(t('data.exportStarted'),'ok');
   if(VIEW === 'profile') render();
+  return true;
 }
 /* The busy state, finally attached to something. `.btn.loading` — the masked
    tally that replaced the app's fourth spinner — has existed in the stylesheet
@@ -21502,7 +22020,21 @@ function setBtnBusy(btn, on){
   if(on) btn.setAttribute('aria-busy', 'true');
   else btn.removeAttribute('aria-busy');
 }
+function importBlock(){
+  if(LOAD_FAILED || RAW_DRAFT !== null) return 'unreadable';
+  if(ACTIVE) return 'active';
+  if(STORAGE_FAILED || STORE_CONFLICT || DRAFT_CONFLICT) return 'unsaved';
+  return '';
+}
+function importErrorMessage(error){
+  const code = error && error.code;
+  const key = ({invalid:'data.importInvalid',newer:'data.importNewer',active:'data.importActive',
+    unreadable:'data.importUnreadable',unsaved:'data.importUnsaved',write:'data.importWrite'})[code] || 'data.importInvalid';
+  toast(t(key), 'alert');
+}
 function doImport(btn){
+  const blocked = importBlock();
+  if(blocked){ importErrorMessage({code:blocked}); return; }
   const i = document.createElement('input');
   i.type = 'file'; i.accept = 'application/json,.json';
   i.onchange = () => {
@@ -21511,19 +22043,53 @@ function doImport(btn){
     const r = new FileReader();
     r.onload = () => {
       setBtnBusy(btn, false);
-      try{ importJSON(r.result); savedToast('you.saved'); go('home'); }
-      catch(e){ toast(t('err.generic'),'alert'); }
+      try{
+        const candidate = prepareImport(r.result);
+        const blocked = importBlock(); if(blocked) throw dataError(blocked);
+        if(!confirm(t('data.importConfirm'))) return;
+        commitImport(candidate);
+        savedToast('you.saved'); go('home');
+      }catch(e){ importErrorMessage(e); }
     };
-    r.onerror = () => { setBtnBusy(btn, false); toast(t('err.generic'),'alert'); };
-    r.readAsText(f);
+    r.onerror = () => { setBtnBusy(btn, false); importErrorMessage({code:'invalid'}); };
+    try{ r.readAsText(f); }catch(e){ setBtnBusy(btn, false); importErrorMessage({code:'invalid'}); }
   };
   i.click();
 }
 function doErase(){
   if(!confirm(t('you.erase.warn'))) return;
   if(!confirm(t('dlg.confirm'))) return;
-  eraseAll(); ACTIVE = null; clearDraft(); stopRest(); syncLiveClock(); BODY_SEL = null;
+  let mirror = null, localDone = false, localOK = true, reported = false;
+  function report(){
+    if(reported || !localDone || mirror === null) return;
+    reported = true;
+    if(!localOK || !mirror){
+      ERASE_INCOMPLETE = true;
+      try{ localStorage.setItem(ERASE_NOTICE_KEY, '1'); }catch(e){}
+      paintStoreFlag();
+      toast(t('data.eraseIncomplete'), 'alert');
+    }else{
+      ERASE_INCOMPLETE = false;
+      try{ localStorage.removeItem(ERASE_NOTICE_KEY); }catch(e){}
+      paintStoreFlag();
+    }
+  }
+  if(eraseAll(ok => { mirror = ok; report(); }) === false){ toast(t('data.eraseFailed'), 'alert'); return; }
+  /* If draft removal fails, the marker stops that old workout reopening. A new
+     draft clears it only after its own write succeeds. */
+  try{
+    localStorage.setItem(DRAFT_ERASE_KEY, '1');
+    if(!clearDraft(true)) localOK = false;
+    else localStorage.removeItem(DRAFT_ERASE_KEY);
+  }catch(e){ localOK = false; }
+  try{
+    const old = Object.keys(localStorage).filter(k => k.indexOf(STORE_KEY + '.damaged.') === 0 || k === CRASH_KEY || k === IDB_UNCHECKED_KEY || k === 'ancestor.lang');
+    old.forEach(k => localStorage.removeItem(k));
+    MIRROR_UNCHECKED = false;
+  }catch(e){ localOK = false; }
+  ACTIVE = null; stopRest(); syncLiveClock(); BODY_SEL = null;
   onbIdx = 0; go('onb');
+  localDone = true; report();
 }
 
 /* ===================================================================== */
@@ -22767,6 +23333,7 @@ function addExerciseToActive(exId){
   render();
 }
 function startCustomSession(){
+  if(!ACTIVE && !draftCanStart()) return;
   /* There is one recoverable draft. Never replace it with another workout,
      even if a stale button, shortcut or rapid second tap reaches this handler. */
   if(ACTIVE){ openTrain(); return; }
@@ -23224,6 +23791,7 @@ function emptyHintFor(spec, missing){
 /* Starts the recommended session when called with no args, or a specific split
    day when given its plan session id. */
 function startSession(dayId){
+  if(!ACTIVE && !draftCanStart()) return;
   if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   let chosen = null;
@@ -23416,7 +23984,7 @@ function applySub(ei, id){
 function discardSession(){
   if(!ACTIVE || !confirm(t('workout.discardConfirm'))) return;
   /* If storage refuses removal, do not pretend the old draft was discarded. */
-  if(!clearDraft()){ toast(t('workout.discardFailed'), 'alert'); return; }
+  if(!clearDraft() && !DRAFT_CONFLICT){ toast(t('workout.discardFailed'), 'alert'); return; }
   ACTIVE = null; SESSION_SUB = 'plan'; FINISH_SAVE_FAILED = false;
   stopRest(); syncLiveClock();
   go('session');
@@ -26662,9 +27230,14 @@ function paintStoreFlag(){
   if(!el) return;
   const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
   const damaged = (typeof LOAD_FAILED !== 'undefined') && LOAD_FAILED;
+  const conflict = (typeof STORE_CONFLICT !== 'undefined') && STORE_CONFLICT;
+  const eraseIncomplete = (typeof ERASE_INCOMPLETE !== 'undefined') && ERASE_INCOMPLETE;
+  const mirrorUnchecked = (typeof MIRROR_UNCHECKED !== 'undefined') && MIRROR_UNCHECKED;
+  const draftUnreadable = (typeof RAW_DRAFT !== 'undefined') && RAW_DRAFT !== null;
+  const draftConflict = (typeof DRAFT_CONFLICT !== 'undefined') && DRAFT_CONFLICT;
   const draftFailing = (typeof ACTIVE !== 'undefined' && ACTIVE &&
                         typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED);
-  if(!failing && !damaged && !draftFailing){
+  if(!failing && !damaged && !draftFailing && !conflict && !eraseIncomplete && !draftUnreadable && !draftConflict && !mirrorUnchecked){
     if(!el.hidden){ el.hidden = true; }
     cancelStoreRetry();
     return;
@@ -26677,20 +27250,41 @@ function paintStoreFlag(){
     if(tEl) tEl.textContent = t('app.load.title');
     if(bEl) bEl.textContent = newer ? t('app.load.newer') : t('app.load.body');
     if(xEl) xEl.textContent = t('app.load.get');
+  } else if(conflict){
+    if(tEl) tEl.textContent = t('data.conflictTitle');
+    if(bEl) bEl.textContent = ACTIVE ? t('data.conflictActive') : t('data.conflictBody');
+    if(xEl) xEl.textContent = t('data.exportLabel');
   } else if(failing){
     if(tEl) tEl.textContent = t('app.store.title');
     /* The ordinary export contains the log, not the active draft. Say so. */
     if(bEl) bEl.textContent = ACTIVE ? t('workout.storeActive') : t('app.store.body');
     if(xEl) xEl.textContent = t('you.export');
-  } else {
+  } else if(draftUnreadable){
+    if(tEl) tEl.textContent = t('data.draftUnreadableTitle');
+    if(bEl) bEl.textContent = t('data.draftUnreadable');
+    if(xEl) xEl.textContent = t('data.draftDownload');
+  } else if(draftConflict){
+    if(tEl) tEl.textContent = t('data.draftConflictTitle');
+    if(bEl) bEl.textContent = ACTIVE ? t('data.draftConflictActive') : t('data.draftConflictIdle');
+    if(xEl) xEl.textContent = ACTIVE ? t('data.exportLabel') : t('data.draftReload');
+  } else if(draftFailing){
     if(tEl) tEl.textContent = t('workout.draftTitle');
     if(bEl) bEl.textContent = t('workout.draftBody');
     if(xEl) xEl.textContent = t('btn.retry');
+  } else if(mirrorUnchecked){
+    if(tEl) tEl.textContent = t('data.mirrorTitle');
+    if(bEl) bEl.textContent = t('data.mirrorBody') + (ACTIVE ? ' ' + t('data.exportNote') : '');
+    if(xEl) xEl.textContent = t('btn.retry');
+  } else {
+    if(tEl) tEl.textContent = t('data.eraseIncompleteTitle');
+    if(bEl) bEl.textContent = t('data.eraseIncomplete');
+    if(xEl) xEl.textContent = t('data.dismiss');
   }
   el.hidden = false;
   /* A refused write is retried; an unreadable one is not, because the retry would
      be the overwrite. There the only way forward is the button. */
-  if(failing || draftFailing) scheduleStoreRetry();
+  if((failing && !conflict) || (draftFailing && !draftConflict)) scheduleStoreRetry();
+  else cancelStoreRetry();
 }
 
 /* ---------------------------------------------------------- a deploy landed
@@ -26737,6 +27331,11 @@ function watchForDeploy(reg){
 
 /* The one action that is safe when the record will not open: hand the bytes back,
    put them somewhere they can be found again, and only then let the log start. */
+function dismissEraseNotice(){
+  try{ localStorage.removeItem(ERASE_NOTICE_KEY); }catch(e){ return; }
+  ERASE_INCOMPLETE = false; paintStoreFlag();
+}
+
 function keepDamagedRecord(){
   const raw = (typeof RAW_RECORD === 'string') ? RAW_RECORD : '';
   try{
@@ -26748,11 +27347,16 @@ function keepDamagedRecord(){
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url), 1000);
   }catch(e){ /* the archive below is the second copy */ }
-  archiveDamagedRecord();
-  saveState();
+  if(archiveDamagedRecord() === false){
+    paintStoreFlag();
+    toast(t('data.archiveFailed'), 'alert');
+    return false;
+  }
+  const saved = saveState();
   paintStoreFlag();
   try{ render(); }catch(e){}
-  toast(t('app.load.kept'), 'ok');
+  if(saved) toast(t('app.load.kept'), 'ok');
+  return saved;
 }
 
 /* A refused write is retried, not just reported. STATE is still the whole truth
@@ -26763,14 +27367,14 @@ function keepDamagedRecord(){
    successful write anywhere cancels the loop. */
 let storeRetryTimer = null;
 function storeNeedsRetry(){
-  return !!((typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) ||
-    (typeof ACTIVE !== 'undefined' && ACTIVE && typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED));
+  return !!((typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED && !STORE_CONFLICT) ||
+    (typeof ACTIVE !== 'undefined' && ACTIVE && typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED && !DRAFT_CONFLICT));
 }
 function retryStore(){
   if(!storeNeedsRetry()) return false;
-  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) saveState();
+  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED && !STORE_CONFLICT) saveState();
   if(typeof ACTIVE !== 'undefined' && ACTIVE &&
-     typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED) saveDraft();
+     typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED && !DRAFT_CONFLICT) saveDraft();
   return !storeNeedsRetry();
 }
 function cancelStoreRetry(){
@@ -27080,7 +27684,9 @@ let toastTimer = null;
    top of it would be the lie the strip exists to prevent. So confirmations go
    through here, and it checks the last write rather than assuming it. */
 function savedToast(key){
-  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) return false;
+  if((typeof LOAD_FAILED !== 'undefined' && LOAD_FAILED) ||
+     (typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) ||
+     (typeof STORE_CONFLICT !== 'undefined' && STORE_CONFLICT)) return false;
   toast(t(key), 'ok');
   return true;
 }
@@ -27151,8 +27757,11 @@ function boot(){
       requestPersistentStorage(() => { if(VIEW === 'profile') render(); });
     }
     if(typeof idbRecoverIfEmpty === 'function'){
-      idbRecoverIfEmpty(rec => {
-        if(rec && rec.onboarded){ VIEW = 'home'; render(); toast(t('you.recovered'), 'ok'); }
+      idbRecoverIfEmpty((rec, saved) => {
+        if(rec && rec.onboarded){
+          if(VIEW === 'onb') VIEW = ACTIVE ? 'session' : 'home';
+          render(); if(saved) toast(t('you.recovered'), 'ok');
+        }
       });
     }
   } catch(e){}
@@ -27180,7 +27789,19 @@ function boot(){
   window.addEventListener('focus', () => { retryStore(); });
   /* Another tab wrote: adopt it rather than overwrite it later. */
   window.addEventListener('storage', ev => {
+    if(ev && ev.key === IDB_UNCHECKED_KEY){
+      MIRROR_UNCHECKED = ev.newValue !== null; paintStoreFlag(); return;
+    }
+    if(ev && ev.key === DRAFT_KEY){
+      if(ev.newValue !== LAST_DRAFT_RAW){ DRAFT_CONFLICT = true; if(ACTIVE) DRAFT_STORAGE_FAILED = true; paintStoreFlag(); }
+      return;
+    }
     if(ev && ev.key !== null && typeof STORE_KEY !== 'undefined' && ev.key !== STORE_KEY) return;
+    /* Never throw away this tab's unsaved data or the sole unreadable copy just
+       because another tab wrote. Retry is paused until the user keeps a copy. */
+    if(STORAGE_FAILED || STORE_CONFLICT || LOAD_FAILED){
+      STORE_CONFLICT = true; paintStoreFlag(); return;
+    }
     try{ reloadState(); }catch(e){ return; }
     try{ render(); }catch(e){}
   });

@@ -183,8 +183,12 @@ ACT('doExport',                     el => doExport());
 /* The header's single recovery control changes purpose with the failure. */
 ACT('storeRecovery',                () => {
   if(LOAD_FAILED) keepDamagedRecord();
-  else if(STORAGE_FAILED) doExport();
+  else if(STORAGE_FAILED || STORE_CONFLICT) doExport();
+  else if(RAW_DRAFT !== null) downloadUnreadableDraft();
+  else if(DRAFT_CONFLICT){ if(ACTIVE) doExport(); else reloadApp(); }
   else if(ACTIVE && DRAFT_STORAGE_FAILED) retryStore();
+  else if(MIRROR_UNCHECKED) keepUncheckedMirror();
+  else if(ERASE_INCOMPLETE) dismissEraseNotice();
 });
 ACT('doImport',                     el => doImport(arg(el, 1)));
 ACT('editField',                    el => editField(arg(el, 1), arg(el, 2), arg(el, 3)));

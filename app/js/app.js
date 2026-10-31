@@ -151,9 +151,14 @@ function paintStoreFlag(){
   if(!el) return;
   const failing = (typeof STORAGE_FAILED !== 'undefined') && STORAGE_FAILED;
   const damaged = (typeof LOAD_FAILED !== 'undefined') && LOAD_FAILED;
+  const conflict = (typeof STORE_CONFLICT !== 'undefined') && STORE_CONFLICT;
+  const eraseIncomplete = (typeof ERASE_INCOMPLETE !== 'undefined') && ERASE_INCOMPLETE;
+  const mirrorUnchecked = (typeof MIRROR_UNCHECKED !== 'undefined') && MIRROR_UNCHECKED;
+  const draftUnreadable = (typeof RAW_DRAFT !== 'undefined') && RAW_DRAFT !== null;
+  const draftConflict = (typeof DRAFT_CONFLICT !== 'undefined') && DRAFT_CONFLICT;
   const draftFailing = (typeof ACTIVE !== 'undefined' && ACTIVE &&
                         typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED);
-  if(!failing && !damaged && !draftFailing){
+  if(!failing && !damaged && !draftFailing && !conflict && !eraseIncomplete && !draftUnreadable && !draftConflict && !mirrorUnchecked){
     if(!el.hidden){ el.hidden = true; }
     cancelStoreRetry();
     return;
@@ -166,20 +171,41 @@ function paintStoreFlag(){
     if(tEl) tEl.textContent = t('app.load.title');
     if(bEl) bEl.textContent = newer ? t('app.load.newer') : t('app.load.body');
     if(xEl) xEl.textContent = t('app.load.get');
+  } else if(conflict){
+    if(tEl) tEl.textContent = t('data.conflictTitle');
+    if(bEl) bEl.textContent = ACTIVE ? t('data.conflictActive') : t('data.conflictBody');
+    if(xEl) xEl.textContent = t('data.exportLabel');
   } else if(failing){
     if(tEl) tEl.textContent = t('app.store.title');
     /* The ordinary export contains the log, not the active draft. Say so. */
     if(bEl) bEl.textContent = ACTIVE ? t('workout.storeActive') : t('app.store.body');
     if(xEl) xEl.textContent = t('you.export');
-  } else {
+  } else if(draftUnreadable){
+    if(tEl) tEl.textContent = t('data.draftUnreadableTitle');
+    if(bEl) bEl.textContent = t('data.draftUnreadable');
+    if(xEl) xEl.textContent = t('data.draftDownload');
+  } else if(draftConflict){
+    if(tEl) tEl.textContent = t('data.draftConflictTitle');
+    if(bEl) bEl.textContent = ACTIVE ? t('data.draftConflictActive') : t('data.draftConflictIdle');
+    if(xEl) xEl.textContent = ACTIVE ? t('data.exportLabel') : t('data.draftReload');
+  } else if(draftFailing){
     if(tEl) tEl.textContent = t('workout.draftTitle');
     if(bEl) bEl.textContent = t('workout.draftBody');
     if(xEl) xEl.textContent = t('btn.retry');
+  } else if(mirrorUnchecked){
+    if(tEl) tEl.textContent = t('data.mirrorTitle');
+    if(bEl) bEl.textContent = t('data.mirrorBody') + (ACTIVE ? ' ' + t('data.exportNote') : '');
+    if(xEl) xEl.textContent = t('btn.retry');
+  } else {
+    if(tEl) tEl.textContent = t('data.eraseIncompleteTitle');
+    if(bEl) bEl.textContent = t('data.eraseIncomplete');
+    if(xEl) xEl.textContent = t('data.dismiss');
   }
   el.hidden = false;
   /* A refused write is retried; an unreadable one is not, because the retry would
      be the overwrite. There the only way forward is the button. */
-  if(failing || draftFailing) scheduleStoreRetry();
+  if((failing && !conflict) || (draftFailing && !draftConflict)) scheduleStoreRetry();
+  else cancelStoreRetry();
 }
 
 /* ---------------------------------------------------------- a deploy landed
@@ -226,6 +252,11 @@ function watchForDeploy(reg){
 
 /* The one action that is safe when the record will not open: hand the bytes back,
    put them somewhere they can be found again, and only then let the log start. */
+function dismissEraseNotice(){
+  try{ localStorage.removeItem(ERASE_NOTICE_KEY); }catch(e){ return; }
+  ERASE_INCOMPLETE = false; paintStoreFlag();
+}
+
 function keepDamagedRecord(){
   const raw = (typeof RAW_RECORD === 'string') ? RAW_RECORD : '';
   try{
@@ -237,11 +268,16 @@ function keepDamagedRecord(){
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url), 1000);
   }catch(e){ /* the archive below is the second copy */ }
-  archiveDamagedRecord();
-  saveState();
+  if(archiveDamagedRecord() === false){
+    paintStoreFlag();
+    toast(t('data.archiveFailed'), 'alert');
+    return false;
+  }
+  const saved = saveState();
   paintStoreFlag();
   try{ render(); }catch(e){}
-  toast(t('app.load.kept'), 'ok');
+  if(saved) toast(t('app.load.kept'), 'ok');
+  return saved;
 }
 
 /* A refused write is retried, not just reported. STATE is still the whole truth
@@ -252,14 +288,14 @@ function keepDamagedRecord(){
    successful write anywhere cancels the loop. */
 let storeRetryTimer = null;
 function storeNeedsRetry(){
-  return !!((typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) ||
-    (typeof ACTIVE !== 'undefined' && ACTIVE && typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED));
+  return !!((typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED && !STORE_CONFLICT) ||
+    (typeof ACTIVE !== 'undefined' && ACTIVE && typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED && !DRAFT_CONFLICT));
 }
 function retryStore(){
   if(!storeNeedsRetry()) return false;
-  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) saveState();
+  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED && !STORE_CONFLICT) saveState();
   if(typeof ACTIVE !== 'undefined' && ACTIVE &&
-     typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED) saveDraft();
+     typeof DRAFT_STORAGE_FAILED !== 'undefined' && DRAFT_STORAGE_FAILED && !DRAFT_CONFLICT) saveDraft();
   return !storeNeedsRetry();
 }
 function cancelStoreRetry(){
@@ -569,7 +605,9 @@ let toastTimer = null;
    top of it would be the lie the strip exists to prevent. So confirmations go
    through here, and it checks the last write rather than assuming it. */
 function savedToast(key){
-  if(typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) return false;
+  if((typeof LOAD_FAILED !== 'undefined' && LOAD_FAILED) ||
+     (typeof STORAGE_FAILED !== 'undefined' && STORAGE_FAILED) ||
+     (typeof STORE_CONFLICT !== 'undefined' && STORE_CONFLICT)) return false;
   toast(t(key), 'ok');
   return true;
 }
@@ -640,8 +678,11 @@ function boot(){
       requestPersistentStorage(() => { if(VIEW === 'profile') render(); });
     }
     if(typeof idbRecoverIfEmpty === 'function'){
-      idbRecoverIfEmpty(rec => {
-        if(rec && rec.onboarded){ VIEW = 'home'; render(); toast(t('you.recovered'), 'ok'); }
+      idbRecoverIfEmpty((rec, saved) => {
+        if(rec && rec.onboarded){
+          if(VIEW === 'onb') VIEW = ACTIVE ? 'session' : 'home';
+          render(); if(saved) toast(t('you.recovered'), 'ok');
+        }
       });
     }
   } catch(e){}
@@ -669,7 +710,19 @@ function boot(){
   window.addEventListener('focus', () => { retryStore(); });
   /* Another tab wrote: adopt it rather than overwrite it later. */
   window.addEventListener('storage', ev => {
+    if(ev && ev.key === IDB_UNCHECKED_KEY){
+      MIRROR_UNCHECKED = ev.newValue !== null; paintStoreFlag(); return;
+    }
+    if(ev && ev.key === DRAFT_KEY){
+      if(ev.newValue !== LAST_DRAFT_RAW){ DRAFT_CONFLICT = true; if(ACTIVE) DRAFT_STORAGE_FAILED = true; paintStoreFlag(); }
+      return;
+    }
     if(ev && ev.key !== null && typeof STORE_KEY !== 'undefined' && ev.key !== STORE_KEY) return;
+    /* Never throw away this tab's unsaved data or the sole unreadable copy just
+       because another tab wrote. Retry is paused until the user keeps a copy. */
+    if(STORAGE_FAILED || STORE_CONFLICT || LOAD_FAILED){
+      STORE_CONFLICT = true; paintStoreFlag(); return;
+    }
     try{ reloadState(); }catch(e){ return; }
     try{ render(); }catch(e){}
   });

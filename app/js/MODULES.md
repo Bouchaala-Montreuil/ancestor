@@ -8,14 +8,14 @@ way: `index.html` must open from the file system, and `file://` blocks ES
 modules. So the boundary is a contract rather than a syntax — one owner per
 name, no unloaded files, and a count per file that cannot grow by accident.
 
-**45 files, 827 top-level names.** Each name has exactly one
+**46 files, 856 top-level names.** Each name has exactly one
 owner; `provides` is what a file creates, `reaches for` is what it mentions
 from another file (a token scan, so it over-reports — it is a reading list,
 not a dependency graph).
 
 | # | File | Provides | Reaches for |
 |---:|---|---:|---:|
-| 1 | `js/core/acts.js` | 8 | 154 |
+| 1 | `js/core/acts.js` | 8 | 161 |
 | 2 | `js/i18n/core.js` | 4 | 3 |
 | 3 | `js/i18n/ui.js` | 3 | 3 |
 | 4 | `js/i18n/exercises.js` | 2 | 4 |
@@ -28,38 +28,39 @@ not a dependency graph).
 | 11 | `js/i18n/ex_modes.js` | 1 | 3 |
 | 12 | `js/i18n/movement.js` | 4 | 4 |
 | 13 | `js/i18n/modes.js` | 11 | 15 |
-| 14 | `js/i18n/lesson_bodies_en.js` | 1 | 4 |
-| 15 | `js/i18n/lesson_bodies_fr.js` | 1 | 4 |
-| 16 | `js/i18n/lesson_bodies_es_de.js` | 2 | 3 |
-| 17 | `js/i18n/lesson_bodies_it_nl_ar.js` | 3 | 3 |
-| 18 | `js/i18n/print.js` | 1 | 4 |
-| 19 | `js/i18n/focus.js` | 1 | 4 |
-| 20 | `js/i18n/locale.js` | 25 | 9 |
-| 21 | `js/data/exercises.js` | 9 | 0 |
-| 22 | `js/data/ex_meta.js` | 9 | 3 |
-| 23 | `js/data/ex_logging.js` | 30 | 8 |
-| 24 | `js/data/anatomy_map.js` | 10 | 0 |
-| 25 | `js/data/modules.js` | 3 | 1 |
-| 26 | `js/data/evidence.js` | 11 | 3 |
-| 27 | `js/data/lessons.js` | 8 | 2 |
-| 28 | `js/core/time.js` | 32 | 5 |
-| 29 | `js/core/profile.js` | 20 | 1 |
-| 30 | `js/core/store.js` | 47 | 11 |
-| 31 | `js/engine/progression.js` | 20 | 14 |
-| 32 | `js/engine/recovery.js` | 13 | 14 |
-| 33 | `js/engine/readiness.js` | 9 | 14 |
-| 34 | `js/engine/program.js` | 29 | 14 |
-| 35 | `js/engine/why.js` | 15 | 27 |
-| 36 | `js/ui/components.js` | 38 | 16 |
-| 37 | `js/ui/movement.js` | 13 | 5 |
-| 38 | `js/ui/screens.js` | 157 | 152 |
-| 39 | `js/ui/workout.js` | 98 | 82 |
-| 40 | `js/ui/printsheet.js` | 13 | 29 |
-| 41 | `js/ui/science.js` | 41 | 52 |
-| 42 | `js/ui/motion.js` | 20 | 2 |
-| 43 | `js/ui/modules.js` | 17 | 18 |
-| 44 | `js/ui/anatomy3d.js` | 40 | 14 |
-| 45 | `js/app.js` | 47 | 64 |
+| 14 | `js/i18n/data_safety.js` | 2 | 2 |
+| 15 | `js/i18n/lesson_bodies_en.js` | 1 | 4 |
+| 16 | `js/i18n/lesson_bodies_fr.js` | 1 | 4 |
+| 17 | `js/i18n/lesson_bodies_es_de.js` | 2 | 3 |
+| 18 | `js/i18n/lesson_bodies_it_nl_ar.js` | 3 | 3 |
+| 19 | `js/i18n/print.js` | 1 | 4 |
+| 20 | `js/i18n/focus.js` | 1 | 4 |
+| 21 | `js/i18n/locale.js` | 25 | 9 |
+| 22 | `js/data/exercises.js` | 9 | 0 |
+| 23 | `js/data/ex_meta.js` | 9 | 3 |
+| 24 | `js/data/ex_logging.js` | 30 | 8 |
+| 25 | `js/data/anatomy_map.js` | 10 | 0 |
+| 26 | `js/data/modules.js` | 3 | 1 |
+| 27 | `js/data/evidence.js` | 11 | 3 |
+| 28 | `js/data/lessons.js` | 8 | 2 |
+| 29 | `js/core/time.js` | 32 | 5 |
+| 30 | `js/core/profile.js` | 20 | 1 |
+| 31 | `js/core/store.js` | 65 | 15 |
+| 32 | `js/engine/progression.js` | 20 | 14 |
+| 33 | `js/engine/recovery.js` | 13 | 14 |
+| 34 | `js/engine/readiness.js` | 9 | 14 |
+| 35 | `js/engine/program.js` | 29 | 14 |
+| 36 | `js/engine/why.js` | 15 | 27 |
+| 37 | `js/ui/components.js` | 38 | 16 |
+| 38 | `js/ui/movement.js` | 13 | 5 |
+| 39 | `js/ui/screens.js` | 165 | 161 |
+| 40 | `js/ui/workout.js` | 98 | 84 |
+| 41 | `js/ui/printsheet.js` | 13 | 29 |
+| 42 | `js/ui/science.js` | 41 | 52 |
+| 43 | `js/ui/motion.js` | 20 | 2 |
+| 44 | `js/ui/modules.js` | 17 | 18 |
+| 45 | `js/ui/anatomy3d.js` | 40 | 14 |
+| 46 | `js/app.js` | 48 | 72 |
 
 ## Who owns what
 
@@ -79,6 +80,7 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/i18n/ex_modes.js`** — 1: `TM`
 - **`js/i18n/movement.js`** — 4: `MOVEMENT_LANGS` `MOVEMENT_COPY` `MOVEMENT_UI` `MOVEMENT_GROUP_ACTION`
 - **`js/i18n/modes.js`** — 11: `TMODE` `TCOST` `TMODE_FULL` `TPLAN` `TPLAN2` `TV41` `TV42` `TV43` `WORKOUT_SAFETY` `EXERCISE_SAFETY` `THIRD_PARTY_LABELS`
+- **`js/i18n/data_safety.js`** — 2: `DATA_SAFETY_KEYS` `DATA_SAFETY_VALUES`
 - **`js/i18n/lesson_bodies_en.js`** — 1: `TLEN`
 - **`js/i18n/lesson_bodies_fr.js`** — 1: `TLFR`
 - **`js/i18n/lesson_bodies_es_de.js`** — 2: `TLES` `TLDE`
@@ -95,7 +97,7 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/data/lessons.js`** — 8: `SCIENCE_CATEGORIES` `LESSONS` `LESSON_BY_ID` `lesson` `lessonsInCat` `lessonsForMuscle` `lessonsForExercise` `ACHIEVEMENTS`
 - **`js/core/time.js`** — 32: `HOUR` `pad` `toLocalInput` `fromLocalInput` `dateKey` `startOfDay` `addDays` `hourOf` `hhmm` `dateLocale` `dayLabel` `dateLabel` `bioDayKey` `bioDayStart` `hoursBetween` `daysBetween` `shiftRange` `shiftHours` `isNightShift` `shiftsOverlapping` `workedWithin` `nextShift` `sleepRange` `sleepHours` `sleepStats` `sleepStartVariability` `lastWake` `typicalSleepWindow` `nrecsSafe` `intrudesOnSleep` `clamp` `round`
 - **`js/core/profile.js`** — 20: `GOALS` `ENVIRONMENTS` `NEEDS` `EMPHASIS` `PRIORITY_GROUPS` `emphasisMuscles` `priorityMuscles` `DISPLAY_DEFAULTS` `defaultV2Profile` `profileSet` `migrateProfile` `activeGoals` `hasGoal` `toggleGoal` `needOn` `toggleNeed` `hasAnyNeed` `goalRepBias` `equipmentFor` `applyDisplay`
-- **`js/core/store.js`** — 47: `STORE_KEY` `SCHEMA_VERSION` `APP_BUILD` `BUILD_KEY` `CRASH_KEY` `rememberCrash` `lastCrash` `forgetCrash` `uid` `defaultState` `STATE` `STORAGE_PERSISTED` `IDB_NAME` `IDB_STORE` `idbMirrorPut` `idbMirrorClear` `idbRecoverIfEmpty` `requestPersistentStorage` `LOAD_FAILED` `LOAD_NEWER` `RAW_RECORD` `loadState` `reloadState` `archiveDamagedRecord` `migrate` `STORAGE_FAILED` `saveState` `getState` `eraseAll` `migrateSet` `migrateSession` `exportJSON` `importJSON` `addSession` `deleteSession` `findSession` `updateSet` `deleteSet` `pruneEmptySessions` `addSleep` `addShift` `addFeeling` `latestFeeling` `addBodyweight` `deleteBodyweight` `exerciseHistory` `lastTrainedByMuscle`
+- **`js/core/store.js`** — 65: `STORE_KEY` `SCHEMA_VERSION` `APP_BUILD` `BUILD_KEY` `CRASH_KEY` `rememberCrash` `lastCrash` `forgetCrash` `uid` `defaultState` `STATE` `STORAGE_PERSISTED` `IDB_NAME` `IDB_STORE` `IDB_ERASE_KEY` `ERASE_NOTICE_KEY` `IDB_UNCHECKED_KEY` `ERASE_INCOMPLETE` `openVault` `idbMirrorPut` `idbMirrorClear` `clearUncheckedMirror` `markUncheckedMirror` `showUncheckedMirror` `idbRecoverIfEmpty` `keepUncheckedMirror` `requestPersistentStorage` `LOAD_FAILED` `LOAD_NEWER` `RAW_RECORD` `LAST_STORED_RAW` `STORE_CONFLICT` `STORAGE_READ_FAILED` `dataError` `dataObject` `dataVersion` `validateDataRecord` `loadState` `reloadState` `archiveDamagedRecord` `migrate` `STORAGE_FAILED` `saveState` `getState` `eraseAll` `migrateSet` `migrateSession` `exportJSON` `prepareImport` `commitImport` `importJSON` `addSession` `deleteSession` `findSession` `updateSet` `deleteSet` `pruneEmptySessions` `addSleep` `addShift` `addFeeling` `latestFeeling` `addBodyweight` `deleteBodyweight` `exerciseHistory` `lastTrainedByMuscle`
 - **`js/engine/progression.js`** — 20: `e1rm` `sessionScore` `RULES` `roundLoad` `roundLoadDown` `stepFor` `TIME_STEP_SEC` `DIST_STEP_RATIO` `roundSeconds` `roundDistance` `LOWER_PATTERNS` `recommend` `applyTarget` `advance` `reduceBy` `holdAndBuild` `r3Reason` `recordKindFor` `isPersonalBest` `personalBest`
 - **`js/engine/recovery.js`** — 13: `BASE_DAYS` `REF_STIMULUS` `STYLE_FACTOR` `EXP_FACTOR` `ADAPT_MIN` `recoveryDays` `allRecovery` `updateAdaptation` `recentRir` `exerciseTrend` `overallTrend` `clampNum` `round1`
 - **`js/engine/readiness.js`** — 9: `SEVERITY` `SEV_INDEX` `decide` `actionFor` `stateTitle` `stateBody` `stateClass` `dedupe` `round2`
@@ -103,11 +105,11 @@ The full map, in load order. A name appears once; if it ever appears twice,
 - **`js/engine/why.js`** — 15: `RULE_KINDS` `RECOMMENDATION_RULES` `RULE_CHANGELOG` `rule` `rulesAffectedByEvidence` `changelogFor` `stmt` `ruleBlock` `drivingEvidence` `explainProgression` `explainDecision` `explainRecovery` `explainVolume` `unitName` `goalLine`
 - **`js/ui/components.js`** — 38: `STATE_VAR` `STATE_TOKEN` `STATE_FALLBACK` `_tokenCache` `token` `tokenReset` `STATE_HEX` `FIG` `FIG_UID` `SIDE_MUSCLES` `bboxOf` `viewFor` `anatomyFigure` `readinessMeter` `metric` `metricsBlock` `dataTable` `niceCeil` `niceStep` `niceScale` `CHART_SEQ` `showChartTip` `lineChart` `barChart` `timelineStrip` `TALLY_BLANK` `SKEL_SHAPES` `skel` `waitMark` `TALLY_BROKEN` `failureState` `emptyState` `banner` `sparkline` `progressRing` `exerciseFigureSideSvg` `exerciseThumbSvg` `exerciseVisualSvg`
 - **`js/ui/movement.js`** — 13: `MOVEMENT_GUIDES` `MOVEMENT_POSES` `MOVEMENT_SCENES` `movementPose` `movementBody` `movementBackdrop` `movementLoad` `movementStage` `movementMixed` `movementReduced` `movementPlayers` `playMovement` `exerciseMovement`
-- **`js/ui/screens.js`** — 157: `DRAFT_KEY` `ACTIVE` `BODY_SIDE` `BODY_SEL` `BODY_ZOOM` `BODY_MODE` `BODY_FALLBACK` `BODY_LAYER` `BODY_REGION` `LAB_STRUCT` `REST` `PROG_EX` `PROG_PERIOD` `PROG_METRIC` `LAST_SUMMARY` `Screens` `esc` `$` `$$` `unit` `displayState` `STATE_WHY` `sessionCostLine` `sessionTotalVolume` `sessionSeries` `chartValue` `chartUnit` `chartLabelKey` `chartBasisKey` `bandHead` `journeyFold` `greetingFor` `heroLine` `trainingMilestones` `milestonesPanel` `trendGlyph` `sleepSummary` `weeklySetTotals` `volumeSparkline` `coverageBars` `contextualInsight` `nextLessonCard` `openAnalysis` `saveRestToDraft` `restoreRestFromDraft` `startRest` `tickRest` `runRestTimer` `pauseRest` `resumeRest` `toggleRest` `resetRest` `addRest` `stopRest` `focusAfterRest` `paintRest` `fmtClock` `syncRestHeight` `paintRestHost` `openRestInfo` `restAlertSupported` `notifyRestDone` `setRestNotify` `restSay` `DRAFT_STORAGE_FAILED` `saveDraft` `clearDraft` `loadDraft` `progressGroupNav` `labStructPanel` `setBodyMode` `noteLabFallback` `retryLab` `setSide` `selectMuscle` `clearMuscle` `toggleZoom` `resetFig` `setLabLayer` `setLabRegion` `groupAnatomicalAction` `openMobileMuscleSheet` `rotateFig` `bindAnatomyLab` `onLabStruct` `openExerciseDetail` `setProgMetric` `bodyweightTrendPanel` `countPRs` `sampleChart` `EDIT` `openSessionEditor` `renderSessionEditor` `editField` `saveEditedSet` `markWarmupEditedSet` `deleteEditedSet` `deleteWholeSession` `closeSessionEditor` `setPeriod` `setProgEx` `setHistEx` `delSession` `setEnvEquip` `toggleGoalP` `toggleNeedP` `setBodyweight` `setDisplay` `rebuildPlan` `replayOnboarding` `doExport` `setBtnBusy` `doImport` `doErase` `LAST_FOCUS` `MODAL_BACKGROUND` `CHOICE_ACTIONS` `syncChoiceButtons` `modalBackground` `focusables` `trapModalTab` `sheetKeyHandler` `sheet` `closeSheet` `openSheet` `saveBodyweightSheet` `removeBodyweightRow` `QUALITY` `pickQuality` `saveSleep` `saveShift` `FEEL` `pickFeel` `saveFeel` `pickLang` `chooseLang` `ONB_STEPS` `ONB_EX_OPEN` `onbExOpen` `rememberExGroup` `onbIdx` `onbGo` `onbNext` `tile` `setConsent` `setOnbDays` `setOnbMinutes` `setP` `setEmphasis` `togglePriority` `planFocusStale` `setLimit` `restoreExPool` `toggleEx` `syncShiftPreview` `addShiftFromOnb` `finishOnboarding`
+- **`js/ui/screens.js`** — 165: `DRAFT_KEY` `DRAFT_ERASE_KEY` `ACTIVE` `BODY_SIDE` `BODY_SEL` `BODY_ZOOM` `BODY_MODE` `BODY_FALLBACK` `BODY_LAYER` `BODY_REGION` `LAB_STRUCT` `REST` `PROG_EX` `PROG_PERIOD` `PROG_METRIC` `LAST_SUMMARY` `Screens` `esc` `$` `$$` `unit` `displayState` `STATE_WHY` `sessionCostLine` `sessionTotalVolume` `sessionSeries` `chartValue` `chartUnit` `chartLabelKey` `chartBasisKey` `bandHead` `journeyFold` `greetingFor` `heroLine` `trainingMilestones` `milestonesPanel` `trendGlyph` `sleepSummary` `weeklySetTotals` `volumeSparkline` `coverageBars` `contextualInsight` `nextLessonCard` `openAnalysis` `saveRestToDraft` `restoreRestFromDraft` `startRest` `tickRest` `runRestTimer` `pauseRest` `resumeRest` `toggleRest` `resetRest` `addRest` `stopRest` `focusAfterRest` `paintRest` `fmtClock` `syncRestHeight` `paintRestHost` `openRestInfo` `restAlertSupported` `notifyRestDone` `setRestNotify` `restSay` `DRAFT_STORAGE_FAILED` `DRAFT_CONFLICT` `LAST_DRAFT_RAW` `RAW_DRAFT` `draftCanStart` `saveDraft` `clearDraft` `loadDraft` `downloadUnreadableDraft` `progressGroupNav` `labStructPanel` `setBodyMode` `noteLabFallback` `retryLab` `setSide` `selectMuscle` `clearMuscle` `toggleZoom` `resetFig` `setLabLayer` `setLabRegion` `groupAnatomicalAction` `openMobileMuscleSheet` `rotateFig` `bindAnatomyLab` `onLabStruct` `openExerciseDetail` `setProgMetric` `bodyweightTrendPanel` `countPRs` `sampleChart` `EDIT` `openSessionEditor` `renderSessionEditor` `editField` `saveEditedSet` `markWarmupEditedSet` `deleteEditedSet` `deleteWholeSession` `closeSessionEditor` `setPeriod` `setProgEx` `setHistEx` `delSession` `setEnvEquip` `toggleGoalP` `toggleNeedP` `setBodyweight` `setDisplay` `rebuildPlan` `replayOnboarding` `doExport` `setBtnBusy` `importBlock` `importErrorMessage` `doImport` `doErase` `LAST_FOCUS` `MODAL_BACKGROUND` `CHOICE_ACTIONS` `syncChoiceButtons` `modalBackground` `focusables` `trapModalTab` `sheetKeyHandler` `sheet` `closeSheet` `openSheet` `saveBodyweightSheet` `removeBodyweightRow` `QUALITY` `pickQuality` `saveSleep` `saveShift` `FEEL` `pickFeel` `saveFeel` `pickLang` `chooseLang` `ONB_STEPS` `ONB_EX_OPEN` `onbExOpen` `rememberExGroup` `onbIdx` `onbGo` `onbNext` `tile` `setConsent` `setOnbDays` `setOnbMinutes` `setP` `setEmphasis` `togglePriority` `planFocusStale` `setLimit` `restoreExPool` `toggleEx` `syncShiftPreview` `addShiftFromOnb` `finishOnboarding`
 - **`js/ui/workout.js`** — 98: `SESSION_SUB` `PLAN_DAY` `PLAN_EDIT` `LIB_QUERY` `LIB_MUSCLE` `LIB_EQUIP` `LIB_MODE` `LIVE_CLOCK` `LAST_LOGGED_SET` `ENTERING_FIELDS` `exerciseReasonText` `filteredExercises` `filteredNames` `exerciseConflictBanner` `confirmExerciseAdd` `validatePickerChoice` `confirmStopRecommendation` `openExerciseSettings` `setSessionSub` `openTrain` `openExerciseLibrary` `activeElapsedMs` `togglePauseWorkout` `syncLiveClock` `formatElapsed` `sessionSubnavHtml` `renderSessionMasthead` `dayRecoveryRatio` `renderWorkoutPlanner` `selectPlanDay` `togglePlanEdit` `openRestPicker` `setPlanRestPick` `openRepPicker` `pickRep` `setPlanRest` `adjustPlanSets` `movePlanExercise` `removePlanExercise` `openPlanSub` `applyPlanSub` `openAddExerciseSheet` `filterAddExSheet` `addExerciseToPlan` `addExerciseToActive` `startCustomSession` `targetRangeText` `recommendationText` `recommendationTextPlain` `plannedSet` `newActiveExercise` `previousExerciseNote` `setExNote` `EX_OPEN` `EX_OPTIONS_OPEN` `SET_OPTIONS_OPEN` `EX_WAS_CURRENT` `exOpen` `exerciseOptionsOpen` `setOptionsOpen` `skipExercise` `renderLive` `setRowHtml` `fieldHtml` `sideFieldsHtml` `toggleLrSplit` `setSideVal` `emptyHintFor` `startSession` `setVal` `paintSetActions` `copyPrevToExercise` `toggleSet` `logSet` `skipSet` `unskipSet` `toggleWarmup` `addSet` `setHasWork` `removeSet` `exerciseHasWork` `unstartedSets` `openSub` `applySub` `discardSession` `FINISHING` `FINISH_SAVE_FAILED` `finishSession` `showCompletion` `closeCompletion` `emptySessionMessage` `normaliseLoggedSet` `setLibQuery` `setLibMuscle` `setLibEquip` `setLibMode` `resetLibFilters` `renderExerciseLibrary`
 - **`js/ui/printsheet.js`** — 13: `PRINT_MARK` `printTallyPaths` `printTally` `printTallyEmpty` `printLastDone` `printSleepFor` `printShiftFor` `printSheet` `printTargetFor` `recordOutcome` `openPrintCard` `openPrintRecord` `printDocument`
 - **`js/ui/science.js`** — 41: `SCI_VIEW` `SCI_CAT` `SCI_QUERY` `LESSON_ID` `QUIZ_STATE` `EXPLORER` `SIM` `MECH_EX` `sciProgress` `sciSave` `sciRead` `isRead` `sciAchievements` `setSciView` `sciModules` `sciLessons` `setSciCat` `setSciQuery` `openLesson` `backToScience` `markRead` `answerQuiz` `finishQuiz` `retryQuiz` `personalBlock` `sciExplorers` `openExplorer` `explorerMuscle` `explorerMetabolism` `explorerMechanics` `setMechEx` `explorerTimeline` `explorerSim` `setSim` `sciEvidence` `evidenceCard` `openEvidence` `openWhy` `whyPanel` `acceptWhy` `rejectWhy`
 - **`js/ui/motion.js`** — 20: `MOTION` `EASE` `PREV_NUMBERS` `PREV_RINGS` `PREV_SUBNAV` `REVEAL_IO` `isJsdom` `reducedMotion` `dur` `BOOT_MIN_MS` `dismissAppBoot` `transitionView` `staggerIn` `animateNumber` `animateRing` `hydrateMotion` `animateSubnavs` `observeReveals` `pressFeedback` `moveIndicator`
 - **`js/ui/modules.js`** — 17: `MOD_ID` `MOD_STEP` `ENERGY` `REC_SIM` `openModule` `closeModule` `setModStep` `setEnergy` `setRecSim` `bindModuleView` `modulePersonalNote` `diagramFor` `energyDiagram` `paintEnergyReadout` `computeRecSimDays` `recoverySimDiagram` `paintRecSimReadout`
 - **`js/ui/anatomy3d.js`** — 40: `LAB_RUNTIME_SRC` `LAB_MODEL_SRC` `LAB` `LAB_MOUNTING` `LAB_DETACHED_STAGE` `LAB_RUNTIME_PROMISE` `LAB_MODEL_BYTES` `labWebGLAvailable` `labInlineText` `labInlineEnc` `b64ToBytes` `decompressGzipBytes` `labLoadScript` `evalRuntimeSource` `labLoadRuntime` `labLoadModelBytes` `mountAnatomyLab` `labControlsHtml` `LAB_ICONS` `createViewer` `labDetachStage` `labReattach` `labSetView` `labResetView` `labZoom` `labToggleIsolate` `labToggleContext` `labIsMounted` `labIsLoaded` `labSelectGroup` `labClearSelection` `labLayerFilter` `labRegionFilter` `labCurrentLayer` `labCurrentRegion` `labMuscleCount` `labGroups` `labSamplePixels` `labPickScreen` `destroyAnatomyLab`
-- **`js/app.js`** — 47: `T_ICON` `_bar` `_frame` `NAV` `NAV_MARK` `VIEW` `go` `switchLang` `saveLangChosen` `NAV_SIG` `renderNav` `paintStoreFlag` `UPDATE_SHOWN` `showUpdateReady` `reloadApp` `watchForDeploy` `keepDamagedRecord` `storeRetryTimer` `storeNeedsRetry` `retryStore` `cancelStoreRetry` `scheduleStoreRetry` `LAST_UNCAUGHT` `UPDATE_REG` `reportUncaught` `ROUTE_HISTORY_READY` `ROUTE_HISTORY_RESTORING` `routeSnapshot` `recordNavigation` `restoreNavigation` `OPEN_DISCLOSURES` `rememberDisclosures` `restoreDisclosures` `FOCUS_VIEW_KEY` `focusViewKey` `captureScreenFocus` `focusScreenStart` `findScreenFocusTarget` `restoreScreenFocus` `render` `bindFigure` `toast` `toastTimer` `savedToast` `handleHashShortcut` `bootCopy` `boot`
+- **`js/app.js`** — 48: `T_ICON` `_bar` `_frame` `NAV` `NAV_MARK` `VIEW` `go` `switchLang` `saveLangChosen` `NAV_SIG` `renderNav` `paintStoreFlag` `UPDATE_SHOWN` `showUpdateReady` `reloadApp` `watchForDeploy` `dismissEraseNotice` `keepDamagedRecord` `storeRetryTimer` `storeNeedsRetry` `retryStore` `cancelStoreRetry` `scheduleStoreRetry` `LAST_UNCAUGHT` `UPDATE_REG` `reportUncaught` `ROUTE_HISTORY_READY` `ROUTE_HISTORY_RESTORING` `routeSnapshot` `recordNavigation` `restoreNavigation` `OPEN_DISCLOSURES` `rememberDisclosures` `restoreDisclosures` `FOCUS_VIEW_KEY` `focusViewKey` `captureScreenFocus` `focusScreenStart` `findScreenFocusTarget` `restoreScreenFocus` `render` `bindFigure` `toast` `toastTimer` `savedToast` `handleHashShortcut` `bootCopy` `boot`

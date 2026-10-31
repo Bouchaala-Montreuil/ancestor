@@ -45,6 +45,12 @@ The Chromium keyboard suite covers focus, dialogs, selected states and offline
 reloads; it is not a substitute for real screen-reader or physical-device testing.
 See `app/README.md` for the individual suites, results and remaining launch work.
 
+The current tab’s log can be exported from Me → Data, but an export **does not
+include an active workout**. Check that the download was saved and keep a
+separate copy: the local IndexedDB mirror is best effort, not an independent
+backup. Close other app tabs before importing or erasing; see the recovery
+guidance in `app/README.md`.
+
 ## Look at it
 
 ```bash

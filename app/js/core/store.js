@@ -12,7 +12,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v44';
+const APP_BUILD = 'v45';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
@@ -110,72 +110,186 @@ let STATE = null;
 let STORAGE_PERSISTED = null;  // null = unknown, true/false once queried
 const IDB_NAME = 'ancestor_vault';
 const IDB_STORE = 'kv';
+/* A durable tombstone prevents an old mirror from being resurrected when an
+   erase or a delayed IndexedDB operation fails. It contains no user data. */
+const IDB_ERASE_KEY = 'ancestor.mirror.erased.v1';
+const ERASE_NOTICE_KEY = 'ancestor.erase.incomplete.v1';
+const IDB_UNCHECKED_KEY = 'ancestor.mirror.unchecked.v1';
+let ERASE_INCOMPLETE = false, MIRROR_UNCHECKED = false;
 
-function idbMirrorPut(raw){
-  try{
-    if(typeof indexedDB === 'undefined' || !indexedDB) return;
-    if(typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || '')) return;
-    const req = indexedDB.open(IDB_NAME, 1);
+/* Old versions could create an empty database while clearing. Repair only that
+   case by upgrading it; a healthy v1 vault and its records stay untouched. */
+function openVault(onOpen, onFailure){
+  let settled = false;
+  const fail = () => { if(settled) return; settled = true; if(onFailure) onFailure(); };
+  function open(version){
+    const req = version ? indexedDB.open(IDB_NAME, version) : indexedDB.open(IDB_NAME);
     req.onupgradeneeded = () => {
-      const db = req.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      if(!req.result.objectStoreNames.contains(IDB_STORE)) req.result.createObjectStore(IDB_STORE);
     };
+    req.onerror = req.onblocked = fail;
     req.onsuccess = () => {
+      const db = req.result;
+      if(settled){ db.close(); return; }
+      if(!db.objectStoreNames.contains(IDB_STORE)){
+        const next = db.version + 1; db.close();
+        try{ open(next); }catch(e){ fail(); }
+        return;
+      }
+      settled = true; onOpen(db);
+    };
+  }
+  try{
+    if(typeof indexedDB === 'undefined' || !indexedDB ||
+       (typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || ''))) return fail();
+    open();
+  }catch(e){ fail(); }
+}
+
+function idbMirrorPut(raw, onDone){
+  let done = false;
+  const finish = ok => { if(done) return; done = true; if(typeof onDone === 'function') onDone(ok); };
+  openVault(db => {
+      if(done){ db.close(); return; }
       try{
-        const db = req.result;
+        /* A newer write or erase wins over a queued, older mirror put. */
+        if(MIRROR_UNCHECKED || localStorage.getItem(IDB_UNCHECKED_KEY) !== null ||
+           localStorage.getItem(STORE_KEY) !== raw){ db.close(); finish(false); return; }
         const tx = db.transaction(IDB_STORE, 'readwrite');
         tx.objectStore(IDB_STORE).put(raw, STORE_KEY);
-        tx.oncomplete = () => db.close();
-      }catch(e){}
-    };
-  }catch(e){}
+        tx.oncomplete = () => {
+          db.close();
+          try{
+            if(localStorage.getItem(STORE_KEY) === raw && localStorage.getItem(IDB_ERASE_KEY) !== null)
+              localStorage.removeItem(IDB_ERASE_KEY);
+          }catch(e){ /* leaving the tombstone is safer than restoring old data */ }
+          finish(true);
+        };
+        tx.onerror = tx.onabort = () => { db.close(); finish(false); };
+      }catch(e){ db.close(); finish(false); }
+  }, () => finish(false));
 }
 
-function idbMirrorClear(){
-  try{
-    if(typeof indexedDB === 'undefined' || !indexedDB) return;
-    if(typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || '')) return;
-    const req = indexedDB.open(IDB_NAME, 1);
-    req.onsuccess = () => {
+function idbMirrorClear(onDone){
+  let done = false;
+  const timer = setTimeout(() => finish(false), 10000);
+  const finish = ok => { if(done) return; done = true; clearTimeout(timer); if(typeof onDone === 'function') onDone(ok); };
+  openVault(db => {
+      if(done){ db.close(); return; }
       try{
-        const db = req.result;
-        if(!db.objectStoreNames.contains(IDB_STORE)){ db.close(); return; }
+        /* A new primary record may have been saved while the erase was pending.
+           Mirror that new record instead of clearing its backup. */
+        const current = localStorage.getItem(STORE_KEY);
+        if(current !== null){ db.close(); idbMirrorPut(current, finish); return; }
         const tx = db.transaction(IDB_STORE, 'readwrite');
         tx.objectStore(IDB_STORE).delete(STORE_KEY);
-        tx.oncomplete = () => db.close();
-      }catch(e){}
-    };
-  }catch(e){}
+        tx.oncomplete = () => {
+          db.close();
+          try{
+            const after = localStorage.getItem(STORE_KEY);
+            if(after !== null){ idbMirrorPut(after, finish); return; }
+            finish(true);
+          }catch(e){ finish(false); }
+        };
+        tx.onerror = tx.onabort = () => { db.close(); finish(false); };
+      }catch(e){ db.close(); finish(false); }
+  }, () => finish(false));
 }
 
+function clearUncheckedMirror(){
+  try{ localStorage.removeItem(IDB_UNCHECKED_KEY); MIRROR_UNCHECKED = false; return true; }
+  catch(e){ return false; }
+}
+function markUncheckedMirror(){
+  MIRROR_UNCHECKED = true;
+  try{ localStorage.setItem(IDB_UNCHECKED_KEY, '1'); }catch(e){}
+}
+function showUncheckedMirror(){ if(typeof paintStoreFlag === 'function') paintStoreFlag(); }
 function idbRecoverIfEmpty(onRecovered){
   try{
-    if(typeof indexedDB === 'undefined' || !indexedDB) return;
     if(typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent || '')) return;
-    if(localStorage.getItem(STORE_KEY)) return;
-    const req = indexedDB.open(IDB_NAME, 1);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
-    };
-    req.onsuccess = () => {
+    if(localStorage.getItem(STORE_KEY) !== null || localStorage.getItem(IDB_ERASE_KEY) !== null || LOAD_FAILED) return;
+    if(MIRROR_UNCHECKED || localStorage.getItem(IDB_UNCHECKED_KEY) !== null){ MIRROR_UNCHECKED = true; showUncheckedMirror(); return; }
+    /* Block mirror writes until the potentially older copy has been checked. */
+    markUncheckedMirror();
+    const initialState = STATE, initialSnapshot = JSON.stringify(STATE);
+    openVault(db => {
       try{
-        const db = req.result;
         const tx = db.transaction(IDB_STORE, 'readonly');
         const g = tx.objectStore(IDB_STORE).get(STORE_KEY);
         g.onsuccess = () => {
           db.close();
-          if(g.result && !localStorage.getItem(STORE_KEY)){
+          try{
+            if(g.result == null){
+              if(clearUncheckedMirror()){
+                const current = localStorage.getItem(STORE_KEY);
+                if(current !== null) idbMirrorPut(current);
+              }
+              showUncheckedMirror(); return;
+            }
+            /* A person may have entered data, or another tab may have written,
+               while IndexedDB was opening. Neither may be replaced by a mirror. */
+            if(STATE !== initialState || JSON.stringify(STATE) !== initialSnapshot ||
+               LOAD_FAILED || STORAGE_FAILED || STORE_CONFLICT || localStorage.getItem(STORE_KEY) !== null ||
+               localStorage.getItem(IDB_ERASE_KEY) !== null){ showUncheckedMirror(); return; }
+            const raw = typeof g.result === 'string' ? g.result : JSON.stringify(g.result);
+            let recovered, stored;
             try{
-              STATE = migrate(JSON.parse(g.result));
-              localStorage.setItem(STORE_KEY, JSON.stringify(STATE));
-              if(typeof onRecovered === 'function') onRecovered(STATE);
-            }catch(err){}
-          }
+              const parsed = JSON.parse(raw);
+              validateDataRecord(parsed);
+              recovered = migrate(parsed); stored = JSON.stringify(recovered);
+            }catch(err){
+              /* The mirror may be the only surviving copy. Keep its exact bytes
+                 and block writes when it is malformed or from a newer schema. */
+              LOAD_FAILED = true; LOAD_NEWER = !!(err && err.code === 'newer'); RAW_RECORD = raw;
+              if(typeof paintStoreFlag === 'function') paintStoreFlag();
+              return;
+            }
+            let saved = false;
+            try{ localStorage.setItem(STORE_KEY, stored); LAST_STORED_RAW = stored; saved = true; }
+            catch(err){ STORAGE_FAILED = true; }
+            /* The unchanged initial state may safely adopt the valid mirror even
+               if its write failed: the warning and export now protect that data. */
+            STATE = recovered;
+            if(saved && clearUncheckedMirror()) idbMirrorPut(stored);
+            showUncheckedMirror();
+            if(typeof onRecovered === 'function') onRecovered(STATE, saved);
+          }catch(err){}
         };
-      }catch(e){}
-    };
+        g.onerror = () => { db.close(); showUncheckedMirror(); };
+      }catch(e){ db.close(); showUncheckedMirror(); }
+    }, showUncheckedMirror);
   }catch(e){}
+}
+
+function keepUncheckedMirror(){
+  openVault(db => {
+    try{
+      const g = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(STORE_KEY);
+      g.onsuccess = () => {
+        db.close();
+        try{
+          if(g.result != null){
+            const raw = typeof g.result === 'string' ? g.result : JSON.stringify(g.result);
+            const key = STORE_KEY + '.damaged.' + Date.now() + '.' + Math.random().toString(36).slice(2,7);
+            try{
+              const u=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+              const a=document.createElement('a');a.href=u;a.download='ancestor-older-backup.json';
+              document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
+            }catch(e){ /* The archive below is the second copy. */ }
+            localStorage.setItem(key, raw);
+            if(localStorage.getItem(key) !== raw) throw new Error('archive failed');
+          }
+          if(!clearUncheckedMirror()) throw new Error('marker failed');
+          const current = localStorage.getItem(STORE_KEY);
+          if(current !== null) idbMirrorPut(current);
+          showUncheckedMirror();
+          if(g.result != null) toast(t('app.load.kept'), 'ok');
+        }catch(e){ toast(t('data.archiveFailed'), 'alert'); }
+      };
+      g.onerror = () => { db.close(); toast(t('data.archiveFailed'), 'alert'); };
+    }catch(e){ db.close(); toast(t('data.archiveFailed'), 'alert'); }
+  }, () => toast(t('data.archiveFailed'), 'alert'));
 }
 
 function requestPersistentStorage(onDone){
@@ -201,38 +315,80 @@ function requestPersistentStorage(onDone){
 let LOAD_FAILED = false;
 let LOAD_NEWER = false;   /* …written by a version that knows more than this one */
 let RAW_RECORD = null;
+/* The exact disk value this tab last read or wrote. `undefined` means this tab
+   has not loaded yet; null means it saw no record. A differing value is not
+   silently overwritten, even if the other tab's storage event is still queued. */
+let LAST_STORED_RAW;
+let STORE_CONFLICT = false;
+let STORAGE_READ_FAILED = false;
+
+function dataError(code){ const e = new Error(code); e.code = code; return e; }
+function dataObject(value){ return !!value && typeof value === 'object' && !Array.isArray(value); }
+function dataVersion(record){
+  if(!dataObject(record)) throw dataError('invalid');
+  if(!Object.prototype.hasOwnProperty.call(record, 'version')) return 0;
+  const v = record.version;
+  if(!Number.isSafeInteger(v) || v < 0) throw dataError('invalid');
+  return v;
+}
+/* Allow missing fields from older backups, but never "repair" a malformed
+   collection into an empty one. Unknown fields and exercise IDs stay intact. */
+function validateDataRecord(record){
+  const parsed = record;
+  dataVersion(parsed);
+  if(parsed.version > SCHEMA_VERSION) throw dataError('newer');
+  const known = ['profile','sessions','sleep','shifts','feelings','bodyweights','plan','science'];
+  if(!known.some(k => Object.prototype.hasOwnProperty.call(record, k))) throw dataError('invalid');
+  if(Object.prototype.hasOwnProperty.call(record, 'profile') && !dataObject(record.profile)) throw dataError('invalid');
+  for(const key of ['plan','science','adaptation']){
+    if(record[key] != null && !dataObject(record[key])) throw dataError('invalid');
+  }
+  for(const key of ['sessions','sleep','shifts','feelings','bodyweights']){
+    if(Object.prototype.hasOwnProperty.call(record, key) && !Array.isArray(record[key])) throw dataError('invalid');
+    if(Array.isArray(record[key]) && record[key].some(item => !dataObject(item))) throw dataError('invalid');
+  }
+  for(const session of record.sessions || []){
+    if(Object.prototype.hasOwnProperty.call(session, 'exercises') && !Array.isArray(session.exercises)) throw dataError('invalid');
+    for(const ex of session.exercises || []){
+      if(!dataObject(ex)) throw dataError('invalid');
+      if(Object.prototype.hasOwnProperty.call(ex, 'sets') && !Array.isArray(ex.sets)) throw dataError('invalid');
+      if((ex.sets || []).some(set => !dataObject(set))) throw dataError('invalid');
+    }
+  }
+  if((record.bodyweights || []).some(b => typeof b.w !== 'number' || !isFinite(b.w) || b.w <= 0)) throw dataError('invalid');
+  return record;
+}
 
 function loadState(){
+  try{
+    ERASE_INCOMPLETE = localStorage.getItem(ERASE_NOTICE_KEY) === '1';
+    MIRROR_UNCHECKED = localStorage.getItem(IDB_UNCHECKED_KEY) !== null;
+  }catch(e){}
   let raw = null;
   try{
     raw = localStorage.getItem(STORE_KEY);
   }catch(e){
-    /* Storage is unavailable, not damaged. A clean start is the only option and
-       there is nothing to protect. */
+    /* We do not know whether an existing record is behind the failed read.
+       Keep the new state in memory and refuse to overwrite an unseen record. */
+    STORAGE_READ_FAILED = true; STORAGE_FAILED = true;
     STATE = defaultState();
     return STATE;
   }
-  if(!raw){
+  LAST_STORED_RAW = raw;
+  if(raw === null){
     STATE = defaultState();
     return STATE;
   }
   try{
     const parsed = JSON.parse(raw);
-    /* A record from a newer build is not a corrupt record, but it is the same
-       danger: migrate() would stamp it with this build's version and drop the
-       fields it does not know on the next save. Refuse it too, and say why. */
-    if(parsed && typeof parsed.version === 'number' && parsed.version > SCHEMA_VERSION){
-      LOAD_NEWER = true;
-    }
+    validateDataRecord(parsed);
     STATE = migrate(parsed);
-    LOAD_FAILED = LOAD_NEWER;
-    if(LOAD_NEWER){ RAW_RECORD = raw; return STATE; }
-    RAW_RECORD = null;
+    LOAD_FAILED = false; LOAD_NEWER = false; RAW_RECORD = null;
     return STATE;
   }catch(e){
-    LOAD_NEWER = false;
-    /* There is a record and this build cannot open it. Keep the bytes, refuse to
-       overwrite them, and say so. */
+    /* Syntactically valid JSON can still be a damaged or newer log. Keep its
+       exact bytes and refuse writes rather than migrating it into an empty log. */
+    LOAD_NEWER = !!(e && e.code === 'newer');
     LOAD_FAILED = true;
     RAW_RECORD = raw;
     STATE = defaultState();
@@ -256,11 +412,18 @@ function reloadState(){
    again. Returns the bytes that were held, so the caller can hand them over. */
 function archiveDamagedRecord(){
   const raw = RAW_RECORD;
-  const stamped = STORE_KEY + '.damaged.' + Date.now();
+  if(raw == null) return false;
+  const stamped = STORE_KEY + '.damaged.' + Date.now() + '.' + Math.random().toString(36).slice(2,7);
   try{
-    if(raw != null) localStorage.setItem(stamped, raw);
-    localStorage.removeItem(STORE_KEY);
-  }catch(e){ /* a full disk cannot hold the copy; the download still can */ }
+    const current = localStorage.getItem(STORE_KEY);
+    /* A different tab may have replaced the record since this one was read. */
+    if(current !== null && current !== raw) return false;
+    localStorage.setItem(stamped, raw);
+    if(localStorage.getItem(stamped) !== raw) return false;
+    if(current !== null) localStorage.removeItem(STORE_KEY);
+  }catch(e){ return false; }
+  LAST_STORED_RAW = null;
+  STORE_CONFLICT = false;
   LOAD_FAILED = false;
   LOAD_NEWER = false;
   RAW_RECORD = null;
@@ -306,12 +469,24 @@ function saveState(){
     }
     return false;
   }
+  if(STORE_CONFLICT){
+    if(typeof paintStoreFlag === 'function') try{ paintStoreFlag(); } catch(e){}
+    return false;
+  }
   let ok = false;
   try{
-    const raw = JSON.stringify(STATE);
-    localStorage.setItem(STORE_KEY, raw);
-    idbMirrorPut(raw);
-    ok = true;
+    const current = localStorage.getItem(STORE_KEY);
+    if(STORAGE_READ_FAILED && current === null){ STORAGE_READ_FAILED = false; LAST_STORED_RAW = null; }
+    if((STORAGE_READ_FAILED && current !== null) ||
+       (LAST_STORED_RAW !== undefined && current !== LAST_STORED_RAW)){
+      STORE_CONFLICT = true; STORAGE_FAILED = true;
+    } else {
+      const raw = JSON.stringify(STATE);
+      localStorage.setItem(STORE_KEY, raw);
+      LAST_STORED_RAW = raw;
+      idbMirrorPut(raw);
+      ok = true;
+    }
   }
   catch(e){ ok = false; }
   STORAGE_FAILED = !ok;
@@ -323,13 +498,27 @@ function saveState(){
 
 function getState(){ return STATE || loadState(); }
 
-function eraseAll(){
-  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
-  idbMirrorClear();
+function eraseAll(onMirrorCleared){
+  let previousMarker = null;
+  try{
+    previousMarker = localStorage.getItem(IDB_ERASE_KEY);
+    localStorage.setItem(IDB_ERASE_KEY, '1');
+    localStorage.removeItem(STORE_KEY);
+  }catch(e){
+    try{
+      if(previousMarker === null) localStorage.removeItem(IDB_ERASE_KEY);
+      else localStorage.setItem(IDB_ERASE_KEY, previousMarker);
+    }catch(_e){}
+    return false;
+  }
+  LAST_STORED_RAW = null;
+  STORE_CONFLICT = false;
+  STORAGE_FAILED = false; STORAGE_READ_FAILED = false;
   LOAD_FAILED = false;
   LOAD_NEWER = false;
   RAW_RECORD = null;
   STATE = defaultState();
+  idbMirrorClear(onMirrorCleared);
   return STATE;
 }
 
@@ -374,13 +563,34 @@ function migrateSession(sess){
 function exportJSON(){
   return JSON.stringify(getState(), null, 2);
 }
-function importJSON(text){
-  const parsed = JSON.parse(text);
-  if(!parsed || typeof parsed !== 'object') throw new Error('bad file');
-  STATE = migrate(parsed);
-  saveState();
+function prepareImport(text){
+  let parsed;
+  try{ parsed = JSON.parse(text); }catch(e){ throw dataError('invalid'); }
+  validateDataRecord(parsed);
+  try{ return migrate(parsed); }catch(e){ throw dataError('invalid'); }
+}
+function commitImport(candidate){
+  if(LOAD_FAILED || (typeof RAW_DRAFT !== 'undefined' && RAW_DRAFT !== null)) throw dataError('unreadable');
+  if(typeof ACTIVE !== 'undefined' && ACTIVE) throw dataError('active');
+  if(STORAGE_FAILED || STORE_CONFLICT || (typeof DRAFT_CONFLICT !== 'undefined' && DRAFT_CONFLICT)) throw dataError('unsaved');
+  let raw;
+  try{
+    const current = localStorage.getItem(STORE_KEY);
+    if(LAST_STORED_RAW !== undefined && current !== LAST_STORED_RAW){
+      STORE_CONFLICT = true; STORAGE_FAILED = true;
+      if(typeof paintStoreFlag === 'function') paintStoreFlag();
+      throw dataError('unsaved');
+    }
+    raw = JSON.stringify(candidate);
+    localStorage.setItem(STORE_KEY, raw);
+  }catch(e){ if(e && e.code === 'unsaved') throw e; throw dataError('write'); }
+  /* Never adopt a replacement in memory until its local write has succeeded. */
+  STATE = candidate;
+  LAST_STORED_RAW = raw;
+  idbMirrorPut(raw);
   return STATE;
 }
+function importJSON(text){ return commitImport(prepareImport(text)); }
 
 /* ---------- logging helpers ---------- */
 function addSession(obj){

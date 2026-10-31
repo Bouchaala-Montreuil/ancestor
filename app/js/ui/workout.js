@@ -558,6 +558,7 @@ function addExerciseToActive(exId){
   render();
 }
 function startCustomSession(){
+  if(!ACTIVE && !draftCanStart()) return;
   /* There is one recoverable draft. Never replace it with another workout,
      even if a stale button, shortcut or rapid second tap reaches this handler. */
   if(ACTIVE){ openTrain(); return; }
@@ -1015,6 +1016,7 @@ function emptyHintFor(spec, missing){
 /* Starts the recommended session when called with no args, or a specific split
    day when given its plan session id. */
 function startSession(dayId){
+  if(!ACTIVE && !draftCanStart()) return;
   if(ACTIVE){ openTrain(); return; }
   const s = getState(), now = Date.now();
   let chosen = null;
@@ -1207,7 +1209,7 @@ function applySub(ei, id){
 function discardSession(){
   if(!ACTIVE || !confirm(t('workout.discardConfirm'))) return;
   /* If storage refuses removal, do not pretend the old draft was discarded. */
-  if(!clearDraft()){ toast(t('workout.discardFailed'), 'alert'); return; }
+  if(!clearDraft() && !DRAFT_CONFLICT){ toast(t('workout.discardFailed'), 'alert'); return; }
   ACTIVE = null; SESSION_SUB = 'plan'; FINISH_SAVE_FAILED = false;
   stopRest(); syncLiveClock();
   go('session');

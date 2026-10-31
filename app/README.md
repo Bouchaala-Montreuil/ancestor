@@ -81,6 +81,36 @@ fails, the app warns and offers a retry; an export contains the log, **not** an
 active workout. A failed draft write can leave the stored draft older than what
 is on screen, so keep the tab open until it is saved.
 
+### Backups and recovery
+
+Me → Data exports the profile and history from the current tab as JSON, including
+unsaved changes, **not** the active workout draft. The browser reports that a download was initiated, not that the
+file was actually saved: check it, and keep a separate copy. Import validates
+basic record structure and schema version, asks before replacement, and writes
+the replacement before adopting it. It refuses imports while a workout, an
+unreadable record or unresolved unsaved data needs attention. Supported older
+records are migrated; unrecognized exercise IDs and exercise fields are retained.
+
+The primary record is in localStorage; an IndexedDB mirror is **best effort**,
+on the same browser origin, and can be unavailable, evicted or lost with the
+primary data. It is not a substitute for a separately saved export. If the
+primary is missing and the mirror cannot be checked, mirror writes pause; retry
+archives any older copy locally and attempts a download before mirroring the
+current log. Unreadable records and drafts are held without automatic overwrite;
+the warning offers a copy. Failed writes and divergent drafts/logs across tabs
+are reported rather than knowingly replaced. Keep an unsaved workout tab open
+and finish it when possible; exports do not contain it. Cross-tab checks are best-effort, not an
+atomic compare-and-swap, synchronization service or automatic merge. Close other
+tabs before importing or erasing, and do not depend on simultaneous edits.
+
+Erase asks twice, removes known local records and attempts to clear the mirror.
+A marker prevents an old mirror or an unsuccessfully removed draft from being
+restored after erase. If a removal fails, a warning (persisted when storage
+allows) directs you to close other tabs and clear site data in browser settings.
+Downloaded files and other devices are not erased. Browser storage itself can be
+cleared, denied, corrupted or evicted; no offline-only storage can guarantee data
+durability.
+
 Automatic plans and substitutions use the same equipment, environment,
 limitation, position and exercise-selection filters. The full library stays
 browseable: adding an exercise outside those choices requires an explicit
@@ -268,6 +298,7 @@ node tests/movement_browser.js     # guide, playback, RTL, theme, layout and off
 node tests/exercise_filters_browser.js # preference, override, draft and warning journeys
 node tests/release_integrity_browser.js # keyboard, localization and offline notices
 node tests/keyboard_a11y_browser.js    # keyboard focus, modal, CSP and CSSOM regressions
+node tests/data_durability_browser.js   # imports, failed writes, recovery, erase and cross-tab conflicts
 npm run audit:deps                 # networked audit of both committed lockfiles
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
@@ -377,10 +408,10 @@ hormones or PEDs are recommended anywhere — also asserted by a test.
 
 ## Privacy
 
-- Everything stored in `localStorage` on the device. Nothing uploaded.
+- Data stays in browser `localStorage`, with a best-effort local IndexedDB mirror. Nothing is uploaded.
 - No account, no email, no analytics, no advertising, no third-party requests
   (there is a test asserting zero external references in the HTML).
-- Full **export to JSON** and **erase everything**, both from Me → Data.
+- Export saved data to JSON or erase local app data from Me → Data; active workouts are not included in exports. Check downloaded files and remove them separately when needed.
 - Onboarding states all of this before collecting anything.
 
 ---
@@ -439,7 +470,7 @@ rebound before focus is returned. Chart focus and hover, and exercise-group
 disclosures, now use delegated events compatible with the existing content
 security policy.
 
-The current `npm run verify` gate passed **1,947 headless checks**, **1,918**
+At that pass, the `npm run verify` gate passed **1,947 headless checks**, **1,918**
 translation keys in seven languages and **67** site checks. The complete Chromium
 suite passed **451 checks**, including 176 layouts. The **70-check** keyboard
 suite also passed separately against the modular file, HTTP PWA and standalone
@@ -463,6 +494,37 @@ Run the keyboard suite on another local distribution or with normal motion using
 ANCESTOR_TEST_TARGET=http://127.0.0.1:8000/ node tests/keyboard_a11y_browser.js
 ANCESTOR_TEST_TARGET=release/ancestor.html node tests/keyboard_a11y_browser.js
 ANCESTOR_TEST_MOTION=normal node tests/keyboard_a11y_browser.js
+```
+
+### Data durability and recovery pass — 2026-10-31
+
+The audit reproduced destructive invalid and future-version imports, an archive
+failure that overwrote unreadable bytes, a valid-JSON `null` record treated as
+empty, and an IndexedDB recovery race over unsaved work. It also reproduced
+cross-tab draft replacement, an empty legacy vault that could not mirror later
+writes, a false “Saved” message, and an unchecked older mirror being replaced.
+The guarded flows and their failure messages are exercised by a real-Chromium
+suite, including the actual file picker and replacement/erase confirmations.
+
+The release gate passed **1,947 headless checks**, **1,946 translation keys** in
+seven languages and **67 site checks**. The complete Chromium suite passed
+**546 checks**, including 176 layouts. The new durability suite passed **95**
+checks on the modular and standalone builds and **96** over HTTP, including an
+offline recovery check. Workout safety, movement, filtering, licence notices,
+keyboard and rest-timer suites also passed on HTTP and standalone; install and
+accessibility-tree audits passed **30** and **75** checks. A simulated v44 → v45
+service-worker update retained a saved record and its healthy v1 mirror, waited
+for the user's reload, and worked offline (**8/8** checks).
+
+The deterministic standalone release is **3,145,123 bytes** (605 bytes below
+3 MiB). These are automated Chromium results, not a guarantee against eviction,
+concurrent writes or device failure; keep separate backups and see the remaining
+independent reviews below.
+
+```bash
+npm run test:durability
+ANCESTOR_TEST_TARGET=http://127.0.0.1:8000/ npm run test:durability
+ANCESTOR_TEST_TARGET=release/ancestor.html npm run test:durability
 ```
 
 ### Launch-readiness audit — remaining work

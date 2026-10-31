@@ -4,6 +4,7 @@
    ========================================================================== */
 
 const DRAFT_KEY = 'ancestor.draft.v1';
+const DRAFT_ERASE_KEY = 'ancestor.draft.erased.v1';
 
 let ACTIVE = null;        // live session being logged
 let BODY_SIDE = 'front';
@@ -951,17 +952,48 @@ function restSay(prefix){
 /* A draft is a separate write from the log. A successful profile save cannot
    prove that the latest set survived; report and retry that write separately. */
 let DRAFT_STORAGE_FAILED = false;
+let DRAFT_CONFLICT = false;
+let LAST_DRAFT_RAW;       // exact draft this tab last read or wrote
+let RAW_DRAFT = null;     // unreadable bytes, including the empty string
+function draftCanStart(){
+  if(RAW_DRAFT !== null || DRAFT_CONFLICT){ paintStoreFlag(); return false; }
+  try{
+    const current = localStorage.getItem(DRAFT_KEY);
+    if(LAST_DRAFT_RAW === undefined || current !== LAST_DRAFT_RAW){
+      DRAFT_CONFLICT = true; paintStoreFlag(); return false;
+    }
+    return true;
+  }catch(e){ DRAFT_CONFLICT = true; paintStoreFlag(); return false; }
+}
 function saveDraft(){
   if(!ACTIVE) return true;
   let ok = false;
-  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(ACTIVE)); ok = true; }catch(e){}
+  try{
+    const current = localStorage.getItem(DRAFT_KEY);
+    if(RAW_DRAFT !== null || DRAFT_CONFLICT || LAST_DRAFT_RAW === undefined || current !== LAST_DRAFT_RAW){
+      DRAFT_CONFLICT = true;
+    }else{
+      const raw = JSON.stringify(ACTIVE);
+      localStorage.setItem(DRAFT_KEY, raw); LAST_DRAFT_RAW = raw;
+      if(localStorage.getItem(DRAFT_ERASE_KEY) !== null) localStorage.removeItem(DRAFT_ERASE_KEY);
+      ok = true;
+    }
+  }catch(e){}
   DRAFT_STORAGE_FAILED = !ok;
   if(typeof paintStoreFlag === 'function') paintStoreFlag();
   return ok;
 }
-function clearDraft(){
+function clearDraft(force){
   let ok = false;
-  try{ localStorage.removeItem(DRAFT_KEY); ok = true; }catch(e){}
+  try{
+    const current = localStorage.getItem(DRAFT_KEY);
+    if(!force && (RAW_DRAFT !== null || DRAFT_CONFLICT || LAST_DRAFT_RAW === undefined || current !== LAST_DRAFT_RAW)){
+      DRAFT_CONFLICT = true;
+    }else{
+      localStorage.removeItem(DRAFT_KEY); LAST_DRAFT_RAW = null;
+      DRAFT_CONFLICT = false; RAW_DRAFT = null; ok = true;
+    }
+  }catch(e){}
   if(ok) DRAFT_STORAGE_FAILED = false;
   if(typeof paintStoreFlag === 'function') paintStoreFlag();
   return ok;
@@ -969,18 +1001,37 @@ function clearDraft(){
 function loadDraft(){
   try{
     const raw = localStorage.getItem(DRAFT_KEY);
-    if(!raw) return false;
-    const draft = JSON.parse(raw);
+    LAST_DRAFT_RAW = raw;
+    if(localStorage.getItem(DRAFT_ERASE_KEY) !== null || raw === null) return false;
+    let draft;
+    try{
+      draft = JSON.parse(raw);
+      if(!dataObject(draft) || !Number.isFinite(draft.startedAt) || !Array.isArray(draft.exercises) ||
+         draft.exercises.some(ex => !dataObject(ex) || !Array.isArray(ex.sets))) throw new Error('invalid draft');
+    }catch(e){ RAW_DRAFT = raw; return false; }
     /* If a completed log landed but removing its draft failed, don't reopen
        the same workout or allow it to be recorded twice after a restart. */
-    if(draft && draft.startedAt != null && !LOAD_FAILED &&
+    if(draft.startedAt != null && !LOAD_FAILED &&
        (getState().sessions || []).some(s => s.startedAt === draft.startedAt)){
       clearDraft(); return false;
     }
     ACTIVE = draft;
-    return !!ACTIVE;
-  }catch(e){}
-  return false;
+    return true;
+  }catch(e){ return false; }
+}
+function downloadUnreadableDraft(){
+  if(RAW_DRAFT === null) return;
+  let url;
+  try{
+    url = URL.createObjectURL(new Blob([RAW_DRAFT],{type:'application/json'}));
+    const a = document.createElement('a');a.href=url;a.download='ancestor-workout-unreadable.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast(t('data.exportStarted'),'ok');
+  }catch(e){
+    if(url) try{ URL.revokeObjectURL(url); }catch(_e){}
+    toast(t('data.exportFailed'),'alert');
+  }
 }
 
 /* ===================================================================== */
@@ -2266,7 +2317,8 @@ Screens.profile = function(){
        esc(s.lastExportAt ? dateLabel(s.lastExportAt) : t('state.none')) + ' · ' + esc(t('you.idbNote')) + '</p>';
   h += '<div class="stack">' +
        '<button class="btn quiet" data-act="openSheet" data-a1="bw">+ ' + esc(t('bw.log')) + '</button>' +
-       '<button class="btn quiet" data-act="doExport">' + esc(t('you.export')) + '</button>' +
+       '<p class="hint">' + esc(t('data.exportNote')) + '</p>' +
+       '<button class="btn quiet" data-act="doExport">' + esc(t('data.exportLabel')) + '</button>' +
        '<button class="btn quiet" data-act="doImport" data-t1="e">' + esc(t('you.import')) + '</button>' +
        '<button class="btn danger" data-act="doErase">' + esc(t('you.erase')) + '</button></div></div>';
 
@@ -2365,23 +2417,32 @@ function rebuildPlan(){
 function replayOnboarding(){ const s = getState(); s.onboarded = false; saveState(); onbIdx = 0; go('onb'); }
 
 function doExport(){
-  /* Exporting an empty log while the real one sits unreadable would be a claim
-     about the wrong data. The strip has the action that makes sense. */
+  /* An unreadable log is exported from the warning, never as an empty log. */
   if(typeof LOAD_FAILED !== 'undefined' && LOAD_FAILED){
     toast(t('app.load.title'), 'alert');
-    return;
+    return false;
   }
-  const s = getState();
-  s.lastExportAt = Date.now();
-  saveState();
-  const blob = new Blob([exportJSON()], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ancestor-data-' + dateKey(Date.now()) + '.json';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  const s = getState(), at = Date.now();
+  let url = null, a = null;
+  try{
+    const snapshot = Object.assign({}, s, {lastExportAt:at});
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], {type:'application/json'});
+    url = URL.createObjectURL(blob);
+    a = document.createElement('a');
+    a.href = url; a.download = 'ancestor-data-' + dateKey(at) + '.json';
+    document.body.appendChild(a); a.click();
+  }catch(e){
+    if(url) try{ URL.revokeObjectURL(url); }catch(_e){}
+    toast(t('data.exportFailed'), 'alert');
+    return false;
+  }finally{ if(a && a.parentNode) a.parentNode.removeChild(a); }
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  toast(t('you.export'),'ok');
+  /* A browser can confirm a download was requested, not that a person saved it. */
+  s.lastExportAt = at;
+  saveState();
+  toast(t('data.exportStarted'),'ok');
   if(VIEW === 'profile') render();
+  return true;
 }
 /* The busy state, finally attached to something. `.btn.loading` — the masked
    tally that replaced the app's fourth spinner — has existed in the stylesheet
@@ -2394,7 +2455,21 @@ function setBtnBusy(btn, on){
   if(on) btn.setAttribute('aria-busy', 'true');
   else btn.removeAttribute('aria-busy');
 }
+function importBlock(){
+  if(LOAD_FAILED || RAW_DRAFT !== null) return 'unreadable';
+  if(ACTIVE) return 'active';
+  if(STORAGE_FAILED || STORE_CONFLICT || DRAFT_CONFLICT) return 'unsaved';
+  return '';
+}
+function importErrorMessage(error){
+  const code = error && error.code;
+  const key = ({invalid:'data.importInvalid',newer:'data.importNewer',active:'data.importActive',
+    unreadable:'data.importUnreadable',unsaved:'data.importUnsaved',write:'data.importWrite'})[code] || 'data.importInvalid';
+  toast(t(key), 'alert');
+}
 function doImport(btn){
+  const blocked = importBlock();
+  if(blocked){ importErrorMessage({code:blocked}); return; }
   const i = document.createElement('input');
   i.type = 'file'; i.accept = 'application/json,.json';
   i.onchange = () => {
@@ -2403,19 +2478,53 @@ function doImport(btn){
     const r = new FileReader();
     r.onload = () => {
       setBtnBusy(btn, false);
-      try{ importJSON(r.result); savedToast('you.saved'); go('home'); }
-      catch(e){ toast(t('err.generic'),'alert'); }
+      try{
+        const candidate = prepareImport(r.result);
+        const blocked = importBlock(); if(blocked) throw dataError(blocked);
+        if(!confirm(t('data.importConfirm'))) return;
+        commitImport(candidate);
+        savedToast('you.saved'); go('home');
+      }catch(e){ importErrorMessage(e); }
     };
-    r.onerror = () => { setBtnBusy(btn, false); toast(t('err.generic'),'alert'); };
-    r.readAsText(f);
+    r.onerror = () => { setBtnBusy(btn, false); importErrorMessage({code:'invalid'}); };
+    try{ r.readAsText(f); }catch(e){ setBtnBusy(btn, false); importErrorMessage({code:'invalid'}); }
   };
   i.click();
 }
 function doErase(){
   if(!confirm(t('you.erase.warn'))) return;
   if(!confirm(t('dlg.confirm'))) return;
-  eraseAll(); ACTIVE = null; clearDraft(); stopRest(); syncLiveClock(); BODY_SEL = null;
+  let mirror = null, localDone = false, localOK = true, reported = false;
+  function report(){
+    if(reported || !localDone || mirror === null) return;
+    reported = true;
+    if(!localOK || !mirror){
+      ERASE_INCOMPLETE = true;
+      try{ localStorage.setItem(ERASE_NOTICE_KEY, '1'); }catch(e){}
+      paintStoreFlag();
+      toast(t('data.eraseIncomplete'), 'alert');
+    }else{
+      ERASE_INCOMPLETE = false;
+      try{ localStorage.removeItem(ERASE_NOTICE_KEY); }catch(e){}
+      paintStoreFlag();
+    }
+  }
+  if(eraseAll(ok => { mirror = ok; report(); }) === false){ toast(t('data.eraseFailed'), 'alert'); return; }
+  /* If draft removal fails, the marker stops that old workout reopening. A new
+     draft clears it only after its own write succeeds. */
+  try{
+    localStorage.setItem(DRAFT_ERASE_KEY, '1');
+    if(!clearDraft(true)) localOK = false;
+    else localStorage.removeItem(DRAFT_ERASE_KEY);
+  }catch(e){ localOK = false; }
+  try{
+    const old = Object.keys(localStorage).filter(k => k.indexOf(STORE_KEY + '.damaged.') === 0 || k === CRASH_KEY || k === IDB_UNCHECKED_KEY || k === 'ancestor.lang');
+    old.forEach(k => localStorage.removeItem(k));
+    MIRROR_UNCHECKED = false;
+  }catch(e){ localOK = false; }
+  ACTIVE = null; stopRest(); syncLiveClock(); BODY_SEL = null;
   onbIdx = 0; go('onb');
+  localDone = true; report();
 }
 
 /* ===================================================================== */
