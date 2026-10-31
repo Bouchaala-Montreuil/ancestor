@@ -69,7 +69,7 @@ let VIEW = 'home';
    do not pretend to animate an exit we cannot produce. */
 function go(v){
   const ov = document.getElementById('doneOverlay');
-  if(ov && ov.parentNode) ov.parentNode.innerHTML = '';
+  if(ov && ov.parentNode){ ov.parentNode.innerHTML = ''; modalBackground(false); }
   if(VIEW === v && document.getElementById('screenBody').innerHTML){ render(); window.scrollTo(0,0); return; }
   VIEW = v;
   transitionView(() => { render(); window.scrollTo(0,0); });
@@ -355,8 +355,99 @@ function restoreDisclosures(root){
   });
 }
 
+/* A render replaces the screen, not the user's place. Track the actual
+   control, not its translated label or a positional index that can shift. */
+let FOCUS_VIEW_KEY = '';
+function focusViewKey(view){
+  if(view === 'onb') return view + ':' + onbIdx;
+  if(view === 'session') return view + ':' + SESSION_SUB;
+  if(view === 'science') return view + ':' + SCI_VIEW;
+  if(view === 'lesson') return view + ':' + LESSON_ID;
+  if(view === 'module') return view + ':' + MOD_ID + ':' + MOD_STEP;
+  return view;
+}
+function captureScreenFocus(body, element){
+  const el = element || document.activeElement, nav = document.getElementById('nav');
+  const inside = !!(body && body.contains(el)), inNav = !!(nav && nav.contains(el));
+  if(!inside && !inNav) return null;
+  let keyboard = false, start, end, direction;
+  try { keyboard = el.matches(':focus-visible'); } catch(e){}
+  try { start = el.selectionStart; end = el.selectionEnd; direction = el.selectionDirection; } catch(e){}
+  const action = el.hasAttribute('data-act') ? 'data-act' : el.hasAttribute('data-in') ? 'data-in' : '';
+  const group = el.tagName === 'SUMMARY' && el.parentElement;
+  return { el, inside, keyboard, id:el.id, tag:el.tagName, nav:el.dataset.nav,
+    classes:Array.from(el.classList).filter(c => c !== 'on'),
+    action, name:action && el.getAttribute(action),
+    args:[1,2,3,4].map(n => el.getAttribute('data-a'+n)), start, end, direction,
+    disclosure:group && group.getAttribute('data-remember'),
+    exGroup:group && group.getAttribute('data-ex-group'), exScope:group && group.getAttribute('data-ex-scope') };
+}
+function focusScreenStart(){
+  const body = document.getElementById('screenBody');
+  const target = body && (body.querySelector('h1') || body);
+  if(target){ if(!target.hasAttribute('tabindex')) target.setAttribute('tabindex','-1'); target.focus({preventScroll:true}); }
+}
+function findScreenFocusTarget(body, snap){
+  if(!snap.inside){
+    return snap.nav ? document.querySelector('#nav [data-nav="' + snap.nav + '"]') : null;
+  }
+  let target = snap.id && Array.from(body.querySelectorAll('[id]')).find(el => el.id === snap.id);
+  if(!target && snap.tag === 'H1') target = body.querySelector('h1');
+  if(!target && (snap.disclosure || snap.exGroup)){
+    target = Array.from(body.querySelectorAll('details')).find(el =>
+      snap.disclosure ? el.getAttribute('data-remember') === snap.disclosure :
+        el.getAttribute('data-ex-group') === snap.exGroup && el.getAttribute('data-ex-scope') === snap.exScope);
+    target = target && target.querySelector(':scope > summary');
+  }
+  if(!target && snap.action){
+    const choices = Array.from(body.querySelectorAll('[' + snap.action + ']')).filter(el =>
+      el.tagName === snap.tag && el.getAttribute(snap.action) === snap.name);
+    const exact = choices.filter(el => snap.args.every((v,i) => el.getAttribute('data-a'+(i+1)) === v));
+    const stable = choices.filter(el => el.getAttribute('data-a1') === snap.args[0]);
+    /* A rerender can add another action with the same arguments (for example,
+       a second bodyweight button in an empty state). Stable visual classes
+       disambiguate the original control without relying on translated text. */
+    const sameClasses = exact.filter(el => snap.classes.length && snap.classes.every(c => el.classList.contains(c)));
+    target = exact.length === 1 ? exact[0] : sameClasses.length === 1 ? sameClasses[0] : stable.length === 1 ? stable[0] : null;
+  }
+  if(target){
+    /* A changed choice may fold its parent; return to that disclosure instead
+       of trying to focus a control hidden inside it. */
+    for(let p = target.parentElement; p && p !== body; p = p.parentElement){
+      if(p.tagName === 'DETAILS' && !p.open){ target = p.querySelector(':scope > summary'); break; }
+    }
+  }
+  return target;
+}
+function restoreScreenFocus(body, snap){
+  if(!snap) return;
+  if(!snap.inside){
+    if(!snap.el.isConnected){
+      const nav = findScreenFocusTarget(body, snap);
+      if(nav) nav.focus({preventScroll:true});
+    }
+    return;
+  }
+  const target = findScreenFocusTarget(body, snap);
+  if(target && !target.disabled && !target.closest('[inert],[hidden]')){
+    if(snap.tag === 'H1' && !target.hasAttribute('tabindex')) target.setAttribute('tabindex','-1');
+    target.focus({preventScroll:true});
+    if(document.activeElement === target){
+      try { if(typeof snap.start === 'number') target.setSelectionRange(snap.start, snap.end, snap.direction); } catch(e){}
+      return;
+    }
+  }
+  if(snap.keyboard) focusScreenStart();
+}
+
 function render(){
-  rememberDisclosures(document.getElementById('screenBody'));
+  const oldBody = document.getElementById('screenBody');
+  const focus = captureScreenFocus(oldBody), previousFocusView = FOCUS_VIEW_KEY;
+  /* A sheet may render its inert background before it closes or replaces
+     itself. Rebind its opener to the new DOM without stealing dialog focus. */
+  const sheetOpen = document.querySelector('#sheetHost .panel[role="dialog"]');
+  const sheetOpener = sheetOpen && LAST_FOCUS ? captureScreenFocus(oldBody, LAST_FOCUS) : null;
+  rememberDisclosures(oldBody);
   const s = getState();
   const onboarding = !s.onboarded;
   /* Step zero of onboarding is the language the rest of it is written in. The
@@ -394,6 +485,22 @@ function render(){
   body.className = 'screens on';
   body.innerHTML = out.html || '';
   restoreDisclosures(body);
+  syncChoiceButtons(body);
+  if(sheetOpener){
+    let opener = findScreenFocusTarget(body, sheetOpener);
+    if(!opener || opener.disabled || opener.closest('[hidden]')){
+      opener = body.querySelector('h1') || body;
+      if(!opener.hasAttribute('tabindex')) opener.setAttribute('tabindex','-1');
+    }
+    LAST_FOCUS = opener;
+  }
+  FOCUS_VIEW_KEY = focusViewKey(view);
+  if(focus && previousFocusView && previousFocusView !== FOCUS_VIEW_KEY){
+    /* Keep a selected subnavigation control focused; a keyboard page change
+       or onboarding step starts at its heading instead. */
+    if(focus.inside && (focus.name === 'setSessionSub' || focus.name === 'setSciView')) restoreScreenFocus(body, focus);
+    else if(focus.keyboard) focusScreenStart();
+  } else restoreScreenFocus(body, focus);
 
   $('#wordmark').textContent = t('app.name');
   $('#ver').textContent = t('app.tag');

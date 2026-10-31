@@ -3,7 +3,7 @@
 ANCESTOR — build script
 
 Produces dist/ancestor.html: one self-contained file with the CSS, all
-JavaScript, all six languages and the icons embedded. No server, no network,
+JavaScript, all seven languages and the icons embedded. No server, no network,
 no build step on the device.
 
   python3 build.py
@@ -30,7 +30,10 @@ def read(p):
     with open(os.path.join(ROOT, p), encoding="utf-8") as f:
         return f.read()
 
-css = read("css/app.css")
+# Source comments remain in the repository. Only safely isolated comments are
+# compacted in the standalone CSS, preserving strings and licence comments.
+from tools.css_packaging import strip_isolated_comments
+css = strip_isolated_comments(read("css/app.css"))
 
 js_parts = []
 for s in SCRIPTS:

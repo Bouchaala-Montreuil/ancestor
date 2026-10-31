@@ -16,7 +16,7 @@ TV.en = {
 'a11y.disclaimer':'These options adapt the programme. They do not mean an exercise is safe for everyone — suitability depends on your circumstances. Consult a professional if you are unsure.',
 'a11y.adaptedOut':'exercises currently filtered out by your selections',
 'a11y.figureAlt':'Interactive anatomical figure. Use the list below to select a muscle group.',
-'a11y.skip':'Skip to main content',
+'a11y.main':'Main content','a11y.skip':'Skip to main content',
 'a11y.needSeated':'requires a seated option','a11y.needWheelchair':'not wheelchair-compatible',
 'a11y.needLowImpact':'not low-impact','a11y.needGrip':'needs a strong grip','a11y.needKneel':'requires kneeling',
 'a11y.needFloor':'requires getting on the floor','a11y.needOverhead':'requires reaching overhead',
@@ -53,7 +53,7 @@ TV.fr = {
 'a11y.disclaimer':'Ces options adaptent le programme. Elles ne signifient pas qu\'un exercice est sûr pour tout le monde : l\'adéquation dépend de votre situation. Consultez un professionnel en cas de doute.',
 'a11y.adaptedOut':'exercices actuellement exclus par vos choix',
 'a11y.figureAlt':'Figure anatomique interactive. Utilisez la liste ci-dessous pour sélectionner un groupe musculaire.',
-'a11y.skip':'Aller au contenu principal',
+'a11y.main':'Contenu principal','a11y.skip':'Aller au contenu principal',
 'a11y.needSeated':'nécessite une option assise','a11y.needWheelchair':'non compatible fauteuil roulant',
 'a11y.needLowImpact':'non à faible impact','a11y.needGrip':'nécessite une bonne prise','a11y.needKneel':'nécessite de s\'agenouiller',
 'a11y.needFloor':'nécessite d\'aller au sol','a11y.needOverhead':'nécessite de lever les bras','a11y.needStand':'nécessite d\'être debout',
@@ -90,7 +90,7 @@ TV.es = {
 'a11y.disclaimer':'Estas opciones adaptan el programa. No significan que un ejercicio sea seguro para todo el mundo: la idoneidad depende de tus circunstancias. Consulta a un profesional si tienes dudas.',
 'a11y.adaptedOut':'ejercicios actualmente excluidos por tus selecciones',
 'a11y.figureAlt':'Figura anatómica interactiva. Usa la lista de abajo para elegir un grupo muscular.',
-'a11y.skip':'Ir al contenido principal',
+'a11y.main':'Contenido principal','a11y.skip':'Ir al contenido principal',
 'a11y.needSeated':'requiere opción sentada','a11y.needWheelchair':'no compatible con silla de ruedas',
 'a11y.needLowImpact':'no es de bajo impacto','a11y.needGrip':'requiere agarre fuerte','a11y.needKneel':'requiere arrodillarse',
 'a11y.needFloor':'requiere ir al suelo','a11y.needOverhead':'requiere llegar por encima de la cabeza','a11y.needStand':'requiere estar de pie',
@@ -127,7 +127,7 @@ TV.de = {
 'a11y.disclaimer':'Diese Optionen passen das Programm an. Sie bedeuten nicht, dass eine Übung für alle sicher ist — die Eignung hängt von deiner Situation ab. Bei Unsicherheit frage Fachpersonal.',
 'a11y.adaptedOut':'Übungen werden derzeit durch deine Auswahl herausgefiltert',
 'a11y.figureAlt':'Interaktive anatomische Abbildung. Wähle eine Muskelgruppe über die Liste unten.',
-'a11y.skip':'Zum Hauptinhalt springen',
+'a11y.main':'Hauptinhalt','a11y.skip':'Zum Hauptinhalt springen',
 'a11y.needSeated':'benötigt eine Variante im Sitzen','a11y.needWheelchair':'nicht rollstuhlgerecht',
 'a11y.needLowImpact':'nicht gelenkschonend','a11y.needGrip':'braucht festen Griff','a11y.needKneel':'erfordert Knien',
 'a11y.needFloor':'erfordert den Boden','a11y.needOverhead':'erfordert Greifen über Kopf','a11y.needStand':'erfordert Stehen',
@@ -164,7 +164,7 @@ TV.it = {
 'a11y.disclaimer':'Queste opzioni adattano il programma. Non significano che un esercizio sia sicuro per tutti: l\'idoneità dipende dalla tua situazione. In caso di dubbi consulta un professionista.',
 'a11y.adaptedOut':'esercizi attualmente esclusi dalle tue selezioni',
 'a11y.figureAlt':'Figura anatomica interattiva. Usa l\'elenco sotto per selezionare un gruppo muscolare.',
-'a11y.skip':'Vai al contenuto principale',
+'a11y.main':'Contenuto principale','a11y.skip':'Vai al contenuto principale',
 'a11y.needSeated':'richiede una variante da seduto','a11y.needWheelchair':'non adatto in sedia a rotelle',
 'a11y.needLowImpact':'non a basso impatto','a11y.needGrip':'richiede presa forte','a11y.needKneel':'richiede di inginocchiarsi',
 'a11y.needFloor':'richiede di andare a terra','a11y.needOverhead':'richiede di arrivare sopra la testa','a11y.needStand':'richiede di stare in piedi',
@@ -201,7 +201,7 @@ TV.nl = {
 'a11y.disclaimer':'Deze opties passen het programma aan. Ze betekenen niet dat een oefening voor iedereen veilig is — geschiktheid hangt af van jouw situatie. Raadpleeg een professional bij twijfel.',
 'a11y.adaptedOut':'oefeningen momenteel weggefilterd door jouw keuzes',
 'a11y.figureAlt':'Interactieve anatomische figuur. Gebruik de lijst hieronder om een spiergroep te kiezen.',
-'a11y.skip':'Naar de hoofdinhoud',
+'a11y.main':'Hoofdinhoud','a11y.skip':'Naar de hoofdinhoud',
 'a11y.needSeated':'vereist een zittende variant','a11y.needWheelchair':'niet geschikt vanuit een rolstoel',
 'a11y.needLowImpact':'niet impactarm','a11y.needGrip':'vereist stevige grip','a11y.needKneel':'vereist knielen',
 'a11y.needFloor':'vereist naar de vloer','a11y.needOverhead':'vereist reiken boven het hoofd','a11y.needStand':'vereist staan',
@@ -229,7 +229,7 @@ TV.nl = {
 
 TV.ar = {
 'profile.environment':'بيئة التدريب','a11y.adaptedOut':'تمرين مستبعد حالياً بسبب اختياراتك',
-'a11y.skip':'الانتقال إلى المحتوى الرئيسي','a11y.poolEmpty':'لا يوجد تمرين مطابق. جرّب تخفيف أحد المرشّحات أو إضافة معدات.',
+'a11y.main':'المحتوى الرئيسي','a11y.skip':'الانتقال إلى المحتوى الرئيسي','a11y.poolEmpty':'لا يوجد تمرين مطابق. جرّب تخفيف أحد المرشّحات أو إضافة معدات.',
 'lang.full':'مترجم بالكامل','lang.partial':'مترجم جزئياً','lang.coverage':'نسبة التغطية'
 };
 

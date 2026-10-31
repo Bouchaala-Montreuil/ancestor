@@ -41,6 +41,8 @@ npm run audit:deps                          # networked npm audit of both lockfi
 ```
 
 The browser and networked dependency audits are separate from `npm run verify`.
+The Chromium keyboard suite covers focus, dialogs, selected states and offline
+reloads; it is not a substitute for real screen-reader or physical-device testing.
 See `app/README.md` for the individual suites, results and remaining launch work.
 
 ## Look at it

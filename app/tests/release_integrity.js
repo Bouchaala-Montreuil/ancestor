@@ -105,6 +105,37 @@ try {
   const negative = spawnSync('python3',[path.join(ROOT,'tools/notices.py'),'--check','--index',bad],{cwd:ROOT,encoding:'utf8'});
   check('the notices check rejects a damaged embedded copyright', negative.status !== 0 && /stale/.test(negative.stderr), negative.stderr);
 } finally { fs.rmSync(tmp,{recursive:true,force:true}); }
+// CSS packaging only compacts comments surrounded by whitespace.
+const compactCSS = text => spawnSync('python3', ['-c',
+  'import sys; from tools.css_packaging import strip_isolated_comments; sys.stdout.write(strip_isolated_comments(sys.stdin.read()))'],
+  {cwd:ROOT,encoding:'utf8',input:text,maxBuffer:1024*1024});
+const cssFixture = `a /* discard */ b
+div/**/.card { content: "/* keep */"; }
+/*! licence */
+`;
+const packedFixture = compactCSS(cssFixture);
+check('standalone CSS compacts isolated comments but preserves tokens, strings and licence comments',
+  packedFixture.status === 0 && packedFixture.stdout === `a /**/ b
+div/**/.card { content: "/* keep */"; }
+/*! licence */
+`, packedFixture.stderr);
+const escapedFixture = compactCSS(String.raw`.x { content: "escaped \" /* not a comment */"; } /* drop */ `);
+check('CSS packing honours escaped quotes inside strings',
+  escapedFixture.status === 0 && escapedFixture.stdout.includes('/* not a comment */') && !escapedFixture.stdout.includes('/* drop */'), escapedFixture.stderr);
+const legalCSS = '/* Copyright 2026 Third Party */\n/* Barlow Condensed, SIL OFL 1.1 */\n/* SPDX-License-Identifier: MIT */\n';
+const packedLegalCSS = compactCSS(legalCSS);
+check('plain legal and attribution comments are retained in the release CSS',
+  packedLegalCSS.status === 0 && packedLegalCSS.stdout === legalCSS, packedLegalCSS.stderr);
+check('CSS packaging fails closed on an unfinished comment or string',
+  compactCSS('a /* broken').status !== 0 && compactCSS(`.x{content:"broken}`).status !== 0);
+const originalCSS = read('css/app.css'), packedCSS = compactCSS(originalCSS);
+const releaseStyle = releaseHTML.match(/<style>\n([\s\S]*?)\n<\/style>/)?.[1] || '';
+const packedWithImages = packedCSS.stdout.replace(/url\("\.\.\/img\/([\w.-]+\.jpg)"\)/g,
+  (_, name) => 'url("data:image/jpeg;base64,' + fs.readFileSync(path.join(ROOT,'img',name)).toString('base64') + '")');
+check('the release uses the tested compacted CSS with the real images inlined',
+  packedCSS.status === 0 && packedCSS.stdout.length < originalCSS.length && releaseStyle === packedWithImages &&
+  read('css/app.css') === originalCSS, packedCSS.stderr);
+
 const release = fs.statSync(path.join(ROOT,'release/ancestor.html')).size;
 check('the standalone release stays inside the 3 MiB budget', release < 3*1024*1024, release + ' bytes');
 const appBuild = /const APP_BUILD = '([^']+)'/.exec(read('js/core/store.js'))?.[1];

@@ -452,11 +452,8 @@ function lineChart(opts){
   const dots = pts.map((p,i) => {
     const valTxt = p.text ? p.text : ((Math.round(p.v*10)/10) + (unit ? ' ' + unit : ''));
     const fullTip = p.label + ' — ' + valTxt + (p.best ? ' (' + t('chart.pr') + ')' : '');
-    const jsTip = fullTip.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return '<g class="chart-pt" tabindex="0" role="listitem" aria-label="' + esc(fullTip) + '" ' +
-      'onmouseenter="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
-      'onfocus="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
-      'data-act="showChartTip" data-a1="' + tipId + '" data-a2="' + esc(jsTip) + '">' +
+      'data-focus="showChartTip" data-hover="showChartTip" data-act="showChartTip" data-a1="' + tipId + '" data-a2="' + esc(fullTip) + '">' +
       '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(p.v).toFixed(1) + '" r="11" fill="transparent"/>' +
       (p.best
         ? '<circle class="dv-dot best" style="animation-delay:' +
@@ -525,14 +522,11 @@ function barChart(opts){
     const h = (r.v/max)*(H-PT-PB);
     const bx = PL + i*bw + bw*0.16, bwid = bw*0.68;
     const tipTxt = (r.name || r.short) + ' — ' + fmtV(r.v) + (u ? ' ' + u : '');
-    const jsTip = tipTxt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     /* A zero is a zero: a 2 px stub on the axis, never a 1 px sliver that
        pretends to be a very small value. */
     const zero = !(r.v > 0);
     g += '<g class="chart-bar-g" tabindex="0" role="listitem" aria-label="' + esc(tipTxt) + '" ' +
-         'onmouseenter="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
-         'onfocus="showChartTip(\'' + tipId + '\',\'' + esc(jsTip) + '\')" ' +
-         'data-act="showChartTip" data-a1="' + tipId + '" data-a2="' + esc(jsTip) + '">' +
+         'data-focus="showChartTip" data-hover="showChartTip" data-act="showChartTip" data-a1="' + tipId + '" data-a2="' + esc(tipTxt) + '">' +
          (zero
            ? '<rect class="chart-bar zero" x="' + bx.toFixed(1) + '" y="' + (H-PB-2) +
              '" width="' + bwid.toFixed(1) + '" height="2"/>'

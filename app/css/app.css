@@ -694,10 +694,11 @@ nav.tabbar{
   border-top:var(--hair) solid var(--line);
 }
 /* Reserve the timer's measured height, including when a translation wraps.
-   A focused set action and a toast must sit above it, not behind it. */
+   A focused set action and a toast must sit above it, not behind it. The
+   toast's entrance offset also needs clearance during its first frame. */
 body.resting{padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--rest-height, 0px) + var(--s3))}
 body.typing.resting .setcard:focus-within .set-actions{bottom:var(--rest-height, 0px)}
-body.resting .toast{bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--rest-height, 0px) + var(--s3))}
+body.resting .toast{bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--rest-height, 0px) + var(--s3) + var(--toast-entrance))}
 .tabbar .inner{
   position:relative;display:flex;align-items:stretch;
   max-width:var(--shell-max);margin:0 auto;
@@ -1394,8 +1395,9 @@ button.flag:hover{border-color:var(--ink)}
 .banner .ic + span{min-width:0}
 
 .toast{
+  --toast-entrance:14px;
   position:fixed;left:50%;bottom:calc(var(--tabbar-h) + var(--safe-b) + var(--s3));
-  transform:translate(-50%,14px);z-index:8000;
+  transform:translate(-50%,var(--toast-entrance));z-index:8000;
   background:var(--block);color:var(--on-block);
   padding:var(--s3) var(--s5);border-radius:var(--r-xs);
   font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
@@ -3156,7 +3158,7 @@ html[data-simple="on"] .chart-tip-readout{display:none}
   body{padding-bottom:var(--s6)}
   .restbar{inset-inline-start:200px;bottom:0}
   body.resting{padding-bottom:calc(var(--rest-height, 0px) + var(--s6))}
-  body.resting .toast{bottom:calc(var(--rest-height, 0px) + var(--s3))}
+  body.resting .toast{bottom:calc(var(--rest-height, 0px) + var(--s3) + var(--toast-entrance))}
   .body-mob-bar{inset-inline-start:200px;bottom:0}
   .toast{bottom:var(--s5);inset-inline-start:calc(50% + 100px)}
   .cols{column-count:2}

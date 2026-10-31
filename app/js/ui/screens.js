@@ -2121,7 +2121,8 @@ Screens.profile = function(){
     const list = byPat[pat];
     const patOn = list.filter(e => !p.exercises || p.exercises[e.id] !== false).length;
     const changed = patOn < list.length;
-    h += '<details class="dis onb-ex-group"' + (changed ? ' open' : '') + '>' +
+    const open = Object.prototype.hasOwnProperty.call(PROFILE_EX_OPEN, pat) ? PROFILE_EX_OPEN[pat] : changed;
+    h += '<details class="dis onb-ex-group" data-ex-group="' + esc(pat) + '" data-ex-scope="profile"' + (open ? ' open' : '') + '>' +
          '<summary><span class="dis-t">' + esc(t('pat.'+pat)) + '</span>' +
          '<span class="flag sm ' + (changed ? 'warn' : 'plain') + '">' +
          numExpr(patOn + ' / ' + list.length) + '</span></summary>' +
@@ -2421,26 +2422,71 @@ function doErase(){
 /*  SHEETS                                                                */
 /* ===================================================================== */
 let LAST_FOCUS = null;
+let MODAL_BACKGROUND = null;
 
+/* These are real toggle/choice buttons, not navigation or one-shot actions.
+   Their existing visual state is also exposed to assistive technology. */
+const CHOICE_ACTIONS = new Set([
+  'setP','setLimit','setEmphasis','setEnvEquip','switchLang','setDisplay',
+  'setSide','setPeriod','setProgEx','setProgMetric','setLibMuscle','setLibEquip',
+  'setLibMode','setSciCat','openExplorer','setMechEx','pickQuality','pickFeel'
+]);
+function syncChoiceButtons(root){
+  if(!root) return;
+  root.querySelectorAll('button.chip[data-act], button.tile[data-act]').forEach(el => {
+    if(CHOICE_ACTIONS.has(el.dataset.act) && !el.hasAttribute('role') && !el.hasAttribute('aria-pressed')){
+      el.setAttribute('aria-pressed', el.classList.contains('on') ? 'true' : 'false');
+    }
+  });
+}
+
+/* A modal removes the background from keyboard and accessibility traversal;
+   leave the live toast available for genuinely time-sensitive messages. */
+function modalBackground(on){
+  if(on && !MODAL_BACKGROUND){
+    MODAL_BACKGROUND = Array.from(document.querySelectorAll('a.skip-link, body > header, #main, #restHost, #nav'))
+      .map(el => [el, el.hasAttribute('inert')]);
+    MODAL_BACKGROUND.forEach(([el]) => el.setAttribute('inert', ''));
+  } else if(!on && MODAL_BACKGROUND){
+    MODAL_BACKGROUND.forEach(([el, wasInert]) => { if(!wasInert) el.removeAttribute('inert'); });
+    MODAL_BACKGROUND = null;
+  }
+}
 function focusables(root){
-  return Array.prototype.slice.call(root.querySelectorAll(
-    'button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
-  )).filter(el => !el.classList.contains('skip-link'));
+  return Array.from(root.querySelectorAll('button,[href],input,select,textarea,summary,[tabindex],[contenteditable="true"]'))
+    .filter(el => {
+      if(el.tabIndex < 0 || el.matches(':disabled') || el.closest('[inert],[hidden]')) return false;
+      for(let p = el.parentElement; p && p !== root; p = p.parentElement){
+        if(p.tagName === 'DETAILS' && !p.open){
+          const summary = Array.from(p.children).find(c => c.tagName === 'SUMMARY');
+          if(!summary || !summary.contains(el)) return false;
+        }
+      }
+      const style = getComputedStyle(el);
+      return style.visibility !== 'hidden' && style.display !== 'none' && el.getClientRects().length > 0;
+    });
+}
+function trapModalTab(e, root){
+  if(e.key !== 'Tab') return;
+  const f = focusables(root), active = document.activeElement;
+  if(!f.length){ e.preventDefault(); root.focus(); return; }
+  if(e.shiftKey && (active === f[0] || f.indexOf(active) < 0)){
+    e.preventDefault(); f[f.length-1].focus();
+  } else if(!e.shiftKey && (active === f[f.length-1] || !root.contains(active))){
+    e.preventDefault(); f[0].focus();
+  }
 }
 function sheetKeyHandler(e){
-  if(e.key === 'Escape'){ closeSheet(); return; }
-  if(e.key !== 'Tab') return;
-  const f = focusables(this);
-  if(!f.length) return;
-  const first = f[0], last = f[f.length-1];
-  if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closeSheet(); return; }
+  trapModalTab(e, this);
 }
 
 /* A dialog must be reachable and escapable without a pointer. */
 function sheet(title, bodyHtml){
   const host = $('#sheetHost');
-  LAST_FOCUS = document.activeElement;
+  if(!host.contains(document.activeElement) || !LAST_FOCUS || !LAST_FOCUS.isConnected){
+    LAST_FOCUS = document.activeElement;
+  }
   /* Backdrop fades, panel rises: one coordinated movement, not two. */
   /* The only visible way out used to be a Close button at the very bottom of
      the sheet — 1 845 px down the scroll on a 390 px phone, below the whole
@@ -2456,6 +2502,8 @@ function sheet(title, bodyHtml){
     '</div></div>';
   const panel = host.querySelector('.panel');
   if(panel){
+    syncChoiceButtons(panel);
+    modalBackground(true);
     panel.addEventListener('keydown', sheetKeyHandler);
     /* A picker starts on its current value (or its first option), so one Tab
        or arrow is enough to choose. Other sheets keep the panel as the target:
@@ -2470,6 +2518,7 @@ function closeSheet(){
   if(!host) return;
   const restInfo = !!host.querySelector('[data-rest-info]');
   host.innerHTML = '';
+  modalBackground(false);
   if(LAST_FOCUS && LAST_FOCUS.isConnected && LAST_FOCUS.focus){
     try { LAST_FOCUS.focus(); } catch(e){}
   } else if(restInfo){
@@ -2480,15 +2529,18 @@ function closeSheet(){
 }
 
 function openSheet(kind){
-  if(kind === 'sleep') return sheet(t('sleep.title'),
+  if(kind === 'sleep'){
+    QUALITY = 3;
+    return sheet(t('sleep.title'),
     '<div class="field"><label for="sl_s">' + esc(t('sleep.start')) + '</label>' +
     '<input type="datetime-local" id="sl_s" value="' + toLocalInput(Date.now()-8*3600000) + '"></div>' +
     '<div class="field"><label for="sl_e">' + esc(t('sleep.end')) + '</label>' +
     '<input type="datetime-local" id="sl_e" value="' + toLocalInput(Date.now()) + '"></div>' +
-    '<div class="field"><label>' + esc(t('sleep.quality')) + '</label><div class="chips" id="sl_q">' +
+    '<div class="field"><label>' + esc(t('sleep.quality')) + '</label><div class="chips" id="sl_q" role="group" aria-label="' + esc(t('sleep.quality')) + '">' +
     [1,2,3,4,5].map(q => '<button class="chip sm ' + (q===3?'on':'') + '" data-act="pickQuality" data-a1="' + q + '" data-t1="l">' + esc(t('sleep.q'+q)) + '</button>').join('') + '</div></div>' +
     '<p class="hint mb-4">' + esc(t('sleep.note')) + '</p>' +
     '<button class="btn block" data-act="saveSleep">' + esc(t('btn.save')) + '</button>');
+  }
 
   if(kind === 'shift') return sheet(t('shift.title'),
     '<div class="field"><label for="sf_s">' + esc(t('shift.start')) + '</label>' +
@@ -2498,15 +2550,18 @@ function openSheet(kind){
     '<p class="hint mb-4">' + esc(t('onb.shift.note')) + '</p>' +
     '<button class="btn block" data-act="saveShift">' + esc(t('btn.save')) + '</button>');
 
-  if(kind === 'feel') return sheet(t('feel.title'),
+  if(kind === 'feel'){
+    FEEL = { soreness:0, joint:0, fatigue:0, illness:0 };
+    return sheet(t('feel.title'),
     [['soreness','feel.soreness'],['joint','feel.joint'],['fatigue','feel.fatigue'],['illness','feel.illness']]
-      .map(([k,lbl]) => '<div class="field"><label>' + esc(t(lbl)) + '</label><div class="chips" id="fl_' + k + '">' +
+      .map(([k,lbl]) => '<div class="field"><label>' + esc(t(lbl)) + '</label><div class="chips" id="fl_' + k + '" role="group" aria-label="' + esc(t(lbl)) + '">' +
         [0,1,2,3].map(v => '<button class="chip sm ' + (v===0?'on':'') + '" data-act="pickFeel" data-a1="' + k + '" data-a2="' + v + '" data-t2="l">' +
           (v===0?esc(t('feel.none')):esc(t('feel.'+['mild','moderate','high'][v-1]))) + '</button>').join('') +
         '</div></div>').join('') +
     '<div class="banner warn mb-4"><span class="ic">i</span><span>' +
     esc(t('feel.stop')) + '</span></div>' +
     '<button class="btn block" data-act="saveFeel">' + esc(t('btn.save')) + '</button>');
+  }
 
   if(kind === 'bw'){
     const s = getState(), u = unit();
@@ -2543,7 +2598,7 @@ function removeBodyweightRow(id){
 let QUALITY = 3;
 function pickQuality(q){
   QUALITY = q;
-  $$('#sl_q .chip').forEach((c,i) => c.classList.toggle('on', i+1 === q));
+  $$('#sl_q .chip').forEach((c,i) => { const on = i+1 === q; c.classList.toggle('on', on); c.setAttribute('aria-pressed', String(on)); });
 }
 function saveSleep(){
   const a = ($('#sl_s')||{}).value, b = ($('#sl_e')||{}).value;
@@ -2560,7 +2615,7 @@ function saveShift(){
 let FEEL = { soreness:0, joint:0, fatigue:0, illness:0 };
 function pickFeel(k,v){
   FEEL[k] = v;
-  $$('#fl_'+k+' .chip').forEach((c,i) => c.classList.toggle('on', i === v));
+  $$('#fl_'+k+' .chip').forEach((c,i) => { const on = i === v; c.classList.toggle('on', on); c.setAttribute('aria-pressed', String(on)); });
 }
 function saveFeel(){
   addFeeling(Object.assign({}, FEEL));
@@ -2660,8 +2715,12 @@ function chooseLang(l){
 }
 
 const ONB_STEPS = ['welcome','exp','focus','approach','equip','avail','shift','sleep','style','ex','ready'];
-let ONB_EX_OPEN = {};
-function onbExOpen(pat, open){ if(open) ONB_EX_OPEN[pat] = true; else delete ONB_EX_OPEN[pat]; }
+let ONB_EX_OPEN = {}, PROFILE_EX_OPEN = {};
+function onbExOpen(pat, open){ ONB_EX_OPEN[pat] = !!open; }
+function rememberExGroup(pat, scope, open){
+  if(scope === 'profile') PROFILE_EX_OPEN[pat] = !!open;
+  else if(scope === 'onb') onbExOpen(pat, open);
+}
 let onbIdx = 0;
 function onbGo(i){ onbIdx = Math.max(0, Math.min(ONB_STEPS.length-1, i)); render(); window.scrollTo(0,0); }
 function onbNext(){ onbGo(onbIdx+1); }
@@ -2886,8 +2945,8 @@ Screens.onb = function(){
       /* an explicit open/close wins; otherwise a group you have changed
          starts open so your removals are visible */
       const open = (pat in ONB_EX_OPEN) ? ONB_EX_OPEN[pat] : kept < list.length;
-      b += '<details class="dis onb-ex-group"' + (open ? ' open' : '') +
-        ' ontoggle="onbExOpen(\'' + pat + '\', this.open)">' +
+      b += '<details class="dis onb-ex-group" data-ex-group="' + esc(pat) + '" data-ex-scope="onb"' +
+        (open ? ' open' : '') + '>' +
         '<summary><span class="dis-t">' + esc(t('pat.' + pat)) + '</span>' +
         '<span class="flag sm ' + (kept === list.length ? 'plain' : 'warn') + '">' +
         numExpr(kept + ' / ' + list.length) + '</span></summary>' +

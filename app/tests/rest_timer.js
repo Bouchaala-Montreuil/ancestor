@@ -435,6 +435,27 @@ async function advance(page, ms){
       const toastFit = await page.evaluate(() => ({toast:document.querySelector('#toast').getBoundingClientRect().bottom,
         bar:document.querySelector('.restbar').getBoundingClientRect().top}));
       check('a toast sits above the timer instead of covering its controls', toastFit.toast <= toastFit.bar+1, JSON.stringify(toastFit));
+      // The entrance begins 14px below its settled position. Check the first
+      // rendered frame, not only the end of the transition, on both layouts.
+      await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);
+      await page.evaluate(() => setDisplay('reducedMotion','auto'));
+      for(const width of [320,1024]){
+        await page.setViewport({width,height:844,deviceScaleFactor:1});
+        await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+        const entering = await page.evaluate(() => {
+          const el=document.querySelector('#toast');
+          el.style.transition='none'; el.className='toast'; void el.offsetWidth;
+          el.style.removeProperty('transition'); void el.offsetWidth;
+          toast('Saved','ok');
+          return {motion:document.documentElement.dataset.motion,
+            toast:el.getBoundingClientRect().bottom, bar:document.querySelector('.restbar').getBoundingClientRect().top};
+        });
+        check('the entering toast clears the timer with normal motion at '+width+'px',
+          entering.motion==='off' && entering.toast <= entering.bar+1, JSON.stringify(entering));
+      }
+      await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
+      await page.setViewport({width:320,height:844,deviceScaleFactor:1});
+      await page.evaluate(() => setDisplay('reducedMotion','auto'));
       if(process.env.REST_SHOTS) await page.screenshot({path:path.join(process.env.REST_SHOTS,'timer-paper-320.png')});
       await page.evaluate(() => { window.scrollTo(0, document.documentElement.scrollHeight); });
       await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));

@@ -263,10 +263,11 @@ node tests/release_integrity.js    # locks, offline notices, vendor payload and 
 node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tests/journey.js              #  39 navigation and disclosure checks in Chromium
 node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
-node tests/rest_timer.js           #  73 timer, alerts, interruption and layout checks in Chromium
+node tests/rest_timer.js           #  75 timer, alerts, interruption and layout checks in Chromium
 node tests/movement_browser.js     # guide, playback, RTL, theme, layout and offline checks
 node tests/exercise_filters_browser.js # preference, override, draft and warning journeys
 node tests/release_integrity_browser.js # keyboard, localization and offline notices
+node tests/keyboard_a11y_browser.js    # keyboard focus, modal, CSP and CSSOM regressions
 npm run audit:deps                 # networked audit of both committed lockfiles
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
@@ -423,6 +424,46 @@ install and accessibility-tree audits passed **30** and **75** checks. The
 notice, exercise-filter, safety, movement and timer journeys also passed against
 both an HTTP PWA and the standalone file. These automated results do not replace
 the independent reviews below.
+
+### Keyboard and accessibility pass — 2026-10-31
+
+Keyboard focus now follows the relevant control through screen rerenders and
+moves to the next heading on keyboard page or onboarding changes. Choice
+buttons expose their selected state; the skip target is focusable and the main
+landmark is named in each of the seven languages. Sheets and the workout
+completion dialog isolate the background, contain Tab and Shift+Tab, and close
+with Escape. Opening a fresh sleep or symptom sheet resets its unsaved choices,
+so a cancelled value cannot be saved behind a different visible selection.
+If a sheet rerenders the background or replaces itself, its original opener is
+rebound before focus is returned. Chart focus and hover, and exercise-group
+disclosures, now use delegated events compatible with the existing content
+security policy.
+
+The current `npm run verify` gate passed **1,947 headless checks**, **1,918**
+translation keys in seven languages and **67** site checks. The complete Chromium
+suite passed **451 checks**, including 176 layouts. The **70-check** keyboard
+suite also passed separately against the modular file, HTTP PWA and standalone
+release; it exercises a saved workout, cancelled and saved choices, modal focus,
+Chrome's accessibility tree, both themes, RTL, reduced motion, offline reload
+and CSP violations across reloads. A modular run with normal motion also passed.
+The separate install and accessibility-tree audits passed **30** and **75**
+checks. Workout safety, movement, filtering, notices and the isolated rest timer
+also passed against both HTTP and the standalone build. The timer suite checks
+that an entering toast never covers its controls, including with normal motion.
+
+The standalone build keeps legal CSS comments but compacts other isolated
+comments to stay under its 3 MiB limit. The keyboard suite compares the original
+and packaged stylesheets using Chromium's CSS parser. These automated checks do
+**not** establish WCAG conformance or replace testing with actual screen readers,
+other browsers, physical devices or independent accessibility specialists.
+
+Run the keyboard suite on another local distribution or with normal motion using:
+
+```bash
+ANCESTOR_TEST_TARGET=http://127.0.0.1:8000/ node tests/keyboard_a11y_browser.js
+ANCESTOR_TEST_TARGET=release/ancestor.html node tests/keyboard_a11y_browser.js
+ANCESTOR_TEST_MOTION=normal node tests/keyboard_a11y_browser.js
+```
 
 ### Launch-readiness audit — remaining work
 

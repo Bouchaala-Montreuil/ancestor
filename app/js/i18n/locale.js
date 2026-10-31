@@ -191,6 +191,11 @@ function applyLocale(lang){
     const v = t('a11y.skip');
     if(v && v !== 'a11y.skip') skip.textContent = v;
   }
+  const main = document.getElementById('main');
+  if(main && typeof t === 'function'){
+    const label = t('a11y.main');
+    if(label && label !== 'a11y.main') main.setAttribute('aria-label', label);
+  }
 }
 
 /* A missing translation should be traceable in development but never show a

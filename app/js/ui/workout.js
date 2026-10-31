@@ -1376,6 +1376,11 @@ function showCompletion(sum){
 
   const ovEl = document.getElementById('doneOverlay');
   if(ovEl){
+    modalBackground(true);
+    ovEl.addEventListener('keydown', e => {
+      if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closeCompletion('progress'); }
+      else trapModalTab(e, ovEl);
+    });
     const ringC = ovEl.querySelector('circle[data-ring]');
     if(ringC) animateRing(ringC, parseFloat(ringC.getAttribute('data-ring')) || 0);
   }
@@ -1390,8 +1395,10 @@ function showCompletion(sum){
 function closeCompletion(to){
   const host = document.getElementById('sheetHost');
   if(host) host.innerHTML = '';
+  modalBackground(false);
   savedToast('session.saved');
   go(to || 'progress');
+  focusScreenStart();
 }
 
 function emptySessionMessage(){
@@ -1461,7 +1468,7 @@ function renderExerciseLibrary(){
        (activeExtra ? '<span class="flag sm accent">' + esc(activeExtra) + '</span>' : '') +
        '</summary><div class="atlas-more-body">';
   h += '<div class="anat-filter-row mb-2">' +
-       '<span class="anat-filter-lbl">' + esc(t('exd.muscles')) + '</span><div class="chips">' +
+       '<span class="anat-filter-lbl">' + esc(t('exd.muscles')) + '</span><div class="chips" role="group" aria-label="' + esc(t('exd.muscles')) + '">' +
        '<button type="button" class="chip sm ' + (LIB_MUSCLE==='all'?'on':'') + '" data-act="setLibMuscle" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        MUSCLES.map(m =>
          '<button type="button" class="chip sm ' + (LIB_MUSCLE===m?'on':'') + '" data-act="setLibMuscle" data-a1="' + m + '">' +
@@ -1469,7 +1476,7 @@ function renderExerciseLibrary(){
        ).join('') + '</div></div>';
 
   h += '<div class="anat-filter-row mb-2">' +
-       '<span class="anat-filter-lbl">' + esc(t('plan.equipLabel')) + '</span><div class="chips">' +
+       '<span class="anat-filter-lbl">' + esc(t('plan.equipLabel')) + '</span><div class="chips" role="group" aria-label="' + esc(t('plan.equipLabel')) + '">' +
        '<button type="button" class="chip sm ' + (LIB_EQUIP==='all'?'on':'') + '" data-act="setLibEquip" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        ['barbell','dumbbell','machine','cable','bodyweight','band'].map(eq =>
          '<button type="button" class="chip sm ' + (LIB_EQUIP===eq?'on':'') + '" data-act="setLibEquip" data-a1="' + eq + '">' +
@@ -1477,7 +1484,7 @@ function renderExerciseLibrary(){
        ).join('') + '</div></div>';
 
   h += '<div class="anat-filter-row">' +
-       '<span class="anat-filter-lbl">' + esc(t('chart.basis')) + '</span><div class="chips">' +
+       '<span class="anat-filter-lbl">' + esc(t('chart.basis')) + '</span><div class="chips" role="group" aria-label="' + esc(t('chart.basis')) + '">' +
        '<button type="button" class="chip sm ' + (LIB_MODE==='all'?'on':'') + '" data-act="setLibMode" data-a1="all">' + esc(t('sci.all')) + '</button>' +
        ['load','bodyweight','weighted','assisted','timed','distance'].map(md =>
          '<button type="button" class="chip sm ' + (LIB_MODE===md?'on':'') + '" data-act="setLibMode" data-a1="' + md + '">' +

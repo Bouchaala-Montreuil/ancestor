@@ -17,7 +17,8 @@
      markup   <button data-act="openSheet" data-a1="sleep">
      action   ACT('openSheet', el => openSheet(arg(el, 1)));
 
-   `data-act` fires on click, `data-in` on input. Arguments are `data-a1…a9`
+   `data-act` fires on click, `data-in` on input, and `data-focus`/`data-hover`
+   on focus or pointer entry. Arguments are `data-a1…a9`
    with an optional `data-t1…t9` saying how to read them:
 
      (absent)  the attribute text, as a string
@@ -111,8 +112,19 @@ function fireFrom(target, ev, attr){
 }
 
 function wireActs(){
-  document.addEventListener('click', ev => fireFrom(ev.target, ev, 'data-act'), false);
+  document.addEventListener('click', ev => {
+    /* Record a person's disclosure choice before the native toggle. This is
+       deliberately a click listener: toggle also fires for generated markup. */
+    const summary = ev.target.closest && ev.target.closest('summary');
+    const group = summary && summary.parentElement;
+    if(group && group.matches('details[data-ex-group]') && typeof rememberExGroup === 'function'){
+      rememberExGroup(group.dataset.exGroup, group.dataset.exScope, !group.open);
+    }
+    fireFrom(ev.target, ev, 'data-act');
+  }, false);
   document.addEventListener('input', ev => fireFrom(ev.target, ev, 'data-in'), false);
+  document.addEventListener('focusin', ev => fireFrom(ev.target, ev, 'data-focus'), false);
+  document.addEventListener('mouseover', ev => fireFrom(ev.target, ev, 'data-hover'), false);
 }
 wireActs();
 
