@@ -141,8 +141,8 @@ function decide(state, exerciseIds, now){
     }
     if(s >= 3){ sev = Math.max(sev, Math.min(4, sev + 2)); reasons.push({ tone:'down', k:'sore', text: t('rsn.soreness') }); }
     else if(s === 2){ sev = Math.max(sev, Math.min(4, sev + 1)); reasons.push({ tone:'warn', k:'sore', text: t('rsn.soreness') }); }
-    if(f >= 3){ sev = Math.max(sev, Math.min(4, sev + 2)); reasons.push({ tone:'down', k:'fat', text: 'Fatigue reported as severe' }); }
-    else if(f === 2){ sev = Math.max(sev, Math.min(4, sev + 1)); reasons.push({ tone:'warn', k:'fat', text: 'Fatigue reported as moderate' }); }
+    if(f >= 3){ sev = Math.max(sev, Math.min(4, sev + 2)); reasons.push({ tone:'down', k:'fat', text: t('feel.fatigue') + ' — ' + t('feel.high') }); }
+    else if(f === 2){ sev = Math.max(sev, Math.min(4, sev + 1)); reasons.push({ tone:'warn', k:'fat', text: t('feel.fatigue') + ' — ' + t('feel.moderate') }); }
   }
 
   /* ---------- performance ------------------------------------------------- */

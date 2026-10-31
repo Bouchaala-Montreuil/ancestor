@@ -722,8 +722,8 @@ async function waitMirror(page){
       await page.waitForFunction(()=>getState().sessions.some(s=>s.id==='original'));
       const state=await page.evaluate(()=>({ids:getState().sessions.map(s=>s.id),disk:JSON.parse(localStorage.getItem(STORE_KEY)).sessions.map(s=>s.id),
         copy:t('data.exportNote'),build:APP_BUILD}));
-      check('the cached v45 app recovers a saved mirror and localized safety copy offline',
-        state.ids.includes('original')&&state.disk.includes('original')&&state.copy.includes('active workout')&&state.build==='v45',JSON.stringify(state));
+      check('the cached v46 app recovers a saved mirror and localized safety copy offline',
+        state.ids.includes('original')&&state.disk.includes('original')&&state.copy.includes('active workout')&&state.build==='v46',JSON.stringify(state));
       await page.setOfflineMode(false);await ctx.close();
     }
     check('no uncaught browser errors in durability journeys',errors.length===0,errors.join('; '));

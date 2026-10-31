@@ -292,7 +292,7 @@ function diagramFor(kind){
       t('modC.s1.title'));
   }
   if(kind === 'volume'){
-    /* dose-response curve with diminishing returns + rising recovery cost */
+    /* Invented curves illustrate a possible trade-off, not measured data. */
     const gain = [], cost = [];
     for(let i=0;i<=16;i++){
       const x = 28 + i * 16.5;
@@ -306,8 +306,9 @@ function diagramFor(kind){
       '<line x1="28" y1="30" x2="28" y2="110" class="d-axis"/>' +
       '<path d="M' + gain.join(' L') + '" class="d-line"/>' +
       '<path d="M' + cost.join(' L') + '" class="d-band-line"/>' +
-      '<text x="160" y="132" class="d-cap" text-anchor="middle">' + esc(t('modC.s2.cap')) + '</text>',
-      t('modC.s2.title'));
+      '<text x="160" y="127" class="d-cap" text-anchor="middle">' + esc(t('sim.illustrative')) + '</text>' +
+      '<text x="160" y="140" class="d-cap" text-anchor="middle">' + esc(t('modC.s2.cap')) + '</text>',
+      t('modC.s2.title') + ' — ' + t('sim.illustrative'));
   }
   if(kind === 'effort'){
     /* RIR 3..0: stimulus plateaus near failure while fatigue spikes at RIR 0 */

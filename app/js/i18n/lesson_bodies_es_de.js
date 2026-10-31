@@ -84,7 +84,7 @@ TLES.es = {
 'sec.training-principles.2.h':'Por qué ANCESTOR no añade peso por calendario',
 'sec.training-principles.2.b':'Una regla que dijera pasaron dos semanas, suma 2,5 kg ignora si alcanzaste el objetivo. ANCESTOR sube la carga solo cuando cada serie prescrita llega a la parte alta del rango de repeticiones con el esfuerzo previsto. Si la evidencia no está, la carga se mantiene; si el rendimiento baja dos veces seguidas, retrocede.',
 'sec.training-principles.3.h':'El volumen es una variable con contrapartidas',
-'sec.training-principles.3.b':'Volúmenes semanales más altos se asocian con mayor hipertrofia media, con rendimientos decrecientes y un coste de recuperación creciente. ANCESTOR sigue las series semanales por grupo muscular para que los cambios sean visibles y revisables; no declara un óptimo por ti.',
+'sec.training-principles.3.b':'Volúmenes semanales más altos se asocian con mayor hipertrofia media. ANCESTOR sigue las series semanales por grupo muscular para que los cambios sean visibles y revisables; no declara un óptimo por ti.',
 'sec.training-principles.4.h':'La adherencia domina',
 'sec.training-principles.4.b':'El mejor programa es el que se sostiene el tiempo suficiente para importar. Por eso ANCESTOR trata las sesiones perdidas como información y no como fracaso, y por eso la constancia es un objetivo seleccionable.',
 /* scientific-literacy */
@@ -183,7 +183,7 @@ TLDE.de = {
 'sec.training-principles.2.h':'Warum ANCESTOR nicht nach Kalender aufstockt',
 'sec.training-principles.2.b':'Eine Regel "zwei Wochen sind vorbei, addiere 2,5 kg" ignoriert, ob du das Ziel erreicht hast. ANCESTOR erhöht die Last nur, wenn jeder vorgeschriebene Satz die obere Grenze des Wiederholungsbereichs mit der vorgesehenen Anstrengung erreicht. Fehlt die Evidenz, bleibt die Last. Sinkt die Leistung zweimal hintereinander, geht sie zurück.',
 'sec.training-principles.3.h':'Volumen ist eine Variable mit Abwägungen',
-'sec.training-principles.3.b':'Höheres Wochenvolumen geht mit größerer durchschnittlicher Hypertrophie einher, mit abnehmendem Ertrag und steigenden Erholungskosten. ANCESTOR erfasst Wochensätze pro Muskelgruppe, damit Veränderungen sichtbar und prüfbar sind. Es erklärt kein Optimum für dich.',
+'sec.training-principles.3.b':'Höheres Wochenvolumen geht mit größerer durchschnittlicher Hypertrophie einher. ANCESTOR erfasst Wochensätze pro Muskelgruppe, damit Veränderungen sichtbar und prüfbar sind. Es erklärt kein Optimum für dich.',
 'sec.training-principles.4.h':'Adhärenz dominiert',
 'sec.training-principles.4.b':'Das beste Programm ist das, das lange genug durchgehalten wird, um zu wirken. Deshalb behandelt ANCESTOR verpasste Einheiten als Information statt als Scheitern. Und deshalb ist Beständigkeit ein wählbares Ziel.',
 /* scientific-literacy */

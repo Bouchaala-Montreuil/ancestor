@@ -145,6 +145,24 @@ async function axNode(page, selector){
     await key(page,'[data-act="finishOnboarding"]');
     check('finishing onboarding puts focus on Today’s heading',(await active(page)).tag==='H1');
     await key(page,'[data-remember="home-week"] > summary');
+    const metricTip='[data-remember="home-week"] .metric:first-child .tip';
+    await key(page,metricTip);
+    state=await page.evaluate(selector=>{const b=document.querySelector(selector), info=b?.closest('.metric')?.querySelector('.metric-help');
+      return {expanded:b?.getAttribute('aria-expanded'),visible:!!info&&!info.hidden,text:info?.textContent};},metricTip);
+    check('keyboard activation reveals the metric explanation and its expanded state',
+      state.expanded==='true' && state.visible && /most recent session/i.test(state.text||''),JSON.stringify(state));
+    await key(page,metricTip);
+    check('activating the metric explanation again closes it',await page.evaluate(selector=>{
+      const b=document.querySelector(selector); return b?.getAttribute('aria-expanded')==='false' &&
+        b.closest('.metric').querySelector('.metric-help')?.hidden;
+    },metricTip));
+    await page.click(metricTip);
+    state=await page.evaluate(selector=>{const b=document.querySelector(selector), r=b.getBoundingClientRect();
+      return {expanded:b.getAttribute('aria-expanded'),visible:!b.closest('.metric').querySelector('.metric-help').hidden,
+        width:r.width,height:r.height};},metricTip);
+    check('a pointer click opens a metric explanation with at least a 24px target',
+      state.expanded==='true' && state.visible && state.width>=24 && state.height>=24,JSON.stringify(state));
+    await page.click(metricTip);
     await key(page,'[data-remember="home-week"] [data-act="openSheet"][data-a1="sleep"]');
     state = await page.evaluate(()=>({inside:!!document.activeElement?.closest('[role="dialog"]'),
       inert:['main','nav','restHost'].every(id=>document.getElementById(id).hasAttribute('inert')),
@@ -185,6 +203,9 @@ async function axNode(page, selector){
       state.quality===4 && state.focus && !state.inert,JSON.stringify(state));
 
     await key(page,'[data-remember="home-week"] [data-act="openSheet"][data-a1="feel"]');
+    state=await page.evaluate(()=>({value:FEEL.illness,text:document.querySelector('[role="dialog"] .banner.warn').textContent}));
+    check('the default symptom sheet offers conditional safety advice without claiming symptoms were reported',
+      state.value===0 && /If you have pain or illness, stop training/.test(state.text) && !/you reported/i.test(state.text),JSON.stringify(state));
     await key(page,'#fl_illness [data-a2="3"]');
     check('a feeling choice exposes its selected state',await page.evaluate(()=>FEEL.illness===3 && document.activeElement.getAttribute('aria-pressed')==='true'));
     await page.keyboard.press('Escape');

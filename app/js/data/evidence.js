@@ -7,11 +7,10 @@
 
    HONESTY ABOUT THIS LIBRARY
    --------------------------
-   `identifierVerified` states whether the DOI/PMID was checked against the
-   publisher record. Where it is false, the bibliographic details must be
-   confirmed before publication. Findings summaries reflect the published
-   conclusions as understood at `lastReviewed`; they are summaries, not
-   quotations, and should be read against the source.
+   `identifierVerified` records a DOI/PMID registry check, not an expert or
+   publisher review. Where false, bibliographic details need confirmation.
+   Findings summaries are not quotations and require independent review
+   against the source before publication.
 
    Live literature retrieval is NOT available in this build. This is a
    curated offline snapshot with declared coverage limits.
@@ -22,15 +21,15 @@ const EVIDENCE = [
       "id": "schoenfeld-2016-volume",
       "title": "Dose-response relationship between weekly resistance training volume and increases in muscle mass: a systematic review and meta-analysis",
       "authors": "Schoenfeld BJ, Ogborn D, Krieger JW",
-      "year": 2016,
+      "year": 2017,
       "journal": "Journal of Sports Sciences",
       "type": "meta-analysis",
       "doi": "10.1080/02640414.2016.1210197",
       "url": "https://doi.org/10.1080/02640414.2016.1210197",
       "population": "Healthy adults in resistance-training interventions",
       "question": "Does weekly resistance-training volume change the magnitude of muscle-mass gain?",
-      "findings": "A graded dose-response was observed: higher weekly set volumes per muscle group were associated with greater hypertrophy on average, roughly 0.37% per week with <5 sets versus about 0.78% per week with 10+ sets. Effects averaged across studies; individual responses varied widely.",
-      "limitations": "Observational dose-response across trials rather than within-trial randomisation of volume; imprecise volume measures; mostly short-to-medium studies; far fewer data on trained individuals and on very high volumes.",
+      "findings": "Across the studies, higher weekly set volumes were associated with greater muscle growth on average. The association does not predict an individual's growth rate or establish an optimum.",
+      "limitations": "Between-study comparisons can be confounded; volume measures vary; studies were mostly short-to-medium, with fewer data on trained individuals and very high volumes.",
       "relevance": "Supports tracking weekly sets per muscle group and flagging large volume changes for review, rather than assuming one fixed volume is optimal for everyone.",
       "quality": "moderate",
       "lastReviewed": "2026-10-26",
@@ -164,7 +163,7 @@ const EVIDENCE = [
       "journal": "Journal of Applied Physiology",
       "type": "narrative-review",
       "doi": "10.1152/japplphysiol.00685.2018",
-      "url": "https://doi.org/10.1152/japplphysiol.00738.2018",
+      "url": "https://doi.org/10.1152/japplphysiol.00685.2018",
       "population": "Human and mechanistic model literature",
       "question": "Which signals initiate hypertrophy after resistance exercise?",
       "findings": "Reviews mechanical tension as a central stimulus with metabolic and damage-related contributors, and stresses that the sensor mechanisms are still being resolved. Explicitly cautions against simplistic single-cause narratives.",

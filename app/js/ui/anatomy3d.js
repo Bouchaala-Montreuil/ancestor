@@ -230,13 +230,13 @@ function labControlsHtml(){
     actAttr(act, ...args) + '>' + LAB_ICONS[key] + '</button>';
   return '<div class="lab-controls">' +
     '<div class="lab-controls-row">' +
-      btn('labFront','lab3d.front','labSetView','front') +
-      btn('labBack','lab3d.back','labSetView','back') +
+      btn('labFront','lab3d.front','labSetView',undefined,'front') +
+      btn('labBack','lab3d.back','labSetView',undefined,'back') +
       btn('labReset','body.reset','labResetView') +
     '</div>' +
     '<div class="lab-controls-row">' +
-      btn('labZoomIn','body.zoom','labZoom', 0.82) +
-      btn('labZoomOut','lab3d.zoomOut','labZoom', 1.22) +
+      btn('labZoomIn','body.zoom','labZoom',undefined,0.82) +
+      btn('labZoomOut','lab3d.zoomOut','labZoom',undefined,1.22) +
       btn('labIso','lab3d.isolate','labToggleIsolate', 'false') +
     '</div>' +
     '<div class="lab-controls-row">' +

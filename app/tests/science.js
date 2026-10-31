@@ -226,6 +226,52 @@ group('5. Evidence library integrity');
       verified + '/' + published.length + ' published sources verified');
   chk('every published source carries a DOI and a PMID', withPmid === published.length,
       published.length + ' DOIs, ' + withPmid + ' PMIDs');
+  // A verified identifier is not enough if the link points to another paper.
+  const wrongLinks = published.filter(e => {
+    try {
+      const url = new URL(e.url);
+      return url.protocol !== 'https:' || url.hostname !== 'doi.org' ||
+        decodeURIComponent(url.pathname).slice(1).toLowerCase() !== e.doi.toLowerCase();
+    } catch(_e){ return true; }
+  });
+  chk('each published source link resolves the same DOI shown on its card',
+      wrongLinks.length === 0,wrongLinks.map(e=>e.id).join(', '));
+  const source = w.evidence('wackerhage-2019-stimuli');
+  const holder = d.createElement('div'); holder.innerHTML = w.evidenceCard(source,false);
+  chk('the hypertrophy review card links to its actual publisher DOI',
+      source.doi === '10.1152/japplphysiol.00685.2018' &&
+      holder.querySelector('a')?.href === 'https://doi.org/' + source.doi);
+  const volume = w.evidence('schoenfeld-2016-volume');
+  chk('the volume review does not present its association as a weekly growth prediction',
+      volume.year === 2017 && !/0\.37% per week|0\.78% per week/.test(volume.findings) &&
+      /does not predict an individual's growth rate/.test(volume.findings));
+  chk('the cited volume principle does not attribute an unsupported recovery-cost curve to that review',
+      !/diminishing returns|rising recovery cost/i.test(w.t('why.vol.principle')) &&
+      !/diminishing returns|rising recovery cost/i.test(w.t('sec.training-principles.3.b')));
+  const missingCitations = [];
+  w.eval('LESSONS').forEach(lesson => (lesson.evidence||[]).forEach(id => {
+    if(!w.evidence(id)) missingCitations.push('lesson:'+lesson.id+':'+id);
+  }));
+  w.eval('LEARNING_MODULES').forEach(module => {
+    (module.evidence||[]).forEach(id => {if(!w.evidence(id)) missingCitations.push('module:'+module.id+':'+id);});
+    (module.steps||[]).forEach(step => (step.claim?.evidence||[]).forEach(id => {
+      if(!w.evidence(id)) missingCitations.push('step:'+module.id+':'+step.id+':'+id);
+    }));
+  });
+  chk('every lesson, module and module-step citation reaches an evidence record',
+      missingCitations.length === 0,missingCitations.join(', '));
+  onboardAs(w,d); w.openLesson('muscle-growth');
+  chk('the muscle-growth lesson actually renders its Damas evidence card',
+      txt(d).includes(w.evidence('damas-2018-hypertrophy').title));
+  for(const lang of ['en','fr','es','de','it','nl','ar']){
+    w.setLang(lang); w.openModule('adaptation-recovery'); w.setModStep(1);
+    const diagram=d.querySelector('#modDiagram svg');
+    const label=w.t('sim.illustrative');
+    chk(`${lang}: volume curves are visibly and accessibly labelled illustrative`,
+        label!=='sim.illustrative' && !!diagram && diagram.textContent.includes(label) &&
+        diagram.getAttribute('aria-label').includes(label));
+  }
+  w.setLang('en');
   chk('no published source is left at draft', published.every(e => e.reviewStatus === 'reviewed'));
   chk('the only draft record is an internal note',
       EVIDENCE.filter(e => e.reviewStatus === 'draft').every(e => e.journal === 'internal'),

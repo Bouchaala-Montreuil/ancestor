@@ -238,9 +238,14 @@ group('7. User navigating with a screen reader');
       hits.every(h => !h.hasAttribute('tabindex') && !h.hasAttribute('role')));
   const rows = Array.from(d.querySelectorAll('.muscle-list .mrow'));
   chk('the muscle list is the keyboard path', rows.length === 12, rows.length + ' rows');
-  chk('each row names the group and its state',
-      rows.every(r => /,\s/.test(r.getAttribute('aria-label') || '')),
-      (rows[0] || {}).getAttribute ? rows[0].getAttribute('aria-label') : '');
+  const recovery = w.allRecovery(w.getState(), Date.now());
+  chk('each row names the visible group, visible value and actual recovery state',
+      rows.every(row => {
+        const id=row.getAttribute('data-a1'), r=recovery[id], label=row.getAttribute('aria-label') || '';
+        const visible=row.textContent.replace(/\s+/g,' ').trim();
+        const state=r && r.since!==null ? r.state : 'fresh';
+        return !!r && label.includes(visible) && label.includes(w.t('mg.'+id)) && label.includes(w.t('mst.'+state));
+      }), (rows[0] || {}).getAttribute ? rows[0].getAttribute('aria-label') : '');
   chk('and says whether it is the selected one',
       rows.every(r => r.getAttribute('aria-pressed') === 'true' || r.getAttribute('aria-pressed') === 'false'));
   chk('the figure has a text alternative',

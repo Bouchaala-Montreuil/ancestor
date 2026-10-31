@@ -1739,6 +1739,14 @@ group('31. Every action named in the app resolves to a registered one');
   /* Views, then the surfaces that are not views. */
   ['home','session','body','progress','profile','science'].forEach(v => { w.go(v); scan(); });
   w.go('body'); w.selectMuscle('chest'); scan();
+  /* jsdom cannot mount WebGL, so inspect the generated toolbar independently;
+     otherwise every 3D control can be missing from the action table unnoticed. */
+  const labProbe = d.createElement('div');
+  labProbe.innerHTML = w.labControlsHtml();
+  labProbe.querySelectorAll('[data-act],[data-in]').forEach(el => {
+    const n = el.getAttribute('data-act') || el.getAttribute('data-in');
+    if(n) seen[n] = (seen[n] || 0) + 1;
+  });
   ['sleep','shift','feel','bw'].forEach(k => { w.openSheet(k); scan(); w.closeSheet(); });
   w.openWhy('decision'); scan(); w.closeSheet();
   w.go('science'); w.openLesson('muscle-growth'); scan(); w.backToScience();
@@ -1766,6 +1774,9 @@ group('31. Every action named in the app resolves to a registered one');
   while((m = grab.exec(src))) named.add(m[1]);
   const grab2 = /actAttr\('([a-z][\w$]*)'/g;
   while((m = grab2.exec(src))) named.add(m[1]);
+  /* The anatomy toolbar passes its action name through btn() to actAttr(). */
+  const grab3 = /btn\('[^']*','[^']*','([a-z][\w$]*)'/g;
+  while((m = grab3.exec(src))) named.add(m[1]);
   const unused = Object.keys(w.ACTS).filter(n => !named.has(n));
   chk('and no registered action is dead code', unused.length === 0,
       unused.length ? 'never named in markup: ' + unused.join(', ')

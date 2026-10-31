@@ -49,7 +49,7 @@ terms — see `assets/ANATOMY-ATTRIBUTION.txt`.
 
 What the figure mode gives you, all genuinely interactive:
 
-- front and back views with a real rotation transition
+- front and back views with an animated 2D flip (the separate atlas rotates in 3D)
 - tap-to-select on 15 muscle regions
 - zoom-to-selection (animated `viewBox`)
 - reset to full view
@@ -280,17 +280,17 @@ npm run test:browser               # the one that needs a real Chrome (source to
 node tests/design.js               # 356 design system, states, targets, disclosures
 node tests/premium.js              # 217 motion, dashboard, charts, states, boundaries
 node tests/ui.js                   # 323 end-to-end DOM tests
-node tests/run.js                  # 146 engine / i18n tests
+node tests/run.js                  # engine / i18n tests
 node tests/inclusive.js            #  70 migration / a11y / locale tests
 node tests/personas.js             #  73 persona journey checks
 node tests/science.js              # Science Hub / evidence / transparency tests
-node tests/logic.js                # 156 exercise-aware logging and workout-safety checks
+node tests/logic.js                # exercise-aware logging and workout-safety checks
 node tests/anatomy.js              #  64 real 3D asset and selection tests
 node tests/print.js                #  88 the A4 sheet
 node tests/movement.js             # exercise mappings, guidance and localization checks
 node tests/exercise_filters.js     # plan, substitution, empty-pool and preference regressions
 node tests/release_integrity.js    # locks, offline notices, vendor payload and build budget
-node tests/browser.js              #  95 real Chromium WebGL 2.0, viewport/RTL & SW offline tests
+node tests/browser.js              # Chromium WebGL 2.0, viewport/RTL & SW offline tests
 node tests/journey.js              #  39 navigation and disclosure checks in Chromium
 node tests/workout_safety.js       #  60 workout, persistence and failure-path checks in Chromium
 node tests/rest_timer.js           #  75 timer, alerts, interruption and layout checks in Chromium
@@ -299,6 +299,9 @@ node tests/exercise_filters_browser.js # preference, override, draft and warning
 node tests/release_integrity_browser.js # keyboard, localization and offline notices
 node tests/keyboard_a11y_browser.js    # keyboard focus, modal, CSP and CSSOM regressions
 node tests/data_durability_browser.js   # imports, failed writes, recovery, erase and cross-tab conflicts
+npm run test:hero                  # conservative image-header contrast bound
+npm run test:axe                   # automated axe scan; incompletes need human review
+ANCESTOR_BROWSER=chromium npm run test:cross-browser # PWA + standalone; engine smoke journey
 npm run audit:deps                 # networked audit of both committed lockfiles
 node tools/pwa_audit.js            #  30 manifest, icons, installability, shortcuts
 node tools/ax_audit.js             #  75 Chrome's accessibility tree
@@ -328,22 +331,24 @@ selection are in **[ANATOMY_MODEL_RESEARCH.md](ANATOMY_MODEL_RESEARCH.md)**.
 |---|---|
 | R1 | Establish a baseline on first exposure |
 | R2 | Build repetitions within the target range |
-| R3 | Increase load only when **every** set reaches the top of the range at target effort |
-| R4 | Hold the load when the increase has not been earned |
-| R5 | Reduce when performance or technique deteriorates |
-| R6 | A missed or delayed session never triggers an increase |
-| R7 | Repeated stagnation is flagged, not punished with more weight |
-| R8 | A deload is recommended only after stagnation **plus** fatigue evidence |
+| R3 | Advance the exercise's training variable when **every** set reaches the top of the range at target effort |
+| R4 | Hold the load when an increase has not been earned and build toward the target |
+| R5 | Step back when the latest result is below the target range; technique is not assessed |
+| R6 | A missed or delayed session never earns an increase; a long gap prompts re-entry |
+| R7 | Flag three flat sessions when no higher-priority rule applies; hold the relevant load, duration or distance |
+| R8 | Two consecutive performance declines trigger a conservative adjustment |
 | R9 | Progress is judged across weeks, not session to session |
 | R10 | Every change is explained in the interface |
 
-**Time is never an input to the load.** Three states with identical history 2,
-9 and 18 days later produce byte-identical recommendations — this is an
-automated test, not a claim.
+**Time alone never earns an increase.** The tests compare identical histories
+2, 9 and 18 days later; a gap over 21 days instead triggers a re-entry adjustment.
 
-Increase sizes: ~2.5 % upper body, ~5 % lower body, rounded to real plates
-(2.5 kg / 2 kg dumbbell / 5 lb). Two consecutive declines trigger a 10 %
-deload. Three flat sessions raise a plateau flag and hold the load.
+The load-axis heuristic uses ~2.5% upper body / ~5% lower body steps, rounded to
+available increments. Consecutive declines use a 10% reduction before rounding;
+assisted work instead increases assistance. Three flat sessions can raise a
+plateau flag and hold the relevant load, duration or distance when no earlier
+rule applies. These rules still need
+independent exercise and clinical review.
 
 ### Recovery — an estimate that admits it is one
 
@@ -354,6 +359,12 @@ style, experience, your logged sleep, what you reported about soreness and
 joints, and recent performance trend. Conservative defaults (2.5–3 days, not
 the folklore "7 days for chest") adapt cautiously to your own log, bounded to
 0.65×–1.50× and requiring evidence before moving.
+
+Only **separately logged** recent sleep enters that calculation. The usual
+sleep hours and variability asked during onboarding are saved and displayed but
+currently do not affect recovery or the train/rest decision; without recent
+sleep logs, sleep is reported as missing. The usual wake time is used to anchor
+the training day. This mismatch needs a product decision before launch.
 
 Every estimate breaks down into named factors with their multipliers. Tap any
 muscle on the body map to see exactly which inputs produced the number.
@@ -527,6 +538,36 @@ ANCESTOR_TEST_TARGET=http://127.0.0.1:8000/ npm run test:durability
 ANCESTOR_TEST_TARGET=release/ancestor.html npm run test:durability
 ```
 
+### Automated launch-review pass — 2026-10-31
+
+This pass repaired the 3D toolbar, several contrast and accessible-name defects,
+metric-help disclosure, a contradictory symptom warning, the held plateau target
+for timed/distance exercises, an inaccurate source summary and two evidence
+links. The usual-sleep onboarding answers remain unused by the recovery model;
+see the recovery section above and the review handoff before changing them.
+
+The current build passed **1,981 headless checks**, a scan of **1,946
+dictionary keys** across seven languages and **67 site checks**. `npm run test:browser`
+passed **733 Chromium checks**, including 176 layouts and an axe scan. A separate
+Playwright Chromium journey passed **72 checks** on the HTTP PWA and actual
+standalone file; a v45 → v46 update/offline probe passed **8/8**. Chromium was
+headless Linux, not a physical device. Firefox and WebKit were not available;
+`tools/ci/browser-engines.yml` is an **inactive** GitHub Actions template because
+the connected GitHub app lacked Workflows permission to install it.
+
+Axe reported zero violations across **144 states** each on HTTP and standalone,
+but marked **1,138 / 1,123 contrast-node occurrences** and **112 / 112
+label-name occurrences** incomplete in the latest HTTP / standalone runs. They require human review; incomplete is
+not a pass. The six header scrims passed a separate conservative mathematical
+contrast bound, which does not settle the other incomplete findings. npm audits
+returned zero known advisories for both locks on this date; that is not a
+security or legal sign-off.
+
+See [LAUNCH_REVIEW.md](LAUNCH_REVIEW.md) for exact coverage, known limitations,
+review checklists and the empty sign-off record. No independent professional,
+real-device, real screen-reader, Firefox or Safari review has been completed;
+**do not treat this as public-launch approval**.
+
 ### Launch-readiness audit — remaining work
 
 The October 2026 audit reproduced and fixed preference bypasses in substitute
@@ -657,9 +698,10 @@ windows are labelled estimates throughout; when data is missing the screen says
   licence. See [LICENSE](../LICENSE).
 - No sync between devices; one browser profile only.
 - Recovery defaults converge only after several weeks of logged sessions.
-- Timed holds (planks, hangs) are approximated in seconds rather than modelled
-  as a separate type.
-- The rotation transition is a scale-based 2D flip, not a true mesh rotation.
+- The flat figure's front/back transition is a scale-based 2D flip; only the
+  separate 3D atlas rotates a mesh.
+- Usual sleep hours and variability from onboarding are stored but not used by
+  the recovery estimate; only separately logged sleep is used.
 
 ---
 

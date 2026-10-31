@@ -282,6 +282,14 @@ group('3. Progression engine — the ten rules');
   ]});
   r = R(`recommend(STATE,'${exId}',${NOW})`);
   chk('R8 two consecutive declines -> deload', r.kind === 'deload' && r.load < 55, r.kind + ' -> ' + r.load);
+  mkState({ sessions:[
+    { id:'a1', date:NOW-15*DAY, exercises:[{id:'assisted-pullup',sets:[{a:20,r:10,rir:1}]}]},
+    { id:'a2', date:NOW-9*DAY, exercises:[{id:'assisted-pullup',sets:[{a:20,r:9,rir:1}]}]},
+    { id:'a3', date:NOW-3*DAY, exercises:[{id:'assisted-pullup',sets:[{a:20,r:8,rir:1}]}]}
+  ]});
+  r = R(`recommend(STATE,'assisted-pullup',${NOW})`);
+  chk('R8 assisted work uses more assistance, without telling the user to reduce it by a percentage',
+    r.kind==='deload' && r.assist>20 && !/reduce about 10%/i.test(r.reasons[0].text),JSON.stringify(r));
 
   // R7: stagnation flagged, not punished
   mkState({ sessions:[
@@ -291,6 +299,22 @@ group('3. Progression engine — the ten rules');
   ]});
   r = R(`recommend(STATE,'${exId}',${NOW})`);
   chk('R7 three flat sessions -> plateau, load held', r.kind === 'plateau' && r.load === 50, r.kind + ' ' + r.load);
+
+  // The same plateau rule must hold the primary axis of timed and distance work.
+  for(const [id,sets,field,value] of [
+    ['plank',[{t:30,rir:2}],'targetTime',30],
+    ['farmer-carry',[{w:10,d:50,rir:2}],'targetDistance',50]
+  ]){
+    const session = days => ({id:id+days,date:NOW-days*DAY,exercises:[{id,sets}]});
+    mkState({sessions:[session(15),session(9),session(3)]});
+    const flat=R(`recommend(STATE,'${id}',${NOW})`);
+    chk(`R7 ${id}: three flat sessions hold the primary target`,
+      flat.kind==='plateau' && flat[field]===value,JSON.stringify({kind:flat.kind,target:flat[field]}));
+    mkState({sessions:[session(3)]});
+    const normal=R(`recommend(STATE,'${id}',${NOW})`);
+    chk(`R4 ${id}: a non-plateau can still aim for a higher target`,
+      normal.kind==='hold' && normal[field]>value,JSON.stringify({kind:normal.kind,target:normal[field]}));
+  }
 
   // The brief's worked example (50 -> 50 -> 50 -> 50x12 -> 52.5) is a barbell
   // lift, so it is verified on bb-bench (6-10 reps, 2.5 kg plates).
@@ -615,6 +639,19 @@ group('7. Refusal engine — it is willing to say no');
   // severe joint pain is a hard stop
   const pain = mkState({ feelings:[{ id:'f', date: NOW-1*HOUR, soreness:0, joint:3, fatigue:0, illness:0 }] });
   chk('severe joint pain -> stop', R(`decide(STATE, ['bb-bench'], ${NOW})`).state === 'stop');
+
+  // Fatigue explanations use the selected language and the actual recorded level.
+  for(const level of [2,3]){
+    mkState({ feelings:[{ id:'f', date:NOW-1*HOUR, soreness:0, joint:0, fatigue:level, illness:0 }] });
+    for(const lang of ['en','fr','es','de','it','nl','ar']){
+      R(`setLang('${lang}')`);
+      const reason=R(`decide(STATE, ['bb-bench'], ${NOW})`).reasons.find(x=>x.k==='fat');
+      const expected=R(`t('feel.fatigue') + ' — ' + t('feel.${level===2?'moderate':'high'}')`);
+      chk(`${lang}: fatigue level ${level} is explained using translated recorded choices`,
+        !!reason && reason.text===expected && reason.tone===(level===2?'warn':'down'));
+    }
+  }
+  R("setLang('en')");
 
   // A shift is NOT an automatic ban
   const shiftState = mkState({ shifts:[{ id:'s', start:'2026-10-22T09:00', end:'2026-10-22T17:00' }] });

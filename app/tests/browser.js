@@ -312,6 +312,46 @@ function startServer(){
         frontPx && frontPx.nonEmpty > 400, JSON.stringify(frontPx));
     if(SHOT_DIR) await shot(page, '04_anatomy_3d_front.png');
 
+    /* Exercise the visible, delegated controls. Calling labSetView() directly
+       does not prove that the toolbar has an action handler or valid arguments. */
+    const toolbar = await page.evaluate(() => ({
+      wired: ['labSetView','labResetView','labZoom','labToggleIsolate','labToggleContext'].every(n => typeof ACTS[n] === 'function'),
+      momentary: ['labFront','labBack','labZoomIn','labZoomOut'].every(id => !document.getElementById(id).hasAttribute('aria-pressed')),
+      back: document.getElementById('labBack').dataset.a1,
+      zoom: Number(document.getElementById('labZoomIn').dataset.a1)
+    }));
+    chk('3D toolbar actions are registered with valid semantics and typed arguments',
+        toolbar.wired && toolbar.momentary && toolbar.back === 'back' && toolbar.zoom === .82, JSON.stringify(toolbar));
+    /* Reset defines the canonical camera position; the initial load has a
+       slightly different elevation and must not be used as a pixel oracle. */
+    await page.click('#labReset');
+    const resetReference = await page.evaluate(() => labSamplePixels());
+    await page.click('#labBack');
+    const backButtonPx = await page.evaluate(() => labSamplePixels());
+    chk('clicking the actual Back button rotates the 3D model', backButtonPx.hash !== resetReference.hash);
+    await page.click('#labFront');
+    const frontButtonPx = await page.evaluate(() => labSamplePixels());
+    chk('clicking the actual Front button returns the model to its front', frontButtonPx.hash === resetReference.hash);
+    await page.click('#labZoomIn');
+    const zoomInPx = await page.evaluate(() => labSamplePixels());
+    await page.click('#labZoomOut');
+    const zoomOutPx = await page.evaluate(() => labSamplePixels());
+    chk('both zoom buttons change the rendered view', zoomInPx.hash !== frontButtonPx.hash && zoomOutPx.hash !== zoomInPx.hash);
+    await page.click('#labIso');
+    const isoButton = await page.evaluate(() => ({on:LAB.isIsolated(), pressed:document.getElementById('labIso').getAttribute('aria-pressed')}));
+    chk('the isolate button changes the model and announces its state', isoButton.on && isoButton.pressed === 'true');
+    await page.click('#labBone');
+    await page.click('#labShell');
+    const contextButtons = await page.evaluate(() => ({bone:LAB.contextVisible('bone'),shell:LAB.contextVisible('shell'),
+      bonePressed:document.getElementById('labBone').getAttribute('aria-pressed'),shellPressed:document.getElementById('labShell').getAttribute('aria-pressed')}));
+    chk('skeleton and fascia buttons change the model and announce their states',
+        !contextButtons.bone && contextButtons.shell && contextButtons.bonePressed === 'false' && contextButtons.shellPressed === 'true', JSON.stringify(contextButtons));
+    await page.click('#labBone'); await page.click('#labShell');
+    await page.click('#labReset');
+    const resetButton = await page.evaluate(() => ({isolated:LAB.isIsolated(),pressed:document.getElementById('labIso').getAttribute('aria-pressed'),px:labSamplePixels()}));
+    chk('the actual Reset button clears isolation and restores the front view',
+        !resetButton.isolated && resetButton.pressed === 'false' && resetButton.px.hash === resetReference.hash, JSON.stringify(resetButton));
+
     /* Switch to back view and verify canvas survives render() AND pixels change */
     const backPx = await page.evaluate(() => {
       setSide('back');

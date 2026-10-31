@@ -37,13 +37,16 @@ npm run verify                              # headless, packaging and site gate
 source tools/chromium.sh                    # install the separately locked browser helper
 npm run test:browser                        # Chromium journeys, WebGL, layouts and offline
 npm run pwa && npm run ax                   # install and accessibility-tree audits
+ANCESTOR_BROWSER=chromium npm run test:cross-browser # PWA and standalone engine smoke test
 npm run audit:deps                          # networked npm audit of both lockfiles
 ```
 
 The browser and networked dependency audits are separate from `npm run verify`.
 The Chromium keyboard suite covers focus, dialogs, selected states and offline
 reloads; it is not a substitute for real screen-reader or physical-device testing.
-See `app/README.md` for the individual suites, results and remaining launch work.
+Firefox and WebKit were not run. See `app/README.md` for individual suites and
+[app/LAUNCH_REVIEW.md](app/LAUNCH_REVIEW.md) for results, known limitations and
+remaining independent reviews.
 
 The current tab’s log can be exported from Me → Data, but an export **does not
 include an active workout**. Check that the download was saved and keep a

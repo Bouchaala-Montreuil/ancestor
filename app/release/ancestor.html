@@ -10,7 +10,7 @@
      'wasm-unsafe-eval' is the narrow one: it lets three.js build its decoders
      and still forbids eval() and new Function() in JavaScript.
      build.py appends the sha256 of each inlined block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-6wBEt/kn4BlsjqT1gNF6M2UuqrUldutKVXL2vhMR73E=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-rd4bjSh0977bpXZz3XVZnaf4hfD21ZTU+pLDQFwFsXY=' 'sha256-3durKpNU0Um8Kt1OwXThxfHCgQD79aN0jYgDtLDqeSk=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-QvpAXxWkdDE3s1gaLHTYfJFaWveBKJfDuJuAoxE5ra8=' 'sha256-cXY8ivakW9/DvDEllvKXUGqCC5EgoKmiizDCrRAQDeg=' 'sha256-JmoOWzWkcsD27s62xpyH8pzUCNt+eLMrf5/LQt2lRUQ=' 'sha256-sTNroQEUr4ob7qlO1cQPCnh7CgaLdcDLk4Yv76M9Evo=' 'sha256-9ibzWl17q13zbqOWAOAavrfuOCEMbW8VoRQCmQuJKhg=' 'sha256-IgY91sf96VmbEjV1G2curcXBftyLJ8Puj20pvISE+xU=' 'sha256-YObl9r0wEYHVfinctMDcchN1Z8jo1YLX6oNB0gU1ni4=' 'sha256-EEkdZpS4eXZ8xHFhewt52kcP+AK2Sfz9YzmSPmXhk1E=' 'sha256-NUKtwlT0pAzG/s/fxeWLXQVHnH3qDIQVliqEy94Xnno=' 'sha256-qFa+EpJXzf/7wQw4y3zdMUpvelgBYgJhHt0mTExeBxQ=' 'sha256-HJjHsLlPugaK0+I8BwaD2b0Q+cq4hu4efyHPmlNy+VY=' 'sha256-2ZzJC0ju89VNnS2inS8FsWufGoc2I+MBsAJDJHd6VTs=' 'sha256-QJfKdTIX8hxZhOpUJKonOOaup8mfH6CT4Zyzjfm8SIg=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-DbftNkhwX+ULRej5pVrEV6QrX2vsFNgEVBWZBIZE1uc=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-KCkoHfFQ1rtrl1vgmEPN0Nau2LdP7lHOkeYHx4dVHkw=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-jloKwvZSQI3BGJICwBOSzPdnlYtMXyqqIpOOO6x9+JY=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-EKso/2w+EhgHhEgAB/vgy3TMz5wgXxP0n5F89bSr+Vg=' 'sha256-fVlh3rMFuRxMcXKb4idAMP6tfnUGXho3XRHlQlM4vw4=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-RV4ks/AwKnSj7WyXJ+VOJcNuoy7gKOG3ksZ7hF2OW3E=' 'sha256-gwBKuFMRbalVTAi6jYqTS2AWihNLjZpYt9Y6oWhs3yY=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-332DySlmQclM2l94eBet8xtA7mjAsfvKf9RtGE27rrs=' 'sha256-NxbjhhHvvB5JozqcUJaMxdc8mGeMH9wYtBa6x6hvFYM=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-MkLEF9l5ylIz5SLUH4FXifHMhrBzX+IHZn/Is0cvLNw=' 'sha256-k+w31khpfjJhOq2obxHkbc5s37qPcYBqHKHTulFDDks=' 'sha256-F0hy9doJPdX7LAxC9J33JcO7KJWG5+1O0L7TKsseFK4=' 'sha256-XG3TrFUULDK7CEnwBTazRA7zbRQMQug5sWzwPIxm2dM=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-wThK8px2h4aPFwoojjG9zoSE1CeCGR0OcZB0xR39jHg=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-h9sHI2cfrDiJgQTvBMYN1NkxA6e8eLglU82J/0LqLgg=' 'sha256-SPOD5fCAbblKCQMbPMxVu4t/1t914BUcsB4GZnfEbWw=' 'sha256-Kf5tcLrLzFkfifLp+PiCNIWCByPfGZgRXiA9j+z0TcI=' 'sha256-0cTqgFhUEqq7Yq9elSA3iD5K/nsdL4A9PWUjOHupXfA='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-/H2Fk2roCjPMP2R4k2tijWjRTmVyi0WfVYdqmqWU1oc=' 'sha256-BkSyOgrxmhoiAFY1TjK870ust9enVWAy7fi+iK+F/XY=' 'sha256-Tc983cUDOk8Swd9/g6lNlXI4Ejat2br1tAIcmqzxVRE=' 'sha256-3durKpNU0Um8Kt1OwXThxfHCgQD79aN0jYgDtLDqeSk=' 'sha256-ib8FWCJ/dFCC2Iqb+64KLQBKqWtsPIrGpdj7gunwlKY=' 'sha256-QvpAXxWkdDE3s1gaLHTYfJFaWveBKJfDuJuAoxE5ra8=' 'sha256-yqpj6vr2K6qLcnZAFj8Y3lHUyYdfKB7PQEDrQNJutIA=' 'sha256-JmoOWzWkcsD27s62xpyH8pzUCNt+eLMrf5/LQt2lRUQ=' 'sha256-dkAGJYDd0gTlIrvybk71CiVotviGwcUDsjQZA2L58hU=' 'sha256-4xbR8pTneQ7HXwkgZB4Xz0gPdchUlkwoNE+dDoLQBE4=' 'sha256-IgY91sf96VmbEjV1G2curcXBftyLJ8Puj20pvISE+xU=' 'sha256-YObl9r0wEYHVfinctMDcchN1Z8jo1YLX6oNB0gU1ni4=' 'sha256-XR9ujfuDxi7Rtqvxlx+hKlqMyB31sd1u7dc62/Y/HSM=' 'sha256-NUKtwlT0pAzG/s/fxeWLXQVHnH3qDIQVliqEy94Xnno=' 'sha256-QoaecLfqjY7GPabTqK8FzJjyi4FN0eT/yglMUlfSkSs=' 'sha256-9effi/73Hl6REMNzN6SxFQmHFI5xgUpURwKAVxL7to0=' 'sha256-5hcl43N+kdB+AkFLDxpKH6E7EUjJh1eEiVtLLFxhBwA=' 'sha256-sLtRVV7iozmmikRlipvFf8pi7yRRUUqXUZTmXwYOFXI=' 'sha256-QhRehKNUCm4CRrcDZlFhS8nVPpGy7iZO06+mIjfUBjI=' 'sha256-d0vawh5niHsbDXqTrcpQjm1K40zi7Ym3LuHcPOQ3Wdk=' 'sha256-DbftNkhwX+ULRej5pVrEV6QrX2vsFNgEVBWZBIZE1uc=' 'sha256-7lzWpLeXd27KkhVqqbjFkUZ1UABiCEgcSxJ5u4Flyv0=' 'sha256-KCkoHfFQ1rtrl1vgmEPN0Nau2LdP7lHOkeYHx4dVHkw=' 'sha256-GH4SmSalU/ModKlFv6POxCV+lwH0RLSXmpJTY2ft11s=' 'sha256-jloKwvZSQI3BGJICwBOSzPdnlYtMXyqqIpOOO6x9+JY=' 'sha256-WBfYQoxadyGKuWJvGI4z7E4A4i9Wv3jtEjrGAwuh2l0=' 'sha256-PJuUVUmDYAM6DnpKR89/oVRx2w6b9bSKSaw29rT+NOs=' 'sha256-pZWSP+yjYmwTRQVMQu4y8T+XdSbFVKK7ycggeaICu30=' 'sha256-urjkiCmgHP/2+9SpWsb9sf3OfqG/O1KTPSvqjUoSjeM=' 'sha256-kVDqjo4mfFaMIK5Vli8dBply9Owj5BbvwJMY6DTgeEE=' 'sha256-LBifAysvL55gIwmvHTIqBFv6fjvcVp3sm4FodSi4tkw=' 'sha256-eGehXETofkB0kwaCIXCH4nqdXo3Nd7VCW7hre1gV9NA=' 'sha256-OjVD06xvJug9iPELgopxEXOKHIZSPNnDv8nMz9uTJxk=' 'sha256-CIq+EcRXxjQNoFrvWLyJhIkFufi3mAF1SKlsLtBntZ8=' 'sha256-NxbjhhHvvB5JozqcUJaMxdc8mGeMH9wYtBa6x6hvFYM=' 'sha256-yI4sgpVe4pBIRiyl19IHhkXaEbBf0Pg96EERDPmhTmY=' 'sha256-ypU7zFpdDr8xt2mvd671q6DZw7E8XlWtXpOOfgrMKpw=' 'sha256-k+w31khpfjJhOq2obxHkbc5s37qPcYBqHKHTulFDDks=' 'sha256-0TKWL7UoFaloopnBmNMrbp/ICJ2TDJovElMrD2uXfS0=' 'sha256-XG3TrFUULDK7CEnwBTazRA7zbRQMQug5sWzwPIxm2dM=' 'sha256-hfV6lL5PlEqt4eeyVNfxHApxK1Kfgko/fKbkXNFvXos=' 'sha256-wThK8px2h4aPFwoojjG9zoSE1CeCGR0OcZB0xR39jHg=' 'sha256-Msqna9WHzQsKqhtmV/av7vVNYNZtTf5e1Qd5wUxYOCs=' 'sha256-mpwGJaE9JKOX1mhDgZGlBz6RznHtFoSHFVTyTpG09A8=' 'sha256-fckeeuBqThfFzeGl6mXMTpPkcjgvVAdqYczZZj7UdWU=' 'sha256-Kf5tcLrLzFkfifLp+PiCNIWCByPfGZgRXiA9j+z0TcI=' 'sha256-0cTqgFhUEqq7Yq9elSA3iD5K/nsdL4A9PWUjOHupXfA='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>ANCESTOR — Recovery Engine</title>
 <meta name="theme-color" content="#090909">
 <meta name="description" content="A recovery-aware training system for natural trainees and shift workers.">
@@ -789,6 +789,7 @@ textarea{min-height:96px;border:var(--hair) solid var(--line);padding:var(--s3)}
 .flag.alert::before{background:var(--alert)}
 .flag.new::before,.flag-new::before{background:var(--burnt)}
 .flag.plain{background:transparent;border-color:var(--line);color:var(--ink-3)}
+.flag.nodata{color:var(--tech-ink);font-size:10px}
 .flag.sm{min-height:22px;font-size:8px;padding:3px 6px}
 button.flag{cursor:pointer}
 button.flag:hover{border-color:var(--ink)}
@@ -910,9 +911,9 @@ button.flag:hover{border-color:var(--ink)}
 .next-ex-more[open] > summary::after{content:"\2013"}
 .next-ex-more > summary:focus-visible{outline:2px solid var(--ivory);outline-offset:2px}
 .readiness-def{margin-top:var(--s2);border-top:0;padding-top:0}
-.readiness-def .dis-t{color:rgba(241,235,221,.75)}
+.decision .dis-t{color:rgba(241,235,221,.75)}
 .readiness-def .body-sm{color:rgba(241,235,221,.85)}
-.readiness-def > summary::after{color:var(--accent-on-ink)}
+.decision .dis > summary::after{color:var(--accent-on-ink)}
 .dash-insight-why{margin-top:var(--s3)}
 .decision .dash-actions{margin-top:var(--s5)}
 .decision .btn{background:var(--cta-bg);border-color:var(--cta-bg);color:var(--cta-ink)}
@@ -956,9 +957,11 @@ button.flag:hover{border-color:var(--ink)}
   letter-spacing:.06em;color:var(--tech-ink);line-height:1.4;
 }
 .metric .tip{margin-inline-start:auto}
+.metric-help{margin:0 0 8px;font-size:12px;line-height:1.45;color:var(--ink)}
+.metric-help[hidden]{display:none}
 
 .tip{
-  width:16px;height:16px;min-height:16px;padding:0;border-radius:50%;
+  width:24px;height:24px;min-height:24px;padding:0;border-radius:50%;
   border:var(--hair) solid var(--line);background:transparent;
   color:var(--tech-ink);font-family:var(--f-mono);font-size:9px;
   line-height:1;cursor:help;display:inline-flex;align-items:center;justify-content:center;
@@ -1645,7 +1648,7 @@ table.data tbody tr:last-child td{border-bottom:0}
   grid-column:1/-1;font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--tech-ink);margin-bottom:2px;
 }
-.setcard .fld label .opt{font-size:8px;letter-spacing:.08em;text-transform:none;color:var(--nodata)}
+.setcard .fld label .opt{font-size:10px;letter-spacing:.08em;text-transform:none;color:var(--tech-ink)}
 .setcard .fld input{grid-column:1;width:100%;min-width:0;min-height:42px;padding:0}
 .setcard .fld .u{grid-column:2;padding-bottom:10px;font-size:9px;white-space:nowrap}
 /**/
@@ -3413,6 +3416,12 @@ ACT('switchLang',                   el => switchLang(arg(el, 1)));
 
 /* shared components */
 ACT('showChartTip',                 el => showChartTip(arg(el, 1), arg(el, 2)));
+ACT('toggleMetricTip', el => {
+  const info = el.closest('.metric')?.querySelector('.metric-help');
+  if(!info) return;
+  info.hidden = !info.hidden;
+  el.setAttribute('aria-expanded', String(!info.hidden));
+});
 
 /* learning modules */
 ACT('closeModule',                  el => closeModule());
@@ -3447,6 +3456,11 @@ ACT('addRest',                      el => addRest(arg(el, 1)));
 ACT('openRestInfo',                 () => openRestInfo());
 ACT('addShiftFromOnb',              el => addShiftFromOnb());
 ACT('clearMuscle',                  el => clearMuscle());
+ACT('labSetView', el => labSetView(arg(el,1)));
+ACT('labResetView', () => labResetView());
+ACT('labZoom', el => labZoom(arg(el,1)));
+ACT('labToggleIsolate', () => labToggleIsolate());
+ACT('labToggleContext', el => labToggleContext(arg(el,1)));
 ACT('closeSessionEditor',           el => closeSessionEditor());
 ACT('closeSheet',                   el => closeSheet());
 ACT('deleteEditedSet',              el => deleteEditedSet(arg(el, 1)));
@@ -3805,7 +3819,7 @@ T.en = {
 'feel.fatigue':'Overall fatigue','feel.illness':'Pain or illness',
 'feel.none':'None','feel.mild':'Mild','feel.moderate':'Moderate','feel.high':'High','feel.severe':'Severe',
 'feel.where':'Where?','feel.saved':'Logged',
-'feel.stop':'You reported pain or illness. Consider stopping and seeking professional advice if symptoms persist or worsen.',
+'feel.stop':'If you have pain or illness, stop training and seek advice from a qualified professional.',
 
 'mg.chest':'Chest','mg.back':'Back','mg.shoulders':'Shoulders','mg.biceps':'Biceps','mg.triceps':'Triceps',
 'mg.forearms':'Forearms','mg.quads':'Quadriceps','mg.hamstrings':'Hamstrings','mg.glutes':'Glutes',
@@ -3965,7 +3979,7 @@ T.fr = {
 'feel.fatigue':'Fatigue globale','feel.illness':'Douleur ou maladie',
 'feel.none':'Aucune','feel.mild':'Légère','feel.moderate':'Modérée','feel.high':'Forte','feel.severe':'Sévère',
 'feel.where':'Où ?','feel.saved':'Enregistré',
-'feel.stop':'Tu as signalé une douleur ou une maladie. Envisage d\'arrêter et de consulter un professionnel si les symptômes persistent ou s\'aggravent.',
+'feel.stop':'En cas de douleur ou de maladie, arrête l’entraînement et consulte un professionnel qualifié.',
 
 'mg.chest':'Pectoraux','mg.back':'Dos','mg.shoulders':'Épaules','mg.biceps':'Biceps','mg.triceps':'Triceps',
 'mg.forearms':'Avant-bras','mg.quads':'Quadriceps','mg.hamstrings':'Ischio-jambiers','mg.glutes':'Fessiers',
@@ -4111,7 +4125,7 @@ T.es = {
 'feel.fatigue':'Fatiga general','feel.illness':'Dolor o enfermedad',
 'feel.none':'Ninguna','feel.mild':'Leve','feel.moderate':'Moderada','feel.high':'Alta','feel.severe':'Severa',
 'feel.where':'¿Dónde?','feel.saved':'Registrado',
-'feel.stop':'Has informado de dolor o enfermedad. Considera parar y consultar a un profesional si los síntomas persisten o empeoran.',
+'feel.stop':'Si tienes dolor o enfermedad, detén el entrenamiento y consulta a un profesional cualificado.',
 'mg.chest':'Pecho','mg.back':'Espalda','mg.shoulders':'Hombros','mg.biceps':'Bíceps','mg.triceps':'Tríceps',
 'mg.forearms':'Antebrazos','mg.quads':'Cuádriceps','mg.hamstrings':'Isquiotibiales','mg.glutes':'Glúteos',
 'mg.calves':'Gemelos','mg.abs':'Abdominales','mg.lowerback':'Zona lumbar',
@@ -4254,7 +4268,7 @@ T.de = {
 'feel.fatigue':'Allgemeine Ermüdung','feel.illness':'Schmerz oder Krankheit',
 'feel.none':'Keine','feel.mild':'Leicht','feel.moderate':'Mittel','feel.high':'Stark','feel.severe':'Sever',
 'feel.where':'Wo?','feel.saved':'Gespeichert',
-'feel.stop':'Du hast Schmerz oder Krankheit gemeldet. Erwäge abzubrechen und bei anhaltenden oder schlimmeren Symptomen professionellen Rat zu suchen.',
+'feel.stop':'Bei Schmerzen oder Krankheit stoppe das Training und hole qualifizierten fachlichen Rat ein.',
 'mg.chest':'Brust','mg.back':'Rücken','mg.shoulders':'Schultern','mg.biceps':'Bizeps','mg.triceps':'Trizeps',
 'mg.forearms':'Unterarme','mg.quads':'Quadrizeps','mg.hamstrings':'Beinbeuger','mg.glutes':'Gesäß',
 'mg.calves':'Waden','mg.abs':'Bauch','mg.lowerback':'Unterer Rücken',
@@ -4397,7 +4411,7 @@ T.it = {
 'feel.fatigue':'Stanchezza generale','feel.illness':'Dolore o malattia',
 'feel.none':'Nessuno','feel.mild':'Lieve','feel.moderate':'Moderato','feel.high':'Alto','feel.severe':'Severo',
 'feel.where':'Dove?','feel.saved':'Registrato',
-'feel.stop':'Hai segnalato dolore o malattia. Valuta di fermarti e di consultare un professionista se i sintomi persistono o peggiorano.',
+'feel.stop':'In caso di dolore o malattia, interrompi l’allenamento e consulta un professionista qualificato.',
 'mg.chest':'Pettorali','mg.back':'Dorso','mg.shoulders':'Spalle','mg.biceps':'Bicipiti','mg.triceps':'Tricipiti',
 'mg.forearms':'Avambracci','mg.quads':'Quadricipiti','mg.hamstrings':'Femorali','mg.glutes':'Glutei',
 'mg.calves':'Polpacci','mg.abs':'Addominali','mg.lowerback':'Zona lombare',
@@ -4540,7 +4554,7 @@ T.nl = {
 'feel.fatigue':'Algehele vermoeidheid','feel.illness':'Pijn of ziekte',
 'feel.none':'Geen','feel.mild':'Licht','feel.moderate':'Matig','feel.high':'Hoog','feel.severe':'Ernstig',
 'feel.where':'Waar?','feel.saved':'Genoteerd',
-'feel.stop':'Je hebt pijn of ziekte gemeld. Overweeg te stoppen en een professional te raadplegen als klachten aanhouden of verergeren.',
+'feel.stop':'Bij pijn of ziekte: stop met trainen en raadpleeg een bevoegde professional.',
 'mg.chest':'Borst','mg.back':'Rug','mg.shoulders':'Schouders','mg.biceps':'Biceps','mg.triceps':'Triceps',
 'mg.forearms':'Onderarmen','mg.quads':'Quadriceps','mg.hamstrings':'Hamstrings','mg.glutes':'Bilspieren',
 'mg.calves':'Kuiten','mg.abs':'Buikspieren','mg.lowerback':'Onderrug',
@@ -5899,7 +5913,7 @@ const TAR = {
 
 'feel.title':'كيف تشعر؟','feel.soreness':'ألم عضلي','feel.joint':'إزعاج في المفاصل','feel.fatigue':'إرهاق عام','feel.illness':'ألم أو مرض',
 'feel.none':'لا شيء','feel.mild':'خفيف','feel.moderate':'متوسط','feel.high':'شديد','feel.severe':'حاد','feel.where':'أين؟',
-'feel.saved':'تم التسجيل','feel.stop':'أبلغت عن ألم أو مرض. فكّر في التوقف واستشارة مختص إذا استمرت الأعراض أو ساءت.',
+'feel.saved':'تم التسجيل','feel.stop':'إذا شعرت بألم أو مرض، فأوقف التدريب واستشر مختصاً مؤهلاً.',
 
 'unc.fewSessions':'عدد الحصص المسجّلة قليل، لذا تستند نوافذ التعافي إلى قيم متحفّظة بدلاً من بياناتك.',
 'unc.noSleep':'لم يُسجَّل نوم مؤخراً، لذلك لم يُؤخذ النوم في الاعتبار.',
@@ -6526,7 +6540,7 @@ TSP.es = {
 "why.vol.row": "{muscle}: {direct} series directas, {indirect} series indirectas",
 "why.vol.flagged": "{muscle} está en el rango «{band}», así que se marca para revisión",
 "why.vol.none": "Ningún grupo muscular queda fuera del rango habitual esta semana",
-"why.vol.principle": "Volúmenes semanales más altos se asocian con mayor hipertrofia media, con rendimientos decrecientes y un coste de recuperación creciente. La respuesta individual varía mucho.",
+"why.vol.principle": "Volúmenes semanales más altos se asocian con mayor hipertrofia media. La respuesta individual varía mucho.",
 "why.data.setsWeights": "Recuento de series ponderado por la contribución muscular de cada ejercicio",
 "why.data.lastSevenDays": "Sesiones de los últimos 7 días",
 "why.assume.contributionWeights": "Supone que los pesos de contribución guardados se aproximan a la implicación real",
@@ -6835,7 +6849,7 @@ TSP.de = {
 "why.vol.row": "{muscle}: {direct} direkte Sätze, {indirect} indirekte Sätze",
 "why.vol.flagged": "{muscle} liegt im Bereich „{band}“ und wird zur Prüfung markiert",
 "why.vol.none": "Diese Woche liegt keine Muskelgruppe außerhalb des üblichen Bereichs",
-"why.vol.principle": "Höhere wöchentliche Satzvolumina gehen mit stärkerer durchschnittlicher Hypertrophie einher, bei abnehmendem Ertrag und steigenden Erholungskosten. Individuelle Reaktionen streuen stark.",
+"why.vol.principle": "Höhere wöchentliche Satzvolumina gehen mit stärkerer durchschnittlicher Hypertrophie einher. Individuelle Reaktionen streuen stark.",
 "why.data.setsWeights": "Satzzählung gewichtet nach dem Muskelbeitrag jeder Übung",
 "why.data.lastSevenDays": "Einheiten der letzten 7 Tage",
 "why.assume.contributionWeights": "Setzt voraus, dass die gespeicherten Mitarbeitsgewichte der realen Beteiligung nahekommen",
@@ -7144,7 +7158,7 @@ TSP.it = {
 "why.vol.row": "{muscle}: {direct} serie dirette, {indirect} serie indirette",
 "why.vol.flagged": "{muscle} rientra nella fascia «{band}», quindi è segnalato per la revisione",
 "why.vol.none": "Questa settimana nessun gruppo muscolare è fuori fascia",
-"why.vol.principle": "Volumi settimanali più alti sono associati a maggiore ipertrofia media, con rendimenti decrescenti e un costo di recupero crescente. Le risposte individuali variano molto.",
+"why.vol.principle": "Volumi settimanali più alti sono associati a maggiore ipertrofia media. Le risposte individuali variano molto.",
 "why.data.setsWeights": "Conteggio delle serie ponderato per il contributo muscolare di ogni esercizio",
 "why.data.lastSevenDays": "Sedute degli ultimi 7 giorni",
 "why.assume.contributionWeights": "Presuppone che i pesi di contribuzione salvati si avvicinino al coinvolgimento reale",
@@ -7453,7 +7467,7 @@ TSP.nl = {
 "why.vol.row": "{muscle}: {direct} directe sets, {indirect} indirecte sets",
 "why.vol.flagged": "{muscle} valt in de band ‘{band}’ en wordt daarom ter controle gemarkeerd",
 "why.vol.none": "Deze week valt geen enkele spiergroep buiten de gebruikelijke band",
-"why.vol.principle": "Hogere wekelijkse setvolumes hangen samen met meer gemiddelde hypertrofie, met afnemend rendement en stijgende herstelkosten. Individuele reacties lopen sterk uiteen.",
+"why.vol.principle": "Hogere wekelijkse setvolumes hangen samen met meer gemiddelde hypertrofie. Individuele reacties lopen sterk uiteen.",
 "why.data.setsWeights": "Settelling gewogen naar de spierbijdrage van elke oefening",
 "why.data.lastSevenDays": "Trainingen van de afgelopen 7 dagen",
 "why.assume.contributionWeights": "Veronderstelt dat de opgeslagen bijdragegewichten de werkelijke betrokkenheid benaderen",
@@ -7762,7 +7776,7 @@ TSP.ar = {
 "why.vol.row": "{muscle}: {direct} مجموعات مباشرة، {indirect} مجموعات غير مباشرة",
 "why.vol.flagged": "{muscle} يقع في النطاق «{band}»، لذا يُرفع للمراجعة",
 "why.vol.none": "لا تخرج أي مجموعة عضلية عن النطاق المعتاد هذا الأسبوع",
-"why.vol.principle": "ترتبط الأحجام الأسبوعية الأعلى بزيادة متوسطة أكبر في التضخّم، مع مردود متناقص وكلفة تعافٍ متصاعدة. والاستجابات الفردية تتفاوت تفاوتًا واسعًا.",
+"why.vol.principle": "ترتبط الأحجام الأسبوعية الأعلى بزيادة متوسطة أكبر في التضخّم. والاستجابات الفردية تتفاوت تفاوتًا واسعًا.",
 "why.data.setsWeights": "عدّ المجموعات موزونًا بمساهمة العضلات في كل تمرين",
 "why.data.lastSevenDays": "حصص آخر 7 أيام",
 "why.assume.contributionWeights": "يفترض أن أوزان المساهمة المخزّنة تقارب المشاركة الفعلية",
@@ -7984,7 +7998,7 @@ TSC2.en = {
 'rule.recovery.estimate':'Estimate recovery windows per muscle','rule.recovery.estimate.how':'A per-muscle default is scaled by work, effort, style, experience, reported sleep, reported symptoms and performance trend, then adjusted slowly by a bounded learned factor. Every factor is shown.',
 'rule.recovery.sleepBand':'Compare reported sleep to a reference band','rule.recovery.sleepBand.how':'Reported sleep is compared against the adult guideline of seven hours or more. It is context, never a measured physiological signal.',
 'rule.decision.ladder':'Escalate cautiously, never force rest','rule.decision.ladder.how':'Readiness, sleep, shifts, reported symptoms and performance trend move a severity ladder from TRAIN through MODIFY to REST. A shift alone never forces rest; reported illness or severe joint pain always escalates.',
-'why.vol.row':'{muscle}: {direct} direct sets, {indirect} indirect sets','why.vol.flagged':'{muscle} falls in the \"{band}\" band, so it is raised for review','why.vol.none':'No muscle group falls outside the usual range this week','why.vol.principle':'Higher weekly set volumes are associated with greater average hypertrophy, with diminishing returns and a rising recovery cost. Individual responses vary widely.','why.data.setsWeights':'Set counts weighted by each exercise muscle contribution','why.data.lastSevenDays':'Sessions in the last 7 days','why.assume.contributionWeights':'Assumes the stored contribution weights approximate real involvement','why.assume.bandsAreReview':'Assumes the bands are prompts to review, not targets','why.missing.noIntensityMeasure':'No measure of effort beyond logged RIR is available','why.alt.changeVolume':'Change weekly volume','why.alt.changeVolume.n':'Add or remove a set and watch how the count and recovery respond.','why.alt.ignoreFlag':'Ignore the flag','why.alt.ignoreFlag.n':'The flag is advisory; your own results are the better guide.','vol.title':'Volume distribution','vol.direct':'Direct sets','vol.indirect':'Indirect sets','vol.total':'Total','vol.band':'Band','vol.reviewNote':'Counts are weighted by each exercise contribution and shown for review. Out-of-band counts are a prompt to look, not a judgement about your training or your body.','vol.flagGap':'Below the usual range — worth a look','vol.flagExcess':'Well above the usual range — check recovery','vol.band.none':'not trained','vol.band.low':'low','vol.band.typical':'typical','vol.band.high':'high','vol.band.veryHigh':'very high','rule.volume.reviewBand':'Flag out-of-range weekly volume for review','rule.volume.reviewBand.how':'Weekly sets per muscle group are counted with contribution weights and split into direct and indirect involvement. Counts outside the usual range raise a review prompt. No optimum is prescribed and nothing is diagnosed.','why.noDataUsed':'No recorded data was available, so the rule fell back to its defaults.','rule.evidence.reviewGate':'Reviewed evidence only','rule.evidence.reviewGate.how':'A source can affect a user-facing rule only after review and only if its quality is usable. Recency alone never qualifies, and nothing deploys straight from the literature.'
+'why.vol.row':'{muscle}: {direct} direct sets, {indirect} indirect sets','why.vol.flagged':'{muscle} falls in the \"{band}\" band, so it is raised for review','why.vol.none':'No muscle group falls outside the usual range this week','why.vol.principle':'Higher weekly set volumes are associated with greater average hypertrophy. Individual responses vary widely.','why.data.setsWeights':'Set counts weighted by each exercise muscle contribution','why.data.lastSevenDays':'Sessions in the last 7 days','why.assume.contributionWeights':'Assumes the stored contribution weights approximate real involvement','why.assume.bandsAreReview':'Assumes the bands are prompts to review, not targets','why.missing.noIntensityMeasure':'No measure of effort beyond logged RIR is available','why.alt.changeVolume':'Change weekly volume','why.alt.changeVolume.n':'Add or remove a set and watch how the count and recovery respond.','why.alt.ignoreFlag':'Ignore the flag','why.alt.ignoreFlag.n':'The flag is advisory; your own results are the better guide.','vol.title':'Volume distribution','vol.direct':'Direct sets','vol.indirect':'Indirect sets','vol.total':'Total','vol.band':'Band','vol.reviewNote':'Counts are weighted by each exercise contribution and shown for review. Out-of-band counts are a prompt to look, not a judgement about your training or your body.','vol.flagGap':'Below the usual range — worth a look','vol.flagExcess':'Well above the usual range — check recovery','vol.band.none':'not trained','vol.band.low':'low','vol.band.typical':'typical','vol.band.high':'high','vol.band.veryHigh':'very high','rule.volume.reviewBand':'Flag out-of-range weekly volume for review','rule.volume.reviewBand.how':'Weekly sets per muscle group are counted with contribution weights and split into direct and indirect involvement. Counts outside the usual range raise a review prompt. No optimum is prescribed and nothing is diagnosed.','why.noDataUsed':'No recorded data was available, so the rule fell back to its defaults.','rule.evidence.reviewGate':'Reviewed evidence only','rule.evidence.reviewGate.how':'A source can affect a user-facing rule only after review and only if its quality is usable. Recency alone never qualifies, and nothing deploys straight from the literature.'
 };
 
 TSC2.fr = {
@@ -8005,7 +8019,7 @@ TSC2.fr = {
 'met.limits':'Aucune dépense énergétique, masse grasse ou apport n\'est calculé dans ANCESTOR. Cet explorateur décrit des principes, pas votre métabolisme.',
 'sim.illustrative':'illustratif','sim.assume':'Suppose que chaque série comptée sollicite directement le muscle, que chaque séance prévue a lieu, et qu\'aucune série n\'est ajoutée ou retirée. C\'est de l\'arithmétique, pas de la physiologie.',
 'sim.limitBody':'Cela ne prédit rien de votre force, de votre taille musculaire ni de votre récupération. Cela montre seulement comment deux variables se multiplient en un compte hebdomadaire.',
-'why.vol.row':'{muscle} : {direct} séries directes, {indirect} séries indirectes','why.vol.flagged':'{muscle} se situe dans la plage « {band} », signalée pour revue','why.vol.none':'Aucun groupe musculaire hors de la plage habituelle cette semaine','why.vol.principle':'Des volumes hebdomadaires plus élevés sont associés à une hypertrophie moyenne supérieure, avec des rendements décroissants et un coût de récupération croissant. Les réponses individuelles varient fortement.','why.data.setsWeights':'Séries pondérées par la contribution musculaire de chaque exercice','why.data.lastSevenDays':'Séances des 7 derniers jours','why.assume.contributionWeights':'Suppose que les poids de contribution approchent l\'implication réelle','why.assume.bandsAreReview':'Suppose que les plages sont des invitations à revoir, pas des cibles','why.missing.noIntensityMeasure':'Aucune mesure d\'effort au-delà du RIR saisi','why.alt.changeVolume':'Modifier le volume hebdomadaire','why.alt.changeVolume.n':'Ajoutez ou retirez une série et observez l\'effet sur le compte et la récupération.','why.alt.ignoreFlag':'Ignorer le signal','why.alt.ignoreFlag.n':'Le signal est indicatif ; vos propres résultats sont le meilleur guide.','vol.title':'Répartition du volume','vol.direct':'Séries directes','vol.indirect':'Séries indirectes','vol.total':'Total','vol.band':'Plage','vol.reviewNote':'Les comptes sont pondérés par la contribution de chaque exercice et affichés pour revue. Un compte hors plage est une invitation à regarder, pas un jugement sur votre entraînement ni sur votre corps.','vol.flagGap':'Sous la plage habituelle — à examiner','vol.flagExcess':'Bien au-dessus de la plage — vérifier la récupération','vol.band.none':'non entraîné','vol.band.low':'faible','vol.band.typical':'typique','vol.band.high':'élevé','vol.band.veryHigh':'très élevé','rule.volume.reviewBand':'Signaler un volume hebdomadaire hors plage','rule.volume.reviewBand.how':'Les séries hebdomadaires par groupe sont comptées avec les poids de contribution et séparées en direct et indirect. Un compte hors plage lève un signal de revue. Aucun optimum n\'est prescrit et rien n\'est diagnostiqué.',"why.noDataUsed":"Aucune donnée enregistrée n'était disponible : la règle a utilisé ses valeurs par défaut.",'rule.prog.baseline':'Établir une référence','rule.prog.baseline.how':'Sans historique pour un exercice, aucune charge n\'est prescrite. La première séance fixe le point de référence.',
+'why.vol.row':'{muscle} : {direct} séries directes, {indirect} séries indirectes','why.vol.flagged':'{muscle} se situe dans la plage « {band} », signalée pour revue','why.vol.none':'Aucun groupe musculaire hors de la plage habituelle cette semaine','why.vol.principle':'Des volumes hebdomadaires plus élevés sont associés à une hypertrophie moyenne supérieure. Les réponses individuelles varient fortement.','why.data.setsWeights':'Séries pondérées par la contribution musculaire de chaque exercice','why.data.lastSevenDays':'Séances des 7 derniers jours','why.assume.contributionWeights':'Suppose que les poids de contribution approchent l\'implication réelle','why.assume.bandsAreReview':'Suppose que les plages sont des invitations à revoir, pas des cibles','why.missing.noIntensityMeasure':'Aucune mesure d\'effort au-delà du RIR saisi','why.alt.changeVolume':'Modifier le volume hebdomadaire','why.alt.changeVolume.n':'Ajoutez ou retirez une série et observez l\'effet sur le compte et la récupération.','why.alt.ignoreFlag':'Ignorer le signal','why.alt.ignoreFlag.n':'Le signal est indicatif ; vos propres résultats sont le meilleur guide.','vol.title':'Répartition du volume','vol.direct':'Séries directes','vol.indirect':'Séries indirectes','vol.total':'Total','vol.band':'Plage','vol.reviewNote':'Les comptes sont pondérés par la contribution de chaque exercice et affichés pour revue. Un compte hors plage est une invitation à regarder, pas un jugement sur votre entraînement ni sur votre corps.','vol.flagGap':'Sous la plage habituelle — à examiner','vol.flagExcess':'Bien au-dessus de la plage — vérifier la récupération','vol.band.none':'non entraîné','vol.band.low':'faible','vol.band.typical':'typique','vol.band.high':'élevé','vol.band.veryHigh':'très élevé','rule.volume.reviewBand':'Signaler un volume hebdomadaire hors plage','rule.volume.reviewBand.how':'Les séries hebdomadaires par groupe sont comptées avec les poids de contribution et séparées en direct et indirect. Un compte hors plage lève un signal de revue. Aucun optimum n\'est prescrit et rien n\'est diagnostiqué.',"why.noDataUsed":"Aucune donnée enregistrée n'était disponible : la règle a utilisé ses valeurs par défaut.",'rule.prog.baseline':'Établir une référence','rule.prog.baseline.how':'Sans historique pour un exercice, aucune charge n\'est prescrite. La première séance fixe le point de référence.',
 'rule.prog.increase':'Augmenter quand la cible est atteinte','rule.prog.increase.how':'La charge n\'augmente que si chaque série prescrite atteint le haut de la plage à l\'effort prévu. L\'incrément est le plus petit disponible pour le matériel.',
 'rule.prog.hold':'Maintenir la charge','rule.prog.hold.how':'Si la cible n\'est pas atteinte, la charge reste et l\'objectif devient une répétition de plus. Le temps écoulé n\'est jamais une entrée.',
 'rule.prog.reduce':'Reculer quand la performance descend sous la plage','rule.prog.reduce.how':'Si la dernière séance est sous le bas de la plage, la charge est légèrement réduite et les répétitions sont reconstruites.',
@@ -10291,9 +10305,9 @@ const TV41 = {
     "modC.s1.body": "Double progression builds repetitions inside a target range first. Only when every prescribed working set reaches the top of the range at the intended RIR does ANCESTOR suggest the smallest practical plate step.",
     "modC.s1.cap": "Build reps first, then add the smallest load step.",
     "modC.s2.label": "Volume",
-    "modC.s2.title": "More weekly sets help up to a point, with rising recovery cost",
-    "modC.s2.body": "Meta-analyses link higher weekly set counts to larger average hypertrophy, but returns flatten while fatigue and joint stress keep climbing. Optimal volume varies widely between individuals.",
-    "modC.s2.cap": "Solid: average stimulus · Dashed: rising recovery cost",
+    "modC.s2.title": "Weekly sets and average muscle growth",
+    "modC.s2.body": "Across studies, higher weekly set volumes were associated with greater muscle growth on average. They do not establish an individual optimum.",
+    "modC.s2.cap": "Solid: stimulus · Dashed: recovery cost",
     "modC.s3.label": "Effort (RIR)",
     "modC.s3.title": "Stopping 1–3 reps shy of failure captures stimulus with less fatigue",
     "modC.s3.body": "Sets taken close to muscular failure recruit high-threshold motor units regardless of load band, while grinding to absolute failure (RIR 0) on heavy compounds multiplies recovery cost.",
@@ -10347,9 +10361,9 @@ const TV41 = {
     "modC.s1.body": "La double progression construit d'abord les répétitions dans la plage cible. Ce n'est que lorsque chaque série de travail atteint le haut de la plage au RIR prévu qu'ANCESTOR suggère le plus petit incrément réel.",
     "modC.s1.cap": "Valider les répétitions d'abord, puis ajouter le plus petit palier.",
     "modC.s2.label": "Volume",
-    "modC.s2.title": "Plus de séries aident jusqu'à un certain point, au prix d'une fatigue croissante",
-    "modC.s2.body": "Les méta-analyses associent davantage de séries hebdomadaires à une hypertrophie moyenne supérieure, mais les gains plafonnent tandis que le coût de récupération grimpe.",
-    "modC.s2.cap": "Continu : stimulus moyen · Pointillé : coût de récupération",
+    "modC.s2.title": "Séries hebdomadaires et croissance musculaire moyenne",
+    "modC.s2.body": "Dans les études, davantage de séries hebdomadaires sont associées à une croissance musculaire moyenne supérieure. Aucun optimum individuel n’est établi.",
+    "modC.s2.cap": "Continu : stimulus · Pointillé : coût de récupération",
     "modC.s3.label": "Effort (RIR)",
     "modC.s3.title": "Garder 1 à 3 répétitions en réserve capte le stimulus avec moins de fatigue",
     "modC.s3.body": "Approcher l'échec musculaire recrute les unités motrices à haut seuil quelle que soit la charge, tandis que l'échec absolu (RIR 0) sur les mouvements polyarticulaires alourdit fortement la récupération.",
@@ -10403,9 +10417,9 @@ const TV41 = {
     "modC.s1.body": "La doble progresión construye primero repeticiones dentro del rango objetivo antes de sugerir el incremento mínimo de carga.",
     "modC.s1.cap": "Completar repeticiones antes de subir carga.",
     "modC.s2.label": "Volumen",
-    "modC.s2.title": "Más series semanales ayudan hasta cierto punto, con mayor coste de recuperación",
-    "modC.s2.body": "Más series semanales se asocian con mayor hipertrofia media, pero con rendimientos decrecientes y más fatiga.",
-    "modC.s2.cap": "Continuo: estímulo medio · Discontinuo: coste de recuperación",
+    "modC.s2.title": "Series semanales y crecimiento muscular medio",
+    "modC.s2.body": "En los estudios, más series semanales se asociaron con mayor crecimiento muscular medio. No establecen un óptimo individual.",
+    "modC.s2.cap": "Continuo: estímulo · Discontinuo: coste de recuperación",
     "modC.s3.label": "Esfuerzo (RIR)",
     "modC.s3.title": "Dejar 1–3 repeticiones en reserva aporta estímulo con menos fatiga",
     "modC.s3.body": "Acercarse al fallo recluta unidades motoras de alto umbral sin el coste desproporcionado del fallo absoluto (RIR 0).",
@@ -10459,8 +10473,8 @@ const TV41 = {
     "modC.s1.body": "Doppelte Progression baut zuerst Wiederholungen im Zielbereich auf, bevor der kleinste Lastschritt empfohlen wird.",
     "modC.s1.cap": "Erst Wiederholungen füllen, dann kleinsten Schritt steigern.",
     "modC.s2.label": "Volumen",
-    "modC.s2.title": "Mehr Wochensätze helfen bis zu einem Punkt, bei steigenden Erholungskosten",
-    "modC.s2.body": "Höheres Satzvolumen geht mit mehr durchschnittlicher Hypertrophie einher, aber mit abnehmendem Grenznutzen.",
+    "modC.s2.title": "Wochensätze und durchschnittliches Muskelwachstum",
+    "modC.s2.body": "In Studien waren mehr Wochensätze mit durchschnittlich größerem Muskelwachstum verbunden. Ein individuelles Optimum ist nicht belegt.",
     "modC.s2.cap": "Durchgezogen: Reiz · Gestrichelt: Erholungskosten",
     "modC.s3.label": "Anstrengung (RIR)",
     "modC.s3.title": "1–3 Wiederholungen in Reserve sichern den Reiz bei geringerer Ermüdung",
@@ -10515,8 +10529,8 @@ const TV41 = {
     "modC.s1.body": "La doppia progressione costruisce prima le ripetizioni nell'intervallo target prima del minimo incremento di carico.",
     "modC.s1.cap": "Prima le ripetizioni, poi il minimo incremento.",
     "modC.s2.label": "Volume",
-    "modC.s2.title": "Più serie settimanali aiutano fino a un certo punto, con costo crescente",
-    "modC.s2.body": "Volumi più alti si associano a maggiore ipertrofia media ma con rendimenti decrescenti e più fatica.",
+    "modC.s2.title": "Serie settimanali e crescita muscolare media",
+    "modC.s2.body": "Negli studi, più serie settimanali erano associate a una crescita muscolare media maggiore. Non stabiliscono un valore ottimale individuale.",
     "modC.s2.cap": "Continua: stimolo · Tratteggiata: costo di recupero",
     "modC.s3.label": "Sforzo (RIR)",
     "modC.s3.title": "Tenere 1–3 ripetizioni in riserva dà stimolo con meno fatica",
@@ -10571,8 +10585,8 @@ const TV41 = {
     "modC.s1.body": "Dubbele progressie bouwt eerst herhalingen op binnen de doelzone vóór de kleinste gewichtsstap volgt.",
     "modC.s1.cap": "Eerst herhalingen opbouwen, daarna kleinste stap verhogen.",
     "modC.s2.label": "Volume",
-    "modC.s2.title": "Meer weeksets helpen tot op zekere hoogte, met stijgende herstelkosten",
-    "modC.s2.body": "Meer sets per week hangen samen met meer gemiddelde groei, maar met afnemende meeropbrengst.",
+    "modC.s2.title": "Wekelijkse sets en gemiddelde spiergroei",
+    "modC.s2.body": "In onderzoeken hingen meer wekelijkse sets samen met gemiddeld meer spiergroei. Ze bepalen geen individueel optimum.",
     "modC.s2.cap": "Doorlopend: prikkel · Gestippeld: herstelkosten",
     "modC.s3.label": "Inspanning (RIR)",
     "modC.s3.title": "1–3 herhalingen in reserve geven prikkel met minder vermoeidheid",
@@ -10627,8 +10641,8 @@ const TV41 = {
     "modC.s1.body": "يبني التدرج المزدوج التكرارات داخل النطاق المستهدف أولاً قبل اقتراح أصغر زيادة عملية في الوزن.",
     "modC.s1.cap": "ابنِ التكرارات أولاً ثم أضف أصغر زيادة.",
     "modC.s2.label": "الحجم",
-    "modC.s2.title": "زيادة المجموعات الأسبوعية تفيد حتى حد معين مع ارتفاع كلفة التعافي",
-    "modC.s2.body": "ترتبط المجموعات الأعلى بمتوسط نمو أكبر لكن بعوائد متناقصة وإجهاد متزايد.",
+    "modC.s2.title": "المجموعات الأسبوعية ومتوسط نمو العضلات",
+    "modC.s2.body": "في الدراسات، ارتبطت زيادة المجموعات الأسبوعية بمتوسط نمو عضلي أكبر. ولا تحدد هذه العلاقة قيمة مثلى للفرد.",
     "modC.s2.cap": "متصل: التحفيز · متقطع: كلفة التعافي",
     "modC.s3.label": "الجهد (RIR)",
     "modC.s3.title": "إبقاء 1–3 تكرارات في الاحتياط يمنح التحفيز بإجهاد أقل",
@@ -11458,7 +11472,7 @@ TLEN.en = {
   'sec.training-principles.2.h': 'Why ANCESTOR will not add weight on a schedule',
   'sec.training-principles.2.b': 'A rule that says "two weeks have passed, add 2.5 kg" ignores whether you actually hit the target. ANCESTOR increases load only when every prescribed set reaches the top of the rep range at the intended effort. If the evidence is not there, the load holds; if performance declines twice in a row, it steps back.',
   'sec.training-principles.3.h': 'Volume is a variable with trade-offs',
-  'sec.training-principles.3.b': 'Higher weekly set volumes are associated with greater average hypertrophy, with diminishing returns and a rising recovery cost. ANCESTOR tracks weekly sets per muscle group so changes are visible and reviewable — it does not declare an optimum for you.',
+  'sec.training-principles.3.b': 'Higher weekly set volumes are associated with greater average hypertrophy. ANCESTOR tracks weekly sets per muscle group so changes are visible and reviewable — it does not declare an optimum for you.',
   'sec.training-principles.4.h': 'Adherence dominates',
   'sec.training-principles.4.b': 'The best programme is the one sustained long enough to matter. This is why ANCESTOR treats missed sessions as information rather than failure, and why consistency is a selectable goal.',
   'sec.scientific-literacy.1.h': 'Not all evidence is equal',
@@ -11574,7 +11588,7 @@ TLFR.fr = {
 'sec.training-principles.2.h':'Pourquoi ANCESTOR n\'ajoute pas de poids selon un calendrier',
 'sec.training-principles.2.b':'Une règle qui dirait « deux semaines sont passées, ajoute 2,5 kg » ignorerait si vous avez réellement atteint la cible. ANCESTOR n\'augmente la charge que lorsque chaque série prescrite atteint le haut de la plage de répétitions à l\'effort prévu. Si la preuve n\'y est pas, la charge est maintenue ; si la performance baisse deux fois de suite, elle recule.',
 'sec.training-principles.3.h':'Le volume est une variable avec des compromis',
-'sec.training-principles.3.b':'Des volumes hebdomadaires plus élevés sont associés à une hypertrophie moyenne supérieure, avec des rendements décroissants et un coût de récupération croissant. ANCESTOR suit les séries hebdomadaires par groupe musculaire afin que les changements soient visibles et révisables — il ne déclare pas d\'optimum à votre place.',
+'sec.training-principles.3.b':'Des volumes hebdomadaires plus élevés sont associés à une hypertrophie moyenne supérieure. ANCESTOR suit les séries hebdomadaires par groupe musculaire afin que les changements soient visibles et révisables — il ne déclare pas d\'optimum à votre place.',
 'sec.training-principles.4.h':'L\'adhérence domine',
 'sec.training-principles.4.b':'Le meilleur programme est celui que l\'on maintient assez longtemps pour qu\'il compte. C\'est pourquoi ANCESTOR traite les séances manquées comme une information plutôt que comme un échec, et pourquoi la constance est un objectif sélectionnable.',
 
@@ -11687,7 +11701,7 @@ TLES.es = {
 'sec.training-principles.2.h':'Por qué ANCESTOR no añade peso por calendario',
 'sec.training-principles.2.b':'Una regla que dijera pasaron dos semanas, suma 2,5 kg ignora si alcanzaste el objetivo. ANCESTOR sube la carga solo cuando cada serie prescrita llega a la parte alta del rango de repeticiones con el esfuerzo previsto. Si la evidencia no está, la carga se mantiene; si el rendimiento baja dos veces seguidas, retrocede.',
 'sec.training-principles.3.h':'El volumen es una variable con contrapartidas',
-'sec.training-principles.3.b':'Volúmenes semanales más altos se asocian con mayor hipertrofia media, con rendimientos decrecientes y un coste de recuperación creciente. ANCESTOR sigue las series semanales por grupo muscular para que los cambios sean visibles y revisables; no declara un óptimo por ti.',
+'sec.training-principles.3.b':'Volúmenes semanales más altos se asocian con mayor hipertrofia media. ANCESTOR sigue las series semanales por grupo muscular para que los cambios sean visibles y revisables; no declara un óptimo por ti.',
 'sec.training-principles.4.h':'La adherencia domina',
 'sec.training-principles.4.b':'El mejor programa es el que se sostiene el tiempo suficiente para importar. Por eso ANCESTOR trata las sesiones perdidas como información y no como fracaso, y por eso la constancia es un objetivo seleccionable.',
 /* scientific-literacy */
@@ -11786,7 +11800,7 @@ TLDE.de = {
 'sec.training-principles.2.h':'Warum ANCESTOR nicht nach Kalender aufstockt',
 'sec.training-principles.2.b':'Eine Regel "zwei Wochen sind vorbei, addiere 2,5 kg" ignoriert, ob du das Ziel erreicht hast. ANCESTOR erhöht die Last nur, wenn jeder vorgeschriebene Satz die obere Grenze des Wiederholungsbereichs mit der vorgesehenen Anstrengung erreicht. Fehlt die Evidenz, bleibt die Last. Sinkt die Leistung zweimal hintereinander, geht sie zurück.',
 'sec.training-principles.3.h':'Volumen ist eine Variable mit Abwägungen',
-'sec.training-principles.3.b':'Höheres Wochenvolumen geht mit größerer durchschnittlicher Hypertrophie einher, mit abnehmendem Ertrag und steigenden Erholungskosten. ANCESTOR erfasst Wochensätze pro Muskelgruppe, damit Veränderungen sichtbar und prüfbar sind. Es erklärt kein Optimum für dich.',
+'sec.training-principles.3.b':'Höheres Wochenvolumen geht mit größerer durchschnittlicher Hypertrophie einher. ANCESTOR erfasst Wochensätze pro Muskelgruppe, damit Veränderungen sichtbar und prüfbar sind. Es erklärt kein Optimum für dich.',
 'sec.training-principles.4.h':'Adhärenz dominiert',
 'sec.training-principles.4.b':'Das beste Programm ist das, das lange genug durchgehalten wird, um zu wirken. Deshalb behandelt ANCESTOR verpasste Einheiten als Information statt als Scheitern. Und deshalb ist Beständigkeit ein wählbares Ziel.',
 /* scientific-literacy */
@@ -11889,7 +11903,7 @@ TLIT.it = {
 "sec.training-principles.2.h":"Perché ANCESTOR non aggiunge peso a calendario",
 "sec.training-principles.2.b":"Una regola che dicesse «sono passate due settimane, aggiungi 2,5 kg» ignora se hai raggiunto l'obiettivo. ANCESTOR alza il carico solo quando ogni serie prescritta arriva alla parte alta dell'intervallo di ripetizioni con lo sforzo previsto. Se l'evidenza non c'è, il carico resta. Se la prestazione scende due volte di fila, il carico torna indietro.",
 "sec.training-principles.3.h":"Il volume è una variabile con compromessi",
-"sec.training-principles.3.b":"Volumi settimanali più alti sono associati a ipertrofia media maggiore, con rendimenti decrescenti e un costo di recupero crescente. ANCESTOR traccia le serie settimanali per gruppo muscolare, così i cambiamenti sono visibili e revisionabili. Non dichiara un optimum al tuo posto.",
+"sec.training-principles.3.b":"Volumi settimanali più alti sono associati a ipertrofia media maggiore. ANCESTOR traccia le serie settimanali per gruppo muscolare, così i cambiamenti sono visibili e revisionabili. Non dichiara un optimum al tuo posto.",
 "sec.training-principles.4.h":"L'aderenza domina",
 "sec.training-principles.4.b":"Il miglior programma è quello mantenuto abbastanza a lungo da contare. Per questo ANCESTOR tratta le sessioni perse come informazione invece che come fallimento. E per questo la costanza è un obiettivo selezionabile.",
 "sec.scientific-literacy.1.h":"Non tutte le evidenze sono uguali",
@@ -11977,7 +11991,7 @@ TLNL.nl = {
 "sec.training-principles.2.h":"Waarom ANCESTOR niet per kalender opschaalt",
 "sec.training-principles.2.b":"Een regel die zou zeggen 'er zijn twee weken voorbij, tel 2,5 kg op' negeert of je het doel hebt gehaald. ANCESTOR verhoogt het gewicht alleen wanneer elke voorgeschreven set de bovenkant van het herhalingsbereik haalt met de bedoelde inspanning. Ontbreekt het bewijs, dan blijft het gewicht. Daalt de prestatie twee keer op rij, dan gaat het terug.",
 "sec.training-principles.3.h":"Volume is een variabele met afwegingen",
-"sec.training-principles.3.b":"Hoger weekvolume hangt samen met grotere gemiddelde hypertrofie, met afnemende opbrengst en stijgende herstelkost. ANCESTOR volgt wekelijkse sets per spiergroep zodat veranderingen zichtbaar en herzienbaar zijn. Het roept geen optimum voor je uit.",
+"sec.training-principles.3.b":"Hoger weekvolume hangt samen met grotere gemiddelde hypertrofie. ANCESTOR volgt wekelijkse sets per spiergroep zodat veranderingen zichtbaar en herzienbaar zijn. Het roept geen optimum voor je uit.",
 "sec.training-principles.4.h":"Therapietrouw overheerst",
 "sec.training-principles.4.b":"Het beste programma is het programma dat lang genoeg wordt volgehouden om ertoe te doen. Daarom behandelt ANCESTOR gemiste sessies als informatie in plaats van falen. En daarom is consistentie een kiesbaar doel.",
 "sec.scientific-literacy.1.h":"Niet alle evidentie is gelijk",
@@ -12065,7 +12079,7 @@ TLAR.ar = {
 "sec.training-principles.2.h":"لماذا لا يزيد ANCESTOR الحمل بالتقويم",
 "sec.training-principles.2.b":"قاعدة تقول «مرّ أسبوعان، أضف 2,5 كجم» تتجاهل ما إذا كنت حقّقت الهدف. لا يرفع ANCESTOR الحمل إلا حين تصل كل مجموعة مقرَّرة إلى أعلى مدى التكرارات بالجهد المطلوب. فإن لم تتوفّر البيّنة، يثبت الحمل. وإن تراجع الأداء مرتين متتاليتين، يعود للخلف.",
 "sec.training-principles.3.h":"الحجم متغيّر فيه مقايضات",
-"sec.training-principles.3.b":"ترتبط الأحجام الأسبوعية الأعلى بتضخّم متوسط أكبر، مع عوائد متناقصة وتكلفة تعافٍ متزايدة. يتتبّع ANCESTOR المجموعات الأسبوعية لكل مجموعة عضلية كي تكون التغييرات مرئية وقابلة للمراجعة. لا يعلن الأمثل عنك.",
+"sec.training-principles.3.b":"ترتبط الأحجام الأسبوعية الأعلى بتضخّم متوسط أكبر. يتتبّع ANCESTOR المجموعات الأسبوعية لكل مجموعة عضلية كي تكون التغييرات مرئية وقابلة للمراجعة. لا يعلن الأمثل عنك.",
 "sec.training-principles.4.h":"الالتزام يتقدّم على كل شيء",
 "sec.training-principles.4.b":"أفضل برنامج هو البرنامج الذي يُستمر عليه زمناً كافياً ليكون ذا أثر. لذلك يعامل ANCESTOR الحصص الفائتة بوصفها معلومة لا فشلاً. ولذلك «الانتظام» هدف قابل للاختيار.",
 "sec.scientific-literacy.1.h":"ليست كل الأدلة متساوية",
@@ -14612,11 +14626,10 @@ if (typeof module !== 'undefined' && module.exports) {
 
    HONESTY ABOUT THIS LIBRARY
    --------------------------
-   `identifierVerified` states whether the DOI/PMID was checked against the
-   publisher record. Where it is false, the bibliographic details must be
-   confirmed before publication. Findings summaries reflect the published
-   conclusions as understood at `lastReviewed`; they are summaries, not
-   quotations, and should be read against the source.
+   `identifierVerified` records a DOI/PMID registry check, not an expert or
+   publisher review. Where false, bibliographic details need confirmation.
+   Findings summaries are not quotations and require independent review
+   against the source before publication.
 
    Live literature retrieval is NOT available in this build. This is a
    curated offline snapshot with declared coverage limits.
@@ -14627,15 +14640,15 @@ const EVIDENCE = [
       "id": "schoenfeld-2016-volume",
       "title": "Dose-response relationship between weekly resistance training volume and increases in muscle mass: a systematic review and meta-analysis",
       "authors": "Schoenfeld BJ, Ogborn D, Krieger JW",
-      "year": 2016,
+      "year": 2017,
       "journal": "Journal of Sports Sciences",
       "type": "meta-analysis",
       "doi": "10.1080/02640414.2016.1210197",
       "url": "https://doi.org/10.1080/02640414.2016.1210197",
       "population": "Healthy adults in resistance-training interventions",
       "question": "Does weekly resistance-training volume change the magnitude of muscle-mass gain?",
-      "findings": "A graded dose-response was observed: higher weekly set volumes per muscle group were associated with greater hypertrophy on average, roughly 0.37% per week with <5 sets versus about 0.78% per week with 10+ sets. Effects averaged across studies; individual responses varied widely.",
-      "limitations": "Observational dose-response across trials rather than within-trial randomisation of volume; imprecise volume measures; mostly short-to-medium studies; far fewer data on trained individuals and on very high volumes.",
+      "findings": "Across the studies, higher weekly set volumes were associated with greater muscle growth on average. The association does not predict an individual's growth rate or establish an optimum.",
+      "limitations": "Between-study comparisons can be confounded; volume measures vary; studies were mostly short-to-medium, with fewer data on trained individuals and very high volumes.",
       "relevance": "Supports tracking weekly sets per muscle group and flagging large volume changes for review, rather than assuming one fixed volume is optimal for everyone.",
       "quality": "moderate",
       "lastReviewed": "2026-10-26",
@@ -14769,7 +14782,7 @@ const EVIDENCE = [
       "journal": "Journal of Applied Physiology",
       "type": "narrative-review",
       "doi": "10.1152/japplphysiol.00685.2018",
-      "url": "https://doi.org/10.1152/japplphysiol.00738.2018",
+      "url": "https://doi.org/10.1152/japplphysiol.00685.2018",
       "population": "Human and mechanistic model literature",
       "question": "Which signals initiate hypertrophy after resistance exercise?",
       "findings": "Reviews mechanical tension as a central stimulus with metabolic and damage-related contributors, and stresses that the sensor mechanisms are still being resolved. Explicitly cautions against simplistic single-cause narratives.",
@@ -15084,7 +15097,7 @@ const LESSONS = [
     {h:'sec.muscle-growth.5.h', b:'sec.muscle-growth.5.b'}
   ],
   takeaways:['takeaway.mg.1','takeaway.mg.2','takeaway.mg.3'],
-  evidence:['damas-2016-hypertrophy','wackerhage-2019-stimuli','schoenfeld-2016-volume'],
+  evidence:['damas-2018-hypertrophy','wackerhage-2019-stimuli','schoenfeld-2016-volume'],
   myths:[
     {claim:'myth.mg.pump', verdict:'myth.mg.pump.v', why:'myth.mg.pump.why'},
     {claim:'myth.mg.damage', verdict:'myth.mg.damage.v', why:'myth.mg.damage.why'}
@@ -15823,7 +15836,7 @@ const SCHEMA_VERSION = 3;
    `tests/ui.js` fails when the two disagree — so a deploy that forgets to bump
    one of them is caught by the gate instead of being discovered by a person
    whose browser is holding two builds at once. */
-const APP_BUILD = 'v45';
+const APP_BUILD = 'v46';
 const BUILD_KEY = 'ancestor.build.v1';
 
 /* The last uncaught error, kept across the tab that saw it. `LAST_UNCAUGHT`
@@ -16738,7 +16751,7 @@ function recommend(state, exId, now){
     out.rule = 'R8';
     reduceBy(out, spec, range, curLoad, curTime, curDist, ex, unit, 0.10, step);
     out.reasons.push({ k:'r8', tone:'down',
-      text: 'Performance dropped in two consecutive sessions. Reduce about 10% and rebuild.' });
+      text: 'Performance dropped in two consecutive sessions. Follow the adjusted target and rebuild.' });
     return out;
   }
 
@@ -16749,7 +16762,7 @@ function recommend(state, exId, now){
     out.rule = 'R5';
     reduceBy(out, spec, range, curLoad, curTime, curDist, ex, unit, 0.075, step);
     out.reasons.push({ k:'r5', tone:'down',
-      text: 'Last session fell short of the bottom of the target range. Step back one increment and rebuild.' });
+      text: 'Last session fell short of the target range. Follow the adjusted target and rebuild.' });
     return out;
   }
 
@@ -16784,6 +16797,10 @@ function recommend(state, exId, now){
   out.rule = stagnant ? 'R7' : 'R4';
   holdAndBuild(out, spec, range, curLoad, curTime, curDist, curReps, step);
   if(stagnant){
+    // Time and distance are the primary training variable for these modes:
+    // a plateau holds that variable rather than quietly increasing it.
+    if(spec.axis === 'time') out.targetTime = curTime === null ? range.lo : curTime;
+    if(spec.axis === 'distance') out.targetDistance = curDist === null ? range.lo : curDist;
     out.reasons.push({ k:'r7', tone:'warn',
       text: 'Three sessions with no measurable progress on this exercise. Hold, and check sleep and recovery before adding anything.' });
   } else {
@@ -17334,8 +17351,8 @@ function decide(state, exerciseIds, now){
     }
     if(s >= 3){ sev = Math.max(sev, Math.min(4, sev + 2)); reasons.push({ tone:'down', k:'sore', text: t('rsn.soreness') }); }
     else if(s === 2){ sev = Math.max(sev, Math.min(4, sev + 1)); reasons.push({ tone:'warn', k:'sore', text: t('rsn.soreness') }); }
-    if(f >= 3){ sev = Math.max(sev, Math.min(4, sev + 2)); reasons.push({ tone:'down', k:'fat', text: 'Fatigue reported as severe' }); }
-    else if(f === 2){ sev = Math.max(sev, Math.min(4, sev + 1)); reasons.push({ tone:'warn', k:'fat', text: 'Fatigue reported as moderate' }); }
+    if(f >= 3){ sev = Math.max(sev, Math.min(4, sev + 2)); reasons.push({ tone:'down', k:'fat', text: t('feel.fatigue') + ' — ' + t('feel.high') }); }
+    else if(f === 2){ sev = Math.max(sev, Math.min(4, sev + 1)); reasons.push({ tone:'warn', k:'fat', text: t('feel.fatigue') + ' — ' + t('feel.moderate') }); }
   }
 
   /* ---------- performance ------------------------------------------------- */
@@ -18686,8 +18703,8 @@ function readinessMeter(value, stateKey, opts){
 }
 
 /* ------------------------------------------------------------- METRICS */
-/* A metric can carry an explanation. The explanation is reachable by pointer,
-   by keyboard focus and by assistive technology — not hover alone.
+/* A metric can carry an explanation. Its disclosure works by pointer and
+   keyboard, and exposes its state to assistive technology.
    When `numKey` is given and `value` is numeric, hydrateMotion() animates
    from the previous real value to the new real value. */
 function metric(key, value, unit, delta, tip, numKey, decimals){
@@ -18698,9 +18715,10 @@ function metric(key, value, unit, delta, tip, numKey, decimals){
     : ' class="v"';
   return '<div class="metric">' +
     '<div class="k">' + esc(key) +
-      (tip ? '<button type="button" class="tip" aria-label="' + esc(tip) + '" ' +
-             'data-tip="' + esc(tip) + '">?</button>' : '') +
+      (tip ? '<button type="button" class="tip" aria-label="' + esc(key + ' — ' + tip) + '" ' +
+             'aria-expanded="false" data-act="toggleMetricTip">?</button>' : '') +
     '</div>' +
+    (tip ? '<p class="metric-help" hidden>' + esc(tip) + '</p>' : '') +
     '<div' + vAttrs + '>' + esc(value) + (unit ? '<small>' + esc(unit) + '</small>' : '') + '</div>' +
     (delta ? '<div class="d">' + esc(delta) + '</div>' : '') + '</div>';
 }
@@ -20716,11 +20734,11 @@ Screens.body = function(){
     const remLabel = esc(remPlain);
     h += '<button class="mrow ' + (BODY_SEL===m?'sel':'') + '" data-act="selectMuscle" data-a1="' + m + '"' +
          ' aria-pressed="' + (BODY_SEL===m?'true':'false') + '"' +
-         ' aria-label="' + esc(t('mg.'+m) + ', ' + (r && r.since !== null ? t('mst.'+st) + ' — ' + remPlain : t('mst.fresh'))) + '">' +
+         ' aria-label="' + esc((MUSCLES.indexOf(m) + 1) + ' ' + t('mg.'+m) + ' ' + remPlain + (r && r.since !== null ? ' — ' + t('mst.'+st) : '')) + '">' +
          '<span class="sw" style="background:' + STATE_HEX[st] + ';opacity:' +
          (r && r.since!==null ? 1 : .3) + '"></span>' +
-         '<span class="idx" aria-hidden="true">' + (MUSCLES.indexOf(m) + 1) + '</span>' +
-         '<span class="nm">' + esc(t('mg.'+m)) + '</span>' +
+         '<span class="idx" aria-hidden="true">' + (MUSCLES.indexOf(m) + 1) + '</span> ' +
+         '<span class="nm">' + esc(t('mg.'+m)) + '</span> ' +
          '<span class="when">' + remLabel + '</span></button>';
   });
   h += '</div></div></div>';
@@ -22643,8 +22661,8 @@ Screens.onb = function(){
       '<p class="onb-prose">' + esc(t('onb.ready.d')) + '</p>';
     if(!plan.poolSize) b += banner('warn', t('workout.emptyPoolTitle'), t('a11y.poolEmpty'));
     plan.sessions.forEach(s2 => {
-      b += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(s2.name) +
-        '</h3><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';
+      b += '<div class="panel"><div class="panel-hd"><h2 class="sub">' + esc(s2.name) +
+        '</h2><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';
       s2.exercises.forEach(e => {
         b += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(t('ex.'+e.id)) +
           '</span><span class="w">' + esc(numExpr(e.sets + '×' + targetRangeText(EX_BY_ID[e.id]))) + ' RIR' + e.rir + '</span></div>';
@@ -26141,7 +26159,7 @@ function diagramFor(kind){
       t('modC.s1.title'));
   }
   if(kind === 'volume'){
-    /* dose-response curve with diminishing returns + rising recovery cost */
+    /* Invented curves illustrate a possible trade-off, not measured data. */
     const gain = [], cost = [];
     for(let i=0;i<=16;i++){
       const x = 28 + i * 16.5;
@@ -26155,8 +26173,9 @@ function diagramFor(kind){
       '<line x1="28" y1="30" x2="28" y2="110" class="d-axis"/>' +
       '<path d="M' + gain.join(' L') + '" class="d-line"/>' +
       '<path d="M' + cost.join(' L') + '" class="d-band-line"/>' +
-      '<text x="160" y="132" class="d-cap" text-anchor="middle">' + esc(t('modC.s2.cap')) + '</text>',
-      t('modC.s2.title'));
+      '<text x="160" y="127" class="d-cap" text-anchor="middle">' + esc(t('sim.illustrative')) + '</text>' +
+      '<text x="160" y="140" class="d-cap" text-anchor="middle">' + esc(t('modC.s2.cap')) + '</text>',
+      t('modC.s2.title') + ' — ' + t('sim.illustrative'));
   }
   if(kind === 'effort'){
     /* RIR 3..0: stimulus plateaus near failure while fatigue spikes at RIR 0 */
@@ -26536,13 +26555,13 @@ function labControlsHtml(){
     actAttr(act, ...args) + '>' + LAB_ICONS[key] + '</button>';
   return '<div class="lab-controls">' +
     '<div class="lab-controls-row">' +
-      btn('labFront','lab3d.front','labSetView','front') +
-      btn('labBack','lab3d.back','labSetView','back') +
+      btn('labFront','lab3d.front','labSetView',undefined,'front') +
+      btn('labBack','lab3d.back','labSetView',undefined,'back') +
       btn('labReset','body.reset','labResetView') +
     '</div>' +
     '<div class="lab-controls-row">' +
-      btn('labZoomIn','body.zoom','labZoom', 0.82) +
-      btn('labZoomOut','lab3d.zoomOut','labZoom', 1.22) +
+      btn('labZoomIn','body.zoom','labZoom',undefined,0.82) +
+      btn('labZoomOut','lab3d.zoomOut','labZoom',undefined,1.22) +
       btn('labIso','lab3d.isolate','labToggleIsolate', 'false') +
     '</div>' +
     '<div class="lab-controls-row">' +

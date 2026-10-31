@@ -35,7 +35,7 @@ const LESSONS = [
     {h:'sec.muscle-growth.5.h', b:'sec.muscle-growth.5.b'}
   ],
   takeaways:['takeaway.mg.1','takeaway.mg.2','takeaway.mg.3'],
-  evidence:['damas-2016-hypertrophy','wackerhage-2019-stimuli','schoenfeld-2016-volume'],
+  evidence:['damas-2018-hypertrophy','wackerhage-2019-stimuli','schoenfeld-2016-volume'],
   myths:[
     {claim:'myth.mg.pump', verdict:'myth.mg.pump.v', why:'myth.mg.pump.why'},
     {claim:'myth.mg.damage', verdict:'myth.mg.damage.v', why:'myth.mg.damage.why'}

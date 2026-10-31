@@ -326,8 +326,8 @@ function readinessMeter(value, stateKey, opts){
 }
 
 /* ------------------------------------------------------------- METRICS */
-/* A metric can carry an explanation. The explanation is reachable by pointer,
-   by keyboard focus and by assistive technology — not hover alone.
+/* A metric can carry an explanation. Its disclosure works by pointer and
+   keyboard, and exposes its state to assistive technology.
    When `numKey` is given and `value` is numeric, hydrateMotion() animates
    from the previous real value to the new real value. */
 function metric(key, value, unit, delta, tip, numKey, decimals){
@@ -338,9 +338,10 @@ function metric(key, value, unit, delta, tip, numKey, decimals){
     : ' class="v"';
   return '<div class="metric">' +
     '<div class="k">' + esc(key) +
-      (tip ? '<button type="button" class="tip" aria-label="' + esc(tip) + '" ' +
-             'data-tip="' + esc(tip) + '">?</button>' : '') +
+      (tip ? '<button type="button" class="tip" aria-label="' + esc(key + ' — ' + tip) + '" ' +
+             'aria-expanded="false" data-act="toggleMetricTip">?</button>' : '') +
     '</div>' +
+    (tip ? '<p class="metric-help" hidden>' + esc(tip) + '</p>' : '') +
     '<div' + vAttrs + '>' + esc(value) + (unit ? '<small>' + esc(unit) + '</small>' : '') + '</div>' +
     (delta ? '<div class="d">' + esc(delta) + '</div>' : '') + '</div>';
 }

@@ -183,7 +183,7 @@ function recommend(state, exId, now){
     out.rule = 'R8';
     reduceBy(out, spec, range, curLoad, curTime, curDist, ex, unit, 0.10, step);
     out.reasons.push({ k:'r8', tone:'down',
-      text: 'Performance dropped in two consecutive sessions. Reduce about 10% and rebuild.' });
+      text: 'Performance dropped in two consecutive sessions. Follow the adjusted target and rebuild.' });
     return out;
   }
 
@@ -194,7 +194,7 @@ function recommend(state, exId, now){
     out.rule = 'R5';
     reduceBy(out, spec, range, curLoad, curTime, curDist, ex, unit, 0.075, step);
     out.reasons.push({ k:'r5', tone:'down',
-      text: 'Last session fell short of the bottom of the target range. Step back one increment and rebuild.' });
+      text: 'Last session fell short of the target range. Follow the adjusted target and rebuild.' });
     return out;
   }
 
@@ -229,6 +229,10 @@ function recommend(state, exId, now){
   out.rule = stagnant ? 'R7' : 'R4';
   holdAndBuild(out, spec, range, curLoad, curTime, curDist, curReps, step);
   if(stagnant){
+    // Time and distance are the primary training variable for these modes:
+    // a plateau holds that variable rather than quietly increasing it.
+    if(spec.axis === 'time') out.targetTime = curTime === null ? range.lo : curTime;
+    if(spec.axis === 'distance') out.targetDistance = curDist === null ? range.lo : curDist;
     out.reasons.push({ k:'r7', tone:'warn',
       text: 'Three sessions with no measurable progress on this exercise. Hold, and check sleep and recovery before adding anything.' });
   } else {

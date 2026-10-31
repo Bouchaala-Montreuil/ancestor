@@ -1151,11 +1151,11 @@ Screens.body = function(){
     const remLabel = esc(remPlain);
     h += '<button class="mrow ' + (BODY_SEL===m?'sel':'') + '" data-act="selectMuscle" data-a1="' + m + '"' +
          ' aria-pressed="' + (BODY_SEL===m?'true':'false') + '"' +
-         ' aria-label="' + esc(t('mg.'+m) + ', ' + (r && r.since !== null ? t('mst.'+st) + ' — ' + remPlain : t('mst.fresh'))) + '">' +
+         ' aria-label="' + esc((MUSCLES.indexOf(m) + 1) + ' ' + t('mg.'+m) + ' ' + remPlain + (r && r.since !== null ? ' — ' + t('mst.'+st) : '')) + '">' +
          '<span class="sw" style="background:' + STATE_HEX[st] + ';opacity:' +
          (r && r.since!==null ? 1 : .3) + '"></span>' +
-         '<span class="idx" aria-hidden="true">' + (MUSCLES.indexOf(m) + 1) + '</span>' +
-         '<span class="nm">' + esc(t('mg.'+m)) + '</span>' +
+         '<span class="idx" aria-hidden="true">' + (MUSCLES.indexOf(m) + 1) + '</span> ' +
+         '<span class="nm">' + esc(t('mg.'+m)) + '</span> ' +
          '<span class="when">' + remLabel + '</span></button>';
   });
   h += '</div></div></div>';
@@ -3078,8 +3078,8 @@ Screens.onb = function(){
       '<p class="onb-prose">' + esc(t('onb.ready.d')) + '</p>';
     if(!plan.poolSize) b += banner('warn', t('workout.emptyPoolTitle'), t('a11y.poolEmpty'));
     plan.sessions.forEach(s2 => {
-      b += '<div class="panel"><div class="panel-hd"><h3 class="sub">' + esc(s2.name) +
-        '</h3><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';
+      b += '<div class="panel"><div class="panel-hd"><h2 class="sub">' + esc(s2.name) +
+        '</h2><span class="hint">' + s2.exercises.length + ' ' + esc(t('progress.exercise')) + '</span></div>';
       s2.exercises.forEach(e => {
         b += '<div class="factor"><span class="dot"></span><span class="txt">' + esc(t('ex.'+e.id)) +
           '</span><span class="w">' + esc(numExpr(e.sets + '×' + targetRangeText(EX_BY_ID[e.id]))) + ' RIR' + e.rir + '</span></div>';

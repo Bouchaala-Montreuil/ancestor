@@ -91,7 +91,7 @@ TLFR.fr = {
 'sec.training-principles.2.h':'Pourquoi ANCESTOR n\'ajoute pas de poids selon un calendrier',
 'sec.training-principles.2.b':'Une règle qui dirait « deux semaines sont passées, ajoute 2,5 kg » ignorerait si vous avez réellement atteint la cible. ANCESTOR n\'augmente la charge que lorsque chaque série prescrite atteint le haut de la plage de répétitions à l\'effort prévu. Si la preuve n\'y est pas, la charge est maintenue ; si la performance baisse deux fois de suite, elle recule.',
 'sec.training-principles.3.h':'Le volume est une variable avec des compromis',
-'sec.training-principles.3.b':'Des volumes hebdomadaires plus élevés sont associés à une hypertrophie moyenne supérieure, avec des rendements décroissants et un coût de récupération croissant. ANCESTOR suit les séries hebdomadaires par groupe musculaire afin que les changements soient visibles et révisables — il ne déclare pas d\'optimum à votre place.',
+'sec.training-principles.3.b':'Des volumes hebdomadaires plus élevés sont associés à une hypertrophie moyenne supérieure. ANCESTOR suit les séries hebdomadaires par groupe musculaire afin que les changements soient visibles et révisables — il ne déclare pas d\'optimum à votre place.',
 'sec.training-principles.4.h':'L\'adhérence domine',
 'sec.training-principles.4.b':'Le meilleur programme est celui que l\'on maintient assez longtemps pour qu\'il compte. C\'est pourquoi ANCESTOR traite les séances manquées comme une information plutôt que comme un échec, et pourquoi la constance est un objectif sélectionnable.',
 

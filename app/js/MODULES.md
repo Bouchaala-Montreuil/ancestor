@@ -15,7 +15,7 @@ not a dependency graph).
 
 | # | File | Provides | Reaches for |
 |---:|---|---:|---:|
-| 1 | `js/core/acts.js` | 8 | 161 |
+| 1 | `js/core/acts.js` | 8 | 167 |
 | 2 | `js/i18n/core.js` | 4 | 3 |
 | 3 | `js/i18n/ui.js` | 3 | 3 |
 | 4 | `js/i18n/exercises.js` | 2 | 4 |

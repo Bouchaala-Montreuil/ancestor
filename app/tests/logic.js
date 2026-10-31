@@ -241,6 +241,23 @@ group('4. A timed exercise accepts duration without requiring repetitions');
       w.exTargetRange(w.eval("EX_BY_ID['dead-hang']")).unit === 'time');
 }
 
+/* The displayed recommendation must agree with the plateau rule for each axis. */
+{
+  const {w,d}=boot(); onboard(w,d);
+  const now=Date.now(), s=w.getState();
+  s.sessions=[15,9,3].map(days=>({id:'flat'+days,date:now-days*DAY,exercises:[
+    {id:'plank',sets:[{t:30,rir:2}]}, {id:'farmer-carry',sets:[{w:10,d:50,rir:2}]}
+  ]}));
+  w.saveState();
+  for(const [id,target] of [['plank','30 s'],['farmer-carry','50 m']]){
+    w.openExerciseDetail(id);
+    const banner=Array.from(d.querySelectorAll('#sheetHost .banner.info')).find(e=>/Three sessions with no measurable progress/.test(e.textContent));
+    chk(`${id} details display the held plateau target and its explanation`,
+      !!banner && banner.textContent.includes(target),banner?.textContent);
+    w.closeSheet();
+  }
+}
+
 /* ==================================================================== */
 group('5. An exercise with no history does not show fabricated previous results');
 {

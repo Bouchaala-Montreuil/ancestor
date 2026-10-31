@@ -68,7 +68,7 @@ TLEN.en = {
   'sec.training-principles.2.h': 'Why ANCESTOR will not add weight on a schedule',
   'sec.training-principles.2.b': 'A rule that says "two weeks have passed, add 2.5 kg" ignores whether you actually hit the target. ANCESTOR increases load only when every prescribed set reaches the top of the rep range at the intended effort. If the evidence is not there, the load holds; if performance declines twice in a row, it steps back.',
   'sec.training-principles.3.h': 'Volume is a variable with trade-offs',
-  'sec.training-principles.3.b': 'Higher weekly set volumes are associated with greater average hypertrophy, with diminishing returns and a rising recovery cost. ANCESTOR tracks weekly sets per muscle group so changes are visible and reviewable — it does not declare an optimum for you.',
+  'sec.training-principles.3.b': 'Higher weekly set volumes are associated with greater average hypertrophy. ANCESTOR tracks weekly sets per muscle group so changes are visible and reviewable — it does not declare an optimum for you.',
   'sec.training-principles.4.h': 'Adherence dominates',
   'sec.training-principles.4.b': 'The best programme is the one sustained long enough to matter. This is why ANCESTOR treats missed sessions as information rather than failure, and why consistency is a selectable goal.',
   'sec.scientific-literacy.1.h': 'Not all evidence is equal',

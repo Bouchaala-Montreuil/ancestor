@@ -140,6 +140,12 @@ ACT('switchLang',                   el => switchLang(arg(el, 1)));
 
 /* shared components */
 ACT('showChartTip',                 el => showChartTip(arg(el, 1), arg(el, 2)));
+ACT('toggleMetricTip', el => {
+  const info = el.closest('.metric')?.querySelector('.metric-help');
+  if(!info) return;
+  info.hidden = !info.hidden;
+  el.setAttribute('aria-expanded', String(!info.hidden));
+});
 
 /* learning modules */
 ACT('closeModule',                  el => closeModule());
@@ -174,6 +180,11 @@ ACT('addRest',                      el => addRest(arg(el, 1)));
 ACT('openRestInfo',                 () => openRestInfo());
 ACT('addShiftFromOnb',              el => addShiftFromOnb());
 ACT('clearMuscle',                  el => clearMuscle());
+ACT('labSetView', el => labSetView(arg(el,1)));
+ACT('labResetView', () => labResetView());
+ACT('labZoom', el => labZoom(arg(el,1)));
+ACT('labToggleIsolate', () => labToggleIsolate());
+ACT('labToggleContext', el => labToggleContext(arg(el,1)));
 ACT('closeSessionEditor',           el => closeSessionEditor());
 ACT('closeSheet',                   el => closeSheet());
 ACT('deleteEditedSet',              el => deleteEditedSet(arg(el, 1)));
